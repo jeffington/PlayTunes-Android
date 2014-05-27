@@ -1,10 +1,10 @@
 package com.ideabag.playtunes;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 
-public class PlayTunesActivity extends Activity {
+public class PlayTunesActivity extends FragmentActivity {
 	
 	int[] commandHistory;
 	
@@ -18,12 +18,13 @@ public class PlayTunesActivity extends Activity {
     }
     
     
-    @Override public Object onRetainNonConfigurationInstance() {
+    @Override public Object onRetainCustomNonConfigurationInstance() {
     	
     	return commandHistory;
     	
     }
 	
+    
 	protected void commandHistoryPush( int commandCode ) {
 		
 		if ( null == commandHistory ) {

@@ -74,4 +74,5 @@ public class SettingsActivity extends PreferenceActivity {
 		prefs.registerOnSharedPreferenceChangeListener( preferenceChangeListener );
 		
 	}
+	
 }
