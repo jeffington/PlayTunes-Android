@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:padding="5dip">
+       	<ImageView android:id="@+id/playIcon"
+       		android:layout_width="wrap_content"
+       		android:layout_height="wrap_content"
+       		android:visibility="gone"
+       		android:paddingRight="3dip"
+       	/>
+       	<TextView
+        	android:id="@+id/trackNumber"
+        	android:paddingRight="3dip"
+        	android:text="1"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_alignParentTop="true"
+        	android:textColor="@color/LightestColor"
+        	android:textSize="16dip"
+        	android:visibility="gone"
+        	android:layout_toRightOf="@id/playIcon"
+   		/>
+        <TextView
+           	android:id="@+id/toptext"
+           	android:layout_height="wrap_content"
+           	android:layout_width="wrap_content"
+           	android:text=""
+           	android:background="@android:color/transparent"
+           	android:textColor="@color/LightestColor"
+           	android:textSize="16dip"
+           	android:layout_toRightOf="@id/trackNumber"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+        />
+        <TextView android:id="@+id/trackAlbum"
+        	android:gravity="left"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:background="@android:color/transparent"
+        	android:textColor="#33AAEE"
+        	android:layout_alignParentBottom="true"
+        	android:text=""
+        	android:paddingRight="5dip"
+        	android:ellipsize="end"
+        	android:lines="1"
+        	android:singleLine="true"
+        />
+        <TextView android:id="@+id/bottomtext"
+           	android:layout_width="wrap_content"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+           	android:ellipsize="marquee"
+           	android:textColor="@color/LightestColor"
+           	android:text=""
+           	android:background="@android:color/transparent"
+           	android:layout_toRightOf="@id/trackAlbum"
+           	android:layout_alignParentBottom="true"
+        />
+    </RelativeLayout>

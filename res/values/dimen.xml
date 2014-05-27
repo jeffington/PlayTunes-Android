@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<dimen name="corner_button_width">48dip</dimen>
+<dimen name="corner_button_height">48dip</dimen>
+<dimen name="song_control_button_width">43dip</dimen>
+<dimen name="song_control_button_height">43dip</dimen>
+</resources>

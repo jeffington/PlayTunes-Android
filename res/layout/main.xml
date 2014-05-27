@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:ads="http://schemas.android.com/apk/res/com.ideabag.playtunes"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:background="@drawable/back_app">
+  
+<Button android:id="@+id/TopLeft" 
+	style="@style/CornerButton"
+	android:layout_alignParentLeft="true" 
+	android:layout_alignParentTop="true"
+	android:text="Albums"
+	android:drawableBottom="@drawable/ic_tab_albums"
+/>
+
+<Button android:id="@+id/TopRight"
+	style="@style/CornerButton"
+	android:layout_alignParentRight="true" 
+	android:layout_alignParentTop="true"
+	android:text="Songs"
+	android:drawableBottom="@drawable/ic_tab_songs"
+/>
+<Button android:id="@+id/BottomLeft"
+	style="@style/CornerButton"
+	android:layout_alignParentLeft="true" 
+	android:layout_alignParentBottom="true"
+	android:text="Artists"
+	android:drawableTop="@drawable/ic_tab_artists"
+/>
+<Button android:id="@+id/BottomRight"
+	style="@style/CornerButton"
+	android:layout_alignParentRight="true" 
+	android:layout_alignParentBottom="true"
+	android:text="Playlists"
+	android:drawableTop="@drawable/ic_tab_playlists"
+/>
+
+<TextView android:id="@+id/Header"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_alignParentTop="true"
+	android:layout_toRightOf="@+id/TopLeft"
+	android:layout_toLeftOf="@+id/TopRight"
+	android:lines="1"
+	android:singleLine="true"
+	android:ellipsize="marquee"
+	android:marqueeRepeatLimit="3"
+	android:textColor="#FFFFFF"
+	android:textSize="19dip"
+	android:gravity="center_horizontal"
+/>
+<TextView android:id="@+id/SubHeader"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_toRightOf="@+id/TopLeft"
+	android:layout_toLeftOf="@+id/TopRight"
+	android:layout_below="@id/Header"
+	android:lines="1"
+	android:singleLine="true"
+	android:ellipsize="none"
+	android:textColor="#A4C639"
+	android:textSize="13dip"
+	android:gravity="center_horizontal"
+/>
+
+<ImageView android:id="@+id/NoSD"
+	android:src="@drawable/ic_nosdcard"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_centerInParent="true"
+/>
+<TextView 
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_below="@id/NoSD"
+	android:layout_centerHorizontal="true"
+	android:text="No SD Card"
+	android:textColor="#FFFFFF"
+/>
+
+<ListView android:id="@+id/ListViewSongs" 
+	style="@style/ListStandard"
+	android:layout_below="@id/TopLeft"
+	android:layout_above="@id/BottomLeft"
+/>
+
+<LinearLayout android:id="@+id/Controls"
+	android:layout_width="wrap_content"
+	android:layout_height="@dimen/corner_button_height"
+	android:layout_centerHorizontal="true"
+	android:layout_alignParentBottom="true"
+	android:orientation="horizontal"
+	android:layout_gravity="center">
+	<ImageView android:id="@+id/BackButton" 
+		style="@style/SongControlButton"
+		android:src="@android:drawable/ic_media_previous"
+		android:layout_marginRight="4dip"
+	/>
+	<ImageView android:id="@+id/PlayButton" 
+		style="@style/SongControlButton"
+		android:src="@android:drawable/ic_media_play"
+		android:layout_marginRight="4dip"
+		android:paddingLeft="3dip"
+	/>
+	<ImageButton android:id="@+id/PauseButton" 
+		style="@style/SongControlButton"
+		android:src="@android:drawable/ic_media_pause"
+		android:layout_marginRight="4dip"
+	/>
+	<ImageButton android:id="@+id/ForwardButton" 
+		style="@style/SongControlButton"
+		android:src="@android:drawable/ic_media_next"
+	/>
+
+</LinearLayout>
+
+<RelativeLayout android:id="@+id/SongInformation" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"
+	android:background="@drawable/back_drawer_content"
+	android:layout_below="@id/TopLeft"
+	android:layout_above="@id/BottomLeft"
+	android:visibility="gone">
+	<TextView android:id="@+id/SongName" 
+		style="@style/SongInfoText"
+		android:ellipsize="end"
+		android:layout_alignParentTop="true"
+	/>
+	<TextView android:id="@+id/SongArtist"
+		style="@style/SongInfoText"
+		android:layout_below="@id/SongName"
+		android:textSize="14dip"
+		android:ellipsize="marquee"
+	/>
+	<TextView android:id="@+id/SongAlbum"
+		style="@style/SongInfoText"
+		android:layout_below="@id/SongArtist"
+		android:textSize="14dip"
+		android:ellipsize="marquee"
+	/>
+	
+	<com.google.ads.AdView android:id="@+id/ad"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		ads:adUnitId="a14d2292195730c"
+		ads:adSize="BANNER"
+		android:layout_alignParentBottom="true"
+	/>
+	
+	<ImageButton android:id="@+id/Shuffle"
+		style="@style/SongControlButton"
+		android:src="@drawable/ic_shuffle_off"
+		android:layout_alignParentRight="true"
+		android:layout_below="@id/SongAlbum"
+	/>
+	
+	<ImageButton android:id="@+id/Repeat"
+		style="@style/SongControlButton"
+		android:src="@drawable/ic_repeat_off"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@id/SongAlbum"
+	/>
+	<ImageView android:id="@+id/AlbumCover"
+		android:src="@drawable/albumart_unknown"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@id/Repeat"
+		android:layout_above="@id/ad"
+		android:layout_marginLeft="2dip"
+	/>	
+</RelativeLayout>
+
+</RelativeLayout>

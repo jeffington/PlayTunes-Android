@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="commands">
+<item>@string/artists</item>
+<item>@string/albums</item>
+<item>@string/genres</item>
+<item>@string/playlists</item>
+<item>@string/songs</item>
+</string-array>
+<integer-array name="command_codes">
+<item>0x800</item>
+<item>0x3000</item>
+<item>0x1800</item>
+<item>0x4000</item>
+<item>0x5000</item>
+</integer-array>
+</resources>

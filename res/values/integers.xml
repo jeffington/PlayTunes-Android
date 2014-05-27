@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<integer name="artists_code">0x800</integer>
+<integer name="artist_code">0x1000</integer>
+<integer name="genres_code">0x1800</integer>
+<integer name="genre_code">0x2000</integer>
+<integer name="now_playing_code">0x2800</integer>
+<integer name="albums_code">0x3000</integer>
+<integer name="album_code">0x3800</integer>
+<integer name="playlists_code">0x4000</integer>
+<integer name="playlist_code">0x4800</integer>
+<integer name="songs_code">0x5000</integer>
+<integer name="artist_singles_code">0x5800</integer>
+<integer name="artist_all_code">0x6000</integer>
+<integer name="alarms_code">0x6800</integer>
+<integer name="id_key">0x7FF</integer>
+<integer name="command_key">0xF800</integer>
+
+<integer name="looping_no">0</integer>
+<integer name="looping_one">2</integer>
+<integer name="looping_all">1</integer>
+</resources>

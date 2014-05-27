@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+<item android:id="@+id/MenuItemSongs"
+	android:title="@string/songs"
+	android:icon="@drawable/ic_menu_songs"
+/>
+<item android:id="@+id/MenuItemArtists"
+	android:title="@string/artists"
+	android:icon="@drawable/ic_menu_artists"
+/>
+<item android:id="@+id/MenuItemAlbums"
+	android:title="@string/albums"
+	android:icon="@drawable/ic_menu_albums"
+/>
+<item android:id="@+id/MenuItemGenres"
+	android:title="@string/genres"
+	android:icon="@drawable/ic_menu_genres"
+/>
+<item android:id="@+id/MenuItemPlaylists"
+	android:title="@string/playlists"
+	android:icon="@drawable/ic_menu_playlists"
+/>
+<item android:id="@+id/MenuItemSettings"
+	android:title="@string/settings"
+	android:icon="@android:drawable/ic_menu_preferences"
+/>
+</menu>
