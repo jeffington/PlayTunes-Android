@@ -24,10 +24,14 @@ import java.util.Random;
 
 
 public class MusicPlayerService extends Service {
+	
 	private static final String TAG = "PlayTunesMusicPlayerService";
+	
 	private MediaPlayer mp;
 	private int isLooping; // Three states: no loop, loop all, loop one
 	private boolean isShuffling, isPlaying;
+	
+	
 	Cursor playlist;
 	private int currentCommand;
 	private int food = 1; // If the service was created, assume 1
@@ -43,114 +47,209 @@ public class MusicPlayerService extends Service {
 	//private static final int PAUSE_NOTIFICATION_ID = 2;
 	
 	PhoneStateListener phoneListener = new PhoneStateListener() {
-		public void onCallStateChanged(int state, String incomingNumber) {
-			if (state == TelephonyManager.CALL_STATE_OFFHOOK || state == TelephonyManager.CALL_STATE_RINGING)
+		
+		public void onCallStateChanged( int state, String incomingNumber ) {
+			
+			if ( state == TelephonyManager.CALL_STATE_OFFHOOK || state == TelephonyManager.CALL_STATE_RINGING ) {
+				
 				pause();
+				
+			}
+			
 		}
+		
 	};
 	
 	// android.intent.action.HEADSET_PLUG when headphones are plugged in or out
 	public BroadcastReceiver MusicPlayerServiceReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
+		
+		@Override public void onReceive( Context context, Intent intent ) {
+			
 			String action = intent.getAction();
-			if (action.equals(Intent.ACTION_MEDIA_EJECT) || action.equals(Intent.ACTION_MEDIA_UNMOUNTED) || action.equals(Intent.ACTION_MEDIA_REMOVED))
+			
+			if ( action.equals( Intent.ACTION_MEDIA_EJECT )
+					|| action.equals( Intent.ACTION_MEDIA_UNMOUNTED )
+					|| action.equals( Intent.ACTION_MEDIA_REMOVED ) ) {
+				
 				stopSelf();
-			else if (action.equals(getString(R.string.action_play))) {
-				loadCommand(intent.getIntExtra("command", -1));
-				if (intent.hasExtra("track") && intent.getIntExtra("track", -1) != -1)
+				
+			} else if ( action.equals( getString( R.string.action_play ) ) ) {
+				
+				loadCommand( intent.getIntExtra( "command", -1 ) );
+				
+				if (intent.hasExtra("track") && intent.getIntExtra("track", -1) != -1) {
+					
 					setPosition(intent.getIntExtra("track", 0));
+					
+				}
+				
 				play();
-			}
-			else if (action.equals(getString(R.string.action_next)))
+				
+			} else if ( action.equals( getString( R.string.action_next ) ) ) {
+				
 				next();
-			else if (action.equals(getString(R.string.action_prev)))
+				
+			} else if ( action.equals( getString( R.string.action_prev ) ) ) {
+				
 				prev();
-			else if (action.equals(getString(R.string.action_pause)))
+				
+			} else if ( action.equals( getString( R.string.action_pause ) ) ) {
+				
 				pause();
-			else if (action.equals(getString(R.string.action_shuffle))) {
+				
+			} else if ( action.equals( getString( R.string.action_shuffle ) ) ) {
+				
 				Log.i(TAG, "Shuffle received.");
-				setShuffle(intent.getBooleanExtra("shuffle", false));
-			}
-			else if (action.equals(getString(R.string.action_repeat)))
-				setRepeat(intent.getIntExtra("repeat", getResources().getInteger(R.integer.looping_no)));
-			else if (action.equals(getString(R.string.action_update))) {
+				setShuffle( intent.getBooleanExtra( "shuffle", false ) );
+				
+			} else if ( action.equals( getString( R.string.action_repeat ) ) ) {
+				
+				setRepeat( intent.getIntExtra( "repeat", getResources().getInteger( R.integer.looping_no ) ) );
+				
+			} else if ( action.equals( getString( R.string.action_update ) ) ) {
+				
 				updateClient();
-			}
-			else if (action.equals("com.ideabag.playtunes.RELEASE")) {
-				Log.i(TAG, "Received RELEASE broadcast.");
+				
+			} else if ( action.equals( "com.ideabag.playtunes.RELEASE" ) ) {
+				
+				Log.i( TAG, "Received RELEASE broadcast." );
 				releaseFood();
-			}
-			else if (action.equals("com.ideabag.playtunes.CONSUME")) {
-				Log.i(TAG, "Received CONSUME broadcast.");
+				
+			} else if ( action.equals( "com.ideabag.playtunes.CONSUME" ) ) {
+				
+				Log.i( TAG, "Received CONSUME broadcast." );
 				consumeFood();
+				
 			}
+			
 		}
+		
 	};
 	
 	MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
-		public void onCompletion(MediaPlayer mp) {
-			if (isLooping == getResources().getInteger(R.integer.looping_one)) // MediaPlayer will repeat, do nothing not even update the client
+		
+		public void onCompletion( MediaPlayer mp ) {
+			
+			if ( isLooping == getResources().getInteger( R.integer.looping_one ) ) {// MediaPlayer will repeat, do nothing not even update the client
+				
 				return;
-			else if (isLooping == getResources().getInteger(R.integer.looping_all))
-				setPosition((playlist.getPosition() + 1) % playlist.getCount()); // Will always loop the whole thing
-			else
-				setPosition(playlist.getPosition() + 1);
+				
+			} else if ( isLooping == getResources().getInteger( R.integer.looping_all ) ) {
+				
+				setPosition( ( playlist.getPosition() + 1 ) % playlist.getCount() ); // Will always loop the whole thing
+				
+			} else {
+				
+				setPosition( playlist.getPosition() + 1 );
+				
+			}
+			
 		}
+		
 	};
 	
 	private void loadCommand(int cmd) {
-		if (cmd == currentCommand)
+		
+		if ( cmd == currentCommand ) {
+			
 			return;
+			
+		}
+		
 		currentCommand = cmd;
 		
-		playlist = MusicUtils.getCursor(getBaseContext(), cmd);
-		if (isShuffling) {
-			if (playlist != null)
+		playlist = MusicUtils.getCursor( getBaseContext(), cmd );
+		
+		if ( isShuffling ) {
+			
+			if ( playlist != null ) {
+			
 				generateRandomPlaylist();
+				
+			}
+			
 		}
+		
 	}
 	
 	private void next() {
-		if (playlist != null)
-			setPosition(playlist.getPosition() + 1);
+		
+		if ( null != playlist) {
+			
+			setPosition( playlist.getPosition() + 1 );
+			
+		}
+		
 	}
 	
 	private void play() {
-		if (playlist != null && !playlist.isBeforeFirst() && !playlist.isAfterLast()) {
+		
+		if ( null != playlist
+				&& !playlist.isBeforeFirst()
+				&& !playlist.isAfterLast() ) {
+			
 			// TODO: Take food when starting to play
-			if (!isPlaying)
+			if ( !isPlaying ) {
+				
 				consumeFood();
+				
+			}
+				
 			mp.start();
 			isPlaying = true;
 			playNotification();
 			updateClient();
-			if (!wl.isHeld())
+			
+			if ( !wl.isHeld() ) {
+				
 				wl.acquire(); // TODO: Wake lock acquired
+				
+			}
+			
 		}
+		
 	}
 	
 	private void pause() {
-		if (mp != null) {
-			if (mp.isPlaying())
+		
+		if ( null != mp ) {
+			
+			if ( mp.isPlaying() ) {
+				
 				mp.pause();
+				
+			}
+			
 			removeNotification();
 			updateClient();
 			isPlaying = false;
 			// TODO: Release food when no longer playing
 			releaseFood();
-			if (wl.isHeld())
+			
+			if ( wl.isHeld() ) {
+				
 				wl.release(); // TODO: Wake lock released
+				
+			}
+			
 		}
+		
 	}
 	
 	private void prev() {
-		if (playlist != null)
-			setPosition(playlist.getPosition() - 1);
+		
+		if (null != playlist) {
+			
+			setPosition( playlist.getPosition() - 1 );
+			
+		}
+		
 	}
 	
-	private void setPosition(int position) {
+	private void setPosition( int position ) {
+		
 		try {
+			
 			playlist.moveToPosition(position);
 			if (playlist.isBeforeFirst() || playlist.isAfterLast()) {
 				shufflePlaylist = null;
@@ -162,133 +261,215 @@ public class MusicPlayerService extends Service {
 				generateRandomPlaylist();
 			
 			mp.reset();
-			if (!isShuffling)
-				mp.setDataSource(playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
-			else {
+			
+			if ( !isShuffling ) {
+				
+				mp.setDataSource( playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.DATA ) ) );
+				
+			} else {
+				
 				int tmp = playlist.getPosition();
-				playlist.moveToPosition(shufflePlaylist[tmp]);
-				mp.setDataSource(playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
-				playlist.moveToPosition(tmp);
+				
+				playlist.moveToPosition( shufflePlaylist[ tmp ] );
+				
+				mp.setDataSource( playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.DATA ) ) );
+				
+				playlist.moveToPosition( tmp );
+				
 			}
+			
 			mp.prepare();
-			if (isPlaying)
+			
+			if ( isPlaying ) {
+				
 				play();
+				
+			}
+			
 			updateClient();
-		} catch (Exception e) {
+			
+		} catch ( Exception e ) {
+			
 			e.printStackTrace();
+			
 		}
+		
 	}
 	
 	private void setRepeat(int repeat) {
-		if (repeat != getResources().getInteger(R.integer.looping_one))
+		
+		if ( repeat != getResources().getInteger( R.integer.looping_one ) ) {
+			
 			mp.setLooping(false);
-		else
+			
+		} else {
+			
 			mp.setLooping(true);
+			
+		}
+		
 		isLooping = repeat;
+		
 	}
 	
-	private void setShuffle(boolean s) {
+	private void setShuffle( boolean s ) {
+		
 		isShuffling = s;
-		if (!isShuffling) {
-			if (playlist != null && !playlist.isBeforeFirst() && !playlist.isAfterLast())
-				playlist.moveToPosition(shufflePlaylist[playlist.getPosition()]);
+		
+		if ( !isShuffling ) {
+			
+			if ( null != playlist
+					&& !playlist.isBeforeFirst()
+					&& !playlist.isAfterLast() ) {
+				
+				playlist.moveToPosition( shufflePlaylist[ playlist.getPosition() ] );
+				
+			}
+			
 			shufflePlaylist = null;
+			
 		} else {
-			if (playlist != null && shufflePlaylist == null)
+			
+			if ( null != playlist
+					&& null == shufflePlaylist ) {
+				
 				generateRandomPlaylist();
+				
+			}
+			
 		}
+		
 	}
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
 		mp = new MediaPlayer();
-		mp.setOnCompletionListener(completionListener);
-		Log.i("PlayTunesService", "Service created.");
+		mp.setOnCompletionListener( completionListener );
+		
+		Log.i( "PlayTunesService", "Service created." );
 		currentCommand = -1; // Restore the previous command from the prefs file
 		
 		//notificationIntent.putExtra("command", getResources().getInteger(R.integer.now_playing_code));
 		//PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(), 0, new Intent(getBaseContext(), PlayTunes.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
 		
-		((TelephonyManager)getBaseContext().getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+		( ( TelephonyManager ) getBaseContext().getSystemService( Context.TELEPHONY_SERVICE ) ).listen( phoneListener, PhoneStateListener.LISTEN_CALL_STATE );
+		pm = ( PowerManager ) getSystemService( Context.POWER_SERVICE );
+		wl = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, TAG );
 		
 		IntentFilter intfil = new IntentFilter();
-		intfil.addAction(Intent.ACTION_MEDIA_EJECT);
-		intfil.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-		intfil.addAction(Intent.ACTION_MEDIA_REMOVED);
-		intfil.addAction(getString(R.string.action_play));
-		intfil.addAction(getString(R.string.action_pause));
-		intfil.addAction(getString(R.string.action_next));
-		intfil.addAction(getString(R.string.action_prev));
-		intfil.addAction(getString(R.string.action_repeat));
-		intfil.addAction(getString(R.string.action_shuffle));
-		intfil.addAction(getString(R.string.action_update));
-		intfil.addAction("com.ideabag.playtunes.RELEASE");
-		intfil.addAction("com.ideabag.playtunes.CONSUME");
-		registerReceiver(MusicPlayerServiceReceiver, intfil);
+		intfil.addAction( Intent.ACTION_MEDIA_EJECT );
+		intfil.addAction( Intent.ACTION_MEDIA_UNMOUNTED );
+		intfil.addAction( Intent.ACTION_MEDIA_REMOVED );
+		intfil.addAction( getString( R.string.action_play ) );
+		intfil.addAction( getString( R.string.action_pause ) );
+		intfil.addAction( getString( R.string.action_next ) );
+		intfil.addAction( getString( R.string.action_prev ) );
+		intfil.addAction( getString( R.string.action_repeat ) );
+		intfil.addAction( getString( R.string.action_shuffle ) );
+		intfil.addAction( getString( R.string.action_update ) );
+		intfil.addAction( "com.ideabag.playtunes.RELEASE" );
+		intfil.addAction( "com.ideabag.playtunes.CONSUME" );
+		registerReceiver( MusicPlayerServiceReceiver, intfil);
+		
 	}
 	
 	private void playNotification() {
-		Notification notification = new Notification(R.drawable.ic_stat_notify_play, null, System.currentTimeMillis());
-		Intent openIntent = new Intent(getBaseContext(), PlayTunes.class);
-		openIntent.putExtra("command", currentCommand);
-		PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(), 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		if (isShuffling) {
+		
+		Notification notification = new Notification( R.drawable.ic_stat_notify_play, null, System.currentTimeMillis() );
+		Intent openIntent = new Intent( getBaseContext(), PlayTunes.class );
+		
+		openIntent.putExtra( "command", currentCommand );
+		
+		PendingIntent contentIntent = PendingIntent.getActivity( getBaseContext(), 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT );
+		
+		if ( isShuffling ) {
+			
 			int tmp = playlist.getPosition();
-			playlist.moveToPosition(shufflePlaylist[tmp]);
-			notification.setLatestEventInfo(getApplicationContext(), playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)), playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)), contentIntent);
-			playlist.moveToPosition(tmp);
+			playlist.moveToPosition( shufflePlaylist[ tmp ] );
+			notification.setLatestEventInfo( getApplicationContext(), playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) ), playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) ), contentIntent );
+			playlist.moveToPosition( tmp );
+			
+		} else {
+			
+			notification.setLatestEventInfo( getApplicationContext(), playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) ), playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) ), contentIntent );
+			
 		}
-		else
-			notification.setLatestEventInfo(getApplicationContext(), playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)), playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)), contentIntent);
+		
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		
-		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).notify(PLAY_NOTIFICATION_ID, notification);
+		( ( NotificationManager ) getSystemService( Context.NOTIFICATION_SERVICE ) ).notify( PLAY_NOTIFICATION_ID, notification );
+		
 	}
 	
 	private void removeNotification() {
-		((NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE)).cancel(PLAY_NOTIFICATION_ID);
+		
+		( ( NotificationManager ) getSystemService( Context.NOTIFICATION_SERVICE ) ).cancel( PLAY_NOTIFICATION_ID) ;
+		
 	}
 	
 	private void updateClient() {
+		
 		Intent clientAlert = new Intent();
-		clientAlert.setAction(PlayTunes.PLAYTUNES_UI_UPDATE);
+		clientAlert.setAction( PlayTunes.PLAYTUNES_UI_UPDATE );
 		String albumURI = "";
 		Cursor albumArtCursor;
 		int tmp;
-		if (playlist != null && !playlist.isBeforeFirst() && !playlist.isAfterLast()) {
-			tmp = playlist.getPosition();
-			if (isShuffling && shufflePlaylist != null)
-				playlist.moveToPosition(shufflePlaylist[tmp]);
+		
+		if ( null != playlist 
+				&& !playlist.isBeforeFirst()
+				&& !playlist.isAfterLast() ) {
 			
-			clientAlert.putExtra("songName", playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
-			clientAlert.putExtra("songArtist", playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)));
-			clientAlert.putExtra("songAlbum", playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)));
+			tmp = playlist.getPosition();
+			
+			if ( isShuffling && null != shufflePlaylist ) {
+				
+				playlist.moveToPosition( shufflePlaylist[ tmp ] );
+				
+			}
+			
+			clientAlert.putExtra( "songName", playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) ) );
+			clientAlert.putExtra( "songArtist", playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) ) );
+			clientAlert.putExtra( "songAlbum", playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) ) );
 			
 			try {
-				albumArtCursor = getBaseContext().getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
+				
+				albumArtCursor = getBaseContext().getContentResolver().query( MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, 
 					new String[] { MediaStore.Audio.Albums.ALBUM_ART, MediaStore.Audio.Albums._ID}, 
-					MediaStore.Audio.Albums._ID+"="+playlist.getString(playlist.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)), null, null);
-				if (albumArtCursor.moveToFirst())
-					albumURI = albumArtCursor.getString(albumArtCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ART));
-			} catch (Exception e) {
+					MediaStore.Audio.Albums._ID + "=" + playlist.getString( playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) ), null, null);
+				
+				if ( albumArtCursor.moveToFirst() ) {
+					
+					albumURI = albumArtCursor.getString( albumArtCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ART ) );
+					
+				}
+				
+			} catch ( Exception e ) {
+				
 				e.printStackTrace();
+				
 			}
+			
 			clientAlert.putExtra("songAlbumArt", albumURI);
 			playlist.moveToPosition(tmp); // This is done to ensure that the correct info is displayed while shuffling
+		
+		} else {
+			
+			clientAlert.putExtra( "songName", "" );
+			clientAlert.putExtra( "songArtist", "" );
+			clientAlert.putExtra( "songAlbum", "" );
+			clientAlert.putExtra( "songAlbumArt", "" );
+			
 		}
-		else {
-			clientAlert.putExtra("songName", "");
-			clientAlert.putExtra("songArtist", "");
-			clientAlert.putExtra("songAlbum", "");
-			clientAlert.putExtra("songAlbumArt", "");
-		}
-		clientAlert.putExtra("shuffle", isShuffling);
-		clientAlert.putExtra("loop", isLooping);
-		clientAlert.putExtra("isPlaying", mp.isPlaying());
-		sendBroadcast(clientAlert);
+		
+		clientAlert.putExtra( "shuffle", isShuffling );
+		clientAlert.putExtra( "loop", isLooping );
+		clientAlert.putExtra( "isPlaying", mp.isPlaying() );
+		
+		sendBroadcast( clientAlert );
+		
 	}
 	
 	/* This function creates a randomly ordered non-repeating array of integers.
@@ -298,62 +479,94 @@ public class MusicPlayerService extends Service {
 	 * is the top of the list.
 	 */
 	private void generateRandomPlaylist() {
+		
 		int size = playlist.getCount();
 		Random gen = new Random();
-		ArrayList<Integer> numbers = new ArrayList<Integer>(size);
+		ArrayList< Integer > numbers = new ArrayList< Integer >( size );
 			
-		shufflePlaylist = new int[size];
+		shufflePlaylist = new int[ size ];
 		
-		for(int x = 0; x < size; x++)
-			numbers.add(x, new Integer(x));
+		for ( int x = 0; x < size; x++ ) {
+			
+			numbers.add( x, new Integer( x ) );
+			
+		}
 		
 // Set the current song to the first of the playlist
-		if (!playlist.isFirst() && !playlist.isAfterLast()) {
-			shufflePlaylist[0] = playlist.getPosition();
-			numbers.remove(playlist.getPosition());
+		if ( !playlist.isFirst() && !playlist.isAfterLast() ) {
+			
+			shufflePlaylist[ 0 ] = playlist.getPosition();
+			
+			numbers.remove( playlist.getPosition() );
 			playlist.moveToFirst();
 			
-			for(int x = 1; x < size; x++) {
-				int pick = gen.nextInt(numbers.size());
+			for ( int x = 1; x < size; x++ ) {
 				
-				shufflePlaylist[x] = numbers.get(pick).intValue();
-				numbers.remove(pick);
+				int pick = gen.nextInt( numbers.size() );
+				
+				shufflePlaylist[ x ] = numbers.get( pick ).intValue();
+				numbers.remove( pick );
+				
 			}
+			
+		} else {
+			
+			for ( int x = 0; x < size; x++ ) {
+				
+				int pick = gen.nextInt( numbers.size() );
+				shufflePlaylist[ x ] = numbers.get( pick ).intValue();
+				numbers.remove( pick );
+				
+			}
+			
 		}
-		else
-			for(int x = 0; x < size; x++) {
-				int pick = gen.nextInt(numbers.size());
-				shufflePlaylist[x] = numbers.get(pick).intValue();
-				numbers.remove(pick);
-			}
+		
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		
 		mp.reset();
 		mp.release();
 		mp = null;
-		if (wl.isHeld())
+		
+		if ( wl.isHeld() ) {
+			
 			wl.release(); // TODO: Wake lock released
-		unregisterReceiver(MusicPlayerServiceReceiver);
+			
+		}
+		
+		unregisterReceiver( MusicPlayerServiceReceiver );
 		removeNotification();
+		
 		Log.i(TAG, "Service destroyed.");
+		
 	}
 	
 	private void consumeFood() {
+		
 		food++;
+		
 		Log.i(TAG, "Service consumed food. Count: "+food);
+		
 	}
+	
 	private void releaseFood() {
+		
 		food--;
 		Log.i(TAG, "Service released food. Count:"+food);
-		if (food == 0)
+		
+		if (food == 0) {
+			
 			stopSelf();
+			
+		}
+		
 	}
 	
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind( Intent intent ) {
 		return null;
 	}
 }
