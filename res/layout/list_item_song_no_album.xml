@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        
+    	<LinearLayout
+    	    android:layout_width="0dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="top"
+    	    android:layout_weight="1"
+    	    android:orientation="vertical"
+    	    android:padding="8dp"
+    	    android:paddingLeft="16dp" >
+    	    
+        <TextView
+           	android:id="@+id/SongTitle"
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:text="asdfasdf"
+           	android:background="@android:color/transparent"
+           	android:textColor="#333333"
+           	android:textSize="16dp"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+        />
+        
+        <TextView android:id="@+id/SongArtist"
+           	android:layout_width="match_parent"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+           	android:ellipsize="marquee"
+			
+           	android:text="asdfasdf"
+        />
+        
+        <TextView android:id="@+id/SongAlbum"
+        	android:gravity="left"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:background="@android:color/transparent"
+           	android:textColor="#666666"
+           	android:textSize="12dp"
+        	
+        	android:text="asdfasdf"
+        	android:paddingRight="8dp"
+        	android:ellipsize="end"
+        	android:lines="1"
+        	android:singleLine="true"
+        	
+        />
+        
+        </LinearLayout>
+        
+       <ImageButton android:id="@+id/StarButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_star_0"
+            android:background="@android:color/transparent"
+            />
+       <ImageButton android:id="@+id/OptionsButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_overflow"
+            android:background="@android:color/transparent"
+            />
+
+</LinearLayout>
