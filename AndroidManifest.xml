@@ -7,21 +7,11 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppThemeLight">
+        android:theme="@style/AppThemeLight"
+        android:allowBackup="true">
     	
-    	<service android:name="com.ideabag.playtuneslegacylegacy.MusicPlayerService"
-    	    android:label="@string/app_name">
-    	    
-    		<intent-filter>
-                <action android:name="com.ideabag.playtunes.ACTION_PLAY" />
-                <action android:name="com.ideabag.playtunes.ACTION_SHUFFLE" />
-                <action android:name="com.ideabag.playtunes.ACTION_PAUSE" />
-                <action android:name="com.ideabag.playtunes.ACTION_UPDATE" />
-                <action android:name="com.ideabag.playtunes.RELEASE" />
-                <action android:name="com.ideabag.playtunes.CONSUME" />
-            </intent-filter>
-            
-    	</service>
+    	<service android:name="com.ideabag.playtunes.MusicPlayerService"
+    	    android:label="@string/app_name" />
     	
         <activity android:name="com.ideabag.playtunes.activity.MainActivity"
             android:label="@string/app_name"
@@ -39,11 +29,11 @@
             
         </activity>
         
-    	<activity android:name="com.ideabag.playtunes.activity.NewSettingsActivity"
+    	<activity android:name="com.ideabag.playtunes.activity.SettingsActivity"
     	    android:label="@string/activity_title_settings">
             
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             
