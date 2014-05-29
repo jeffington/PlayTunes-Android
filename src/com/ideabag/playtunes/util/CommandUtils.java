@@ -1,14 +1,23 @@
-package com.ideabag.playtunes;
+package com.ideabag.playtunes.util;
 
-import java.util.ArrayList;
+import com.ideabag.playtunes.R;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
 
-public class MusicUtils {
+public class CommandUtils {
+	
+	public enum Commands {
+		ALL_ARTISTS,
+		ONE_ARTIST,
+		ALL_GENRES,
+		ONE_GENRE,
+		ALL_ALBUMS,
+		ONE_ALBUM,
+		
+		
+	};
 	
 	public static final int COMMAND_ARTISTS_CODE = 0x800;
 	public static final int COMMAND_ARTIST_CODE = 0x1000;
@@ -119,54 +128,120 @@ return new PlayTunesListAdapter(context, R.layout.tabletext, c, singleGenreSelec
     	
     		case COMMAND_ALBUM_CODE:
     			
-    		    return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, singleAlbumSelection, MediaStore.Audio.Media.ALBUM_ID+"="+id, null, MediaStore.Audio.Media.TRACK);
+    		    return context.getContentResolver().query(
+    		    		MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    		    		singleAlbumSelection,
+    		    		MediaStore.Audio.Media.ALBUM_ID + "=" + id,
+    		    		null,
+    		    		MediaStore.Audio.Media.TRACK
+    		    	);
     		
     		case COMMAND_ALBUMS_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, allAlbumsSelection, null, null, MediaStore.Audio.Albums.ALBUM);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+    					allAlbumsSelection,
+    					null,
+    					null,
+    					MediaStore.Audio.Albums.ALBUM
+    				);
     		
     		case COMMAND_ARTISTS_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, artistsSelection, null, null, MediaStore.Audio.Artists.ARTIST);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+    					artistsSelection,
+    					null,
+    					null,
+    					MediaStore.Audio.Artists.ARTIST
+    				);
     		
     		case COMMAND_ARTIST_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Artists.Albums.getContentUri("external", id), artistsAllSelection, MediaStore.Audio.Artists.Albums.ALBUM+"!='Music'", null, MediaStore.Audio.Albums.ALBUM);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Artists.Albums.getContentUri("external", id),
+    					artistsAllSelection,
+    					MediaStore.Audio.Artists.Albums.ALBUM + "!='Music'",
+    					null,
+    					MediaStore.Audio.Albums.ALBUM
+    				);
     		
     		case COMMAND_PLAYLISTS_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, allPlaylistsSelection, null, null, MediaStore.Audio.Playlists.NAME);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+    					allPlaylistsSelection,
+    					null,
+    					null,
+    					MediaStore.Audio.Playlists.NAME
+    				);
     		
     		case COMMAND_PLAYLIST_CODE:
     		
-    			return context.getContentResolver().query(MediaStore.Audio.Playlists.Members.getContentUri("external", id), singlePlaylistSelection, null, null, MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Playlists.Members.getContentUri("external", id),
+    					singlePlaylistSelection,
+    					null,
+    					null,
+    					MediaStore.Audio.Playlists.Members.DEFAULT_SORT_ORDER
+    				);
     		
     		case COMMAND_SONGS_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, allSongsSelection, null, null, MediaStore.Audio.Media.TITLE);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    					allSongsSelection,
+    					null,
+    					null,
+    					MediaStore.Audio.Media.TITLE
+    				);
     		
     		case COMMAND_GENRES_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, allGenresSelection, null, null, MediaStore.Audio.Genres.NAME);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+    					allGenresSelection,
+    					null,
+    					null,
+    					MediaStore.Audio.Genres.NAME
+    				);
     		
     		case COMMAND_GENRE_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Genres.Members.getContentUri("external", id), singleGenreSelection, null, null, MediaStore.Audio.Genres.Members.TITLE);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Genres.Members.getContentUri("external", id), 
+    					singleGenreSelection, 
+    					null, 
+    					null, 
+    					MediaStore.Audio.Genres.Members.TITLE
+    				);
     		
     		case COMMAND_ARTIST_SINGLES_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, allSongsSelection, MediaStore.Audio.Media.ARTIST_ID+"="+id+" AND "+MediaStore.Audio.Media.ALBUM+"='Music'", null, MediaStore.Audio.Media.TITLE);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    					allSongsSelection,
+    					MediaStore.Audio.Media.ARTIST_ID + "=" + id + " AND " + MediaStore.Audio.Media.ALBUM + "='Music'",
+    					null,
+    					MediaStore.Audio.Media.TITLE
+    				);
     		
     		case COMMAND_ARTIST_ALL_CODE:
     			
-    			return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, allSongsSelection, MediaStore.Audio.Media.ARTIST_ID+"="+id, null, MediaStore.Audio.Media.TITLE);
+    			return context.getContentResolver().query(
+    					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    					allSongsSelection,
+    					MediaStore.Audio.Media.ARTIST_ID + "=" + id,
+    					null,
+    					MediaStore.Audio.Media.TITLE
+    				);
     			
     	}
     	
     	return null;
     	
 	}
-	
+	/*
 	public static PlayTunesListAdapter getAdapter( Context context, Cursor c, int command ) {
 		
 		int cmd = COMMAND_KEY & command;
@@ -186,15 +261,15 @@ return new PlayTunesListAdapter(context, R.layout.tabletext, c, singleGenreSelec
 			return new PlayTunesListAdapter(context, R.layout.basicrow, c, artistsSelection, new int[] { R.id.basicRowText });
 		
 		case COMMAND_ARTIST_CODE:
-		
+			
 			return new PlayTunesListAdapter(context, R.layout.basicrow, c, artistsAllSelection, new int[] { R.id.basicRowText });
 		
 		case COMMAND_PLAYLISTS_CODE:
-		
+			
 			return new PlayTunesListAdapter(context, R.layout.basicrow, c, allPlaylistsSelection, new int[] { R.id.basicRowText });
 		
 		case COMMAND_PLAYLIST_CODE:
-	
+			
 			return new PlayTunesListAdapter(context, R.layout.tabletext, c, singlePlaylistSelection, new int[] { R.id.toptext, R.id.trackAlbum });
 		
 		case COMMAND_SONGS_CODE:
@@ -222,6 +297,7 @@ return new PlayTunesListAdapter(context, R.layout.tabletext, c, singleGenreSelec
 		return null;
 	
 	}
+	*/
 	
 	public static String getCommandText( Context context, int command ) {
 
@@ -370,58 +446,6 @@ return new PlayTunesListAdapter(context, R.layout.tabletext, c, singleGenreSelec
 			return "tracks";
 			
 		}
-		
-	}
-	
-	public static int getCommandIcon( int command ) {
-		
-		int cmd = COMMAND_KEY & command;
-		
-		switch ( cmd ) {
-		
-			case COMMAND_PLAYLISTS_CODE:
-				return R.drawable.ic_tab_playlists;
-				
-			case COMMAND_ARTISTS_CODE:
-				return R.drawable.ic_tab_artists;
-				
-			case COMMAND_SONGS_CODE:
-				return R.drawable.ic_tab_songs;
-				
-			case COMMAND_ALBUMS_CODE:
-				return R.drawable.ic_tab_albums;
-				
-			case COMMAND_GENRES_CODE:
-				return R.drawable.ic_tab_genres;
-				
-		}
-		
-		return R.drawable.ic_tab_albums;
-		
-	}
-	
-	public static ArrayList<View> getHeaders( Context context, int command ) {
-		
-		ArrayList<View> headers = new ArrayList<View>();
-		
-		int cmd = COMMAND_KEY & command;
-		
-		LayoutInflater inflater = (LayoutInflater)context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-		
-		switch ( cmd ) {
-		
-		case COMMAND_ARTIST_CODE: // Add singles and all songs
-			
-			headers.add( inflater.inflate( R.layout.all_songs_header, null ) );
-			headers.add( inflater.inflate( R.layout.singles_header, null ) );
-			
-			break;
-		/*case COMMAND_PLAYLISTS_CODE:
-			headers.add(inflater.inflate(R.layout.add_playlist_header, null));
-			break;*/
-		}
-		
-		return headers;
 		
 	}
 	
