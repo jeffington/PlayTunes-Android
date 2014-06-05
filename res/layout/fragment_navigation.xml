@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <ListView android:id="@+id/NavigationListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+	
+    <TextView android:id="@+id/Toolbar"
+        android:layout_height="56dp"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:text="Toolbar"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@drawable/actionbar_background"
+        />
+    
+</LinearLayout>
