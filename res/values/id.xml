@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <item type="id" name="tag_genre_id" />
+    <item type="id" name="tag_album_id" />
+    <item type="id" name="tag_artist_id" />
+    <item type="id" name="tag_playlist_id" />
+    <item type="id" name="tag_song_id" />
+    
+</resources>
