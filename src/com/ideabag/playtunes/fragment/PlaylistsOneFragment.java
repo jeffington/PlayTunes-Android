@@ -1,8 +1,7 @@
 package com.ideabag.playtunes.fragment;
 
-import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.adapter.SongsAllAdapter;
+import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,14 +11,23 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
 
-public class SongsFragment extends ListFragment {
+public class PlaylistsOneFragment extends ListFragment {
 	
-    private MainActivity mActivity;
-    
-	SongsAllAdapter adapter;
+	private static final char MUSIC_NOTE = (char) 9834;
 	
+	MainActivity mActivity;
+	PlaylistsOneAdapter adapter;
+	
+	private String PLAYLIST_ID;
+	
+	public void setPlaylistId( String playlist_id ) {
+		
+		PLAYLIST_ID = playlist_id;
+		
+	}
 	
 	@Override public void onAttach( Activity activity ) {
+			
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
@@ -30,23 +38,17 @@ public class SongsFragment extends ListFragment {
 		super.onActivityCreated( savedInstanceState );
 		
 		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
-		
     	
-    	adapter = new SongsAllAdapter( getActivity() );
-    	
-    	
+    	adapter = new PlaylistsOneAdapter( getActivity(), PLAYLIST_ID );
     	
     	setListAdapter( adapter );
     	
-    	getListView().setItemsCanFocus( true );
-    	
-    	bar.setTitle( "Songs" );
+    	bar.setTitle( "" + Character.toString(MUSIC_NOTE) + "Dark Side of the Moon" );
 		//bar.setSubtitle( cursor.getCount() + " songs" );
-    	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
 	}
-		
+	
 	@Override public void onResume() {
 		super.onResume();
 		
@@ -55,26 +57,15 @@ public class SongsFragment extends ListFragment {
 		
 	@Override public void onPause() {
 		super.onPause();
-		
-		
+			
+			
+			
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		android.util.Log.i( "Tapped Song", "" + position );
-		// Play the song
-		/*
-		Intent servicePlay = new Intent( getActivity(), MusicPlayerService.class );
-		
-		servicePlay.setAction(  getString( R.string.action_play )  );
-		
-		servicePlay.putExtra( "position", position );
-		servicePlay.putExtra( "command", CommandUtils.COMMAND_SONGS_CODE );
-		
-		getActivity().startService( servicePlay );
-		*/
-		
+		//mActivity send command to service
+			
 	}
-	
 	
 }

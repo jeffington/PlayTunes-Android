@@ -2,7 +2,7 @@ package com.ideabag.playtunes.fragment;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.adapter.SongsAllAdapter;
+import com.ideabag.playtunes.adapter.ArtistsAllAdapter;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,14 +12,15 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
 
-public class SongsFragment extends ListFragment {
+public class ArtistsAllFragment extends ListFragment {
 	
-    private MainActivity mActivity;
-    
-	SongsAllAdapter adapter;
-	
+	private static final char MUSIC_NOTE = (char) 9834;
+
+	ArtistsAllAdapter adapter;
+	private MainActivity mActivity;
 	
 	@Override public void onAttach( Activity activity ) {
+			
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
@@ -30,51 +31,41 @@ public class SongsFragment extends ListFragment {
 		super.onActivityCreated( savedInstanceState );
 		
 		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
-		
     	
-    	adapter = new SongsAllAdapter( getActivity() );
-    	
-    	
+    	adapter = new ArtistsAllAdapter( getActivity() );
     	
     	setListAdapter( adapter );
     	
-    	getListView().setItemsCanFocus( true );
-    	
-    	bar.setTitle( "Songs" );
-		//bar.setSubtitle( cursor.getCount() + " songs" );
-    	
-    	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+    	bar.setTitle( "Artists" );
+		bar.setSubtitle( adapter.getCount() + " artists" );
+		
+		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
 	}
 		
 	@Override public void onResume() {
 		super.onResume();
-		
+			
 		
 	}
 		
 	@Override public void onPause() {
 		super.onPause();
-		
-		
+			
+			
+			
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		android.util.Log.i( "Tapped Song", "" + position );
-		// Play the song
-		/*
-		Intent servicePlay = new Intent( getActivity(), MusicPlayerService.class );
+		String albumID = ( String ) v.getTag( R.id.tag_artist_id );
 		
-		servicePlay.setAction(  getString( R.string.action_play )  );
+		ArtistsOneFragment artistFragment = new ArtistsOneFragment();
+		artistFragment.setArtistId( albumID );
 		
-		servicePlay.putExtra( "position", position );
-		servicePlay.putExtra( "command", CommandUtils.COMMAND_SONGS_CODE );
+		mActivity.transactFragment( artistFragment );
 		
-		getActivity().startService( servicePlay );
-		*/
 		
 	}
-	
 	
 }
