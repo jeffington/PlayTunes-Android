@@ -1,56 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-<style name="Theme.PlayTunes" parent="@android:style/Theme.Black.NoTitleBar">
-	<item name="android:windowContentOverlay">@null</item>
-	<item name="android:windowBackground">@null</item>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    
+<style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+	
+    <item name="displayOptions">showTitle</item>
+    
+	<item name="android:background">@drawable/actionbar_background</item>
+	
+	<!-- Support library compatibility -->
+	<item name="background">@drawable/actionbar_background</item>
+	
+	<!-- Support library compatibility -->
+	<item name="titleTextStyle">@style/MyActionBarTitleText</item>
+	
 </style>
-<style name="CornerButton">
-	<item name="android:background">@drawable/corner_button</item>
-	<item name="android:layout_width">@dimen/corner_button_width</item>
-	<item name="android:layout_height">@dimen/corner_button_height</item>
-	<item name="android:orientation">vertical</item>
-	<item name="android:padding">1dip</item>
-	<item name="android:gravity">center_horizontal</item>
-	<item name="android:textSize">11dip</item>
-	<item name="android:textColor">#FFFFFF</item>
+
+<style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:gravity">center_horizontal</item>
+    <item name="android:textColor">#E2E2E2</item>
+    <item name="android:layout_marginLeft">16dp</item>
+    <!-- The textColor property is backward compatible with the Support Library -->
+	
 </style>
-<style name="CornerButtonLabel">
-	<item name="android:layout_width">fill_parent</item>
-	<item name="android:layout_height">wrap_content</item>
-	<item name="android:textSize">11dip</item>
-	<item name="android:textColor">#FFFFFF</item>
-	<item name="android:gravity">center_horizontal</item>
+
+<style name="BadgeNumber" parent="@android:style/Widget.TextView">
+    
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:padding">4dp</item>
+    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:typeface">monospace</item>
+    
 </style>
-<style name="TextStandard" parent="@android:style/Widget.TextView">
-	<item name="android:layout_width">wrap_content</item>
-	<item name="android:layout_height">wrap_content</item>
-	<item name="android:textColor">@color/LightestColor</item>
+
+<style name="StarButton" parent="@android:style/Widget.CompoundButton">
+    
+    <item name="android:button">@drawable/button_star</item>
+    <item name="android:background">@drawable/button_background_light</item>
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:layout_width">48dp</item>
+    <item name="android:gravity">center</item>
+
 </style>
-<style name="ListStandard" parent="@android:style/Widget.ListView">
-	<item name="android:layout_width">fill_parent</item>
-	<item name="android:layout_height">wrap_content</item>
-	<item name="android:background">@drawable/list_bg</item>
-	<item name="android:layout_marginTop">2dp</item>
-	<item name="android:layout_marginBottom">2dp</item>
-	<item name="android:choiceMode">singleChoice</item>
-	<item name="android:clipChildren">true</item>
-	<item name="android:fadingEdge">none</item>
-	<item name="android:cacheColorHint">@color/DarkestColor</item>
+
+<style name="MenuButton" parent="@android:style/Widget.ImageButton">
+    
+    <item name="android:button">@drawable/button_star</item>
+    <item name="android:background">@drawable/button_background_light</item>
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:layout_width">48dp</item>
+    <item name="android:gravity">center</item>
+    <item name="android:src">@drawable/ic_action_overflow</item>
+
 </style>
-<style name="SongInfoText" parent="@android:style/Widget.TextView">
-	<item name="android:layout_width">fill_parent</item>
-	<item name="android:layout_height">wrap_content</item>
-	<item name="android:textColor">@color/LightestColor</item>
-	<item name="android:gravity">center_horizontal</item>
-	<item name="android:textSize">16dip</item>
-	<item name="android:lines">1</item>
-	<item name="android:singleLine">true</item>
-	<item name="android:paddingLeft">2dip</item>
-	<item name="android:paddingRight">2dip</item>
-</style>
-<style name="SongControlButton" parent="@android:style/Widget.ImageButton">
-	<item name="android:layout_width">@dimen/song_control_button_width</item>
-	<item name="android:layout_height">@dimen/song_control_button_height</item>
-	<item name="android:background">@drawable/control_button</item>
-</style>
+
 </resources>
