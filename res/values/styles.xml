@@ -13,13 +13,15 @@
 	<!-- Support library compatibility -->
 	<item name="titleTextStyle">@style/MyActionBarTitleText</item>
 	
+	
+	
 </style>
 
 <style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
     <item name="android:layout_width">match_parent</item>
     <item name="android:gravity">center_horizontal</item>
-    <item name="android:textColor">#E2E2E2</item>
-    <item name="android:layout_marginLeft">16dp</item>
+    <item name="android:textColor">@color/textColorPrimaryDark</item>
+    
     <!-- The textColor property is backward compatible with the Support Library -->
 	
 </style>
@@ -29,28 +31,37 @@
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:padding">4dp</item>
-    <item name="android:textColor">@color/textColorSecondary</item>
+    <item name="android:textColor">@color/textColorPrimary</item>
+    <item name="android:textSize">@dimen/text_medium</item>
     <item name="android:gravity">center_vertical</item>
     <item name="android:typeface">monospace</item>
     
 </style>
 
-<style name="StarButton" parent="@android:style/Widget.CompoundButton">
+<style name="StarButton">
     
     <item name="android:button">@drawable/button_star</item>
     <item name="android:background">@drawable/button_background_light</item>
     <item name="android:layout_height">match_parent</item>
     <item name="android:layout_width">48dp</item>
     <item name="android:gravity">center</item>
+    <item name="android:textOn">@null</item>
+    <item name="android:textOff">@null</item>
+	
+</style>
 
+<style name="DarkStarButton" android:parent="@style/StarButton">
+    
+    <item name="android:button">@drawable/button_star_dark</item>
+    <item name="android:background">@drawable/button_background_dark</item>
+	
 </style>
 
 <style name="MenuButton" parent="@android:style/Widget.ImageButton">
     
-    <item name="android:button">@drawable/button_star</item>
     <item name="android:background">@drawable/button_background_light</item>
     <item name="android:layout_height">match_parent</item>
-    <item name="android:layout_width">48dp</item>
+    <item name="android:layout_width">@dimen/touch_target_minimum</item>
     <item name="android:gravity">center</item>
     <item name="android:src">@drawable/ic_action_overflow</item>
 

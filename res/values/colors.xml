@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-	<color name="BlueAccent">#3E9ACC</color>
-	
 	<color name="button_pressed">#22000000</color>
 	<color name="button_selected">#44000000</color>
 	
@@ -13,6 +11,10 @@
 	<color name="textColorSecondary">#666666</color>
 	<color name="textColorTertiary">#999999</color>
 	
-
+	<color name="textColorPrimaryDark">#FFFFFF</color>
+	<color name="textColorSecondaryDark">#AAAAAA</color>
+	<color name="textColorTertiaryDark">#999999</color>
+	
+	<color name="footer_background">#333333</color>
 
 </resources>
