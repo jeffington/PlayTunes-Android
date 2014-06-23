@@ -1,27 +1,31 @@
 package com.ideabag.playtunes.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.ideabag.playtunes.MusicPlayerService;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsAllAdapter;
-import com.ideabag.playtunes.util.CommandUtils;
+import com.ideabag.playtunes.util.TrackerSingleton;
 
 public class AlbumsAllFragment extends ListFragment {
 	
-	private static final char MUSIC_NOTE = (char) 9834;
+	public static final String TAG = "All Albums Fragment";
 
 	AlbumsAllAdapter adapter;
 	private MainActivity mActivity;
+    private AdView adView;
 	
 	@Override public void onAttach( Activity activity ) {
 		
@@ -41,15 +45,52 @@ public class AlbumsAllFragment extends ListFragment {
     	setListAdapter( adapter );
     	
     	bar.setTitle( "Albums" );
+    	mActivity.actionbarTitle = bar.getTitle();
 		bar.setSubtitle( adapter.getCount() + " albums" );
+		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+		
+		LayoutInflater inflater = mActivity.getLayoutInflater();
+    	
+    	LinearLayout adContainer = (LinearLayout) inflater.inflate( R.layout.list_header_admob, null, false );
+    	
+		adView = ( AdView ) adContainer.findViewById( R.id.adView );
+	    //adView.setAdSize( AdSize.BANNER );
+	    //adView.setAdUnitId( getString( R.string.admob_unit_id_main_activity ) );
+	    
+	    //ViewGroup.MarginLayoutParams params = ( ViewGroup.MarginLayoutParams ) adView.getLayoutParams();
+	    //params.setMargins( 0, 8, 0, 8 );
+		
+	    
+	    //adView.setLayoutParams( params );
+	    
+	    AdRequest adRequest = new AdRequest.Builder()
+        .addTestDevice( AdRequest.DEVICE_ID_EMULATOR )
+        .addTestDevice( "7C4F580033D16C5C89E5CD5E5F432004" )
+        .build();
+		
+		
+		
+		// Start loading the ad in the background.
+		adView.loadAd(adRequest);
+    	
+    	getListView().addHeaderView( adContainer, null, true );
 		
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
 		
+		Tracker t = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
+
+	        // Set screen name.
+	        // Where path is a String representing the screen name.
+		t.setScreenName( TAG );
+		t.set( "_count", ""+adapter.getCount() );
+		
+	        // Send a screen view.
+		t.send( new HitBuilders.AppViewBuilder().build() );
 		
 	}
 	

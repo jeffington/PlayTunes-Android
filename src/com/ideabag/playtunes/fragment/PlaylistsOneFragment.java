@@ -1,23 +1,30 @@
 package com.ideabag.playtunes.fragment;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
+import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 public class PlaylistsOneFragment extends ListFragment {
 	
-	private static final char MUSIC_NOTE = (char) 9834;
+	public static final String TAG = "One Playlist Fragment";
 	
 	MainActivity mActivity;
 	PlaylistsOneAdapter adapter;
-	
+	ViewGroup starredPlaylist;
 	private String PLAYLIST_ID;
 	
 	public void setPlaylistId( String playlist_id ) {
@@ -40,11 +47,13 @@ public class PlaylistsOneFragment extends ListFragment {
 		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
     	
     	adapter = new PlaylistsOneAdapter( getActivity(), PLAYLIST_ID );
+
     	
     	setListAdapter( adapter );
     	
-    	bar.setTitle( "" + Character.toString(MUSIC_NOTE) + "Dark Side of the Moon" );
-		//bar.setSubtitle( cursor.getCount() + " songs" );
+    	bar.setTitle( "Playlist" );
+		bar.setSubtitle( adapter.getCount() + " songs" );
+		
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
 	}
@@ -52,6 +61,16 @@ public class PlaylistsOneFragment extends ListFragment {
 	@Override public void onResume() {
 		super.onResume();
 		
+
+		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
+
+	    // Set screen name.
+	    // Where path is a String representing the screen name.
+		t.setScreenName( TAG );
+		t.set( "_count", ""+adapter.getCount() );
+		
+	    // Send a screen view.
+		t.send( new HitBuilders.AppViewBuilder().build() );
 		
 	}
 		
@@ -65,6 +84,7 @@ public class PlaylistsOneFragment extends ListFragment {
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		//mActivity send command to service
+		Log.i("clicked", "" + position );
 			
 	}
 	

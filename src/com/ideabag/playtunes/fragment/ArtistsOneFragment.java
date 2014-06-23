@@ -1,8 +1,13 @@
 package com.ideabag.playtunes.fragment;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistsOneAdapter;
+import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -15,21 +20,26 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class ArtistsOneFragment extends ListFragment {
 	
+	public static final String TAG = "One Artist Fragment";
+	
 	private ViewGroup AllSongs;
-	private ViewGroup Singles;
+	private ViewGroup Singles = null;
 	
 	private TextView albumDivider;
 	
 	ArtistsOneAdapter adapter;
 	
 	private MainActivity mActivity;
-	
+    private AdView adView;
+    
 	private String ARTIST_ID;
 	
 	public void setArtistId( String album_id ) {
@@ -50,6 +60,7 @@ public class ArtistsOneFragment extends ListFragment {
 		super.onActivityCreated( savedInstanceState );
 		
 		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
+		LayoutInflater inflater = mActivity.getLayoutInflater();
 		//android.util.Log.i( "ARTIST_ID", ARTIST_ID );
     	adapter = new ArtistsOneAdapter( getActivity(), ARTIST_ID );
     	
@@ -88,39 +99,81 @@ public class ArtistsOneFragment extends ListFragment {
 				null
 			);
     	
+
+    	
+    	bar.setTitle( adapter.ArtistName );
+    	mActivity.actionbarTitle = bar.getTitle();
+    	bar.setSubtitle( "Artist" );
+    	mActivity.actionbarSubtitle = bar.getSubtitle();
+		
+		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+    	
+    	LinearLayout adContainer = (LinearLayout) inflater.inflate( R.layout.list_header_admob, null, false );
+    	
+		adView = ( AdView ) adContainer.findViewById( R.id.adView );
+	    //adView.setAdSize( AdSize.BANNER );
+	    //adView.setAdUnitId( getString( R.string.admob_unit_id_main_activity ) );
+	    
+	    //ViewGroup.MarginLayoutParams params = ( ViewGroup.MarginLayoutParams ) adView.getLayoutParams();
+	    //params.setMargins( 0, 8, 0, 8 );
+		
+	    
+	    //adView.setLayoutParams( params );
+	    
+	    AdRequest adRequest = new AdRequest.Builder()
+        .addTestDevice( AdRequest.DEVICE_ID_EMULATOR )
+        .addTestDevice( "7C4F580033D16C5C89E5CD5E5F432004" )
+        .build();
+		
+		
+		
+		// Start loading the ad in the background.
+		adView.loadAd(adRequest);
+    	getListView().addHeaderView( adContainer, null, true );
+    	
     	int songCount = songCountCursor.getCount();
     	songCountCursor.close();
     	
     	int singlesCount = singlesCountCursor.getCount();
     	singlesCountCursor.close();
     	
-    	LayoutInflater inflater = mActivity.getLayoutInflater();
     	
     	AllSongs = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
     	( ( TextView ) AllSongs.findViewById( R.id.BadgeCount ) ).setText( "" + songCount );
     	( ( TextView ) AllSongs.findViewById( R.id.Title ) ).setText( getString( R.string.artist_all_songs ) );
-    	
-    	Singles = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
-    	( ( TextView ) Singles.findViewById( R.id.BadgeCount ) ).setText( "" + singlesCount );
-    	( ( TextView ) Singles.findViewById( R.id.Title ) ).setText( getString( R.string.artist_singles ) );
-    	
-    	albumDivider = ( TextView ) inflater.inflate( R.layout.list_item_header_albums, null );
-    	
     	getListView().addHeaderView( AllSongs, null, true );
-    	getListView().addHeaderView( Singles, null, true );
+    	
+    	if ( singlesCount > 0) {
+    		
+    		Singles = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
+    		( ( TextView ) Singles.findViewById( R.id.BadgeCount ) ).setText( "" + singlesCount );
+    		( ( TextView ) Singles.findViewById( R.id.Title ) ).setText( getString( R.string.artist_singles ) );
+    		getListView().addHeaderView( Singles, null, true );
+    		
+    	}
+    	albumDivider = ( TextView ) inflater.inflate( R.layout.list_header_albums, null );
+    	
+    	
     	getListView().addHeaderView( albumDivider, null, false );
     	
-    	setListAdapter( adapter );
     	
-    	bar.setTitle( adapter.ArtistName );
-		
-		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+    	
+    	setListAdapter( adapter );
     	
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
 		
+		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
+
+	        // Set screen name.
+	        // Where path is a String representing the screen name.
+		t.setScreenName( TAG );
+		t.set( "_count", ""+adapter.getCount() );
+		
+	        // Send a screen view.
+		t.send( new HitBuilders.AppViewBuilder().build() );
 		
 	}
 		
@@ -135,32 +188,16 @@ public class ArtistsOneFragment extends ListFragment {
 		
 		//android.util.Log.i( "Clicked", "" + position);
 		
-		if ( 0 == position ) { // All Songs
+		if ( v.equals( AllSongs ) ) { // All Songs
 			
 			ArtistAllSongsFragment allSongsFragment = new ArtistAllSongsFragment( );
 			allSongsFragment.setArtistId( ARTIST_ID );
 			
 			mActivity.transactFragment( allSongsFragment );
 			
-		} else if ( 1 == position ) { // Singles
-			// Any singles?
-			TextView badge = ( ( TextView ) v.findViewById( R.id.BadgeCount ) );
+		} else if ( null != Singles && v.equals( Singles ) ) {
 			
-			android.util.Log.i( "Singles Click", badge.getText().toString() );
-			
-			if ( "0".equals( badge.getText().toString() ) ) {
-				
-				//badge.setType
-				badge.setTypeface(null, Typeface.BOLD);
-				badge.setTextColor( getResources().getColor( android.R.color.black ) );
-				badge.setTextSize( TypedValue.COMPLEX_UNIT_DIP, 16 );
-				
-			} else {
-				
-				// Load the singles
-				
-			}
-			
+			// Load Singles
 			
 		} else {
 			
@@ -172,7 +209,7 @@ public class ArtistsOneFragment extends ListFragment {
 			mActivity.transactFragment( albumFragment );
 			
 		}
-			
+		
 	}
 	
 }

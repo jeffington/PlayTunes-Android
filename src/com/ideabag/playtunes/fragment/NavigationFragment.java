@@ -58,6 +58,8 @@ public class NavigationFragment extends Fragment implements OnItemClickListener,
 		lv.setOnItemClickListener( this );
 		lv.setOnItemLongClickListener( this );
 		
+		getView().findViewById( R.id.NavigationToolbarSettings ).setOnClickListener( NavigationClickListener );
+		
 		
 	}
 	
@@ -79,15 +81,15 @@ public class NavigationFragment extends Fragment implements OnItemClickListener,
 		@Override public void onClick( View v ) {
 			
 			int id = v.getId();
-			/*
-			if ( id == R.id.NavigationSettings ) {
+			
+			if ( id == R.id.NavigationToolbarSettings ) {
 				
 				Intent launchSettingsIntent = new Intent( getActivity(), SettingsActivity.class);
 				
 				getActivity().startActivity( launchSettingsIntent );
 				
 			}
-			*/
+			
 		}
 		
 	};

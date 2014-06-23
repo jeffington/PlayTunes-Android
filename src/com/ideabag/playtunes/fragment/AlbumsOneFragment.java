@@ -6,18 +6,21 @@ import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
+import com.ideabag.playtunes.util.TrackerSingleton;
 
 public class AlbumsOneFragment extends ListFragment {
+	
+	public static final String TAG = "One Album Fragment";
 	
 	private final static String STATE_KEY_ALBUM_ID = "album_id";
 	
@@ -27,11 +30,6 @@ public class AlbumsOneFragment extends ListFragment {
 	private String ALBUM_ID;
 	
 	private View albumArtHeader;
-	
-	private ViewGroup AllSongs;
-	private ViewGroup Singles;
-	
-	private TextView albumDivider;
 	
 	public void setAlbumId( String album_id ) {
 		
@@ -92,15 +90,41 @@ public class AlbumsOneFragment extends ListFragment {
 		if ( null != adapter.albumTitle ) {
 			
 			bar.setTitle( adapter.albumTitle );
+			mActivity.actionbarTitle = bar.getTitle();
 			bar.setSubtitle( adapter.getCount() + " tracks" );
+			mActivity.actionbarSubtitle = bar.getSubtitle();
 			
 		}
+		
+	}
+	
+	
+	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
+		
+		mActivity.BoundService.setPlaylistCursor( adapter.getCursor() );
+		
+		mActivity.BoundService.setPosition( position - l.getHeaderViewsCount() );
+		
+		mActivity.BoundService.play();
+		
+		// Set the title of the playlist
+		
+		// 
 		
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
 		
+		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
+		
+	        // Set screen name.
+	        // Where path is a String representing the screen name.
+		t.setScreenName( TAG );
+		t.set( "_count", ""+adapter.getCount() );
+		
+	        // Send a screen view.
+		t.send( new HitBuilders.AppViewBuilder().build() );
 		
 	}
 	
