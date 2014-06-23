@@ -4,3 +4,4 @@ gen/
 
 /res/values/analytics.xml
 res/values/admob.xml
+res/xml/analytics.xml
