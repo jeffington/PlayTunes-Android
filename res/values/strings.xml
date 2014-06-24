@@ -8,6 +8,12 @@
 	<string name="songs">Songs</string>
 	<string name="settings">Settings</string>
 	<string name="playlists">Playlists</string>
+	<string name="discover">Discover</string>
+	
+	<string name="activity_title_now_playing">Now Playing</string>
+	<string name="activity_title_settings">PlayTunes Settings</string>
+	
+	<string name="cancel">Cancel</string>
 	
 	<string name="shuffle_on">Shuffle on.</string>
 	<string name="shuffle_off">Shuffle off.</string>
