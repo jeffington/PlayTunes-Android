@@ -1,6 +1,9 @@
 package com.ideabag.playtunes.activity;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.ideabag.playtunes.MusicPlayerService;
+import com.ideabag.playtunes.MusicPlayerService.SongInfoChangedListener;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.fragment.AlbumsAllFragment;
@@ -14,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -21,22 +25,31 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
 	
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
 	
-	private MusicPlayerService mBoundService;
+	public boolean mIsBound = false;
+	public MusicPlayerService BoundService;
 	
 	public PlaylistManager PlaylistManager;
 	
+	public AdView AdView;
+	
 	private String NOW_PLAYING_MEDIA_ID;
 	
-	private boolean mIsBound = false;
+	private String lastAlbumUri = null;
+	public CharSequence actionbarTitle, actionbarSubtitle;
 	
 	private ServiceConnection mConnection = new ServiceConnection() {
 		
@@ -46,7 +59,81 @@ public class MainActivity extends ActionBarActivity {
 	        // interact with the service.  Because we have bound to a explicit
 	        // service that we know is running in our own process, we can
 	        // cast its IBinder to a concrete class and directly access it.
-	        mBoundService = ( ( MusicPlayerService.MusicPlayerServiceBinder ) service ).getService();
+	    	BoundService = ( ( MusicPlayerService.MusicPlayerServiceBinder ) service ).getService();
+	        
+	    	BoundService.setOnSongInfoChangedListener( new SongInfoChangedListener() {
+	    		
+	    		
+	    		@Override public void songInfoChanged( String media_content_id ) {
+	    		
+	    			android.util.Log.i( "content_id", media_content_id );
+	    			
+	    		Cursor mSongCursor = getContentResolver().query(
+	    				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+	    				new String[] {
+	    					
+	    					MediaStore.Audio.Media.ALBUM,
+	    					MediaStore.Audio.Media.ARTIST,
+	    					MediaStore.Audio.Media.TITLE,
+	    					MediaStore.Audio.Media.ALBUM_ID,
+	    					MediaStore.Audio.Media._ID
+	    					
+	    				},
+	    				MediaStore.Audio.Media._ID + "=?",
+	    				new String[] {
+	    					
+	    					media_content_id
+	    					
+	    				},
+	    				null
+	    			);
+	    		
+	    		mSongCursor.moveToFirst();
+	    		
+	    		String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+	    		String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+	    		String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+	    		
+	    		Cursor albumCursor = getContentResolver().query(
+	    				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+	    			    new String[] {
+	    			    	
+	    			    	MediaStore.Audio.Albums.ALBUM_ART,
+	    			    	MediaStore.Audio.Albums._ID
+	    			    	
+	    			    },
+	    			    MediaStore.Audio.Albums._ID + "=?",
+	    				new String[] {
+	    					
+	    					album_id
+	    					
+	    				},
+	    				null
+	    			);
+	    		
+	    		albumCursor.moveToFirst();
+	    		
+	    		String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+	    		
+	    		if ( !newAlbumUri.equals( lastAlbumUri ) ) {
+	    			
+	    			lastAlbumUri = newAlbumUri;
+	    			
+	    			Uri albumArtUri = Uri.parse( newAlbumUri );
+	    			
+	    			( ( ImageView ) findViewById( R.id.FooterControlsAlbumArt )).setImageURI( albumArtUri );
+	    		}
+	    		
+	    		( ( TextView ) findViewById( R.id.FooterControlsSongTitle )).setText( title );
+	    		( ( TextView ) findViewById( R.id.FooterControlsArtistName )).setText( artist );
+	    		
+	    		
+	    		
+	    		}
+	    		
+	    	});
+	        
+	        //mBoundService.next();
 	        
 	    }
 
@@ -55,11 +142,12 @@ public class MainActivity extends ActionBarActivity {
 	        // unexpectedly disconnected -- that is, its process crashed.
 	        // Because it is running in our same process, we should never
 	        // see this happen.
-	        mBoundService = null;
+	    	BoundService = null;
 	        
 	    }
+	    
 	};
-
+	
 	void doBindService() {
 	    // Establish a connection with the service.  We use an explicit
 	    // class name because we want a specific service implementation that
@@ -91,8 +179,6 @@ public class MainActivity extends ActionBarActivity {
 		
 		PlaylistManager = new PlaylistManager( this );
 		
-		//doBindService();
-		getSupportActionBar().setCustomView( R.layout.view_actionbar );
 		
         mDrawerLayout = ( DrawerLayout ) findViewById( R.id.drawer_layout );
         
@@ -101,25 +187,35 @@ public class MainActivity extends ActionBarActivity {
         mDrawerToggle = new ActionBarDrawerToggle(
         		this,
         		mDrawerLayout,
-                R.drawable.ic_drawer,
+                R.drawable.carbon,
                 R.string.drawer_open,
-                R.string.drawer_close) {
+                R.string.drawer_close ) {
         	
+        	//boolean open = false;
         	
             public void onDrawerClosed( View view ) {
             	
             	//this.open = false;
             	//customActionBarToggle.showClose();
             	//transactFragment();
+            	
+            	getSupportActionBar().setTitle( actionbarTitle );
+            	getSupportActionBar().setSubtitle( actionbarSubtitle );
+            	//open = false;
+            	
             }
             
             public void onDrawerOpened( View drawerView ) {
                 
             	//customActionBarToggle.showOpen();
-            	//getSupportActionBar().setTitle( "");
+            	actionbarTitle = getSupportActionBar().getTitle();
+            	actionbarSubtitle = getSupportActionBar().getSubtitle();
+            	
+            	getSupportActionBar().setTitle( "PlayTunes" );
+            	getSupportActionBar().setSubtitle( null );
                 //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             	//this.open = true;
-            	
+            	//open = true;
            }
             
             public void onDrawerSlide( View drawerView, float slideOffset ) {
@@ -132,9 +228,14 @@ public class MainActivity extends ActionBarActivity {
         
         
         mDrawerLayout.setDrawerListener( mDrawerToggle );
-        
-        //getSupportActionBar().setDisplayHomeAsUpEnabled( true );
-        getSupportActionBar().setHomeButtonEnabled( true );
+        ActionBar supportBar = getSupportActionBar();
+        //supportBar.setIcon( R.drawable.ic_drawer );
+        supportBar.setLogo( R.drawable.ic_drawer );
+        //supportBar.setDisplayShowCustomEnabled( true );
+        supportBar.setDisplayShowHomeEnabled( true );
+        supportBar.setDisplayHomeAsUpEnabled( false );
+        supportBar.setHomeButtonEnabled( true );
+        supportBar.setDisplayUseLogoEnabled( true );
         
 	}
 	
@@ -146,6 +247,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		startService( playService );
 		
+		doBindService();
 		
 	}
 	
@@ -157,6 +259,8 @@ public class MainActivity extends ActionBarActivity {
 		
 		stopService( playService );
 		
+		doUnbindService();
+		
 	}
 
 	
@@ -166,11 +270,13 @@ public class MainActivity extends ActionBarActivity {
     		
     		mDrawerLayout.closeDrawer( GravityCompat.START );
     		//customActionBarToggle.showClose();
-    		
+    		getSupportActionBar().setTitle( actionbarTitle );
     	} else {
     		
     		mDrawerLayout.openDrawer( GravityCompat.START );
     		//customActionBarToggle.showOpen();
+    		actionbarTitle = getSupportActionBar().getTitle();
+    		getSupportActionBar().setTitle( "PlayTunes" );
     		
     	}
     	
@@ -179,7 +285,7 @@ public class MainActivity extends ActionBarActivity {
     // 
     // Now the hardware menu button will toggle the drawer layout
     // 
-    @Override public boolean onKeyDown(int keycode, KeyEvent e) {
+    @Override public boolean onKeyDown( int keycode, KeyEvent e ) {
     	
         switch ( keycode ) {
         
@@ -190,7 +296,7 @@ public class MainActivity extends ActionBarActivity {
                 
         }
 
-        return super.onKeyDown(keycode, e);
+        return super.onKeyDown( keycode, e );
         
     }
     
@@ -204,7 +310,7 @@ public class MainActivity extends ActionBarActivity {
         	
         }
         // Handle your other action bar items...
-
+        
         return super.onOptionsItemSelected( item );
         
     }
