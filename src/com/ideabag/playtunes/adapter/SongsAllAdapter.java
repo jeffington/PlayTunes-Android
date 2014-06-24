@@ -1,8 +1,6 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.view.SongMenuButton;
-import com.ideabag.playtunes.view.StarButton;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class SongsAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	Cursor cursor;
+	
+	View.OnClickListener songMenuClickListener;
 	
 	private static final char MUSIC_NOTE = (char) 9834;
 	
@@ -33,7 +34,13 @@ public class SongsAllAdapter extends BaseAdapter {
     	
     };
     
-	public SongsAllAdapter( Context context ) {
+    public Cursor getCursor() {
+    	
+    	return cursor;
+    	
+    }
+    
+	public SongsAllAdapter( Context context, View.OnClickListener menuClickListener ) {
 		
 		mContext = context;
 		
@@ -44,7 +51,8 @@ public class SongsAllAdapter extends BaseAdapter {
 					null,
 					MediaStore.Audio.Media.TITLE
     			);
-    
+    	
+    	this.songMenuClickListener = menuClickListener;
 		
 	}
 	
@@ -68,11 +76,15 @@ public class SongsAllAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		
 		if ( null == convertView ) {
 			
 			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
 			convertView = li.inflate( R.layout.list_item_song_no_album, null );
+			
+			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
+			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
 			
 		}
 		
@@ -87,11 +99,17 @@ public class SongsAllAdapter extends BaseAdapter {
 		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
 		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
 		
-		( ( StarButton ) convertView.findViewById( R.id.StarButton ) ).setTag( R.id.tag_song_id, song_id );
-		( ( SongMenuButton ) convertView.findViewById( R.id.MenuButton ) ).setTag( R.id.tag_song_id, song_id );
+		//CheckBox starButton = ( CheckBox ) convertView.findViewById( R.id.StarButton );
+		
+		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
+		
+		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
+		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
 		
 		return convertView;
 		
 	}
+	
+
 
 }

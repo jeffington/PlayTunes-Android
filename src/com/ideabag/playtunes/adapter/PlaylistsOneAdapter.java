@@ -19,6 +19,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 	private static final char MUSIC_NOTE = (char) 9834;
 	
 	private String PLAYLIST_ID;
+	public String PLAYLIST_NAME;
 	
     private static final String[] singlePlaylistSelection = new String[] { // And this...
     	/*
@@ -30,6 +31,8 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		MediaStore.Audio.Media.ALBUM_ID,
 		*/
     	MediaStore.Audio.Playlists.Members.TITLE,
+    	MediaStore.Audio.Playlists.Members.ARTIST,
+    	MediaStore.Audio.Playlists.Members.ALBUM,
 		//MediaStore.Audio.Playlists._ID,
 		
 	};
@@ -38,18 +41,19 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		
 		mContext = context;
 		PLAYLIST_ID = playlist_id;
+		//PLAYLIST_NAME = name;
 		
 		cursor = context.getContentResolver().query(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ),
 				singlePlaylistSelection,
-				null,//MediaStore.Audio.Playlists._ID + "=?",
-				null,//new String[] {
-					
-				//	PLAYLIST_ID
-					
-				//},
+				null,
+				null,
 				null
 			);
+	
+		//cursor.moveToFirst();
+		
+		
 		
 	}
 	

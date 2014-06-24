@@ -16,6 +16,8 @@ public class ArtistsAllAdapter extends BaseAdapter {
 	private Context mContext;
 	private Cursor cursor;
 	
+	public String ARTIST_NAME;
+	
 	private static final String[] artistsSelection = new String[] {
 		
     	MediaStore.Audio.Artists.ARTIST,
@@ -37,6 +39,9 @@ public class ArtistsAllAdapter extends BaseAdapter {
 				null,
 				MediaStore.Audio.Artists.ARTIST
 			);
+    	
+    	cursor.moveToFirst();
+    	
     	
 		
 	}
@@ -64,7 +69,7 @@ public class ArtistsAllAdapter extends BaseAdapter {
 			
 			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
-			convertView = li.inflate( R.layout.list_item_artist_album, null );
+			convertView = li.inflate( R.layout.list_item_genre, null );
 			
 		}
 		cursor.moveToPosition( position );

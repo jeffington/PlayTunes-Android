@@ -1,8 +1,12 @@
 package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.R;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff.Mode;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,13 +65,14 @@ public class NavigationListAdapter extends BaseAdapter {
 		return 0;
 	}
 
+	
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
 		if ( null == convertView ) {
 			
 			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
-			convertView = li.inflate( R.layout.list_item_title_one_badge, null );
+			convertView = li.inflate( R.layout.list_item_navigation_title, null );
 			
 		}
 		
@@ -159,9 +164,17 @@ public class NavigationListAdapter extends BaseAdapter {
 		}
 		
 		( ( TextView ) convertView.findViewById( R.id.Title )).setText( title );
+		ImageView badgeIcon = ( ImageView ) convertView.findViewById( R.id.BadgeIcon );
+		badgeIcon.setImageResource( icon_resource );
 		
-		( ( ImageView ) convertView.findViewById( R.id.BadgeIcon )).setImageResource( icon_resource );
+		int badgeColor = mContext.getResources().getColor( R.color.textColorPrimary );
+		
+		
+		
+		badgeIcon.setColorFilter( new LightingColorFilter( badgeColor, badgeColor ) );
 		( ( TextView ) convertView.findViewById( R.id.BadgeCount )).setText( "" + badgeCount );
+		
+		//.setColorFilter( Color.RED, Mode.MULTIPLY );
 		
 		return convertView;
 		

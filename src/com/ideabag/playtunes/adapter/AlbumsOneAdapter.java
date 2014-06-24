@@ -18,7 +18,7 @@ public class AlbumsOneAdapter extends BaseAdapter {
 	private String ALBUM_ID;
 	
 	private Context mContext;
-	Cursor cursor;
+	private Cursor cursor;
 	
 	public Uri albumArtUri = null;
 	
@@ -81,6 +81,12 @@ public class AlbumsOneAdapter extends BaseAdapter {
     	albumArtUri = Uri.parse( albumUriString );
     	
     	albumTitle = album.getString( album.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
+		
+	}
+	
+	public Cursor getCursor() {
+		
+		return cursor;
 		
 	}
 	

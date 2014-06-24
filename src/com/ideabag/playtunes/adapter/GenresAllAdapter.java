@@ -20,7 +20,6 @@ public class GenresAllAdapter extends BaseAdapter {
     private static final String[] allGenresSelection = new String[] {
     	
 		MediaStore.Audio.Genres.NAME,
-		//MediaStore.Audio.Genres._COUNT,
 		MediaStore.Audio.Genres._ID
 		
     };
@@ -66,21 +65,57 @@ public class GenresAllAdapter extends BaseAdapter {
 			
 			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
-			convertView = li.inflate( R.layout.list_item_artist_album, null );
+			convertView = li.inflate( R.layout.list_item_genre, null );
 			
 		}
 		
 		cursor.moveToPosition( position );
 		
 		String genreName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
-		//int songCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._COUNT ) );
-		//int albumCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_ALBUMS ) );
+		String genre_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) );
 		
-		convertView.setTag(R.id.tag_genre_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
+		Cursor genreSongCount = mContext.getContentResolver().query(
+				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
+				new String[] {
+					
+					MediaStore.Audio.Genres.Members._ID
+					
+				},
+				null,
+				null,
+				null
+			);
 		
-		( ( TextView ) convertView.findViewById( R.id.Title )).setText( genreName );
+		Cursor genreAlbumCount = mContext.getContentResolver().query(
+				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
+				new String[] {
+					
+					"DISTINCT " + MediaStore.Audio.Genres.Members.ALBUM_ID
+					
+				},
+				null,
+				null,
+				null
+			);
 		
-		//( ( TextView ) convertView.findViewById( R.id.BadgeCount )).setText( "" + songCount );
+		
+		
+		
+		
+		int songCount = genreSongCount.getCount();
+		genreSongCount.close();
+		
+		int albumCount = genreAlbumCount.getCount();
+		genreAlbumCount.close();
+		
+		convertView.setTag( R.id.tag_genre_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
+		
+		( ( TextView ) convertView.findViewById( R.id.Title ) ).setText( genreName );
+		
+		
+		
+		( ( TextView ) convertView.findViewById( R.id.BadgeAlbum ).findViewById( R.id.BadgeCount ) ).setText( "" + albumCount );
+		( ( TextView ) convertView.findViewById( R.id.BadgeSong ).findViewById( R.id.BadgeCount ) ).setText( "" + songCount );
 		
 		return convertView;
 		

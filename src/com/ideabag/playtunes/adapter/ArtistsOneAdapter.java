@@ -55,7 +55,6 @@ public class ArtistsOneAdapter extends BaseAdapter {
     	
     	ArtistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
     	
-    	android.util.Log.i( "Number of albums for artist", "" + cursor.getCount() );
     	
 	}
 	

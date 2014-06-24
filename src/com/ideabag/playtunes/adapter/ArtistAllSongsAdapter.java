@@ -16,8 +16,7 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 	private Context mContext;
 	Cursor cursor;
 	private String ARTIST_ID;
-	
-	//private static final char MUSIC_NOTE = (char) 9834;
+	public String ARTIST_NAME;
 	
     private static final String[] allSongsSelection = new String[] {
     	
@@ -49,7 +48,8 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 					MediaStore.Audio.Media.TITLE
     			);
     
-		
+    	ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+    	
 	}
 	
 	@Override
