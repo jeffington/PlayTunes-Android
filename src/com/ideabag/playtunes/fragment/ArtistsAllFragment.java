@@ -1,12 +1,14 @@
 package com.ideabag.playtunes.fragment;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdRequest.Builder;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistsAllAdapter;
+import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -43,7 +45,6 @@ public class ArtistsAllFragment extends ListFragment {
     	
     	adapter = new ArtistsAllAdapter( getActivity() );
     	
-    	setListAdapter( adapter );
     	
     	bar.setTitle( "Artists" );
 		bar.setSubtitle( adapter.getCount() + " artists" );
@@ -55,16 +56,18 @@ public class ArtistsAllFragment extends ListFragment {
     	
 		adView = ( AdView ) adContainer.findViewById( R.id.adView );
 	    
-	    AdRequest adRequest = new AdRequest.Builder()
-        .addTestDevice( AdRequest.DEVICE_ID_EMULATOR )
-        .addTestDevice( "7C4F580033D16C5C89E5CD5E5F432004" )
-        .build();
+	    Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
+	    AdmobUtil.AddTestDevices( mActivity, adRequestBuilder );
+	    
+	    AdRequest adRequest = adRequestBuilder.build();
 		
 		
 		// Start loading the ad in the background.
 		adView.loadAd(adRequest);
     	
     	getListView().addHeaderView( adContainer, null, true );
+    	
+    	setListAdapter( adapter );
     	
 	}
 		
