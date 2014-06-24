@@ -3,11 +3,13 @@ package com.ideabag.playtunes.activity;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.MusicPlayerService.SongInfoChangedListener;
+import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdRequest.Builder;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -79,11 +81,10 @@ public class NowPlayingActivity extends ActionBarActivity {
 		FrameLayout adFrame = ( FrameLayout ) findViewById( R.id.NowPlayingAdContainer );
 		adFrame.addView( adView );
 	    
-		AdRequest adRequest = new AdRequest.Builder()
-        .addTestDevice( AdRequest.DEVICE_ID_EMULATOR )
-        .addTestDevice( "7C4F580033D16C5C89E5CD5E5F432004" )
-        .build();
-		
+		Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
+	    AdmobUtil.AddTestDevices( this, adRequestBuilder );
+	    
+	    AdRequest adRequest = adRequestBuilder.build();
 		
 		
 		// Start loading the ad in the background.
