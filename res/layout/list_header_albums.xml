@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_divider_height"
+    android:background="@drawable/actionbar_background"
+    android:text="@string/albums"
+    android:textSize="@dimen/text_medium"
+    android:gravity="left|center_vertical"
+    android:textColor="#FFFFFF"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    android:textStyle="bold"
+    android:textAllCaps="true"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">    
+
+</TextView>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="68dp"
+    android:orientation="horizontal"
+    android:minHeight="68dp"
+    android:gravity="center_vertical">
+    
+    <TextView android:id="@+id/Title"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Pink Floyd"
+        android:gravity="left|center_vertical"
+        android:textSize="18sp"
+        android:paddingLeft="16dp"
+        />
+    
+    <include layout="@layout/view_badge_album" android:id="@+id/BadgeAlbum" />
+    
+    <include layout="@layout/view_badge_song" android:id="@+id/BadgeSong" />
+    
+
+
+</LinearLayout>

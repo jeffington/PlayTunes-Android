@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/list_item_height"
+    android:gravity="center_vertical"
+    android:descendantFocusability="blocksDescendants">
+    
+    <TextView android:id="@+id/PlaylistTitle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Pink Floyd"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/text_xlarge"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:textColor="@color/textColorPrimary"
+        />
+    
+    <include layout="@layout/view_badge_song" />
+    
+	<ImageButton android:id="@+id/PlaylistMenuButton"
+	    style="@style/MenuButton"
+	    
+	    
+	    />
+
+</LinearLayout>

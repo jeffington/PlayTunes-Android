@@ -2,49 +2,50 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants" >
         
-    	<LinearLayout
+    	<LinearLayout android:orientation="vertical"
     	    android:layout_width="0dp"
     	    android:layout_height="wrap_content"
     	    android:layout_gravity="top"
     	    android:layout_weight="1"
-    	    android:orientation="vertical"
     	    android:padding="8dp"
     	    android:paddingLeft="16dp" >
     	    
-        <TextView
-           	android:id="@+id/SongTitle"
+        <TextView android:id="@+id/SongTitle"
+            
            	android:layout_height="wrap_content"
            	android:layout_width="match_parent"
            	android:text="asdfasdf"
-           	android:background="@android:color/transparent"
-           	android:textColor="#333333"
-           	android:textSize="16dp"
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
            	android:lines="1"
            	android:ellipsize="end"
            	android:singleLine="true"
+           	
         />
         
         <TextView android:id="@+id/SongArtist"
+            
            	android:layout_width="match_parent"
            	android:layout_height="wrap_content"
            	android:singleLine="true"
            	android:ellipsize="marquee"
-			android:textColor="#666666"
+			android:textColor="@color/textColorSecondary"
+			android:textSize="@dimen/text_medium"
            	android:text="asdfasdf"
+           	
         />
         
         <TextView android:id="@+id/SongAlbum"
+            
         	android:gravity="left"
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
-        	android:background="@android:color/transparent"
-           	android:textColor="#999999"
-           	android:textSize="12dp"
-        	
+           	android:textColor="@color/textColorSecondary"
+           	android:textSize="@dimen/text_small"
         	android:text="asdfasdf"
-        	android:paddingRight="8dp"
         	android:ellipsize="end"
         	android:lines="1"
         	android:singleLine="true"
@@ -53,11 +54,11 @@
         
         </LinearLayout>
         
-       <com.ideabag.playtunes.view.StarButton android:id="@+id/StarButton"
+       <ToggleButton android:id="@+id/StarButton"
            style="@style/StarButton"
             />
        
-       <com.ideabag.playtunes.view.SongMenuButton android:id="@+id/MenuButton"
+       <ImageButton android:id="@+id/MenuButton"
             style="@style/MenuButton"
             
             />

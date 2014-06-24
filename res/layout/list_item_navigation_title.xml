@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/list_item_height"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    android:paddingRight="@dimen/list_item_horizontal_spacing">
+   	
+   	<ImageView android:id="@+id/BadgeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_music_2"
+            />
+        
+    <TextView android:id="@+id/Title"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Pink Floyd"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
+        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+        />
+    
+        <TextView android:id="@+id/BadgeCount"
+            style="@style/BadgeNumber"
+			android:text="1200"
+			android:textColor="@color/textColorSecondary"
+            />
+
+</LinearLayout>
