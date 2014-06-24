@@ -6,31 +6,12 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-	<RelativeLayout
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
-		
-	    
-    	<fragment android:name="com.ideabag.playtunes.fragment.PlayerControlsFragment"
-    	    android:id="@+id/FooterFragment"
-    	    android:layout_width="match_parent"
-    	    android:layout_height="56dp"
-    	    android:layout_alignParentBottom="true"
-    	    />
-    	
-    	<FrameLayout android:id="@+id/MusicBrowserContainer"
-    	    android:layout_width="match_parent"
-    	    android:layout_height="wrap_content"
-    	    android:layout_above="@id/FooterFragment"
-    	    android:layout_alignParentTop="true"
-    	    >
-    	<fragment android:name="com.ideabag.playtunes.fragment.SongsFragment"
-    	    android:id="@+id/MusicBrowserFragment"
-    	    android:layout_width="match_parent"
-    	    android:layout_height="match_parent"
+	<fragment android:name="com.ideabag.playtunes.fragment.MusicBrowserFragment"
+	    android:id="@+id/MusicBrowserFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        
         />
-    	</FrameLayout>
-	</RelativeLayout>
    	
 	<fragment android:name="com.ideabag.playtunes.fragment.NavigationFragment"
         android:id="@+id/left_drawer"
