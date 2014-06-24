@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+<style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    
+    <item name="android:background">@drawable/actionbar_background</item>
+	<item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
+	<item name="android:displayOptions">showTitle</item>
+	<item name="android:actionBarItemBackground" tools:ignore="NewApi">@drawable/button_background_dark</item>
+    
+</style>
+
+<style name="CompatButton" parent="android:Widget">
+    
+    <item name="android:background">@drawable/button_background_dark</item>
+    
+</style>
+
+<style name="CompatListView" parent="@android:style/Widget.ListView">
+    <item name="android:listSelector">@drawable/button_background_dark</item>
+</style>
+
+</resources>
