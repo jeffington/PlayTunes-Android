@@ -1,6 +1,7 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.PlaylistManager;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,19 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class SongsAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	Cursor cursor;
+	private PlaylistManager PlaylistManager;
 	
 	View.OnClickListener songMenuClickListener;
 	
-	private static final char MUSIC_NOTE = (char) 9834;
-	
     private static final String[] allSongsSelection = new String[] {
+    	
+    	MediaStore.Audio.Media._ID,
     	
     	MediaStore.Audio.Media.TITLE,
     	MediaStore.Audio.Media.ARTIST,
@@ -29,8 +31,8 @@ public class SongsAllAdapter extends BaseAdapter {
     	MediaStore.Audio.Media.TRACK,
     	MediaStore.Audio.Media.DATA,
     	MediaStore.Audio.Media.ALBUM_ID,
-    	MediaStore.Audio.Media.ARTIST_ID,
-    	MediaStore.Audio.Media._ID
+    	MediaStore.Audio.Media.ARTIST_ID
+    	
     	
     };
     
@@ -43,6 +45,8 @@ public class SongsAllAdapter extends BaseAdapter {
 	public SongsAllAdapter( Context context, View.OnClickListener menuClickListener ) {
 		
 		mContext = context;
+		
+		PlaylistManager = new PlaylistManager( mContext );
 		
     	cursor = mContext.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -99,12 +103,13 @@ public class SongsAllAdapter extends BaseAdapter {
 		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
 		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
 		
-		//CheckBox starButton = ( CheckBox ) convertView.findViewById( R.id.StarButton );
-		
-		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
-		
 		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
 		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		
+		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+		
+		starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
+		
 		
 		return convertView;
 		

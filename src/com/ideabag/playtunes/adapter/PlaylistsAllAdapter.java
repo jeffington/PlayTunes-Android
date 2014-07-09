@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.adapter;
 
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.cursor.MediaQueryCursor;
 import com.ideabag.playtunes.cursor.StaticMediaQueries;
@@ -16,41 +17,72 @@ import android.widget.TextView;
 public class PlaylistsAllAdapter extends BaseAdapter {
 	
 	protected Context mContext;
-	protected MediaQueryCursor mediaQuery;
+	protected Cursor cursor = null;
+	
+	private PlaylistManager mPlaylistManager;
 	
 	View.OnClickListener playlistMenuClickListener;
+	
+	//View.OnClickListener playlistMenuClickListener;
+	
+    private final String[] allPlaylistsSelection = new String[] {
+    	
+    	MediaStore.Audio.Playlists.NAME,
+    	MediaStore.Audio.Playlists.DATE_MODIFIED,
+		MediaStore.Audio.Playlists._ID
+	
+    };
     
-	public PlaylistsAllAdapter( Context context, View.OnClickListener onClick ) {
+	public PlaylistsAllAdapter( Context context, View.OnClickListener menuClickListener ) {
 		
 		mContext = context;
 		
-		this.playlistMenuClickListener = onClick;
 		
-		mediaQuery = StaticMediaQueries.getPlaylists( mContext );
     	
-    	
-    	
-	}
-
-	public void requery() {
+		playlistMenuClickListener = menuClickListener;
 		
+		mPlaylistManager = new PlaylistManager( mContext );
+    	
+		requery();
 		
 	}
 	
+	public void requery() {
+		
+		if ( null != cursor)
+			cursor.close(); 
+		
+    	cursor = mContext.getContentResolver().query(
+				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+				allPlaylistsSelection,
+				MediaStore.Audio.Playlists._ID + " !=?",
+				new String[] {
+					
+					mPlaylistManager.createStarredIfNotExist()
+						
+				},
+				MediaStore.Audio.Playlists.DATE_MODIFIED + " DESC"
+			);
+		
+	}
+
+	
 	@Override public int getCount() {
 		
-		return mediaQuery.getCursor().getCount();
+		return cursor.getCount();
+		
 	}
 
-	@Override public Object getItem(int position) {
-		// TODO Auto-generated method stub
+	@Override public Object getItem( int position ) {
+		
 		return null;
+		
 	}
 
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
+	@Override public long getItemId( int position ) {
+		
 		return 0;
+		
 	}
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
@@ -64,8 +96,6 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 			convertView.findViewById( R.id.PlaylistMenuButton ).setOnClickListener( playlistMenuClickListener );
 			
 		}
-		
-		Cursor cursor = mediaQuery.getCursor();
 		
 		cursor.moveToPosition( position );
 		String playlist_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists._ID ) );

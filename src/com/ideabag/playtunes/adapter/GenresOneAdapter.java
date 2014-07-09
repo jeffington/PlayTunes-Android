@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.adapter;
 
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 
 import android.content.Context;
@@ -11,22 +12,35 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class GenresOneAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private Cursor cursor;
+	private PlaylistManager mPlaylistManager;
 	
 	private String GENRE_ID;
 	
     private static final String[] oneGenreSelection = new String[] {
     	
+    	// Audio media ID must always be at position 0
+    	MediaStore.Audio.Genres.Members.AUDIO_ID,
+    	
 		MediaStore.Audio.Genres.Members._ID,
 		MediaStore.Audio.Genres.Members.ALBUM,
 		MediaStore.Audio.Genres.Members.TITLE,
-		MediaStore.Audio.Genres.Members.ARTIST
+		MediaStore.Audio.Genres.Members.ARTIST,
+		MediaStore.Audio.Genres.Members.DATA,
+		MediaStore.Audio.Genres.Members.DURATION
 		
     };
+    
+    public Cursor getCursor() {
+    	
+    	return cursor;
+    	
+    }
     
 	public GenresOneAdapter( Context context, String genre_id ) {
 		super();
@@ -42,7 +56,7 @@ public class GenresOneAdapter extends BaseAdapter {
 				null
 			);
 		
-		
+		mPlaylistManager = new PlaylistManager( mContext );
 		
 	}
 
@@ -75,14 +89,20 @@ public class GenresOneAdapter extends BaseAdapter {
 		
 		cursor.moveToPosition( position );
 		
-		String genreName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.TITLE ) );
-		String media_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members._ID ) );
+		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.TITLE ) );
+		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.AUDIO_ID ) );
+		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.ARTIST ) );
+		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.ALBUM ) );
 		
+		convertView.setTag( R.id.tag_song_id, song_id );
 		
-		convertView.setTag( R.id.tag_song_id, media_id );
+		( ( TextView ) convertView.findViewById( R.id.SongTitle ) ).setText( songTitle );
+		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
+		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
 		
-		( ( TextView ) convertView.findViewById( R.id.Title ) ).setText( genreName );
+		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
 		
+		starButton.setChecked( mPlaylistManager.isStarred( song_id ) ); 
 		
 		return convertView;
 		

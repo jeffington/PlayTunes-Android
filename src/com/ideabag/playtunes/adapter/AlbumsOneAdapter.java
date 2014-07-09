@@ -24,15 +24,18 @@ public class AlbumsOneAdapter extends BaseAdapter {
 	
 	public String albumTitle = null;
 	
-	private static final String[] singleAlbumSelection = new String[] { // This is the same as...
+	private static final String[] singleAlbumSelection = new String[] {
+		
+		// Media ID must always be at position 0
+		MediaStore.Audio.Media._ID,
 		
 		MediaStore.Audio.Media.TITLE,
 		MediaStore.Audio.Media.ARTIST,
 		MediaStore.Audio.Media.TRACK,
 		MediaStore.Audio.Media.ALBUM,
 		MediaStore.Audio.Media.DATA,
-		MediaStore.Audio.Media.ALBUM_ID,
-		MediaStore.Audio.Media._ID
+		MediaStore.Audio.Media.ALBUM_ID
+		
 		
 	};
 	
