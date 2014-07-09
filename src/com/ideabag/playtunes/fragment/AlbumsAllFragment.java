@@ -101,7 +101,7 @@ public class AlbumsAllFragment extends ListFragment {
 		String albumID = ( String ) v.getTag( R.id.tag_album_id );
 		
 		AlbumsOneFragment albumFragment = new AlbumsOneFragment( );
-		albumFragment.setAlbumId( albumID );
+		albumFragment.setMediaID( albumID );
 		
 		mActivity.transactFragment( albumFragment );
 		

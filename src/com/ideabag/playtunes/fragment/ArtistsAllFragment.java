@@ -104,14 +104,14 @@ public class ArtistsAllFragment extends ListFragment {
 		if ( 0 == albumCount ) {
 			
 			ArtistAllSongsFragment artistAllFragment = new ArtistAllSongsFragment();
-			artistAllFragment.setArtistId( artistID );
+			artistAllFragment.setMediaID( artistID );
 			
 			mActivity.transactFragment( artistAllFragment );
 			
 		} else {
 			
 			ArtistsOneFragment artistFragment = new ArtistsOneFragment();
-			artistFragment.setArtistId( artistID );
+			artistFragment.setMediaID( artistID );
 			
 			mActivity.transactFragment( artistFragment );
 			

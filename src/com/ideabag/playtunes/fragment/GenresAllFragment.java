@@ -95,7 +95,7 @@ public class GenresAllFragment extends ListFragment {
 		
 		GenresOneFragment genreFragment = new GenresOneFragment();
 		
-		genreFragment.setGenreId( genre_id );
+		genreFragment.setMediaID( genre_id );
 		
 		mActivity.transactFragment( genreFragment );
 		

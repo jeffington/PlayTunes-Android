@@ -196,7 +196,7 @@ public class PlaylistsAllFragment extends ListFragment {
 		
 		PlaylistsOneFragment playlistFragment = new PlaylistsOneFragment();
 		
-		playlistFragment.setPlaylistId( playlist_id );
+		playlistFragment.setMediaID( playlist_id );
 		
 		mActivity.transactFragment( playlistFragment );
 		

@@ -7,6 +7,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistsOneAdapter;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -26,7 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ArtistsOneFragment extends ListFragment {
+public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "One Artist Fragment";
 	
@@ -42,9 +43,9 @@ public class ArtistsOneFragment extends ListFragment {
     
 	private String ARTIST_ID;
 	
-	public void setArtistId( String album_id ) {
+	@Override public void setMediaID( String media_id ) {
 		
-		ARTIST_ID = album_id;
+		ARTIST_ID = media_id;
 		
 	}
 	
@@ -179,12 +180,10 @@ public class ArtistsOneFragment extends ListFragment {
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		//android.util.Log.i( "Clicked", "" + position);
-		
 		if ( v.equals( AllSongs ) ) { // All Songs
 			
 			ArtistAllSongsFragment allSongsFragment = new ArtistAllSongsFragment( );
-			allSongsFragment.setArtistId( ARTIST_ID );
+			allSongsFragment.setMediaID( ARTIST_ID );
 			
 			mActivity.transactFragment( allSongsFragment );
 			
@@ -197,7 +196,7 @@ public class ArtistsOneFragment extends ListFragment {
 			String albumID = ( String ) v.getTag( R.id.tag_album_id );
 			
 			AlbumsOneFragment albumFragment = new AlbumsOneFragment( );
-			albumFragment.setAlbumId( albumID );
+			albumFragment.setMediaID( albumID );
 			
 			mActivity.transactFragment( albumFragment );
 			

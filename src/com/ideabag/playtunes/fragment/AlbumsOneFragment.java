@@ -16,9 +16,10 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
-public class AlbumsOneFragment extends ListFragment {
+public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "One Album Fragment";
 	
@@ -31,12 +32,11 @@ public class AlbumsOneFragment extends ListFragment {
 	
 	private View albumArtHeader;
 	
-	public void setAlbumId( String album_id ) {
+	@Override public void setMediaID( String media_id ) {
 		
-		ALBUM_ID = album_id;
+		ALBUM_ID = media_id;
 		
 	}
-	
 	
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );

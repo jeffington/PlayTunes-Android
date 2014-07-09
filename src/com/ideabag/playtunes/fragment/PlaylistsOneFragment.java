@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -24,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-public class PlaylistsOneFragment extends ListFragment {
+public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "One Playlist Fragment";
 	
@@ -37,9 +38,9 @@ public class PlaylistsOneFragment extends ListFragment {
 	
 	//private DragNDropListView ListView;
 	
-	public void setPlaylistId( String playlist_id ) {
+	@Override public void setMediaID( String media_id ) {
 		
-		PLAYLIST_ID = playlist_id;
+		PLAYLIST_ID = media_id;
 		
 	}
 	

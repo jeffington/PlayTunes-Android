@@ -6,6 +6,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.GenresAllAdapter;
 import com.ideabag.playtunes.adapter.GenresOneAdapter;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -20,7 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
-public class GenresOneFragment extends ListFragment {
+public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "One Genre Fragment";
 	
@@ -29,9 +30,9 @@ public class GenresOneFragment extends ListFragment {
 	
 	private String GENRE_ID;
 	
-	public void setGenreId( String id ) {
+	@Override public void setMediaID(String media_id) {
 		
-		this.GENRE_ID = id;
+		GENRE_ID = media_id;
 		
 	}
 	
@@ -143,4 +144,5 @@ public class GenresOneFragment extends ListFragment {
 
 	};
 	*/
+
 }
