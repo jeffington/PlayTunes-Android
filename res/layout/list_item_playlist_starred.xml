@@ -25,7 +25,8 @@
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
         />
     
-    <include layout="@layout/view_badge_song"
+    <include android:id="@+id/BadgeSong"
+        layout="@layout/view_badge_song"
 
         />
 </LinearLayout>
