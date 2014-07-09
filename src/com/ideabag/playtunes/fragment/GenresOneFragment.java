@@ -36,6 +36,8 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 		
 	}
 	
+	@Override public String getMediaID() { return GENRE_ID; }
+	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
@@ -109,9 +111,9 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		android.util.Log.i("List Header Count", "" + l.getHeaderViewsCount() + " position " + position );
+		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, GenresOneFragment.class, GENRE_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		

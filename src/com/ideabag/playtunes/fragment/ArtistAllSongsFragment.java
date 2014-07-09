@@ -32,6 +32,8 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 		
 	}
 	
+	@Override public String getMediaID() { return ARTIST_ID; }
+	
 	@Override public void onAttach( Activity activity ) {
 			
 		super.onAttach( activity );
@@ -99,7 +101,13 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
+		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
+		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, ArtistAllSongsFragment.class, ARTIST_ID );
+		
+		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
+		
+		mActivity.mBoundService.play();
 		
 	}
 	

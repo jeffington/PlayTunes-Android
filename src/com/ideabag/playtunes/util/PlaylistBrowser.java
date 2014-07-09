@@ -4,4 +4,6 @@ public interface PlaylistBrowser {
 	
 	public void setMediaID( String media_id );
 	
+	public String getMediaID();
+	
 }

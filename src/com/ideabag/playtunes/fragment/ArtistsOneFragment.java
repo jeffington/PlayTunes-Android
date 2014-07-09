@@ -49,6 +49,8 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 		
 	}
 	
+	@Override public String getMediaID() { return ARTIST_ID; }
+	
 	@Override public void onAttach( Activity activity ) {
 			
 		super.onAttach( activity );
