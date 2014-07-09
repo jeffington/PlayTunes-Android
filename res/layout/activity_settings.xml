@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:text="SETTINGS PAGE"
+        android:textSize="@dimen/text_large"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        />
+
+</LinearLayout>
