@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:minWidth="280dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:orientation="horizontal"
+        android:background="@drawable/actionbar_background">
+        
+		<ImageButton android:id="@+id/DialogCloseButton"
+	        
+	        android:layout_width="@dimen/touch_target_minimum"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:src="@drawable/abc_ic_clear"
+	        android:background="@drawable/button_background_dark"
+			
+		/>
+        
+	    <TextView android:id="@+id/DialogHeaderTitle"
+	        
+	        android:layout_width="0dp"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:layout_weight="1"
+	        android:textColor="#FFFFFF"
+	        android:textSize="@dimen/text_xlarge"
+	        android:gravity="center"
+	        android:text="Send Feedback"
+		/>
+	    
+		<ImageButton android:id="@+id/DialogConfirmButton"
+	        
+	        android:layout_width="@dimen/touch_target_minimum"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:src="@drawable/abc_ic_cab_done_holo_dark"
+	        android:background="@drawable/button_background_dark"
+			
+		/>
+        
+    </LinearLayout>
+    
+    <ImageView
+        
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/actionbar_shadow"
+        
+	/>
+	
+    <EditText android:id="@+id/NewPlaylistName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:inputType="textMultiLine|textLongMessage|textAutoCorrect|textCapSentences"
+        android:gravity="top|left"
+        android:maxLength="1500"
+        android:hint="Tell us how we can make PlayTunes better. :-)"
+        android:lines="3"
+        android:minLines="3"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="16dp"/>
+    
+</LinearLayout>
