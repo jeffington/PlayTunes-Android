@@ -5,12 +5,12 @@
     android:orientation="horizontal"
     android:gravity="center">
     
-    <ImageButton
+    <ImageButton android:id="@+id/NowPlayingRepeatButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         
         android:layout_weight="1"
-        android:src="@drawable/ic_repeat_off"
+        android:src="@drawable/ic_action_playback_repeat_white"
         android:background="@drawable/button_background_dark"
         />
     
@@ -31,15 +31,15 @@
         <ImageButton android:id="@+id/NowPlayingNextButton"
 	    android:layout_width="@dimen/list_item_height"
 	    android:layout_height="match_parent"
-	    android:src="@drawable/ic_action_playback_forw_white"
+	    android:src="@drawable/ic_action_playback_next_white"
 	    android:background="@drawable/button_background_dark"
 	    />
-    <ImageButton
+    <ImageButton android:id="@+id/NowPlayingShuffleButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         
         android:layout_weight="1"
-        android:src="@drawable/ic_shuffle_off"
+        android:src="@drawable/ic_action_playback_schuffle_white"
         android:background="@drawable/button_background_dark"
         />
 </LinearLayout>
