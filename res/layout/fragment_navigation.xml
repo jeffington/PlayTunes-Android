@@ -1,24 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@android:color/white">
 
-    <ListView android:id="@+id/NavigationListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-	
-    <TextView android:id="@+id/Toolbar"
-        android:layout_height="56dp"
+    <LinearLayout android:id="@+id/Toolbar"
+        android:layout_height="@dimen/footer_height"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
-        android:text="Toolbar"
-        android:textColor="#FFFFFF"
-        android:gravity="center"
+        android:textColor="@android:color/white"
         android:background="@drawable/actionbar_background"
+        android:orientation="horizontal"
+        android:gravity="fill_horizontal">
+        
+        <ImageButton android:id="@+id/NavigationToolbarSettings"
+            
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:src="@drawable/ic_action_settings"
+            android:background="@drawable/button_background_dark"
+            android:layout_weight="1"
+            android:nextFocusRight="@+id/NavigationToolbarFeedbackButton"
+            
+            />
+        
+        <View
+            
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+			
+		/>
+        
+        <ImageButton android:id="@+id/NavigationToolbarFeedback"
+            
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:src="@drawable/ic_action_monolog"
+            android:background="@drawable/button_background_dark"
+            android:layout_weight="1"
+            android:nextFocusLeft="@id/NavigationToolbarFeedback"
+        	
         />
-    
-</LinearLayout>
+        
+     </LinearLayout>
+     
+     <ListView android:id="@+id/NavigationListView"
+        
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/Toolbar"
+        
+	/>
+	
+	<ImageView
+		
+		android:layout_width="match_parent"
+    	android:layout_height="2dp"
+    	android:src="@drawable/footer_shadow"
+    	android:layout_above="@id/Toolbar"
+	
+	/>
+
+</RelativeLayout>
