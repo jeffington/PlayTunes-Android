@@ -7,4 +7,8 @@
     <item type="id" name="tag_playlist_id" />
     <item type="id" name="tag_song_id" />
     
+    <item type="id" name="tag_shuffle_state" />
+    
+    <item type="id" name="tag_repeat_state" />
+    
 </resources>
