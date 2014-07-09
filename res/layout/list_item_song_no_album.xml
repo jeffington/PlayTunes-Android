@@ -62,5 +62,11 @@
             style="@style/MenuButton"
             
             />
+       
+       <ImageButton android:id="@+id/DragButton"
+            style="@style/MenuButton"
+            android:src="@drawable/ic_action_drag"
+            android:visibility="gone"
+            />
 
 </LinearLayout>
