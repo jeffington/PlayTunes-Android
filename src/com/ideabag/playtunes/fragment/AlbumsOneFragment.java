@@ -144,6 +144,13 @@ public class AlbumsOneFragment extends ListFragment {
 		
 	}
 	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onSaveInstanceState( Bundle outState ) {
         super.onSaveInstanceState( outState );
         

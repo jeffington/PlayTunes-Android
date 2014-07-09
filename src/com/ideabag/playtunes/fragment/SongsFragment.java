@@ -104,6 +104,13 @@ public class SongsFragment extends ListFragment {
 		
 	}
 	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();

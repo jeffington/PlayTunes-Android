@@ -87,6 +87,13 @@ public class AlbumsAllFragment extends ListFragment {
 		
 	}
 	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		//convertView.setTag( R.id.tag_album_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) ) );

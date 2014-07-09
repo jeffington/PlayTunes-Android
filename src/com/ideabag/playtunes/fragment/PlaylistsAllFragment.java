@@ -155,6 +155,13 @@ public class PlaylistsAllFragment extends ListFragment {
 		
 	}
 	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
 		super.onCreateOptionsMenu(menu, inflater);
 		

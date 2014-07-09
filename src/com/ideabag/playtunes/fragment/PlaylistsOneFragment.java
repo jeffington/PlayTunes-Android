@@ -117,6 +117,13 @@ public class PlaylistsOneFragment extends ListFragment {
 		//getListView().removeHeaderView( mActivity.AdContainer );
 		
 	}
+	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
 
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		

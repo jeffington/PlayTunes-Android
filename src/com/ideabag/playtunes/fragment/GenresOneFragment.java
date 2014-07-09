@@ -99,6 +99,13 @@ public class GenresOneFragment extends ListFragment {
 			
 	}
 	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );

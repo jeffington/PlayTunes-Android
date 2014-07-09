@@ -88,6 +88,13 @@ public class ArtistsAllFragment extends ListFragment {
 			
 	}
 	
+	@Override public void onDestroyView() {
+	    super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		String artistID = ( String ) v.getTag( R.id.tag_artist_id );
