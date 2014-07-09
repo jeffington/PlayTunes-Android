@@ -16,5 +16,9 @@
 	<color name="textColorTertiaryDark">#999999</color>
 	
 	<color name="footer_background">#333333</color>
+	
+	<color name="list_item_default">#FFFFFF</color>
+	<color name="list_item_pressed">#EEEEEE</color>
+	<color name="list_item_focused">#F5F5F5</color>
 
 </resources>
