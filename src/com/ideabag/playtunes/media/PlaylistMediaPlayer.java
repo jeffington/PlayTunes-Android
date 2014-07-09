@@ -212,21 +212,33 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	
 	public String getCurrentMediaID() {
 		
+		String media_id = null;
+		
 		if ( playlistReady() ) {
 			
-			String media_id = Playlist.getString( 0 );
-			
-			//Playlist.getColumnName( 0 )
-			
-			android.util.Log.i("Media ID for media player", media_id );
+			if ( isShuffling ) {
+				
+				int tmpPosition = Playlist.getPosition();
+				
+				int shufflePosition = getNthInt( tmpPosition );
+				
+				Playlist.moveToPosition( shufflePosition );
+				
+				media_id = Playlist.getString( 0 );
+				
+				Playlist.moveToPosition( tmpPosition );
+				
+			} else {
+				
+				media_id = Playlist.getString( 0 );
+				
+			}
 			
 			return media_id;
 			
-		} else {
-			
-			return null;
-			
 		}
+		
+		return media_id;
 		
 	}
 	
