@@ -8,11 +8,15 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.SongsAllAdapter;
+import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -48,53 +52,42 @@ public class SongsFragment extends ListFragment {
     	adapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
     	
     	
-    	//getListView().setItemsCanFocus( true );
-    	
-    	bar.setTitle( "Songs" );
+    	bar.setTitle( "All Songs" );
     	mActivity.actionbarTitle = bar.getTitle();
 		bar.setSubtitle( adapter.getCount() + " songs" );
 		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
-    	LayoutInflater inflater = mActivity.getLayoutInflater();
+    	getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		getListView().setSelector( R.drawable.list_item_background );
     	
-    	LinearLayout adContainer = (LinearLayout) inflater.inflate( R.layout.list_header_admob, null, false );
-    	
-		adView = ( AdView ) adContainer.findViewById( R.id.adView );
-	    //adView.setAdSize( AdSize.BANNER );
-	    //adView.setAdUnitId( getString( R.string.admob_unit_id_main_activity ) );
-	    
-	    //ViewGroup.MarginLayoutParams params = ( ViewGroup.MarginLayoutParams ) adView.getLayoutParams();
-	    //params.setMargins( 0, 8, 0, 8 );
-		
-	    
-		Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
-	    AdmobUtil.AddTestDevices( mActivity, adRequestBuilder );
-	    
-	    AdRequest adRequest = adRequestBuilder.build();
-		
-		
-		// Start loading the ad in the background.
-		adView.loadAd(adRequest);
-    	
-    	getListView().addHeaderView( adContainer, null, true );
+    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
     	setListAdapter( adapter );
+    	
     	
 	}
 		
 	@Override public void onResume() {
 		super.onResume();
 		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
+		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
-		t.set( "_count", ""+adapter.getCount() );
+		tracker.setScreenName( TAG );
+		tracker.send( new HitBuilders.AppViewBuilder().build() );
 		
+		//t.set( "_count", ""+adapter.getCount() );
+		tracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( "playlist" )
+    	.setAction( "show" )
+    	.setLabel( TAG )
+    	.setValue( adapter.getCount() )
+    	.build());
 	        // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+		
 		
 	}
 		
@@ -104,19 +97,24 @@ public class SongsFragment extends ListFragment {
 		
 	}
 	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		//getListView().removeHeaderView( mActivity.AdContainer );
+		
+	}
+	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
+		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
+		mActivity.mBoundService.setPlaylist(adapter.getCursor(), playlistName, SongsFragment.class, null );
+		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
 		
-		mActivity.BoundService.setPlaylistCursor( adapter.getCursor() );
+		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
-		mActivity.BoundService.setPosition( position - l.getHeaderViewsCount() );
+		mActivity.mBoundService.play();
 		
-		mActivity.BoundService.play();
-		
-		// Set the title of the playlist
-		
-		// 
 		
 	}
 	
@@ -134,14 +132,23 @@ public class SongsFragment extends ListFragment {
 				if ( starButton.isChecked() ) {
 					
 					mActivity.PlaylistManager.addFavorite( songID );
-					android.util.Log.i( "starred", songID );
+					//android.util.Log.i( "starred", songID );
 					
 				} else {
 					
 					mActivity.PlaylistManager.removeFavorite( songID );
-					android.util.Log.i( "unstarred", songID );
+					//android.util.Log.i( "unstarred", songID );
 					
 				}
+				
+			} else if ( viewID == R.id.MenuButton ) {
+				
+				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	        	
+				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+				newFragment.setMediaID( songID );
+	        	
+	            newFragment.show( ft, "dialog" );
 				
 			}
 			

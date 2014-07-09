@@ -41,7 +41,7 @@ public class ArtistsAllFragment extends ListFragment {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
+		ActionBar bar =	mActivity.getSupportActionBar();
     	
     	adapter = new ArtistsAllAdapter( getActivity() );
     	
@@ -50,22 +50,10 @@ public class ArtistsAllFragment extends ListFragment {
 		bar.setSubtitle( adapter.getCount() + " artists" );
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
-		LayoutInflater inflater = mActivity.getLayoutInflater();
-    	
-    	LinearLayout adContainer = (LinearLayout) inflater.inflate( R.layout.list_header_admob, null, false );
-    	
-		adView = ( AdView ) adContainer.findViewById( R.id.adView );
-	    
-	    Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
-	    AdmobUtil.AddTestDevices( mActivity, adRequestBuilder );
-	    
-	    AdRequest adRequest = adRequestBuilder.build();
-		
-		
-		// Start loading the ad in the background.
-		adView.loadAd(adRequest);
-    	
-    	getListView().addHeaderView( adContainer, null, true );
+		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		getListView().setSelector( R.drawable.list_item_background );
+    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
     	
     	setListAdapter( adapter );
     	
@@ -79,10 +67,17 @@ public class ArtistsAllFragment extends ListFragment {
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
 		t.setScreenName( TAG );
-		t.set( "_count", ""+adapter.getCount() );
+		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
 		t.send( new HitBuilders.AppViewBuilder().build() );
+		
+		t.send( new HitBuilders.EventBuilder()
+    	.setCategory( "playlist" )
+    	.setAction( "show" )
+    	.setLabel( TAG )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 		
@@ -97,7 +92,7 @@ public class ArtistsAllFragment extends ListFragment {
 		
 		String artistID = ( String ) v.getTag( R.id.tag_artist_id );
 		
-		int albumCount = Integer.parseInt( ( String ) ( ( TextView ) v.findViewById( R.id.BadgeAlbum ).findViewById( R.id.BadgeCount ) ).getText() );
+		int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.BadgeAlbum ).findViewById( R.id.BadgeCount ) ).getText().toString() );
 		
 		if ( 0 == albumCount ) {
 			

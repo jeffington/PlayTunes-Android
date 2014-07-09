@@ -50,29 +50,10 @@ public class AlbumsAllFragment extends ListFragment {
 		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
-		
-		LayoutInflater inflater = mActivity.getLayoutInflater();
-    	
-    	LinearLayout adContainer = (LinearLayout) inflater.inflate( R.layout.list_header_admob, null, false );
-    	
-		adView = ( AdView ) adContainer.findViewById( R.id.adView );
-	    //adView.setAdSize( AdSize.BANNER );
-	    //adView.setAdUnitId( getString( R.string.admob_unit_id_main_activity ) );
-	    
-	    //ViewGroup.MarginLayoutParams params = ( ViewGroup.MarginLayoutParams ) adView.getLayoutParams();
-	    //params.setMargins( 0, 8, 0, 8 );
-		
-	    
-		Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
-	    AdmobUtil.AddTestDevices( mActivity, adRequestBuilder );
-	    
-	    AdRequest adRequest = adRequestBuilder.build();
-		
-		
-		// Start loading the ad in the background.
-		adView.loadAd(adRequest);
-    	
-    	getListView().addHeaderView( adContainer, null, true );
+		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		getListView().setSelector( R.drawable.list_item_background );
+		//getListView().addHeaderView( mActivity.AdContainer, null, true );
     	setListAdapter( adapter );
     	
 	}
@@ -85,10 +66,17 @@ public class AlbumsAllFragment extends ListFragment {
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
 		t.setScreenName( TAG );
-		t.set( "_count", ""+adapter.getCount() );
+		//t.set( "_count", ""+adapter.getCount() );
 		
-	        // Send a screen view.
+		// Send a screen view.
 		t.send( new HitBuilders.AppViewBuilder().build() );
+		
+		t.send( new HitBuilders.EventBuilder()
+    	.setCategory( "playlist" )
+    	.setAction( "show" )
+    	.setLabel( TAG )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 	

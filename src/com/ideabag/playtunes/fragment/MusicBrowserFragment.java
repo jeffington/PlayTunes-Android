@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class MusicBrowserFragment extends Fragment {
+	
 	private MainActivity mActivity;
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,20 +33,6 @@ public class MusicBrowserFragment extends Fragment {
 		
 		super.onActivityCreated( savedInstanceState );
         
-		//this.getListView().setSelector(R.drawable.nav_list_item_back);
-		//getActivity().getResources().getDimension(resourceID) 
-		//this.setListAdapter( listAdapter );
-		//this.getListView().setDivider( new ColorDrawable( 0xCCCCCC ) );
-		//this.getListView().setDividerHeight( 1 );
-		//this.getListView().setChoiceMode( ListView.CHOICE_MODE_SINGLE );
-		//this.getListView().setHeaderDividersEnabled( true );
-		
-		//getView().findViewById( R.id.NavigationSettings ).setOnClickListener( NavigationClickListener );
-
-		
-		//getView().findViewById( R.id.NavigationToolbarSettings ).setOnClickListener( NavigationClickListener );
-		
-		
 	}
 	
 	@Override public void onResume() {

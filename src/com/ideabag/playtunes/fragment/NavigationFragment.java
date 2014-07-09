@@ -4,11 +4,15 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.SettingsActivity;
 import com.ideabag.playtunes.adapter.NavigationListAdapter;
+import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
+import com.ideabag.playtunes.dialog.FeedbackDialogFragment;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +22,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 
-public class NavigationFragment extends Fragment implements OnItemClickListener, OnItemLongClickListener {
+public class NavigationFragment extends Fragment implements OnItemClickListener {
 	
 	private MainActivity mActivity;
 	
@@ -56,10 +60,13 @@ public class NavigationFragment extends Fragment implements OnItemClickListener,
 		
 		
 		lv.setOnItemClickListener( this );
-		lv.setOnItemLongClickListener( this );
+		//lv.setOnItemLongClickListener( this );
 		
 		getView().findViewById( R.id.NavigationToolbarSettings ).setOnClickListener( NavigationClickListener );
-		
+		getView().findViewById( R.id.NavigationToolbarFeedback ).setOnClickListener( NavigationClickListener );
+		lv.setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		lv.setDividerHeight( 1 );
+		lv.setSelector( R.drawable.list_item_background );
 		
 	}
 	
@@ -88,6 +95,15 @@ public class NavigationFragment extends Fragment implements OnItemClickListener,
 				
 				getActivity().startActivity( launchSettingsIntent );
 				
+			} else if ( id == R.id.NavigationToolbarFeedback ) {
+				
+	        	FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	        	
+	        	DialogFragment newFragment = new FeedbackDialogFragment();
+	        	
+	            newFragment.show(ft, "dialog");
+				//mActivity.getSupportFragmentManager()
+				
 			}
 			
 		}
@@ -97,14 +113,6 @@ public class NavigationFragment extends Fragment implements OnItemClickListener,
 	@Override public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
 		
 		load( position, false );
-		
-	}
-	
-	@Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		
-		load( position, true );
-		
-		return false;
 		
 	}
 	

@@ -37,14 +37,19 @@ public class GenresAllFragment extends ListFragment {
 		
 		adapter = new GenresAllAdapter( getActivity() );
     	
-    	setListAdapter( adapter );
-    	
-    	bar.setTitle( "Genres" );
+    	bar.setTitle( "All Genres" );
     	mActivity.actionbarTitle = bar.getTitle();
 		bar.setSubtitle( adapter.getCount() + " genres" );
 		mActivity.actionbarSubtitle = bar.getSubtitle();
-    	
+		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		getListView().setSelector( R.drawable.list_item_background );
+		
+    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
+		
+    	setListAdapter( adapter );
     	
 	}
 		
@@ -56,10 +61,17 @@ public class GenresAllFragment extends ListFragment {
 	    // Set screen name.
 	    // Where path is a String representing the screen name.
 		t.setScreenName( TAG );
-		t.set( "_count", ""+adapter.getCount() );
+		//t.set( "_count", ""+adapter.getCount() );
 		
 	    // Send a screen view.
 		t.send( new HitBuilders.AppViewBuilder().build() );
+		
+		t.send( new HitBuilders.EventBuilder()
+    	.setCategory( "playlist" )
+    	.setAction( "show" )
+    	.setLabel( TAG )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 		

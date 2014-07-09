@@ -47,15 +47,17 @@ public class ArtistAllSongsFragment extends ListFragment {
     	adapter = new ArtistAllSongsAdapter( getActivity(), ARTIST_ID );
     	
     	
-    	setListAdapter( adapter );
-    	
     	bar.setTitle( adapter.ARTIST_NAME );
     	mActivity.actionbarTitle = bar.getTitle();
 		bar.setSubtitle( "All Songs" );
 		mActivity.actionbarSubtitle = bar.getSubtitle();
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
-    	
+		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		
+    	setListAdapter( adapter );
+		
 	}
 	
 	@Override public void onResume() {
@@ -66,10 +68,17 @@ public class ArtistAllSongsFragment extends ListFragment {
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
 		t.setScreenName( TAG );
-		t.set( "_count", ""+adapter.getCount() );
+		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
 		t.send( new HitBuilders.AppViewBuilder().build() );
+		
+		t.send( new HitBuilders.EventBuilder()
+    	.setCategory( "playlist" )
+    	.setAction( "show" )
+    	.setLabel( TAG )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 		

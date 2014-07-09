@@ -49,7 +49,9 @@ public class AlbumsOneFragment extends ListFragment {
 		super.onActivityCreated( savedInstanceState );
     	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
-		
+		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		getListView().setSelector( R.drawable.list_item_background );
 		
 		if ( null != savedInstanceState && savedInstanceState.containsKey( STATE_KEY_ALBUM_ID ) ) {
 			
@@ -101,15 +103,17 @@ public class AlbumsOneFragment extends ListFragment {
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		mActivity.BoundService.setPlaylistCursor( adapter.getCursor() );
+		mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
 		
-		mActivity.BoundService.setPosition( position - l.getHeaderViewsCount() );
+		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
-		mActivity.BoundService.play();
+		mActivity.mBoundService.play();
 		
 		// Set the title of the playlist
 		
-		// 
+		// mPlaylistMediaID = ALBUM_ID
+		// mPlaylistName mActivity.getSupportActionBar().getTitle().toString()
+		// mPlaylistFragmentClass = AlbumsOneFragment.class
 		
 	}
 	
@@ -121,10 +125,17 @@ public class AlbumsOneFragment extends ListFragment {
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
 		t.setScreenName( TAG );
-		t.set( "_count", ""+adapter.getCount() );
+		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
 		t.send( new HitBuilders.AppViewBuilder().build() );
+		
+		t.send( new HitBuilders.EventBuilder()
+    	.setCategory( "playlist" )
+    	.setAction( "show" )
+    	.setLabel( TAG )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 	
