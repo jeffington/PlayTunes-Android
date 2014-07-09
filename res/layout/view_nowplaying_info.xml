@@ -4,12 +4,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
-        android:paddingRight="@dimen/list_item_horizontal_spacing">
+			android:paddingRight="@dimen/list_item_horizontal_spacing">
         
-       <CheckBox android:id="@+id/StarButton"
+       <ToggleButton android:id="@+id/StarButton"
            style="@style/DarkStarButton"
-           android:layout_width="@dimen/touch_target_minimum"
-           android:layout_height="match_parent"
+            
             />
     
     	<LinearLayout
@@ -26,7 +25,7 @@
            	android:layout_height="wrap_content"
            	android:layout_width="match_parent"
            	android:text="asdfasdf"
-           	android:textColor="#999999"
+           	android:textColor="@color/textColorPrimaryDark"
            	android:textSize="@dimen/text_xlarge"
            	android:lines="1"
            	android:ellipsize="end"
@@ -39,7 +38,7 @@
            	android:layout_height="wrap_content"
            	android:singleLine="true"
            	android:ellipsize="marquee"
-			android:textColor="#999999"
+			android:textColor="@color/textColorPrimaryDark"
 			android:textSize="@dimen/text_large"
            	android:text="asdfasdf"
            	android:gravity="center"
@@ -49,8 +48,7 @@
         	android:gravity="center"
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
-        	android:background="@android:color/transparent"
-           	android:textColor="#999999"
+           	android:textColor="@color/textColorSecondaryDark"
            	android:textSize="@dimen/text_medium"
         	
         	android:text="asdfasdf"
@@ -63,7 +61,7 @@
         </LinearLayout>
        
        <ImageButton android:id="@+id/MenuButton"
-            style="@style/MenuButton"
+            style="@style/MenuButtonDark"
             android:background="@drawable/button_background_dark"
             />
 
