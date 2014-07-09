@@ -1,70 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
-<style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+	<style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+		
+	    <item name="displayOptions">showTitle</item>
+	    
+		<item name="android:background">@drawable/actionbar_background</item>
+		
+		<!-- Support library compatibility -->
+		<item name="background">@drawable/actionbar_background</item>
+		<item name="titleTextStyle">@style/MyActionBarTitleText</item>
+		<item name="actionButtonStyle">@style/ActionButtonCompat</item>
+		
+		
+	</style>
 	
-    <item name="displayOptions">showTitle</item>
-    
-	<item name="android:background">@drawable/actionbar_background</item>
+	<style name="ActionButtonCompat" parent="@style/Widget.AppCompat.ActionButton">
+	    
+	    <item name="android:background">@drawable/button_background_dark</item>
+	    
+	</style>
 	
-	<!-- Support library compatibility -->
-	<item name="background">@drawable/actionbar_background</item>
+	<style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+	    <item name="android:layout_width">match_parent</item>
+	    <item name="android:gravity">center_horizontal</item>
+	    <item name="android:textColor">@color/textColorPrimaryDark</item>
+	    <item name="android:background">@drawable/button_background_dark</item>
+	    <!-- The textColor property is backward compatible with the Support Library -->
+		
+	</style>
 	
-	<!-- Support library compatibility -->
-	<item name="titleTextStyle">@style/MyActionBarTitleText</item>
+	<style name="BadgeNumber" parent="@android:style/Widget.TextView">
+	    
+	    <item name="android:layout_width">wrap_content</item>
+	    <item name="android:layout_height">wrap_content</item>
+	    <item name="android:padding">4dp</item>
+	    <item name="android:textColor">@color/textColorSecondary</item>
+	    <item name="android:textSize">@dimen/text_medium</item>
+	    <item name="android:gravity">center_vertical</item>
+	    <item name="android:typeface">monospace</item>
+	    
+	</style>
 	
+	<style name="StarButton">
+	    
+	    <item name="android:button">@drawable/button_star</item>
+	    <item name="android:background">@drawable/button_background_light</item>
+	    <item name="android:layout_height">match_parent</item>
+	    <item name="android:layout_width">48dp</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:textOn">@null</item>
+	    <item name="android:textOff">@null</item>
+		
+	</style>
 	
+	<style name="DarkStarButton">
+	    
+	    <item name="android:button">@drawable/button_star_dark</item>
+	    <item name="android:background">@drawable/button_background_dark</item>
+	    <item name="android:layout_height">match_parent</item>
+	    <item name="android:layout_width">48dp</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:textOn">@null</item>
+	    <item name="android:textOff">@null</item>
+		
+	</style>
 	
-</style>
-
-<style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-    <item name="android:layout_width">match_parent</item>
-    <item name="android:gravity">center_horizontal</item>
-    <item name="android:textColor">@color/textColorPrimaryDark</item>
-    
-    <!-- The textColor property is backward compatible with the Support Library -->
+	<style name="MenuButton" parent="@android:style/Widget.ImageButton">
+	    
+	    <item name="android:background">@drawable/button_background_light</item>
+	    <item name="android:layout_height">match_parent</item>
+	    <item name="android:layout_width">@dimen/touch_target_minimum</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:src">@drawable/abc_ic_menu_moreoverflow_normal_holo_light</item>
 	
-</style>
-
-<style name="BadgeNumber" parent="@android:style/Widget.TextView">
-    
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:padding">4dp</item>
-    <item name="android:textColor">@color/textColorPrimary</item>
-    <item name="android:textSize">@dimen/text_medium</item>
-    <item name="android:gravity">center_vertical</item>
-    <item name="android:typeface">monospace</item>
-    
-</style>
-
-<style name="StarButton">
-    
-    <item name="android:button">@drawable/button_star</item>
-    <item name="android:background">@drawable/button_background_light</item>
-    <item name="android:layout_height">match_parent</item>
-    <item name="android:layout_width">48dp</item>
-    <item name="android:gravity">center</item>
-    <item name="android:textOn">@null</item>
-    <item name="android:textOff">@null</item>
+	</style>
 	
-</style>
-
-<style name="DarkStarButton" android:parent="@style/StarButton">
-    
-    <item name="android:button">@drawable/button_star_dark</item>
-    <item name="android:background">@drawable/button_background_dark</item>
+	<style name="MenuButtonDark" parent="@style/MenuButton">
+	    
+	    <item name="android:src">@drawable/abc_ic_menu_moreoverflow_normal_holo_dark</item>
 	
-</style>
-
-<style name="MenuButton" parent="@android:style/Widget.ImageButton">
-    
-    <item name="android:background">@drawable/button_background_light</item>
-    <item name="android:layout_height">match_parent</item>
-    <item name="android:layout_width">@dimen/touch_target_minimum</item>
-    <item name="android:gravity">center</item>
-    <item name="android:src">@drawable/ic_action_overflow</item>
-
+	</style>
+	
+<style name="CompatListView" parent="@android:style/Widget.ListView">
+    	    <item name="android:divider">@drawable/list_divider</item>
+	    <item name="android:dividerHeight">1dp</item>
+    <item name="android:listSelector">@drawable/button_background_dark</item>
 </style>
 
 </resources>
