@@ -4,7 +4,6 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.SettingsActivity;
 import com.ideabag.playtunes.adapter.NavigationListAdapter;
-import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
 import com.ideabag.playtunes.dialog.FeedbackDialogFragment;
 
 import android.app.Activity;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 
@@ -28,7 +26,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
-		return inflater.inflate( R.layout.fragment_navigation, null, false );
+		return inflater.inflate( R.layout.fragment_navigation, container, false );
 		
 	}
 	
@@ -99,9 +97,9 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 				
 	        	FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 	        	
-	        	DialogFragment newFragment = new FeedbackDialogFragment();
+	        	DialogFragment mNewFragment = new FeedbackDialogFragment();
 	        	
-	            newFragment.show(ft, "dialog");
+	            mNewFragment.show(ft, "dialog");
 				//mActivity.getSupportFragmentManager()
 				
 			}
@@ -118,27 +116,37 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	
 	private void load( int position, boolean silent ) {
 		
+		Fragment mNewFragment = null;
+		
 		switch ( position ) {
 		
 		case 0:
-			mActivity.showArtists();
+			mNewFragment = new ArtistsAllFragment();
 			break;
 			
 		case 1:
-			mActivity.showAlbums();
+			mNewFragment = new AlbumsAllFragment();
 			break;
 			
 		case 2:
-			mActivity.showGenres();
+	    	mNewFragment = new GenresAllFragment();
 			break;
 			
 		case 3:
-			mActivity.showSongs();
+			
+	    	mNewFragment = new SongsFragment();
 			break;
 		
 		default:
-			mActivity.showPlaylists();
+			
+			mNewFragment = new PlaylistsAllFragment();
 			break;
+			
+		}
+		
+		if ( null != mNewFragment ) {
+			
+			mActivity.transactFragment( mNewFragment );
 			
 		}
 		

@@ -264,46 +264,6 @@ public class MainActivity extends ActionBarActivity {
     	transaction.commit();
     	
     }
-    
-    //public static class Navigator {
-    	
-    	public void showArtists() {
-    		
-        	// Create new fragment and transaction
-        	Fragment newFragment = new ArtistsAllFragment();
-        	transactFragment( newFragment );
-    		
-    	}
-    	
-    	public void showAlbums() {
-    		
-        	Fragment newFragment = new AlbumsAllFragment();
-        	transactFragment( newFragment );
-    		
-    	}
-    	
-    	public void showGenres() {
-    		
-        	Fragment newFragment = new GenresAllFragment();
-        	transactFragment( newFragment );
-    	
-    	}
-    	
-    	public void showSongs() {
-    		
-        	Fragment newFragment = new SongsFragment();
-        	transactFragment( newFragment );
-    		
-    	}
-    	
-    	public void showPlaylists() {
-    		
-        	Fragment newFragment = new PlaylistsAllFragment();
-        	transactFragment( newFragment );
-    		
-    	}
-    	
-    //}
     	
 	private ServiceConnection mConnection = new ServiceConnection() {
 		
