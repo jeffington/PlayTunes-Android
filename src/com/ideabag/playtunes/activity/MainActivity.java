@@ -6,13 +6,9 @@ import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.MusicPlayerService.SongInfoChangedListener;
-import com.ideabag.playtunes.fragment.AlbumsAllFragment;
-import com.ideabag.playtunes.fragment.ArtistsAllFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
-import com.ideabag.playtunes.fragment.GenresAllFragment;
-import com.ideabag.playtunes.fragment.PlaylistsAllFragment;
-import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -27,17 +23,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 public class MainActivity extends ActionBarActivity {
 	
@@ -260,6 +249,7 @@ public class MainActivity extends ActionBarActivity {
     	transaction.replace( R.id.MusicBrowserContainer, newFragment );
     	transaction.addToBackStack( null );
     	
+    	
     	// Commit the transaction
     	transaction.commit();
     	
@@ -354,6 +344,11 @@ public class MainActivity extends ActionBarActivity {
 		
 	};
 	
+	// 
+	// We use the onActivityResult mechanism to return from the NowPlayingActivity
+	// and display the Fragment of the currently playing playlist, if it's not already displayed.
+	// 
+	
 	@Override protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
 		
 		if ( resultCode == RESULT_OK ) {
@@ -362,17 +357,43 @@ public class MainActivity extends ActionBarActivity {
 			
 			String nowPlayingMediaID = this.mBoundService.mPlaylistMediaID;
 			
+			Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
+			
+			android.util.Log.i( "MainActivity", "Showing Fragment: " + ( showingFragment == null ? "Is Null" : "Is Not Null" ) );
+			
 			try {
 				
-				Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
+				// 
+				// Check to see if the currently playing Fragment is already showing
+				// only create the new fragment if it isn't already showing.
+				//
 				
-				if ( null != nowPlayingMediaID ) {
+				boolean mClassEquals = showingFragment != null && showingFragment.getClass().equals( nowPlayingFragmentClass );
+				boolean mMediaIDEquals = showingFragment != null && ( ( PlaylistBrowser ) showingFragment ).getMediaID().equals( nowPlayingMediaID );
+				
+				if ( !( mClassEquals && mMediaIDEquals ) ) {
 					
+					Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
 					
+					if ( null != nowPlayingMediaID ) {
+						
+						( ( PlaylistBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
+						
+					}
+					
+					FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			    	
+			    	// Replace whatever is in the fragment_container view with this fragment,
+			    	// and add the transaction to the back stack
+			    	transaction.replace( R.id.MusicBrowserContainer, nowPlayingFragment );
+			    	transaction.addToBackStack( null );
+			    	
+			    	
+			    	// Commit the transaction
+			    	transaction.commitAllowingStateLoss();
+			    	
 					
 				}
-				
-				transactFragment( nowPlayingFragment );
 				
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
@@ -380,6 +401,9 @@ public class MainActivity extends ActionBarActivity {
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch ( ClassCastException e ) {
+				
+				
 			}
 			
 			//this.transactFragment(newFragment)
