@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:drawable="@drawable/button_background_dark"
+        
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp"
+        android:bottom="0dp"
+        
+        />
+    
+    <item
+        android:top="0dp"
+        android:bottom="0dp"
+        android:left="0dp"
+        android:right="0dp" >
+        
+        <inset android:insetLeft="16dp"
+            android:insetRight="16dp" android:drawable="@drawable/progress_handle_background" />
+		
+	</item>
+    
+    <item>
+        
+        <inset
+            android:insetLeft="16dp"
+            android:insetRight="16dp"
+            android:insetTop="4dp"
+            android:insetBottom="4dp">
+            
+            
+            <bitmap android:src="@drawable/drawer_icon"
+                
+                />
+            
+            
+        </inset>
+        
+    </item>
+
+</layer-list>
