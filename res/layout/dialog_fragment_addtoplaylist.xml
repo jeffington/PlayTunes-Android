@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dialog_width"
+    android:minWidth="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    
+    <LinearLayout android:id="@+id/AddToPlaylistHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:orientation="horizontal"
+        android:background="@drawable/actionbar_background"
+        android:layout_alignParentTop="true">
+        
+		<ImageButton android:id="@+id/DialogCloseButton"
+	        
+	        android:layout_width="@dimen/touch_target_minimum"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:src="@drawable/abc_ic_clear"
+	        android:background="@drawable/button_background_dark"
+			
+		/>
+        
+	    <TextView android:id="@+id/DialogHeaderTitle"
+	        
+	        android:layout_width="0dp"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:layout_weight="1"
+	        android:textColor="#FFFFFF"
+	        android:textSize="@dimen/text_xlarge"
+	        android:gravity="center"
+	        android:text="Add Song to Playlist"
+	        android:paddingRight="@dimen/touch_target_minimum"
+	        
+		/>
+        
+    </LinearLayout>
+	
+    <ListView android:id="@+id/AddToPlaylistSelection"
+        style="@style/CompatListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:layout_below="@id/AddToPlaylistHeader"
+        
+	/>
+    
+    
+    <ImageView
+        android:layout_below="@id/AddToPlaylistHeader"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/actionbar_shadow"
+        
+	/>
+    
+</RelativeLayout>
+
