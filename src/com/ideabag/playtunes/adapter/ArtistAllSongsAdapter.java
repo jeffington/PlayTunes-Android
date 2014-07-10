@@ -52,6 +52,12 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
     	
 	}
 	
+	public Cursor getCursor() {
+		
+		return cursor;
+		
+	}
+	
 	@Override
 	public int getCount() {
 		
