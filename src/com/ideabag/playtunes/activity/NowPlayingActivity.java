@@ -212,8 +212,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setCategory( "now playing button" )
 		        	.setAction( "click" )
 		        	.setLabel( "pause" )
-		        	.build()
-							);
+		        	.build());
 					
 					mBoundService.pause();
 					
@@ -223,8 +222,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setCategory( "now playing button" )
 		        	.setAction( "click" )
 		        	.setLabel( "play" )
-		        	.build()
-							);
+		        	.build());
 					
 					mBoundService.play();
 					
@@ -236,8 +234,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 	        	.setCategory( "now playing button" )
 	        	.setAction( "click" )
 	        	.setLabel( "next" )
-	        	.build()
-						);
+	        	.build());
 				
 				mBoundService.next();
 				
@@ -247,8 +244,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 	        	.setCategory( "now playing button" )
 	        	.setAction( "click" )
 	        	.setLabel( "previous" )
-	        	.build()
-						);
+	        	.build());
 				
 				mBoundService.prev();
 				
@@ -264,8 +260,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setAction( "click" )
 		        	.setLabel( "star" )
 		        	.setValue( 1 )
-		        	.build()
-							);
+		        	.build());
 					
 					mPlaylistManager.addFavorite( current_media_id );
 					
@@ -276,8 +271,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setAction( "click" )
 		        	.setLabel( "star" )
 		        	.setValue( 0 )
-		        	.build()
-							);
+		        	.build());
 					
 					mPlaylistManager.removeFavorite( current_media_id );
 					
@@ -324,8 +318,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setAction( "click" )
 		        	.setLabel( "repeat" )
 		        	.setValue( 1 )
-		        	.build()
-							);
+		        	.build());
 					
 				} else if ( repeatState.equals( "1" ) ) {
 					
@@ -339,8 +332,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setAction( "click" )
 		        	.setLabel( "repeat" )
 		        	.setValue( 2 )
-		        	.build()
-							);
+		        	.build());
 					
 				} else {
 					
@@ -354,8 +346,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setAction( "click" )
 		        	.setLabel( "repeat" )
 		        	.setValue( 0 )
-		        	.build()
-							);
+		        	.build());
 					
 				}
 				
@@ -377,8 +368,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		        	.setAction( "click" )
 		        	.setLabel( "shuffle" )
 		        	.setValue( 1 )
-		        	.build()
-							);
+		        	.build());
 					
 				} else {
 					
@@ -435,7 +425,7 @@ public class NowPlayingActivity extends ActionBarActivity {
     
     public void setMediaID( String media_id ) {
     	
-    	android.util.Log.i("now playing media_id", ( media_id == null ? "Is Null" : media_id ) );
+    	//android.util.Log.i("now playing media_id", ( media_id == null ? "Is Null" : media_id ) );
     	
     	if ( null == media_id ) {
     		
@@ -507,6 +497,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 			}
 			
 			albumCursor.close();
+			mSongCursor.close();
 			
 			( ( TextView ) findViewById( R.id.SongTitle ) ).setText( title );
 			( ( TextView ) findViewById( R.id.SongArtist ) ).setText( artist );
@@ -556,6 +547,8 @@ public class NowPlayingActivity extends ActionBarActivity {
 			
 			isPlaying = true;
 			
+			
+			
 			( ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_pause_white );
 			
 		}
@@ -563,6 +556,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		@Override public void musicPaused( int position_milliseconds ) {
 			
 			isPlaying = false;
+			mProgressFragment.setProgress( position_milliseconds );
 			mProgressFragment.stopProgress();
 			( ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_play_white );
 			
