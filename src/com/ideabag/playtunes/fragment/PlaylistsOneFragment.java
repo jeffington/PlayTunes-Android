@@ -44,6 +44,8 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		
 	}
 	
+	@Override public String getMediaID() { return PLAYLIST_ID; }
+	
 	@Override public void onAttach( Activity activity ) {
 			
 		super.onAttach( activity );
@@ -128,7 +130,9 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+		
+		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
