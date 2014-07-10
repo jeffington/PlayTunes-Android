@@ -11,6 +11,7 @@ import com.ideabag.playtunes.adapter.SongsAllAdapter;
 import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -26,7 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-public class SongsFragment extends ListFragment {
+public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "All Songs Fragment";
 	
@@ -164,6 +165,15 @@ public class SongsFragment extends ListFragment {
 		}
 		
 	};
+
+
+	@Override public void setMediaID(String media_id) { /* ... */ }
+
+	@Override public String getMediaID() {
+		
+		return null;
+		
+	}
 	
 	
 }
