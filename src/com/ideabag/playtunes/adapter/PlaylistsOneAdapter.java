@@ -51,7 +51,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		
 		//android.util.Log.i( "starred adapter", "" + playlist_id );
 		
-		requery();
+		
 		
 	}
 	
@@ -156,5 +156,6 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		this.notifyDataSetChanged();
 		
 	}
+
 
 }
