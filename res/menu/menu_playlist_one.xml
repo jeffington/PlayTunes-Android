@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:compat="http://schemas.android.com/apk/res-auto">
+    
+    <item android:id="@+id/MenuPlaylistEdit"
+        android:title="Edit"
+        android:orderInCategory="2"
+        compat:showAsAction="always"
+        
+        />
+    
+    <item android:id="@+id/MenuPlaylistDone"
+        android:title="Done"
+        android:icon="@drawable/abc_ic_cab_done_holo_dark"
+        android:orderInCategory="1"
+        compat:showAsAction="withText|always"
+        />
+    
+
+</menu>
