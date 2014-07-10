@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <fragment android:name="com.ideabag.playtunes.fragment.FooterControlsFragment"
+            
+        	android:id="@+id/FooterControlsFragment"
+        	android:layout_width="match_parent"
+        	android:layout_height="@dimen/footer_height"
+        	android:layout_alignParentBottom="true"
+        	
+	/>
+	   
+    <FrameLayout android:id="@+id/MusicBrowserContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/FooterControlsFragment">
+    	
+    	<fragment android:name="com.ideabag.playtunes.fragment.SongsFragment"
+        	android:id="@+id/SongsFragment"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+       	/>
+    	
+    </FrameLayout>
+    
+    <ImageView 
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/footer_shadow"
+        android:visibility="gone"
+        android:layout_above="@id/FooterControlsFragment"
+        />
+	
+</RelativeLayout>
