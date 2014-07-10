@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SongMenuChoices"
+    style="@style/CompatListView"
+    android:layout_width="280dp"
+    android:minWidth="280dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">   
+    
+    <Button
+    	android:id="@+id/SongMenuAddTo"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/list_item_height"
+		android:gravity="left|center_vertical"
+		android:textSize="@dimen/text_xlarge"
+		android:paddingLeft="@dimen/list_item_horizontal_spacing"
+		android:textColor="@color/textColorPrimary"
+		android:text="Add to..."
+		android:background="@drawable/list_item_background"
+	/>
+    
+    <Button
+    	android:id="@+id/SongMenuArtist"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/list_item_height"
+		android:gravity="left|center_vertical"
+		android:textSize="@dimen/text_xlarge"
+		android:paddingLeft="@dimen/list_item_horizontal_spacing"
+		android:textColor="@color/textColorPrimary"
+		android:text="Artist"
+		android:background="@drawable/list_item_background"
+	/>
+    
+    <Button
+    	android:id="@+id/SongMenuAlbum"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/list_item_height"
+		android:gravity="left|center_vertical"
+		android:textSize="@dimen/text_xlarge"
+		android:paddingLeft="@dimen/list_item_horizontal_spacing"
+		android:textColor="@color/textColorPrimary"
+		android:text="Album"
+		android:background="@drawable/list_item_background"
+	/>
+    
+    
+</LinearLayout >
