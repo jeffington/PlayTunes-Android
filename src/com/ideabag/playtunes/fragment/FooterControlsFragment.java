@@ -57,7 +57,7 @@ public class FooterControlsFragment extends Fragment {
 	
 	@Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		
-		return inflater.inflate( R.layout.fragment_footer_controls, null, false );
+		return inflater.inflate( R.layout.fragment_footer_controls, container, false );
 		
 	}
 	
@@ -110,11 +110,11 @@ public class FooterControlsFragment extends Fragment {
 		
 	};
 	
-	   public void setMediaID( String media_id ) {
-	    	
-		   android.util.Log.i("MediaID", ( null == media_id ? "Is Null" : media_id ) );
+	public void setMediaID( String media_id ) {
+		
+		android.util.Log.i("MediaID", ( null == media_id ? "Is Null" : media_id ) );
 		   
-	    	if ( null == media_id) {
+		if ( null == media_id ) {
 	    		
 	    		if ( isShowing ) {
 		    		
@@ -181,7 +181,6 @@ public class FooterControlsFragment extends Fragment {
 						null
 					);
 				
-	    		android.util.Log.i( "FooterControlsFragment", "Current song cursor : " + mSongCursor.getCount() );
 	    		
 				mSongCursor.moveToFirst();
 				
@@ -189,6 +188,8 @@ public class FooterControlsFragment extends Fragment {
 				String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 				
 				String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+				
+				
 				
 				Cursor albumCursor = mActivity.getContentResolver().query(
 						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -221,6 +222,7 @@ public class FooterControlsFragment extends Fragment {
 				}
 				
 				albumCursor.close();
+				mSongCursor.close();
 				
 				( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setText( title );
 				( ( TextView ) getView().findViewById( R.id.FooterControlsArtistName ) ).setText( artist );
