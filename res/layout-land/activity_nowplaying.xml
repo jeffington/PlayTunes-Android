@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="#222222">
+	
+    <ImageView android:id="@+id/NowPlayingAlbumCover"
+        
+        android:layout_width="0dp"
+        android:layout_height="240dp"
+        android:src="@drawable/carbon"
+        android:layout_margin="8dp"
+        android:layout_weight="1"
+        
+        />
+    
+    <LinearLayout
+        android:layout_width="360dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center" >
+        
+    <include layout="@layout/view_nowplaying_info" android:id="@+id/NowPlayingInfo"
+        
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        />
+    
+	<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
+	    	android:id="@+id/TrackProgressFragment"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="@dimen/list_item_height"
+    	    />
+
+    <include android:id="@+id/NowPlayingControls"
+        layout="@layout/view_nowplaying_controls"
+        
+        android:layout_height="@dimen/list_item_height"
+        android:layout_width="match_parent"
+        
+    	
+    />
+    
+    <FrameLayout android:id="@+id/NowPlayingAdContainer"
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</LinearLayout>
