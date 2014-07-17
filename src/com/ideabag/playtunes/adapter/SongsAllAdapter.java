@@ -51,7 +51,7 @@ public class SongsAllAdapter extends BaseAdapter {
     	cursor = mContext.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					allSongsSelection,
-					null,
+					MediaStore.Audio.Media.IS_MUSIC + " != 0",
 					null,
 					MediaStore.Audio.Media.TITLE
     			);
