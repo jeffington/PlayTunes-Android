@@ -6,6 +6,7 @@
 package com.ideabag.playtunes.media;
 
 
+import java.util.Collections;
 import java.util.Random;
 
 import android.content.BroadcastReceiver;
@@ -19,22 +20,84 @@ import android.provider.MediaStore;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-public class PlaylistMediaPlayer extends MediaPlayer {
+public class PlaylistMediaPlayer {
 	
 	public static final String TAG = "PlaylistMediaPlayer";
 	
-	private boolean isShuffling, isPlaying;
+	protected boolean isShuffling, isPlaying;
 	
-	private Cursor Playlist;
+	protected Cursor mPlaylistCursor;
+	protected int mPlaylistPosition = -1;
+	protected int mPlaylistSize = -1;
+	
+	private int[] mShuffledPlaylist;
+	
+	protected LoopState mLoopState;
+	
+	protected MediaPlayer mMediaPlayer;
+	
 	
 	private PlaybackListener PlaybackChanged = null;
+	
+	private Context mContext;
+	
+	private long shuffleRandomNumberSeed = -1;
+	
+	PowerManager pm;
+	PowerManager.WakeLock wl;
+	
+	//
+	//
+	//
 	
 	public interface PlaybackListener {
 		
 		void onTrackChanged( String media_id );
-		void onPlay();
-		void onPause();
-		void onDone();
+		
+		void onPlay( int playbackPositionMilliseconds );
+		
+		void onPause( int playbackPositionMilliseconds );
+		
+		void onPlaylistDone();
+		
+		void onLoopingChanged( LoopState loop );
+		
+		void onShuffleChanged( boolean isShuffling );
+		
+	}
+	
+	public enum LoopState {
+		LOOP_NO,
+		LOOP_ALL,
+		LOOP_ONE
+	};
+	
+	public PlaylistMediaPlayer( Context context ) {
+		super();
+		
+		//( ( TelephonyManager ) context.getSystemService( Context.TELEPHONY_SERVICE ) ).listen( phoneListener, PhoneStateListener.LISTEN_CALL_STATE );
+		
+		mContext = context;
+		
+		
+		mMediaPlayer = new MediaPlayer();
+		
+		mMediaPlayer.setOnCompletionListener( loopOnCompletionListener );
+		mMediaPlayer.setOnPreparedListener( onPreparedListener );
+		
+		mLoopState = LoopState.LOOP_NO;
+		
+		// 
+		// Intents for loss of connection to media
+		// 
+		//hardwareStopIntents.addAction( Intent.ACTION_MEDIA_EJECT );
+		//hardwareStopIntents.addAction( Intent.ACTION_MEDIA_UNMOUNTED );
+		//hardwareStopIntents.addAction( Intent.ACTION_MEDIA_REMOVED );
+		
+		//mContext.registerReceiver(HardwareStopReceiver, hardwareStopIntents);
+		
+		pm = ( PowerManager ) mContext.getSystemService( Context.POWER_SERVICE );
+		wl = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, TAG );
 		
 	}
 	
@@ -44,52 +107,36 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		
 	}
 	
-	private Context mContext;
-	
-	PowerManager pm;
-	PowerManager.WakeLock wl;
-	
-	public PlaylistMediaPlayer( Context context ) {
-		super();
-		
-		( ( TelephonyManager ) context.getSystemService( Context.TELEPHONY_SERVICE ) ).listen( phoneListener, PhoneStateListener.LISTEN_CALL_STATE );
-		
-		mContext = context;
-		
-		setOnCompletionListener( loopOnCompletionListener );
-		
-		// 
-		// Intents for loss of connection to media
-		// 
-		hardwareStopIntents.addAction( Intent.ACTION_MEDIA_EJECT );
-		hardwareStopIntents.addAction( Intent.ACTION_MEDIA_UNMOUNTED );
-		hardwareStopIntents.addAction( Intent.ACTION_MEDIA_REMOVED );
-		
-		mContext.registerReceiver(HardwareStopReceiver, hardwareStopIntents);
-		
-		pm = ( PowerManager ) mContext.getSystemService( Context.POWER_SERVICE );
-		wl = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, TAG );
-		
-	}
-	
 	
 	MediaPlayer.OnCompletionListener loopOnCompletionListener = new MediaPlayer.OnCompletionListener() {
 		
 		public void onCompletion( MediaPlayer mp ) {
 			
-			if ( null != Playlist ) {
+			
+			
+			if ( null != mPlaylistCursor ) {
+				
+				
 				
 				if ( mLoopState == LoopState.LOOP_ALL ) {
 					
-					setPlaylistPosition( ( Playlist.getPosition() + 1 ) % Playlist.getCount() ); // Will always loop the whole thing
+					android.util.Log.i( TAG, "LOOP_ALL");
 					
-				} else if ( mLoopState == LoopState.LOOP_NO ){
+					setPlaylistPosition( ( mPlaylistPosition + 1 ) % mPlaylistSize ); // Will always loop the whole thing
 					
-					setPlaylistPosition( Playlist.getPosition() + 1 );
+				} else if ( mLoopState == LoopState.LOOP_NO ) {
+					
+					android.util.Log.i( TAG, "LOOP_NO");
+					
+					setPlaylistPosition( mPlaylistPosition + 1 );
+					
+				} else if ( mLoopState == LoopState.LOOP_ONE ) { // We don't need to change the media on LOOP_ONE, but we need to alert the client
+					
+					android.util.Log.i( TAG, "LOOP_ONE");
+					
+					setPlaylistPosition( mPlaylistPosition );
 					
 				}
-				
-				// Do nothing for LOOP_ONE, the MediaPlayer takes care of it on its own
 				
 			}
 			
@@ -101,7 +148,25 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		
 		@Override public void onPrepared( MediaPlayer mp ) {
 			
-			// Alert the client if the track has changed
+			if ( isPlaying ) {
+				
+				if ( null != PlaybackChanged ) {
+					
+					PlaybackChanged.onPlay( 0 );
+				
+				}
+				
+				mp.start();
+				
+			} else {
+				
+				if ( null != PlaybackChanged ) {
+					
+					PlaybackChanged.onPause( 0 );
+				
+				}
+				
+			}
 			
 		}
 		
@@ -117,8 +182,8 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	//
 	public void destroy() {
 		
-		reset();
-		release();
+		mMediaPlayer.reset();
+		mMediaPlayer.release();
 		
 		if ( wl.isHeld() ) {
 			
@@ -126,30 +191,64 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 			
 		}
 		
-		mContext.unregisterReceiver( HardwareStopReceiver );
+		//mContext.unregisterReceiver( HardwareStopReceiver );
 		
 	}
 	
 	public void setPlaylistCursor( Cursor c ) {
 		
-		Playlist = c;
+		if ( null == mPlaylistCursor || !mPlaylistCursor.equals( c ) ) {
+			
+			mPlaylistCursor = c;
+			
+			mPlaylistSize = mPlaylistCursor.getCount();
+			mPlaylistPosition = 0;
+			
+			if ( isShuffling ) {
+				
+				generateShuffledPlaylist();
+				
+			}
+			
+		}
+		
+	}
+	
+	public boolean isPlaying() {
+		
+		return isPlaying;
 		
 	}
 	
 	public void play() {
 		
-		if ( null != Playlist
-				&& !Playlist.isBeforeFirst()
-				&& !Playlist.isAfterLast() ) {
+		if ( null != mPlaylistCursor
+				&& !mPlaylistCursor.isBeforeFirst()
+				&& !mPlaylistCursor.isAfterLast() ) {
 			
-			start();
 			isPlaying = true;
 			
 			if ( null != PlaybackChanged ) {
 				
-				PlaybackChanged.onPlay();
+				PlaybackChanged.onPlay( mMediaPlayer.getCurrentPosition() );
 				
 			}
+			
+			mMediaPlayer.start();
+			
+			mMediaPlayer.setOnCompletionListener( loopOnCompletionListener );
+			/*
+			if ( mLoopState == LoopState.LOOP_ONE ) {
+				
+				mMediaPlayer.setLooping( true );
+				
+			} else {
+				
+				mMediaPlayer.setLooping( false );
+				
+			}
+			*/
+
 			
 			if ( !wl.isHeld() ) {
 				
@@ -163,13 +262,15 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	
 	public void pause() {
 		
-		if ( isPlaying() ) {
+		if ( mMediaPlayer.isPlaying() ) {
 			
-			super.pause();
+			isPlaying = false;
+			
+			mMediaPlayer.pause();
 			
 			if ( null != PlaybackChanged ) {
 				
-				PlaybackChanged.onPause();
+				PlaybackChanged.onPause( mMediaPlayer.getCurrentPosition() );
 				
 			}
 			
@@ -177,11 +278,32 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		
 	}
 	
+	public void back() {
+		
+		if ( null != mPlaylistCursor && null != mMediaPlayer ) {
+			
+			int position = mMediaPlayer.getCurrentPosition();
+			int duration = mMediaPlayer.getDuration();
+			
+			if ( position >= ( 0.08 * duration ) ) {
+				
+				setSeekPosition( 0 );
+				
+			} else {
+				
+				previousTrack();
+				
+			}
+			
+		}
+		
+	}
+
 	public void previousTrack() {
 		
-		if ( null != Playlist ) {
+		if ( null != mPlaylistCursor ) {
 			
-			setPlaylistPosition( Playlist.getPosition() - 1 );
+			setPlaylistPosition( mPlaylistPosition - 1 );
 			
 		}
 		
@@ -190,9 +312,9 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	
 	public void nextTrack() {
 		
-		if ( null != Playlist ) {
+		if ( null != mPlaylistCursor ) {
 			
-			setPlaylistPosition( Playlist.getPosition() + 1 );
+			setPlaylistPosition( mPlaylistPosition + 1 );
 			
 		}
 		
@@ -204,9 +326,14 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	// NOTE: PlaylistMediaPlayer expects column 0 of the Cursor to be the ID of the media
 	// 
 	
-	private boolean playlistReady() {
+	public boolean isPlaylistReady() {
 		
-		return !(Playlist == null || Playlist.isAfterLast() || Playlist.isBeforeFirst() || Playlist.isClosed() );
+		return !( mPlaylistCursor == null
+				|| mPlaylistPosition < 0 || mPlaylistPosition >= mPlaylistSize 
+				//|| mPlaylistCursor.isAfterLast()
+				//|| mPlaylistCursor.isBeforeFirst()
+				|| mPlaylistCursor.isClosed()
+				);
 		
 	}
 	
@@ -214,27 +341,23 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		
 		String media_id = null;
 		
-		if ( playlistReady() ) {
+		if ( isPlaylistReady() ) {
 			
 			if ( isShuffling ) {
 				
-				int tmpPosition = Playlist.getPosition();
+				int shufflePosition = mShuffledPlaylist[ mPlaylistPosition ];
 				
-				int shufflePosition = getNthInt( tmpPosition );
+				mPlaylistCursor.moveToPosition( shufflePosition );
 				
-				Playlist.moveToPosition( shufflePosition );
-				
-				media_id = Playlist.getString( 0 );
-				
-				Playlist.moveToPosition( tmpPosition );
+				media_id = mPlaylistCursor.getString( 0 );
 				
 			} else {
 				
-				media_id = Playlist.getString( 0 );
+				mPlaylistCursor.moveToPosition( mPlaylistPosition );
+				
+				media_id = mPlaylistCursor.getString( 0 );
 				
 			}
-			
-			return media_id;
 			
 		}
 		
@@ -242,14 +365,19 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		
 	}
 	
-	// TODO: Move to next shuffled position (if shuffling) 
+	public int getTrackPlaybackPosition() {
+		
+		return mMediaPlayer.getCurrentPosition();
+		
+	}
+	
 	public void setPlaylistPosition( int position ) {
 		
 		try {
 			
-			Playlist.moveToPosition( position );
+			mPlaylistPosition = position;
 			
-			if ( Playlist.isBeforeFirst() || Playlist.isAfterLast() ) {
+			if ( mPlaylistPosition < 0 || mPlaylistPosition >= mPlaylistSize ) {
 				
 				pause();
 				
@@ -257,7 +385,7 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 				
 				if ( null != PlaybackChanged ) {
 					
-					PlaybackChanged.onDone();
+					PlaybackChanged.onPlaylistDone();
 					
 				}
 				
@@ -265,11 +393,21 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 				
 			}
 			
-			reset();
+			
+			//
+			// NOTE: Calling reset clears the looping, this only affects the LOOP_ONE state.
+			// Nonetheless, we need to set the loop state again after calling reset()
+			// 
+			
+			mMediaPlayer.reset();
+			
+			//setLooping( mLoopState );
 			
 			if ( !isShuffling ) {
 				
-				setDataSource( Playlist.getString( Playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.DATA ) ) );
+				mPlaylistCursor.moveToPosition( mPlaylistPosition );
+				
+				mMediaPlayer.setDataSource( mPlaylistCursor.getString( mPlaylistCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.DATA ) ) );
 				
 				if ( null != PlaybackChanged ) {
 					
@@ -279,13 +417,11 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 				
 			} else { // Shuffle!
 				
-				int tmp = Playlist.getPosition();
+				int nextInt = mShuffledPlaylist[ mPlaylistPosition ];
 				
-				int nextInt = getNthInt( tmp );
+				mPlaylistCursor.moveToPosition( nextInt );
 				
-				Playlist.moveToPosition( nextInt );
-				
-				setDataSource( Playlist.getString( Playlist.getColumnIndexOrThrow( MediaStore.Audio.Media.DATA ) ) );
+				mMediaPlayer.setDataSource( mPlaylistCursor.getString( mPlaylistCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.DATA ) ) );
 				
 				if ( null != PlaybackChanged ) {
 					
@@ -293,17 +429,9 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 					
 				}
 				
-				Playlist.moveToPosition( tmp );
-				
 			}
 			
-			prepare();
-			
-			if ( isPlaying ) {
-				
-				play();
-				
-			}
+			mMediaPlayer.prepareAsync();
 			
 		} catch ( Exception e ) {
 			
@@ -315,17 +443,17 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	
 	public void setSeekPosition( int msecs ) {
 		
-		if ( this.isPlaying && this.isPlaying() ) {
+		if ( this.isPlaying && mMediaPlayer.isPlaying() ) {
 			
-			this.pause();
+			mMediaPlayer.pause();
 			
 		}
 		
-		this.seekTo( msecs );
+		mMediaPlayer.seekTo( msecs );
 		
-		if ( this.isPlaying ) {
+		if ( isPlaying ) {
 			
-			this.play();
+			play();
 			
 		}
 		
@@ -342,47 +470,28 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	// version that accepts a LoopState enum and through this you can set any of the three loop states.
 	// 
 	
-	public enum LoopState {
-		LOOP_NO,
-		LOOP_ALL,
-		LOOP_ONE
-	};
-	
-	protected LoopState mLoopState;
-	
 	public void setLooping( LoopState state ) {
 		
+		mLoopState = state;
+		/*
 		if ( state != LoopState.LOOP_ONE ) {
 			
-			setLooping( false );
+			mMediaPlayer.setLooping( false );
 			
 		} else {
 			
-			setLooping( true );
+			mMediaPlayer.setLooping( true );
 			
 		}
-		
-		mLoopState = state;
+		*/
+		if ( null != PlaybackChanged ) {
+			
+			PlaybackChanged.onLoopingChanged( mLoopState );
+			
+		}
 		
 	}
 	
-	//
-	// Overridden to maintain MediaPlayer API and sync local state
-	//
-	@Override public void setLooping( boolean shouldLoop ) {
-		super.setLooping( shouldLoop );
-		
-		if ( !shouldLoop ) {
-			
-			mLoopState = LoopState.LOOP_NO;
-			
-		} else {
-			
-			mLoopState = LoopState.LOOP_ONE;
-			
-		}
-		
-	}
 	
 	public LoopState getLoopState() {
 		
@@ -402,37 +511,94 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	// That seed number is used by the algorithm to 
 	//
 	
-	private long shuffleRandomNumberSeed = -1;
 	
+	// 
+	// 
+	// Updated: Should not change the play position when turning shuffle on or off
+	// 
 	public void setShuffle( boolean shouldShuffle ) {
 		
 		isShuffling = shouldShuffle;
 		
-		if ( !isShuffling ) {
+		if ( isShuffling ) {
 			
-			if ( null != Playlist
-					&& !Playlist.isBeforeFirst()
-					&& !Playlist.isAfterLast() ) {
+			generateShuffledPlaylist();
 			
-				//playlist.moveToPosition( shufflePlaylist[ playlist.getPosition() ] );
-				setPlaylistPosition( Playlist.getPosition() );
-				
-			}
-		
-			//shufflePlaylist = null;
-		
 		} else {
 			
-			if ( null != Playlist ) {
-				
-				//generateRandomPlaylist();
-				generateRandomSeed();
-				
-			}
+			mShuffledPlaylist = null;
+			
+		}
 		
+		if ( null != PlaybackChanged ) {
+			
+			PlaybackChanged.onShuffleChanged( shouldShuffle );//( mMediaPlayer.getCurrentPosition() );
+			
 		}
 	
-
+	}
+	
+	public boolean isShuffling() {
+		
+		return isShuffling;
+		
+	}
+	
+	private void generateShuffledPlaylist() {
+		
+		int size = mPlaylistSize;
+		
+		mShuffledPlaylist = new int[ mPlaylistSize ];
+		
+		for ( int i = 0; i < size; i++ ) {
+			
+			mShuffledPlaylist[ i ] = i;
+			
+		}
+		
+		shuffleArray( mShuffledPlaylist );
+		
+		String shuffledList = "";
+		
+		for ( int i = 0; i < mShuffledPlaylist.length; i++ ) {
+			
+			shuffledList += mShuffledPlaylist[ i ] + ",";
+			
+		}
+		
+		android.util.Log.i( TAG, shuffledList );
+		
+	}
+	
+	// 
+	// Implementing FisherÐYates shuffle
+	void shuffleArray( int[] ar ) {
+		
+	    Random rnd = new Random();
+	    
+	    for ( int i = ar.length - 1; i > 0; i-- ) {
+	    	
+	    	if ( i == mPlaylistPosition) {
+	    		
+	    		continue;
+	    		
+	    	}
+	    	
+	    	int index = rnd.nextInt( i + 1 );
+	    	
+	    	while ( index == mPlaylistPosition) {
+	    		
+	    		index = rnd.nextInt( i + 1 );
+	    		
+	    	}
+	    	
+	    	// Simple swap
+	    	int a = ar[ index ];
+	    	ar[ index ] = ar[ i ];
+	    	ar[ i ] = a;
+	    	
+	    }
+	    
 	}
 	
 	private void generateRandomSeed() {
@@ -441,13 +607,23 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		
 		shuffleRandomNumberSeed = gen.nextLong();
 		
+		String sequence = "";
+		
+		for ( int i = 0; i < mPlaylistSize; i++ ) {
+			
+			sequence += "" + getNthInt( i ) + ", ";
+			
+		}
+		
+		android.util.Log.i( TAG, "Shuffle sequence:" + sequence );
+		
 	}
 	
 	private int getNthInt( int n ) {
 		
 		Random mRandom = new Random( shuffleRandomNumberSeed );
 		
-		int mSize = Playlist.getCount();
+		int mSize = mPlaylistSize;
 		
 		int value = 0;
 		
@@ -468,7 +644,7 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 	// This includes:
 	// receiving a phone call, headphones being unplugged, and the SD card being disconnected
 	// 
-	
+	/*
 	private IntentFilter hardwareStopIntents = new IntentFilter();
 	
 	private BroadcastReceiver HardwareStopReceiver = new BroadcastReceiver() {
@@ -498,6 +674,7 @@ public class PlaylistMediaPlayer extends MediaPlayer {
 		}
 		
 	};
+	*/
 	
 }
 

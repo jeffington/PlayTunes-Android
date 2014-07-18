@@ -16,6 +16,7 @@ import android.util.Log;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -28,7 +29,7 @@ public class MusicPlayerService extends Service {
 	public static final String ACTION_NEXT = "com.ideabag.playtunes.NEXT";
 	public static final String ACTION_CLOSE = "com.ideabag.playtunes.CLOSE";
 	
-	private static final String TAG = "PlayTunesMusicPlayerService";
+	private static final String TAG = "MusicPlayerService";
 	
 	private PlaylistMediaPlayer MediaPlayer;
 	private PlaybackNotification Notification;
@@ -40,6 +41,7 @@ public class MusicPlayerService extends Service {
 	
 	private MusicPlayerService self;
 	
+	private ArrayList< PlaybackListener > ChangedListeners = new ArrayList< PlaybackListener >();
 
 	BroadcastReceiver NotificationActionReceiver = new BroadcastReceiver() {
 
@@ -61,8 +63,7 @@ public class MusicPlayerService extends Service {
 			        	.setCategory( "notification button" )
 			        	.setAction( "click" )
 			        	.setLabel( "pause" )
-			        	.build()
-								);
+			        	.build());
 						
 						pause();
 						
@@ -72,8 +73,7 @@ public class MusicPlayerService extends Service {
 			        	.setCategory( "notification button" )
 			        	.setAction( "click" )
 			        	.setLabel( "play" )
-			        	.build()
-								);
+			        	.build());
 						
 						play();
 						
@@ -88,8 +88,7 @@ public class MusicPlayerService extends Service {
 	        	.setCategory( "notification button" )
 	        	.setAction( "click" )
 	        	.setLabel( "next" )
-	        	.build()
-						);
+	        	.build());
 				
 				next();
 				
@@ -99,8 +98,7 @@ public class MusicPlayerService extends Service {
 	        	.setCategory( "notification button" )
 	        	.setAction( "click" )
 	        	.setLabel( "close" )
-	        	.build()
-						);
+	        	.build());
 				
 				 
 				self.stopSelf();
@@ -129,12 +127,10 @@ public class MusicPlayerService extends Service {
 		
 		MediaPlayer.setPlaybackListener( MediaPlayerListener );
 		
-		android.util.Log.i(TAG, "About to register broadcast receiver." );
 		
 		registerReceiver( NotificationActionReceiver, mNotificationIntentFilter );
 		
 		startService( new Intent( this, MusicPlayerService.class ) );
-		
 		
 	}
 	
@@ -151,8 +147,6 @@ public class MusicPlayerService extends Service {
 		MediaPlayer.destroy();
 		
 		Notification.remove();
-		
-		Log.i(TAG, "Service destroyed.");
 		
 	}
 	 
@@ -174,33 +168,9 @@ public class MusicPlayerService extends Service {
 	// 
 	private final IBinder mBinder = new MusicPlayerServiceBinder();
 	
-	private ArrayList< SongInfoChangedListener > ChangedListeners = new ArrayList< SongInfoChangedListener >();
-	
 	@Override public IBinder onBind( Intent intent ) {
 		
 		return mBinder;
-	}
-	
-	public interface SongInfoChangedListener {
-		
-		public void songInfoChanged( String media_content_id );
-		
-		public void musicStarted( int position_milliseconds );
-		
-		public void musicPaused( int position_milliseconds );
-		
-		public void musicDone();
-		
-	}
-	
-	public void setPlaylistCursor( Cursor c ) {
-		
-		if ( null != MediaPlayer ) {
-			
-			MediaPlayer.setPlaylistCursor( c );
-			
-		}
-		
 	}
 	
 	public void setPlaylist( Cursor c, String playlistName, Class < ? extends Fragment > fragmentClass, String playlistMediaID ) {
@@ -254,7 +224,7 @@ public class MusicPlayerService extends Service {
 		
 		if ( null != MediaPlayer ) {
 			
-			MediaPlayer.previousTrack();
+			MediaPlayer.back();
 			
 		}
 		
@@ -272,7 +242,7 @@ public class MusicPlayerService extends Service {
 	
 	public void pause() {
 		
-		if ( null != MediaPlayer && MediaPlayer.isPlaying() ) {
+		if ( null != MediaPlayer ) {
 			
 			MediaPlayer.pause();
 			
@@ -280,7 +250,7 @@ public class MusicPlayerService extends Service {
 		
 	}
 	
-	public void setRepeat( PlaylistMediaPlayer.LoopState repeat ) {
+	public void setLooping( PlaylistMediaPlayer.LoopState repeat ) {
 		
 		MediaPlayer.setLooping( repeat );
 		
@@ -292,24 +262,44 @@ public class MusicPlayerService extends Service {
 		
 	}
 	
-	public void addOnSongInfoChangedListener( SongInfoChangedListener listener ) {
+	
+	// 
+	// The PlaylistMediaPlayer creates a PlaybackListener interface and uses it as a callback for changes in playback.
+	// In MusicPlayerService, we use that interface both to update the notification and to rebroadcast that
+	// callback information to as many clients as are interested.
+	// 
+	// We use the number of PlaybackListeners as a way to determine if the Service is detached or not.
+	//
+	// 
+	
+	public void addPlaybackListener( PlaybackListener listener ) {
 		
 		this.ChangedListeners.add( listener );
 		
-		// When we get a SongInfoChangedListener, we immediately fire back with the current state data
+		// When we get a PlaybackListener, we immediately fire all the callbacks with the current state information
 		
-		
-		listener.songInfoChanged( MediaPlayer.getCurrentMediaID() );
-		
-		if ( null != MediaPlayer && MediaPlayer.isPlaying() ) {
+		if ( null != MediaPlayer ) {
 			
-			listener.musicStarted( MediaPlayer.getCurrentPosition() );
+			listener.onTrackChanged( MediaPlayer.getCurrentMediaID() );
+			listener.onLoopingChanged( MediaPlayer.getLoopState() );
+			listener.onShuffleChanged( MediaPlayer.isShuffling() );
 			
-		} else {
-			
-			listener.musicPaused( MediaPlayer.getCurrentPosition() );
+			if ( MediaPlayer.isPlaying() ) {
+				
+				listener.onPlay( MediaPlayer.getTrackPlaybackPosition() );
+				
+			} else {
+				
+				listener.onPause( MediaPlayer.getTrackPlaybackPosition() );
+				
+			}
 			
 		}
+		
+		//
+		// Listeners are added when an interested Activity UI is shown, so we remove
+		// the notification in this case.
+		//
 		
 		if ( this.ChangedListeners.size() > 0 ) {
 			
@@ -319,15 +309,21 @@ public class MusicPlayerService extends Service {
 		
 	}
 	
-	public void removeOnSongInfoChangedListener( SongInfoChangedListener listener ) {
+	public void removePlaybackListener( PlaybackListener listener ) {
 		
 		this.ChangedListeners.remove( listener );
+		
+		//
+		// Listeners are removed when an interested Activity UI is hidden, so we either
+		// show the notification in this case and update it with the currently playing song
+		// or destroy the service if no music is playing.
+		// 
 		
 		if ( this.ChangedListeners.size() == 0 ) {
 			
 			if ( MediaPlayer.isPlaying()  ) {
 				
-				Notification.showSong( CURRENT_MEDIA_ID );
+				Notification.showSong( MediaPlayer.getCurrentMediaID() );
 				Notification.showPlaying();
 				
 			} else {
@@ -340,137 +336,111 @@ public class MusicPlayerService extends Service {
 		
 	}
 	
-	private void triggerSongInfoChanged( String media_id ) {
-		
-		int count = this.ChangedListeners.size();
-		
-		for ( int x = 0; x < count; x++ ) {
-			
-			this.ChangedListeners.get( x ).songInfoChanged( media_id );
-			
-		}
-		
-		if ( 0 == count ) {
-			
-			Notification.showSong( media_id );
-			
-		}
-		
-	}
-	
-	private void triggerMusicStarted( int position ) {
-		
-		int count = this.ChangedListeners.size();
-		
-		for ( int x = 0; x < count; x++ ) {
-			
-			this.ChangedListeners.get( x ).musicStarted( position );
-			
-		}
-		
-		if ( 0 == count ) {
-			
-			Notification.showPlaying();
-			
-		}
-		
-	}
-	
-	private void triggerMusicPaused( int position ) {
-		
-		int count = this.ChangedListeners.size();
-		
-		for ( int x = 0; x < count; x++ ) {
-			
-			this.ChangedListeners.get( x ).musicPaused( position );
-			
-		}
-		
-		if ( 0 == count ) {
-			
-			Notification.showPaused();
-			
-		}
-		
-	}
-	
-	
-	private void triggerMusicDone() {
-		
-		int count = this.ChangedListeners.size();
-		
-		for ( int x = 0; x < count; x++ ) {
-			
-			this.ChangedListeners.get( x ).musicDone();
-			
-		}
-		
-		if ( 0 == count ) {
-			
-			Notification.remove();
-			
-		}
-		
-	}
-	
 	PlaybackListener MediaPlayerListener = new PlaybackListener() {
 		
 		@Override public void onTrackChanged( String media_id ) {
 			
 			CURRENT_MEDIA_ID = media_id; // Set even if media_id is null
 			
-			triggerSongInfoChanged( media_id );
+			int count = ChangedListeners.size();
+			
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onTrackChanged( media_id );
+				
+			}
+			
+			if ( 0 == count ) {
+				
+				Notification.showSong( media_id );
+				
+			}
+			
+		}
+
+
+		@Override public void onPlaylistDone() {
+			
+			int count = ChangedListeners.size();
+			
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onPlaylistDone();
+				
+			}
+			
+			if ( 0 == count ) {
+				
+				Notification.remove();
+				
+			}
+			
+		}
+
+		@Override public void onLoopingChanged( LoopState loop ) {
+			
+			int count = ChangedListeners.size();
+			
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onLoopingChanged( loop );
+				
+			}
 			
 			
 			
 		}
 
-		@Override public void onPlay() {
+		@Override public void onShuffleChanged( boolean isShuffling ) {
 			
-			triggerMusicStarted( MediaPlayer.getCurrentPosition() );
+			int count = ChangedListeners.size();
+			
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onShuffleChanged( isShuffling );
+				
+			}
 			
 		}
 
-		@Override public void onPause() {
+
+		@Override public void onPlay(int playbackPositionMilliseconds ) {
 			
-			triggerMusicPaused( MediaPlayer.getCurrentPosition() );
+			int count = ChangedListeners.size();
+			
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onPlay( playbackPositionMilliseconds );
+				
+			}
+			
+			if ( count == 0 ) {
+				
+				Notification.showPlaying();
+				
+			}
 			
 		}
 
-		@Override public void onDone() {
+
+		@Override public void onPause( int playbackPositionMilliseconds ) {
 			
-			triggerMusicDone();
+			int count = ChangedListeners.size();
 			
-		}
-		
-	};
-	/*
-	public void doAttachActivity() {
-		
-		mBinderCount = mBinderCount + 1;
-		
-	}
-	
-	public void doDetachActivity() {
-		
-		mBinderCount = mBinderCount - 1;
-		
-		android.util.Log.i(TAG, "Binder Count: " + mBinderCount );
-		
-		if ( null != MediaPlayer ) {
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onPause( playbackPositionMilliseconds );
+				
+			}
 			
-			if ( !MediaPlayer.isPlaying() ) {
+			if ( count == 0 ) {
 				
-				this.stopSelf();
-				
-			} else {
-				
-				//Notification.showPlaying();
+				Notification.showPaused();
 				
 			}
 			
 		}
 		
-	}
-	*/
+	};
+	
 }
