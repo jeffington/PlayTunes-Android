@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dialog_width"
+    android:minWidth="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    
+    <LinearLayout android:id="@+id/DialogHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:orientation="horizontal"
+        android:background="@drawable/actionbar_background"
+        android:layout_alignParentTop="true">
+        
+		<ImageButton android:id="@+id/DialogCloseButton"
+	        
+	        android:layout_width="@dimen/touch_target_minimum"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:src="@drawable/abc_ic_clear"
+	        android:background="@drawable/button_background_dark"
+			
+		/>
+        
+	    <TextView android:id="@+id/DialogHeaderTitle"
+	        
+	        android:layout_width="0dp"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:layout_weight="1"
+	        android:textColor="#FFFFFF"
+	        android:textSize="@dimen/text_xlarge"
+	        android:gravity="center"
+	        android:text="@string/playlists_options"
+	        android:paddingRight="@dimen/touch_target_minimum"
+	        
+		/>
+        
+    </LinearLayout>
+	<Button
+    	android:id="@+id/PlaylistOptionsRename"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/list_item_height"
+		android:layout_below="@id/DialogHeader"
+		android:gravity="left|center_vertical"
+		android:textSize="@dimen/text_xlarge"
+		android:paddingLeft="@dimen/list_item_horizontal_spacing"
+		android:textColor="@color/textColorPrimary"
+		android:text="@string/rename"
+		android:background="@drawable/list_item_background"
+	/>
+	<Button
+    	android:id="@+id/PlaylistOptionsDelete"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/list_item_height"
+		android:layout_below="@id/PlaylistOptionsRename"
+		android:gravity="left|center_vertical"
+		android:textSize="@dimen/text_xlarge"
+		android:paddingLeft="@dimen/list_item_horizontal_spacing"
+		android:textColor="@color/textColorPrimary"
+		android:text="@string/delete"
+		android:background="@drawable/list_item_background"
+	/>
+    
+    <ImageView
+        android:layout_below="@id/DialogHeader"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/actionbar_shadow"
+        
+	/>
+    
+</RelativeLayout>
+
