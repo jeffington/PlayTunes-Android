@@ -50,26 +50,12 @@
 	    android:src="@drawable/ic_action_playback_next_white"
 	    android:background="@drawable/button_background_dark"
 	    />
-	<LinearLayout android:orientation="vertical"
+	<ImageButton android:id="@+id/NotificationCloseButton"
 	    android:layout_width="48dip"
 	    android:layout_height="match_parent"
-	    android:gravity="center_horizontal"
-	    >
-	<ImageButton android:id="@+id/NotificationCloseButton"
-	    android:layout_width="match_parent"
-	    android:layout_height="8dp"
 	    android:scaleType="centerInside"
-	    android:padding="4dp"
 	    android:src="@drawable/abc_ic_clear"
 	    
 	    android:background="@drawable/button_background_dark"
-	    android:layout_weight="3"
 	    />
-	<ImageView
-	    android:src="@drawable/ic_action_music_2_white"
-	    android:layout_width="16dp"
-	    android:layout_height="16dp"
-	    android:layout_weight="1"
-	    />
-	</LinearLayout>
 </LinearLayout>
