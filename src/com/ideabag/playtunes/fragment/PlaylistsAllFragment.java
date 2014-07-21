@@ -6,13 +6,14 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsAllAdapter;
 import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
+import com.ideabag.playtunes.dialog.PlaylistMenuDialogFragment;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.TrackerSingleton;
 import com.ideabag.playtunes.view.AllPlaylistsDialogBuilder;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -28,7 +29,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,10 +37,12 @@ public class PlaylistsAllFragment extends ListFragment {
 	
 	public static final String TAG = "All Playlists Fragment";
 	
-	PlaylistsAllAdapter adapter;
+	PlaylistsAllAdapter playslistsAdapter;
+	MergeAdapter adapter;
+	
 	MainActivity mActivity;
 	
-	AllPlaylistsDialogBuilder dialogBuilder;
+	//AllPlaylistsDialogBuilder dialogBuilder;
 	
 	
 	ContentObserver playlistsChanged = new ContentObserver( new Handler() ) {
@@ -51,8 +53,8 @@ public class PlaylistsAllFragment extends ListFragment {
 
 				@Override public void run() {
 					
-					adapter.requery();
-					adapter.notifyDataSetChanged();
+					playslistsAdapter.requery();
+					playslistsAdapter.notifyDataSetChanged();
 					
 				}
             	
@@ -77,22 +79,20 @@ public class PlaylistsAllFragment extends ListFragment {
 		
 		ActionBar bar =	( ( ActionBarActivity ) getActivity()).getSupportActionBar();
 		
-		//mActivity.PlaylistManager.createStarredIfNotExist();
-    	
-		adapter = new PlaylistsAllAdapter( getActivity(), playlistMenuClickListener );
+		adapter = new MergeAdapter();
+		playslistsAdapter = new PlaylistsAllAdapter( getActivity(), playlistMenuClickListener );
 		
-    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
+
     	
     	LayoutInflater inflater = mActivity.getLayoutInflater();
     	LinearLayout starredPlaylist = ( LinearLayout ) inflater.inflate( R.layout.list_item_playlist_starred, null );
-    	getListView().addHeaderView( starredPlaylist );
     	
     	starredPlaylist.setTag( R.id.tag_playlist_id, mActivity.PlaylistManager.createStarredIfNotExist() );
     	
     	( ( TextView ) starredPlaylist.findViewById( R.id.BadgeCount ) ).setText( "" + mActivity.PlaylistManager.getStarredCursor().getCount() );
 		
     	
-    	bar.setTitle( "All Playlists" );
+    	bar.setTitle( getString( R.string.playlists_plural ) );
     	mActivity.actionbarTitle = bar.getTitle();
     	mActivity.actionbarSubtitle = null;
 		bar.setSubtitle( null );
@@ -104,6 +104,10 @@ public class PlaylistsAllFragment extends ListFragment {
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
 		
+		//adapter.addView( mActivity.AdContainer, false );
+		adapter.addView( starredPlaylist );
+		adapter.addAdapter( playslistsAdapter );
+		
     	setListAdapter( adapter );
     	
 	}
@@ -113,7 +117,7 @@ public class PlaylistsAllFragment extends ListFragment {
 	@Override public void onResume() {
 		super.onResume();
 		
-		dialogBuilder = new AllPlaylistsDialogBuilder( mActivity, mActivity.PlaylistManager );
+		//dialogBuilder = new AllPlaylistsDialogBuilder( mActivity, mActivity.PlaylistManager );
 		
 		getActivity().getContentResolver().registerContentObserver( MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, playlistsChanged );
 		
@@ -140,7 +144,7 @@ public class PlaylistsAllFragment extends ListFragment {
 	@Override public void onPause() {
 		super.onPause();
 		
-		dialogBuilder = null;
+		//dialogBuilder = null;
 		
 		getActivity().getContentResolver().unregisterContentObserver( playlistsChanged );
 		
@@ -207,15 +211,16 @@ public class PlaylistsAllFragment extends ListFragment {
 		@Override public void onClick(View v) {
 			
 			//int id = v.getId();
+			
 			ViewGroup list_item = ( ViewGroup ) v.getParent();
 			String playlist_id = ( String ) list_item.getTag( R.id.tag_playlist_id);
-			Log.i("clicked playlist", playlist_id );
 			
-			if ( null != dialogBuilder ) {
-				
-				dialogBuilder.buildPlaylistMenuDialog( playlist_id ).show();
-				
-			}
+			FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        	
+			PlaylistMenuDialogFragment newFragment = new PlaylistMenuDialogFragment();
+			newFragment.setMediaID( playlist_id );
+        	
+            newFragment.show( ft, "dialog" );
 			
 		}
 		

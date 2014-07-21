@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+    
+    <com.google.android.gms.ads.AdView android:id="@+id/adView"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/list_item_height"
+    	android:minHeight="@dimen/list_item_height"
+		ads:adUnitId="@string/admob_unit_id_main_activity"
+		ads:adSize="BANNER"
+		android:layout_alignParentTop="true"
+		android:background="@drawable/footer_background"
+	
+	/>
     
     <fragment android:name="com.ideabag.playtunes.fragment.FooterControlsFragment"
             
@@ -15,7 +27,7 @@
     <FrameLayout android:id="@+id/MusicBrowserContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/adView"
         android:layout_above="@id/FooterControlsFragment">
     	
     	<fragment android:name="com.ideabag.playtunes.fragment.SongsFragment"

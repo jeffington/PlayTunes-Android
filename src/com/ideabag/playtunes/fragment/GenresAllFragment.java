@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.GenresAllAdapter;
+import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -19,7 +20,9 @@ public class GenresAllFragment extends ListFragment {
 	
 	public static final String TAG = "All Genres Fragment";
 	
-	GenresAllAdapter adapter;
+	MergeAdapter adapter;
+	GenresAllAdapter genresAdapter;
+	
 	private MainActivity mActivity;
 	
 	@Override public void onAttach( Activity activity ) {
@@ -34,12 +37,17 @@ public class GenresAllFragment extends ListFragment {
 		super.onActivityCreated( savedInstanceState );
 		
 		ActionBar bar =	( ( ActionBarActivity ) getActivity()).getSupportActionBar();
+		adapter = new MergeAdapter();
+		genresAdapter = new GenresAllAdapter( getActivity() );
 		
-		adapter = new GenresAllAdapter( getActivity() );
+		//adapter.addView( mActivity.AdContainer, true );
+		adapter.addAdapter( genresAdapter );
+		
     	
-    	bar.setTitle( "All Genres" );
+    	bar.setTitle( getString( R.string.genres_plural) );
     	mActivity.actionbarTitle = bar.getTitle();
-		bar.setSubtitle( adapter.getCount() + " genres" );
+    	
+		bar.setSubtitle( genresAdapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.genre_singular ) : getString( R.string.genres_plural ) ) );
 		mActivity.actionbarSubtitle = bar.getSubtitle();
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
@@ -47,7 +55,6 @@ public class GenresAllFragment extends ListFragment {
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
 		
-    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
 		
     	setListAdapter( adapter );
     	
@@ -55,6 +62,8 @@ public class GenresAllFragment extends ListFragment {
 		
 	@Override public void onResume() {
 		super.onResume();
+		
+		//mActivity.AdView.resume();
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
@@ -77,7 +86,7 @@ public class GenresAllFragment extends ListFragment {
 		
 	@Override public void onPause() {
 		super.onPause();
-		
+		//mActivity.AdView.pause();
 		
 		
 	}

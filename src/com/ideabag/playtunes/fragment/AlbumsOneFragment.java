@@ -70,7 +70,7 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		//lv.addHeaderView( );
 		//Resources r = getResources();
 		int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics() );
-		albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.view_album_header, null, false );
+		albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
 		albumArtHeader.setLayoutParams( new AbsListView.LayoutParams( AbsListView.LayoutParams.MATCH_PARENT, headerHeightPx ) );
 		
 		getListView().addHeaderView( albumArtHeader, null, false );

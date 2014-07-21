@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
+import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -21,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
@@ -30,8 +30,9 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	public static final String TAG = "One Playlist Fragment";
 	
 	MainActivity mActivity;
-	PlaylistsOneAdapter adapter;
-	ViewGroup starredPlaylist;
+	MergeAdapter adapter;
+	PlaylistsOneAdapter playlistAdapter;
+	
 	private String PLAYLIST_ID;
 	
 	//private MenuItem menuItemEdit, menuItemDoneEditing;
@@ -60,13 +61,18 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
 		setHasOptionsMenu( true );
 		
-    	adapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
+		adapter = new MergeAdapter();
+		
+		
+    	playlistAdapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
     	
+    	//adapter.addView( mActivity.AdContainer, true );
+    	adapter.addAdapter( playlistAdapter );
     	
     	bar.setTitle( "Playlist" );
-		bar.setSubtitle( "Playlist " + adapter.getCount() + " songs" );
+		bar.setSubtitle( playlistAdapter.getCount() + " " + ( playlistAdapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 		
-		//getListView().addHeaderView( mActivity.AdContainer, null, true );
+		
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		//getListView().setAdapter( adapter );
     	
@@ -74,6 +80,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
 		
+		//getListView().addHeaderView( mActivity.AdContainer, null, true );
 		setListAdapter( adapter );
 		
 	}
@@ -132,7 +139,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
+		mActivity.mBoundService.setPlaylist( playlistAdapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
@@ -159,14 +166,14 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	    	  mActivity.actionbarTitle = bar.getTitle();
 	    	  bar.setSubtitle( null );
 	    	  mActivity.actionbarSubtitle = bar.getSubtitle();
-	    	  adapter.setEditing( true );
+	    	  playlistAdapter.setEditing( true );
 	    	  //ListView.invalidate();
 	    	  
 	         return true;
 	         
 	      case R.id.MenuPlaylistDone:
 	    	  
-	    	  adapter.setEditing( false );
+	    	  playlistAdapter.setEditing( false );
 	    	  //ListView.invalidate();
 	    	  
 	    	  return true;
@@ -187,8 +194,8 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 
 				@Override public void run() {
 					
-					adapter.requery();
-					adapter.notifyDataSetChanged();
+					playlistAdapter.requery();
+					playlistAdapter.notifyDataSetChanged();
 					//getListView().invalidate();
 				}
             	

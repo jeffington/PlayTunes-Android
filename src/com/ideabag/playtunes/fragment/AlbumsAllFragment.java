@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -27,7 +28,6 @@ public class AlbumsAllFragment extends ListFragment {
 
 	AlbumsAllAdapter adapter;
 	private MainActivity mActivity;
-    private AdView adView;
 	
 	@Override public void onAttach( Activity activity ) {
 		
@@ -44,7 +44,7 @@ public class AlbumsAllFragment extends ListFragment {
     	
     	adapter = new AlbumsAllAdapter( getActivity() );
     	
-    	bar.setTitle( "Albums" );
+    	bar.setTitle( getString( R.string.albums_plural) );
     	mActivity.actionbarTitle = bar.getTitle();
 		bar.setSubtitle( adapter.getCount() + " albums" );
 		mActivity.actionbarSubtitle = bar.getSubtitle();
@@ -53,8 +53,8 @@ public class AlbumsAllFragment extends ListFragment {
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
-		//getListView().addHeaderView( mActivity.AdContainer, null, true );
-    	setListAdapter( adapter );
+		
+		setListAdapter( adapter );
     	
 	}
 	
@@ -78,12 +78,14 @@ public class AlbumsAllFragment extends ListFragment {
     	.setValue( adapter.getCount() )
     	.build());
 		
+		//mActivity.AdView.resume();
+		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
 		
-		
+		//mActivity.AdView.pause();
 		
 	}
 	

@@ -1,29 +1,23 @@
 package com.ideabag.playtunes.fragment;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.AdRequest.Builder;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.SongsAllAdapter;
-import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
@@ -32,10 +26,9 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	public static final String TAG = "All Songs Fragment";
 	
     private MainActivity mActivity;
-    private AdView adView;
     
-	SongsAllAdapter adapter;
-	
+	MergeAdapter adapter;
+	SongsAllAdapter songAdapter;
 	
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );
@@ -49,13 +42,17 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
 		
+    	adapter = new MergeAdapter();
+		
+		songAdapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
     	
-    	adapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
+		//adapter.addView( mActivity.AdContainer, false );
+		adapter.addAdapter( songAdapter );
     	
-    	
-    	bar.setTitle( "All Songs" );
+    	bar.setTitle( getString( R.string.all_songs ) );
     	mActivity.actionbarTitle = bar.getTitle();
-		bar.setSubtitle( adapter.getCount() + " songs" );
+		
+    	bar.setSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
@@ -64,19 +61,18 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
     	
-    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
+		
+    	//getListView().addHeaderView( mActivity.AdContainer );
     	setListAdapter( adapter );
     	
     	
 	}
-		
+	
 	@Override public void onResume() {
 		super.onResume();
-		
+		//mActivity.AdView.resume();
 		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
-
-	        // Set screen name.
-	        // Where path is a String representing the screen name.
+		
 		tracker.setScreenName( TAG );
 		tracker.send( new HitBuilders.AppViewBuilder().build() );
 		
@@ -94,7 +90,7 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 	@Override public void onPause() {
 		super.onPause();
-		
+		//mActivity.AdView.pause();
 		
 	}
 	
@@ -106,9 +102,12 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	}
 	
 	@Override public void onDestroyView() {
-	    super.onDestroyView();
+		super.onDestroyView();
+	    //adapter = null;
 	    
+	    //getListView().removeHeaderView( mActivity.AdContainer );
 	    setListAdapter( null );
+	    
 	    
 	}
 	
@@ -116,10 +115,10 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist(adapter.getCursor(), playlistName, SongsFragment.class, null );
+		mActivity.mBoundService.setPlaylist( songAdapter.getCursor(), playlistName, SongsFragment.class, null );
 		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
 		
-		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
+		mActivity.mBoundService.setPlaylistPosition( position );
 		
 		mActivity.mBoundService.play();
 		

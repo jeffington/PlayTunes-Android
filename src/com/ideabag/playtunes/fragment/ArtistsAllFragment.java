@@ -28,7 +28,6 @@ public class ArtistsAllFragment extends ListFragment {
 
 	ArtistsAllAdapter adapter;
 	private MainActivity mActivity;
-    private AdView adView;
 	
 	@Override public void onAttach( Activity activity ) {
 			
@@ -53,7 +52,8 @@ public class ArtistsAllFragment extends ListFragment {
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
-    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
+    	
+		//getListView().addHeaderView( mActivity.AdContainer, null, true );
     	
     	setListAdapter( adapter );
     	
