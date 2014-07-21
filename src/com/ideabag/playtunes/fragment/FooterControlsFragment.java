@@ -7,6 +7,7 @@ import com.ideabag.playtunes.activity.NowPlayingActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,9 +17,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +28,7 @@ public class FooterControlsFragment extends Fragment {
 	private String lastAlbumUri;
 	private String current_media_id;
 	
+	private ImageButton mPlayPauseButton;
 	private boolean isPlaying = false;
 	
 	private boolean isShowing = false;
@@ -49,7 +48,10 @@ public class FooterControlsFragment extends Fragment {
 		
 		getView().findViewById( R.id.FooterControls ).setOnClickListener( controlsClickListener );
     	
-		getView().findViewById( R.id.FooterControlsPlayPauseButton ).setOnClickListener( controlsClickListener );
+		
+		mPlayPauseButton = ( ImageButton ) getView().findViewById( R.id.FooterControlsPlayPauseButton );
+		mPlayPauseButton.setOnClickListener( controlsClickListener );
+		
 		
 		//mActivity.BoundService.setOnSongInfoChangedListener( MusicStateChanged );
 		
@@ -87,9 +89,7 @@ public class FooterControlsFragment extends Fragment {
 				
 				Intent startNowPlayingActivity = new Intent( getActivity(), NowPlayingActivity.class );
 				
-				//startNowPlayingActivity.putExtra( "title", mActivity.actionbarTitle );
-				
-				getActivity().startActivityForResult( startNowPlayingActivity, 0 );//( i );
+				getActivity().startActivityForResult( startNowPlayingActivity, 0 );
 				
 			} else if ( id == R.id.FooterControlsPlayPauseButton ) {
 				
@@ -112,8 +112,6 @@ public class FooterControlsFragment extends Fragment {
 	
 	public void setMediaID( String media_id ) {
 		
-		android.util.Log.i("MediaID", ( null == media_id ? "Is Null" : media_id ) );
-		   
 		if ( null == media_id ) {
 	    		
 	    		if ( isShowing ) {
@@ -212,13 +210,32 @@ public class FooterControlsFragment extends Fragment {
 				
 				String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 				
+				ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
+				
 				if ( !newAlbumUri.equals( lastAlbumUri ) ) {
 					
-					lastAlbumUri = newAlbumUri;
+					//lastAlbumUri = newAlbumUri;
 					
 					Uri albumArtUri = Uri.parse( newAlbumUri );
 					
-					( ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt ) ).setImageURI( albumArtUri );
+					
+					
+					if ( null != lastAlbumUri ) {
+						
+						BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+						
+						if ( null != bd ) {
+							
+							bd.getBitmap().recycle();
+							mAlbumCover.setImageBitmap( null );
+							
+						}
+						
+					}
+					
+					mAlbumCover.setImageURI( albumArtUri );
+					
+					lastAlbumUri = newAlbumUri;
 				}
 				
 				albumCursor.close();
@@ -237,7 +254,7 @@ public class FooterControlsFragment extends Fragment {
 		   
 		   this.isPlaying = false;
 		   
-		   ( ( ImageButton ) getView().findViewById( R.id.FooterControlsPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_play_white );
+		   mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_play_white );
 		   
 		   ( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setEllipsize( null );
 		   
@@ -247,7 +264,7 @@ public class FooterControlsFragment extends Fragment {
 		   
 		   this.isPlaying = true;
 		   
-		   ( ( ImageButton ) getView().findViewById( R.id.FooterControlsPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_pause_white );
+		   mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_pause_white );
 		   
 		   ( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setEllipsize( TextUtils.TruncateAt.MARQUEE );
 		   
