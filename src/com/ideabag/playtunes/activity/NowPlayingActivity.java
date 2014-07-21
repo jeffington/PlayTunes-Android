@@ -3,10 +3,10 @@ package com.ideabag.playtunes.activity;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.MusicPlayerService.SongInfoChangedListener;
 import com.ideabag.playtunes.dialog.AddToPlaylistDialogFragment;
 import com.ideabag.playtunes.fragment.TrackProgressFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -53,9 +54,9 @@ public class NowPlayingActivity extends ActionBarActivity {
 	private TrackProgressFragment mProgressFragment;
 	
 	private boolean isPlaying = false;
-	private int currentPlayback = 0;
+	//private int currentPlayback = 0;
 	
-	private String lastAlbumUri;
+	private String lastAlbumUri = null;
 	private AdView adView;
 	
 	private String current_media_id;
@@ -143,7 +144,12 @@ public class NowPlayingActivity extends ActionBarActivity {
 	@Override public void onStart() {
 		super.onStart();
 		
-		
+		if ( mIsBound && mBoundService != null ) {
+			
+			mBoundService.addPlaybackListener( mPlaybackListener );
+			getSupportActionBar().setTitle( mBoundService.mPlaylistName );
+			
+		}
 		
 	}
 	
@@ -163,30 +169,23 @@ public class NowPlayingActivity extends ActionBarActivity {
 		adView.resume();
 		
 		
-		if ( mIsBound && mBoundService != null ) {
-			
-			mBoundService.addOnSongInfoChangedListener( MusicStateChanged );
-			
-		}
-		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
 		
 		adView.pause();
-		//doUnbindService();
-		if ( mIsBound && mBoundService != null ) {
-			
-			mBoundService.removeOnSongInfoChangedListener( MusicStateChanged );
-			
-		}
 		
 	}
 	
 	@Override public void onStop() {
 		super.onStop();
 		
+		if ( mIsBound && mBoundService != null ) {
+			
+			mBoundService.removePlaybackListener( mPlaybackListener );
+			
+		}
 		
 	}
 	
@@ -302,16 +301,11 @@ public class NowPlayingActivity extends ActionBarActivity {
 				
 			} else if ( id == R.id.NowPlayingRepeatButton ) {
 				
-				ImageButton ib = ( ImageButton ) v;
-				
-				String repeatState = (String) ib.getTag( R.id.tag_repeat_state );
+				String repeatState = (String) v.getTag( R.id.tag_repeat_state );
 				
 				if ( null == repeatState || repeatState.equals( "0" ) ) {
 					
-					mBoundService.setRepeat( PlaylistMediaPlayer.LoopState.LOOP_ALL );
-					
-					ib.setTag( R.id.tag_repeat_state, "1" );
-					ib.setImageResource( R.drawable.ic_action_playback_repeat_orange_dark );
+					mBoundService.setLooping( PlaylistMediaPlayer.LoopState.LOOP_ALL );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -322,10 +316,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 					
 				} else if ( repeatState.equals( "1" ) ) {
 					
-					mBoundService.setRepeat( PlaylistMediaPlayer.LoopState.LOOP_ONE );
-					
-					ib.setTag( R.id.tag_repeat_state, "2" );
-					ib.setImageResource( R.drawable.ic_action_playback_repeat_1_orange_dark );
+					mBoundService.setLooping( PlaylistMediaPlayer.LoopState.LOOP_ONE );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -336,10 +327,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 					
 				} else {
 					
-					mBoundService.setRepeat( PlaylistMediaPlayer.LoopState.LOOP_NO );
-					
-					ib.setTag( R.id.tag_repeat_state, "0" );
-					ib.setImageResource( R.drawable.ic_action_playback_repeat_white );
+					mBoundService.setLooping( PlaylistMediaPlayer.LoopState.LOOP_NO );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -352,16 +340,13 @@ public class NowPlayingActivity extends ActionBarActivity {
 				
 			} else if ( id == R.id.NowPlayingShuffleButton ) {
 				
-				ImageButton ib = ( ImageButton ) v;
+				//ImageButton ib = ( ImageButton ) v;
 				
-				String shuffleState = (String) ib.getTag( R.id.tag_shuffle_state );
+				String shuffleState = (String) v.getTag( R.id.tag_shuffle_state );
 				
 				if ( null == shuffleState || shuffleState.equals( "0" ) ) {
 					
 					mBoundService.setShuffle( true );
-					
-					ib.setTag( R.id.tag_shuffle_state, "1" );
-					ib.setImageResource( R.drawable.ic_action_playback_schuffle_orange_dark );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -373,9 +358,6 @@ public class NowPlayingActivity extends ActionBarActivity {
 				} else {
 					
 					mBoundService.setShuffle( false );
-					
-					ib.setTag( R.id.tag_shuffle_state, "0" );
-					ib.setImageResource( R.drawable.ic_action_playback_schuffle_white );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -436,6 +418,7 @@ public class NowPlayingActivity extends ActionBarActivity {
     		
     		this.current_media_id = media_id;
     		
+    		
     		Cursor mSongCursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					new String[] {
@@ -489,11 +472,27 @@ public class NowPlayingActivity extends ActionBarActivity {
 			
 			if ( !newAlbumUri.equals( lastAlbumUri ) ) {
 				
+				ImageView mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
+				
+				if ( null != lastAlbumUri ) {
+					
+					BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+					
+					if ( null != bd ) {
+						
+						bd.getBitmap().recycle();
+						mAlbumCover.setImageBitmap( null );
+						
+					}
+					
+				}
+				
 				lastAlbumUri = newAlbumUri;
 				
 				Uri albumArtUri = Uri.parse( newAlbumUri );
 				
-				( ( ImageView ) findViewById( R.id.NowPlayingAlbumCover ) ).setImageURI( albumArtUri );
+				mAlbumCover.setImageURI( albumArtUri );
+				
 			}
 			
 			albumCursor.close();
@@ -513,52 +512,79 @@ public class NowPlayingActivity extends ActionBarActivity {
     	
     }
     
-    private SongInfoChangedListener MusicStateChanged = new SongInfoChangedListener() {
-		
-		
-		@Override public void songInfoChanged( String media_content_id ) {
+    private PlaylistMediaPlayer.PlaybackListener mPlaybackListener = new PlaylistMediaPlayer.PlaybackListener() {
+
+		@Override public void onTrackChanged( String media_id ) {
 			
-			if ( null == media_content_id ) {
-				
-				this.musicDone();
-				
-			} else {
-				
-				setMediaID( media_content_id );
-				
-			}
-			
-			getSupportActionBar().setTitle( mBoundService.mPlaylistName );
+			setMediaID( media_id );
 			
 		}
 
-
-		@Override public void musicDone() {
-			
-			setMediaID( null );
-			
-		} 
-
-		@Override public void musicStarted( int position_milliseconds ) {
-			
-			currentPlayback = position_milliseconds;
-			mProgressFragment.setProgress( position_milliseconds );
-			mProgressFragment.startProgress();
+		@Override public void onPlay(int playbackPositionMilliseconds) {
 			
 			isPlaying = true;
-			
-			
+			mProgressFragment.setProgress( playbackPositionMilliseconds );
+			mProgressFragment.startProgress();
 			
 			( ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_pause_white );
 			
+			
 		}
 
-		@Override public void musicPaused( int position_milliseconds ) {
+		@Override public void onPause( int playbackPositionMilliseconds ) {
 			
 			isPlaying = false;
-			mProgressFragment.setProgress( position_milliseconds );
+			mProgressFragment.setProgress( playbackPositionMilliseconds );
 			mProgressFragment.stopProgress();
 			( ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_play_white );
+			
+		}
+
+		@Override public void onPlaylistDone() {
+			
+			isPlaying = false;
+			setMediaID( null );
+			
+		}
+
+		@Override public void onLoopingChanged( LoopState loopState ) {
+			
+			ImageButton mRepeatButton = ( (ImageButton) findViewById( R.id.NowPlayingRepeatButton ) );
+			
+			if ( loopState == LoopState.LOOP_ALL ) {
+				
+				mRepeatButton.setTag( R.id.tag_repeat_state, "1" );
+				mRepeatButton.setImageResource( R.drawable.ic_action_playback_repeat_orange_dark );
+				
+			} else if ( loopState == LoopState.LOOP_ONE ) {
+				
+				mRepeatButton.setTag( R.id.tag_repeat_state, "2" );
+				mRepeatButton.setImageResource( R.drawable.ic_action_playback_repeat_1_orange_dark );
+				
+			} else {
+				
+				mRepeatButton.setTag( R.id.tag_repeat_state, "0" );
+				mRepeatButton.setImageResource( R.drawable.ic_action_playback_repeat_white );
+				
+			}
+			
+		}
+
+		@Override public void onShuffleChanged(boolean isShuffling) {
+			
+			ImageButton mShuffleButton = ( (ImageButton) findViewById( R.id.NowPlayingShuffleButton ) );
+			
+			if ( !isShuffling ) {
+				
+				mShuffleButton.setTag( R.id.tag_shuffle_state, "0" );
+				mShuffleButton.setImageResource( R.drawable.ic_action_playback_schuffle_white );
+				
+			} else {
+				
+				mShuffleButton.setTag( R.id.tag_shuffle_state, "1" );
+				mShuffleButton.setImageResource( R.drawable.ic_action_playback_schuffle_orange_dark );
+				
+			}
 			
 		}
 		
@@ -578,8 +604,10 @@ public class NowPlayingActivity extends ActionBarActivity {
 	    	
 	    	//setMediaID( mBoundService.CURRENT_MEDIA_ID );
 	    	//mBoundService.doAttachActivity();
-	    	mBoundService.addOnSongInfoChangedListener( MusicStateChanged );
+	    	mBoundService.addPlaybackListener( mPlaybackListener );
 	        
+	    	getSupportActionBar().setTitle( mBoundService.mPlaylistName );
+	    	
 	        //mmBoundService.next();
 	        
 	    }
