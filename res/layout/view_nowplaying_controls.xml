@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:orientation="horizontal"
-    android:gravity="center">
+    android:gravity="center"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+	android:paddingRight="@dimen/list_item_horizontal_spacing">
     
     <ImageButton android:id="@+id/NowPlayingRepeatButton"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/list_item_height"
         android:layout_height="match_parent"
-        
-        android:layout_weight="1"
         android:src="@drawable/ic_action_playback_repeat_white"
         android:background="@drawable/button_background_dark"
         />
@@ -35,10 +35,8 @@
 	    android:background="@drawable/button_background_dark"
 	    />
     <ImageButton android:id="@+id/NowPlayingShuffleButton"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/list_item_height"
         android:layout_height="match_parent"
-        
-        android:layout_weight="1"
         android:src="@drawable/ic_action_playback_schuffle_white"
         android:background="@drawable/button_background_dark"
         />
