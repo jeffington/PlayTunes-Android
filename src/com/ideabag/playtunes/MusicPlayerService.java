@@ -1,38 +1,73 @@
 package com.ideabag.playtunes;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
+import android.media.RemoteControlClient;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.media.AudioFocusHelper;
+import com.ideabag.playtunes.media.MediaButtonHelper;
+import com.ideabag.playtunes.media.MusicFocusable;
+import com.ideabag.playtunes.media.MusicIntentReceiver;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
+import com.ideabag.playtunes.media.RemoteControlClientCompat;
+import com.ideabag.playtunes.media.RemoteControlHelper;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 
-public class MusicPlayerService extends Service {
+public class MusicPlayerService extends Service implements MusicFocusable {
 	
 	public static final String ACTION_PLAY = "com.ideabag.playtunes.PLAY";
 	public static final String ACTION_PLAY_OR_PAUSE = "com.ideabag.playtunes.PLAY_PAUSE";
 	public static final String ACTION_PAUSE = "com.ideabag.playtunes.PAUSE";
 	public static final String ACTION_NEXT = "com.ideabag.playtunes.NEXT";
+	public static final String ACTION_BACK = "com.ideabag.playtunes.BACK";
 	public static final String ACTION_CLOSE = "com.ideabag.playtunes.CLOSE";
 	
 	private static final String TAG = "MusicPlayerService";
 	
 	private PlaylistMediaPlayer MediaPlayer;
 	private PlaybackNotification Notification;
+	
+	// our RemoteControlClient object, which will use remote control APIs available in
+    // SDK level >= 14, if they're available.
+    RemoteControlClientCompat mRemoteControlClientCompat;
+
+    // Dummy album art we will pass to the remote control (if the APIs are available).
+    Bitmap mDummyAlbumArt;
+
+    // The component name of MusicIntentReceiver, for use with media button and remote control
+    // APIs
+    ComponentName mMediaButtonReceiverComponent;
+    
+    AudioManager mAudioManager;
+    
+    AudioFocusHelper mAudioFocusHelper = null;
 	
 	public String CURRENT_MEDIA_ID = null;
 	public Class < ? extends Fragment > mPlaylistFragmentClass;
@@ -51,7 +86,6 @@ public class MusicPlayerService extends Service {
 			
 			String action = intent.getAction();
 			android.util.Log.i( "MusicPlayerService", "Intent received with action " + action );
-			
 			
 			if ( action.equals( ACTION_PLAY_OR_PAUSE ) ) {
 				
@@ -103,12 +137,23 @@ public class MusicPlayerService extends Service {
 				 
 				self.stopSelf();
 				
+			} else if ( action.equals( ACTION_BACK ) ) {
+				
+				tracker.send( new HitBuilders.EventBuilder()
+	        	.setCategory( "notification button" )
+	        	.setAction( "click" )
+	        	.setLabel( "back" )
+	        	.build());
+				
+				MediaPlayer.back();
+				
 			}
 			
 		}
 		
 	};
 	
+	@SuppressLint("NewApi")
 	@Override public void onCreate() {
 		super.onCreate();
 		
@@ -118,11 +163,13 @@ public class MusicPlayerService extends Service {
 		
 		Notification = new PlaybackNotification( getBaseContext() );
 		
+		mAudioManager = ( AudioManager ) getSystemService( AUDIO_SERVICE );
 		
 		IntentFilter mNotificationIntentFilter = new IntentFilter();
 		mNotificationIntentFilter.addAction( ACTION_PLAY_OR_PAUSE );
 		mNotificationIntentFilter.addAction( ACTION_NEXT );
 		mNotificationIntentFilter.addAction( ACTION_CLOSE );
+		mNotificationIntentFilter.addAction( Intent.ACTION_MEDIA_BUTTON );
 		
 		
 		MediaPlayer.setPlaybackListener( MediaPlayerListener );
@@ -132,6 +179,29 @@ public class MusicPlayerService extends Service {
 		
 		startService( new Intent( this, MusicPlayerService.class ) );
 		
+		if (android.os.Build.VERSION.SDK_INT >= 8)
+            mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
+		
+		if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
+			
+			mMediaButtonReceiverComponent = new ComponentName( this, MusicIntentReceiver.class );
+			MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
+			
+	        if ( mRemoteControlClientCompat == null ) {
+	        	
+	            Intent intent = new Intent( Intent.ACTION_MEDIA_BUTTON );
+	            //intent.setAction(  );
+	            intent.setComponent( mMediaButtonReceiverComponent );
+	            mRemoteControlClientCompat = new RemoteControlClientCompat(
+	                    PendingIntent.getBroadcast(this /*context*/,
+	                            0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
+	            
+	            RemoteControlHelper.registerRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
+	            
+	        }
+	        
+		}
+		
 	}
 	
 	
@@ -139,9 +209,18 @@ public class MusicPlayerService extends Service {
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
+		mAudioFocusHelper.abandonFocus();
+		
 		unregisterReceiver( NotificationActionReceiver );
 		
 		ChangedListeners.clear();
+		
+		if ( null != mRemoteControlClientCompat ) {
+			
+			RemoteControlHelper.unregisterRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
+			MediaButtonHelper.unregisterMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
+			
+		}
 		
 		MediaPlayer.pause();
 		MediaPlayer.destroy();
@@ -236,6 +315,12 @@ public class MusicPlayerService extends Service {
 			
 			MediaPlayer.play();
 			
+			if ( mRemoteControlClientCompat != null ) {
+	            
+				mRemoteControlClientCompat.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+	            
+	        }
+			
 		}
 		
 	}
@@ -262,6 +347,122 @@ public class MusicPlayerService extends Service {
 		
 	}
 	
+	private void updateRemoteControlClientPause() {
+		
+		if ( null != mRemoteControlClientCompat ) {
+			
+			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
+			
+		}
+		
+	}
+	
+	private void updateRemoteControlClientPlay() {
+		
+		if ( null != mRemoteControlClientCompat ) {
+			
+			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
+			
+		}
+		
+	}
+	
+	@SuppressLint("InlinedApi")
+	private void updateRemoteControlClientMedia( String media_id ) {
+		
+		if ( null != mRemoteControlClientCompat ) {
+				
+			
+			Cursor mSongCursor = getContentResolver().query(
+					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+					new String[] {
+						
+						MediaStore.Audio.Media.ALBUM,
+						MediaStore.Audio.Media.ARTIST,
+						MediaStore.Audio.Media.TITLE,
+						MediaStore.Audio.Media.ALBUM_ID,
+						MediaStore.Audio.Media.DURATION,
+						MediaStore.Audio.Media._ID
+						
+					},
+					MediaStore.Audio.Media._ID + "=?",
+					new String[] {
+						
+							media_id
+						
+					},
+					null
+				);
+			
+			mSongCursor.moveToFirst();
+			
+			String mSongTitle = mSongCursor.getString( mSongCursor.getColumnIndex(MediaStore.Audio.Media.TITLE ) );
+			String mSongAlbum = mSongCursor.getString( mSongCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM ) );
+			String mSongArtist = mSongCursor.getString( mSongCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST ) );
+			long mSongDuration = mSongCursor.getLong( mSongCursor.getColumnIndex( MediaStore.Audio.Media.DURATION ) );
+			String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+			//Bitmap mAlbumArt = BitmapFactory.
+			
+			mSongCursor.close();
+			
+			
+			
+			
+			Cursor albumCursor = getContentResolver().query(
+					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+				    new String[] {
+				    	
+				    	MediaStore.Audio.Albums.ALBUM_ART,
+				    	MediaStore.Audio.Albums._ID
+				    	
+				    },
+				    MediaStore.Audio.Albums._ID + "=?",
+					new String[] {
+						
+						album_id
+						
+					},
+					null
+				);
+			
+			albumCursor.moveToFirst();
+			
+			String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+			albumCursor.close();
+			
+			Uri imageUri = Uri.parse( newAlbumUri );
+			Bitmap albumArtBitmap = null;
+			
+			
+			try {
+				albumArtBitmap = BitmapFactory.decodeStream( getContentResolver().openInputStream( imageUri ) );
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			mAudioFocusHelper.requestFocus();
+			
+	        mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
+	        
+	        mRemoteControlClientCompat.setTransportControlFlags(
+	                RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE |
+	                RemoteControlClient.FLAG_KEY_MEDIA_NEXT |
+	                RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS |
+	                RemoteControlClient.FLAG_KEY_MEDIA_STOP);
+	
+	        // Update the remote controls
+	        mRemoteControlClientCompat.editMetadata( true )
+	                .putString( MediaMetadataRetriever.METADATA_KEY_ARTIST, mSongArtist )
+	                .putString( MediaMetadataRetriever.METADATA_KEY_ALBUM, mSongAlbum )
+	                .putString( MediaMetadataRetriever.METADATA_KEY_TITLE, mSongTitle )
+	                .putLong( MediaMetadataRetriever.METADATA_KEY_DURATION, mSongDuration )
+	                // TODO: fetch real item artwork
+	                .putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, albumArtBitmap )
+	                .apply();
+	        
+		}
+		
+	}
 	
 	// 
 	// The PlaylistMediaPlayer creates a PlaybackListener interface and uses it as a callback for changes in playback.
@@ -350,6 +551,8 @@ public class MusicPlayerService extends Service {
 				
 			}
 			
+			updateRemoteControlClientMedia( media_id );
+			
 			if ( 0 == count ) {
 				
 				Notification.showSong( media_id );
@@ -368,6 +571,12 @@ public class MusicPlayerService extends Service {
 				ChangedListeners.get( x ).onPlaylistDone();
 				
 			}
+			
+			//if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
+				
+				//updateRemoteControlClient( media_id );
+				
+			//}
 			
 			if ( 0 == count ) {
 				
@@ -414,6 +623,8 @@ public class MusicPlayerService extends Service {
 				
 			}
 			
+			updateRemoteControlClientPlay();
+			
 			if ( count == 0 ) {
 				
 				Notification.showPlaying();
@@ -433,6 +644,8 @@ public class MusicPlayerService extends Service {
 				
 			}
 			
+			updateRemoteControlClientPause();
+			
 			if ( count == 0 ) {
 				
 				Notification.showPaused();
@@ -442,5 +655,18 @@ public class MusicPlayerService extends Service {
 		}
 		
 	};
+
+	@Override public void onGainedAudioFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+
+
+	@Override
+	public void onLostAudioFocus(boolean canDuck) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
