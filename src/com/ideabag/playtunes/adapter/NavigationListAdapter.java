@@ -31,11 +31,11 @@ public class NavigationListAdapter extends BaseAdapter {
 	
 	private static final int[] label_string_resources = {
 		
-		R.string.artists,
-		R.string.albums,
-		R.string.genres,
-		R.string.songs,
-		R.string.playlists
+		R.string.artists_plural,
+		R.string.albums_plural,
+		R.string.genres_plural,
+		R.string.songs_plural,
+		R.string.playlists_plural
 		
 	};
 	
