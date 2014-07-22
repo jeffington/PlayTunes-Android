@@ -24,7 +24,6 @@
            	android:id="@+id/SongTitle"
            	android:layout_height="wrap_content"
            	android:layout_width="match_parent"
-           	android:text="asdfasdf"
            	android:textColor="@color/textColorPrimaryDark"
            	android:textSize="@dimen/text_xlarge"
            	android:lines="1"
@@ -40,7 +39,6 @@
            	android:ellipsize="marquee"
 			android:textColor="@color/textColorPrimaryDark"
 			android:textSize="@dimen/text_large"
-           	android:text="asdfasdf"
            	android:gravity="center"
         />
         
@@ -51,7 +49,6 @@
            	android:textColor="@color/textColorSecondaryDark"
            	android:textSize="@dimen/text_medium"
         	
-        	android:text="asdfasdf"
         	android:ellipsize="end"
         	android:lines="1"
         	android:singleLine="true"
@@ -61,8 +58,7 @@
         </LinearLayout>
        
        <ImageButton android:id="@+id/MenuButton"
-            style="@style/MenuButtonDark"
-            android:background="@drawable/button_background_dark"
+            style="@style/AddButtonDark"
             />
 
 </LinearLayout>

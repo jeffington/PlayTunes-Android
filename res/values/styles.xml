@@ -78,8 +78,19 @@
 	
 	<style name="MenuButtonDark" parent="@style/MenuButton">
 	    
+	    <item name="android:background">@drawable/button_background_dark</item>
 	    <item name="android:src">@drawable/abc_ic_menu_moreoverflow_normal_holo_dark</item>
 	
+	</style>
+	
+	<style name="AddButtonDark" parent="@android:style/Widget.ImageButton">
+	    
+	    <item name="android:background">@drawable/button_background_dark</item>
+	    <item name="android:layout_height">match_parent</item>
+	    <item name="android:layout_width">@dimen/touch_target_minimum</item>
+	    <item name="android:gravity">center</item>
+	    <item name="android:src">@drawable/ic_action_add_white</item>
+	    
 	</style>
 	
 <style name="CompatListView" parent="@android:style/Widget.ListView">
