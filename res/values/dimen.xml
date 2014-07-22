@@ -17,5 +17,9 @@
 	<dimen name="list_item_horizontal_spacing">16dp</dimen>
 	
 	<dimen name="dialog_width">280dp</dimen>
+	
+	<dimen name="spacing_small">4dp</dimen>
+	<dimen name="spacing_medium">8dp</dimen>
+	<dimen name="spacing_large">16dp</dimen>
 
 </resources>
