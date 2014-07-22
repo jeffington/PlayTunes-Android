@@ -27,6 +27,8 @@
 	
 	<string name="albums_plural">Albums</string>
 	
+	<string name="albums_plural_caps">ALBUMS</string>
+	
 	
 	<string name="activity_title_now_playing">Now Playing</string>
 	<string name="activity_title_settings">PlayTunes Settings</string>
