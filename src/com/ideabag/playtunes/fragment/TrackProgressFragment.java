@@ -26,6 +26,7 @@ public class TrackProgressFragment extends Fragment {
 	
 	private boolean isPlaying = false;
 	
+	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
@@ -39,14 +40,6 @@ public class TrackProgressFragment extends Fragment {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		//getView().setOnClickListener( controlsClickListener );
-		
-		//getView().findViewById( R.id.FooterControls ).setOnClickListener( controlsClickListener );
-    	
-		//getView().findViewById( R.id.FooterControlsPlayPauseButton ).setOnClickListener( controlsClickListener );
-		
-		//mActivity.BoundService.setOnSongInfoChangedListener( this );
-		
 		this.Bar = ( SeekBar ) getView().findViewById( R.id.TrackProgressBar );
 		
 		//this.Bar.setProgressDrawable( mActivity.getResources().getDrawable( R.drawable.progress_indicator ) );
@@ -57,7 +50,7 @@ public class TrackProgressFragment extends Fragment {
 	
 	@Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		
-		return inflater.inflate( R.layout.fragment_track_progress, null, false );
+		return inflater.inflate( R.layout.fragment_track_progress, container, false );
 		
 	}
 	
@@ -73,6 +66,7 @@ public class TrackProgressFragment extends Fragment {
 		stopProgress();
 		
 	}
+	
 	
 	private OnSeekBarChangeListener mSeekBarChangedListener = new OnSeekBarChangeListener() {
 
@@ -132,7 +126,7 @@ public class TrackProgressFragment extends Fragment {
 	public void startProgress() {
 		
 		stopProgress();
-		mUpdateTimer.run(); 
+		handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 		//handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 		
 		
@@ -146,6 +140,8 @@ public class TrackProgressFragment extends Fragment {
 	
 	public void setProgress( int progress ) {
 		
+		stopProgress();
+		
 		this.Bar.setProgress( progress );
 		
 		int seconds = progress / ONE_SECOND_IN_MILLI;
@@ -154,7 +150,7 @@ public class TrackProgressFragment extends Fragment {
 		
 		( ( TextView ) getView().findViewById( R.id.TrackProgressPlayPosition ) ).setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
 		
-		
+		startProgress();
 		
 	}
 	
