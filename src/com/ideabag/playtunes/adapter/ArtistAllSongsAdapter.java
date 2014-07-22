@@ -20,14 +20,16 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 	
     private static final String[] allSongsSelection = new String[] {
     	
+    	MediaStore.Audio.Media._ID, // Needs to be at position 0
+    	
     	MediaStore.Audio.Media.TITLE,
     	MediaStore.Audio.Media.ARTIST,
     	MediaStore.Audio.Media.ALBUM,
     	MediaStore.Audio.Media.TRACK,
     	MediaStore.Audio.Media.DATA,
     	MediaStore.Audio.Media.ALBUM_ID,
-    	MediaStore.Audio.Media.ARTIST_ID,
-    	MediaStore.Audio.Media._ID
+    	MediaStore.Audio.Media.ARTIST_ID
+    	
     	
     };
     
@@ -47,7 +49,9 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 					},
 					MediaStore.Audio.Media.TITLE
     			);
-    
+    	
+    	cursor.moveToFirst();
+    	
     	ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
     	
 	}
