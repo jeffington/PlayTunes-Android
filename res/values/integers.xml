@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-	<integer name="footer_controls_slide_animation_duration">300</integer>
+	<integer name="footer_controls_slide_animation_duration">200</integer>
 
 </resources>
