@@ -38,12 +38,12 @@
     	
     </FrameLayout>
     
-    <ImageView 
+    <ImageView android:id="@+id/FooterShadow"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:src="@drawable/footer_shadow"
-        android:visibility="gone"
         android:layout_above="@id/FooterControlsFragment"
+        android:visibility="gone"
         />
 	
 </RelativeLayout>
