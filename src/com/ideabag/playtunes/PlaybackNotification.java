@@ -16,6 +16,8 @@ import android.widget.RemoteViews;
 
 public class PlaybackNotification {
 	
+	private static final char DASH_SYMBOL = 0x2013;
+	
 	private static final int PAUSE_ICON_RESOURCE = R.drawable.ic_action_playback_pause_white;
 	private static final int TUNE_ICON_RESOURCE = R.drawable.ic_action_music_2_white;
 	private static final int PLAY_NOTIFICATION_ID = 1;
@@ -41,6 +43,9 @@ public class PlaybackNotification {
 		mNotificationManager = ( NotificationManager ) mContext.getSystemService( Context.NOTIFICATION_SERVICE );
 		
 		openIntent = new Intent( mContext, MainActivity.class );
+		
+		openIntent.putExtra( "now_playing", true );
+		
 		contentIntent = PendingIntent.getActivity( mContext, 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT );
 		
 		playIntent = new Intent( MusicPlayerService.ACTION_PLAY_OR_PAUSE );
@@ -65,11 +70,25 @@ public class PlaybackNotification {
 	
 	private void buildAndShowNotification() {
 		
+		String tickerString = "";
+		
+		if ( null != mSongCursor ) {
+			
+			mSongCursor.moveToFirst();
+			
+			String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+			String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+			
+			tickerString = title + " " + Character.toString( DASH_SYMBOL ) + " " + artist;
+			
+		}
+		
 		NotificationCompat.Builder mBuilder =
 		        new NotificationCompat.Builder( mContext )
 		        .setSmallIcon( TUNE_ICON_RESOURCE )
 				.setContent( mRemoteViews )
                 .setOngoing( true )
+                .setTicker( tickerString )
 		        .setContentIntent( contentIntent );
 		
 		mNotificationManager.notify( PLAY_NOTIFICATION_ID, mBuilder.build() );
