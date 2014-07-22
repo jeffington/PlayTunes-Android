@@ -3,13 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_divider_height"
     android:background="@drawable/actionbar_background"
-    android:text="@string/albums"
+    android:text="@string/albums_plural_caps"
     android:textSize="@dimen/text_medium"
     android:gravity="left|center_vertical"
-    android:textColor="#FFFFFF"
+    android:textColor="@color/textColorPrimaryDark"
     android:paddingLeft="@dimen/list_item_horizontal_spacing"
     android:textStyle="bold"
-    android:textAllCaps="true"
     android:paddingTop="8dp"
     android:paddingBottom="8dp">    
 
