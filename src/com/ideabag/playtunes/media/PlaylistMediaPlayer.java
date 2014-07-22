@@ -6,13 +6,9 @@
 package com.ideabag.playtunes.media;
 
 
-import java.util.Collections;
 import java.util.Random;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
@@ -29,6 +25,8 @@ public class PlaylistMediaPlayer {
 	protected Cursor mPlaylistCursor;
 	protected int mPlaylistPosition = -1;
 	protected int mPlaylistSize = -1;
+	
+	protected boolean isPrepared = false;
 	
 	private int[] mShuffledPlaylist;
 	
@@ -148,6 +146,8 @@ public class PlaylistMediaPlayer {
 		
 		@Override public void onPrepared( MediaPlayer mp ) {
 			
+			isPrepared = true;
+			
 			if ( isPlaying ) {
 				
 				if ( null != PlaybackChanged ) {
@@ -234,21 +234,11 @@ public class PlaylistMediaPlayer {
 				
 			}
 			
-			mMediaPlayer.start();
-			
-			mMediaPlayer.setOnCompletionListener( loopOnCompletionListener );
-			/*
-			if ( mLoopState == LoopState.LOOP_ONE ) {
+			if ( isPrepared ) {
 				
-				mMediaPlayer.setLooping( true );
-				
-			} else {
-				
-				mMediaPlayer.setLooping( false );
+				mMediaPlayer.start();
 				
 			}
-			*/
-
 			
 			if ( !wl.isHeld() ) {
 				
@@ -377,19 +367,29 @@ public class PlaylistMediaPlayer {
 			
 			mPlaylistPosition = position;
 			
-			if ( mPlaylistPosition < 0 || mPlaylistPosition >= mPlaylistSize ) {
+			// Is the new position out of bounds?
+			if ( mPlaylistPosition < 0 || mPlaylistPosition >= mPlaylistSize) {
 				
-				pause();
-				
-				// Send stopped event
-				
-				if ( null != PlaybackChanged ) {
+				// Out of bounds, but looping, so we bring the position back
+				if ( mLoopState == LoopState.LOOP_ALL ) {
 					
-					PlaybackChanged.onPlaylistDone();
+					mPlaylistPosition = mPlaylistPosition % mPlaylistSize;
+					
+				} else { // Not looping and out of bounds
+					
+					pause();
+					
+					// Send stopped event
+					
+					if ( null != PlaybackChanged ) {
+						
+						PlaybackChanged.onPlaylistDone();
+						
+					}
+					
+					return;
 					
 				}
-				
-				return;
 				
 			}
 			
@@ -400,7 +400,7 @@ public class PlaylistMediaPlayer {
 			// 
 			
 			mMediaPlayer.reset();
-			
+			isPrepared = false;
 			//setLooping( mLoopState );
 			
 			if ( !isShuffling ) {
