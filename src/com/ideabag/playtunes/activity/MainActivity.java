@@ -1,13 +1,11 @@
 package com.ideabag.playtunes.activity;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
-import com.ideabag.playtunes.MusicPlayerService.SongInfoChangedListener;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
-import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -26,7 +24,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
-import android.widget.LinearLayout;
 
 public class MainActivity extends ActionBarActivity {
 	
@@ -39,9 +36,6 @@ public class MainActivity extends ActionBarActivity {
 	private FooterControlsFragment mFooterControlsFragment;
 	
 	public PlaylistManager PlaylistManager;
-	
-	public LinearLayout AdContainer;
-	public AdView AdView;
 	
 	public CharSequence actionbarTitle, actionbarSubtitle;
 	
@@ -62,35 +56,25 @@ public class MainActivity extends ActionBarActivity {
         mDrawerToggle = new ActionBarDrawerToggle(
         		this,
         		mDrawerLayout,
-                android.R.color.transparent,
+                R.drawable.drawer_icon,
                 R.string.drawer_open,
                 R.string.drawer_close ) {
         	
-        	//boolean open = false;
-        	
             public void onDrawerClosed( View view ) {
-            	
-            	//this.open = false;
-            	//customActionBarToggle.showClose();
-            	//transactFragment();
             	
             	getSupportActionBar().setTitle( actionbarTitle );
             	getSupportActionBar().setSubtitle( actionbarSubtitle );
-            	//open = false;
             	
             }
             
             public void onDrawerOpened( View drawerView ) {
                 
-            	//customActionBarToggle.showOpen();
             	actionbarTitle = getSupportActionBar().getTitle();
             	actionbarSubtitle = getSupportActionBar().getSubtitle();
             	
-            	getSupportActionBar().setTitle( "PlayTunes" );
+            	getSupportActionBar().setTitle( getString( R.string.app_name ) );
             	getSupportActionBar().setSubtitle( null );
-                //invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            	//this.open = true;
-            	//open = true;
+                
            }
             
             public void onDrawerSlide( View drawerView, float slideOffset ) {
@@ -111,25 +95,9 @@ public class MainActivity extends ActionBarActivity {
         supportBar.setDisplayHomeAsUpEnabled( false );
         supportBar.setHomeButtonEnabled( true );
         supportBar.setDisplayUseLogoEnabled( true );
-        /*
-        AdContainer = (LinearLayout) getLayoutInflater().inflate( R.layout.list_header_admob, null, false );
-    	AdView = ( AdView ) AdContainer.findViewById( R.id.adView );
-	    
-		AdRequest.Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
-	    AdmobUtil.AddTestDevices( this, adRequestBuilder );
-	    
-	    AdRequest adRequest = adRequestBuilder.build();
-		
-		
-		// Start loading the ad in the background.
-	    AdView.loadAd(adRequest);
-	    */
+        
 	    mFooterControlsFragment = ( FooterControlsFragment ) getSupportFragmentManager().findFragmentById( R.id.FooterControlsFragment );
         
-		
-		//startService( new Intent( this, MusicPlayerService.class ) );
-		
-		
 	    
 	}
 	
@@ -138,42 +106,41 @@ public class MainActivity extends ActionBarActivity {
 		
 		doBindService();
 		
+		if ( mIsBound && mBoundService != null ) {
+			
+			mBoundService.addPlaybackListener( mPlaybackListener );
+			
+		}
+		/*
+		if ( getIntent().hasExtra( "now_playing" ) ) {
+			
+			Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
+			
+			startActivityForResult( startNowPlayingActivity, 0 );
+			
+		}
+		*/
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
-		
-		//AdView.pause();
-		//doUnbindService();
-		
-		if ( mIsBound && mBoundService != null ) {
-			
-			mBoundService.removeOnSongInfoChangedListener( MusicStateChanged );
-			
-		}
 		
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
 		
-		//AdView.resume();
-		
-		if ( mIsBound && mBoundService != null ) {
-			
-			mBoundService.addOnSongInfoChangedListener( MusicStateChanged );
-			
-		}
-		
 	}
 	
 	@Override public void onStop() {
 		super.onStop();
 		
-		//Intent playService = new Intent( this, MusicPlayerService.class );
-		//playService.setAction( getString( R.string.action_play ) );
+		if ( mIsBound && mBoundService != null ) {
+			
+			mBoundService.removePlaybackListener( mPlaybackListener );
+			
+		}
 		
-		//stopService( playService );
 		doUnbindService();
 		
 	}
@@ -266,7 +233,7 @@ public class MainActivity extends ActionBarActivity {
 	    	mBoundService = ( ( MusicPlayerService.MusicPlayerServiceBinder ) service ).getService();
 	    	android.util.Log.i("Attached to service", "Main Activity connected to service." );
 	    	//BoundService.doAttachActivity();
-	    	mBoundService.addOnSongInfoChangedListener( MusicStateChanged );
+	    	mBoundService.addPlaybackListener( mPlaybackListener );
 	        
 	    	mIsBound = true;
 	    	
@@ -303,7 +270,7 @@ public class MainActivity extends ActionBarActivity {
 	        
 	    	
 	    	// Remove service's reference to local object
-	    	mBoundService.removeOnSongInfoChangedListener( MusicStateChanged );
+	    	mBoundService.removePlaybackListener( mPlaybackListener );
 	    	//BoundService.doDetachActivity();
 	    	//android.util.Log.i("Detached from service", "Main Activity disconnected from service." );
 	    	// Detach our existing connection.
@@ -314,33 +281,40 @@ public class MainActivity extends ActionBarActivity {
 	    
 	}
      
-    private SongInfoChangedListener MusicStateChanged = new SongInfoChangedListener() {
-		
-		
-		@Override public void songInfoChanged( String media_content_id ) {
+    private PlaylistMediaPlayer.PlaybackListener mPlaybackListener = new PlaylistMediaPlayer.PlaybackListener() {
+
+		@Override public void onTrackChanged( String media_id ) {
 			
-			mFooterControlsFragment.setMediaID( media_content_id );
+			mFooterControlsFragment.setMediaID( media_id );
 			
 		}
 
 
-		@Override public void musicDone() {
-			
-			mFooterControlsFragment.setMediaID( null );
-			
-		} 
-
-		@Override public void musicStarted( int position_milliseconds ) {
+		@Override public void onPlay(int playbackPositionMilliseconds) {
 			
 			mFooterControlsFragment.showPlaying();
 			
 		}
-		
-		@Override public void musicPaused( int position_milliseconds ) {
+
+
+		@Override public void onPause(int playbackPositionMilliseconds) {
 			
 			mFooterControlsFragment.showPaused();
 			
 		}
+
+
+		@Override public void onPlaylistDone() {
+			
+			mFooterControlsFragment.setMediaID( null );
+			
+		}
+
+
+		@Override public void onLoopingChanged( LoopState loop ) { /* ... */ }
+
+
+		@Override public void onShuffleChanged( boolean isShuffling ) { /* ... */ }
 		
 	};
 	
