@@ -11,7 +11,7 @@
 		ads:adUnitId="@string/admob_unit_id_main_activity"
 		ads:adSize="BANNER"
 		android:layout_alignParentTop="true"
-		android:background="@drawable/footer_background"
+		android:background="@color/footer_background"
 	
 	/>
     
