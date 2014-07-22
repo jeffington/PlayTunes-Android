@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:text="Starred"
+        android:text="@string/playlist_name_starred"
         android:textSize="@dimen/text_xlarge"
         android:gravity="left|center_vertical"
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
