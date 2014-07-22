@@ -18,7 +18,7 @@ public class PlaylistManager {
 	
 	public static final String TAG = "PlaylistManager";
 	
-	public final static String STARRED_PLAYLIST_NAME = "Starred";
+	private String STARRED_PLAYLIST_NAME;
 	
 	private Context mContext;
 	private ContentResolver mResolver;
@@ -32,6 +32,8 @@ public class PlaylistManager {
 		
 		mContext = context;
 		mResolver = mContext.getContentResolver();
+		
+		STARRED_PLAYLIST_NAME = mContext.getString( R.string.playlist_name_starred );
 		
 		prefs = context.getSharedPreferences( STARRED_PLAYLIST_NAME, Context.MODE_PRIVATE );
 		
@@ -408,7 +410,7 @@ public class PlaylistManager {
 			
 			new String[] {
 				
-					"Starred"
+					STARRED_PLAYLIST_NAME
 						
 					},
 					
@@ -417,7 +419,7 @@ public class PlaylistManager {
 			
 			if ( 0 == starredQueryCursor.getCount()) {
 				
-				createPlaylist( "Starred" );
+				createPlaylist( STARRED_PLAYLIST_NAME );
 				
 				starredQueryCursor = mResolver.query(
 						playlistsUri,
@@ -450,8 +452,6 @@ public class PlaylistManager {
 			
 			
 		}
-		
-		//android.util.Log.i("starred playlist id", STARRED_PLAYLIST_ID );
 		
 		return STARRED_PLAYLIST_ID;
 		
