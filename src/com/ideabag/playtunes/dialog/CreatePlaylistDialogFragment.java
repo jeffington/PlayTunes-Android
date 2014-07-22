@@ -87,30 +87,37 @@ public class CreatePlaylistDialogFragment extends DialogFragment implements OnEd
     
     private void createPlaylist() {
     	
-    	String playlistName = mEditText.getEditableText().toString();
+    	String playlistName = mEditText.getEditableText().toString().trim();
     	
-    	if ( null != playlistName && playlistName.length() > 0 ) {
+    	if ( null == playlistName || playlistName.length() < 1 ) {
     		
-    		int playlist_id = mPlaylistManager.createPlaylist( playlistName );
-    		
-    		if ( null != mMediaID ) {
-    			
-    			mPlaylistManager.addSong( "" + playlist_id, mMediaID );
-    			
-    			Toast.makeText(getActivity(), "Added song to new playlist " + playlistName, Toast.LENGTH_SHORT ).show();
-    			
-    		} else {
-    			
-    			Toast.makeText(getActivity(), "Created playlist " + playlistName, Toast.LENGTH_SHORT ).show();
-    			
-    		}
-    		
-    		dismiss();
-    		
+    		Toast.makeText(getActivity(), "Please enter a playlist name.", Toast.LENGTH_SHORT ).show();
     		
     	} else {
     		
-    		Toast.makeText(getActivity(), "Please enter a playlist name.", Toast.LENGTH_SHORT ).show();
+    		if ( playlistName.toLowerCase().equals( getString( R.string.playlist_name_starred ).toLowerCase() ) ) {
+    			
+    			Toast.makeText(getActivity(), "Your playlist can't be named `Starred`.", Toast.LENGTH_SHORT ).show();
+    			
+    		} else {
+	    		
+	    		int playlist_id = mPlaylistManager.createPlaylist( playlistName );
+	    		
+	    		if ( null != mMediaID ) {
+	    			
+	    			mPlaylistManager.addSong( "" + playlist_id, mMediaID );
+	    			
+	    			Toast.makeText(getActivity(), "Added song to new playlist " + playlistName, Toast.LENGTH_SHORT ).show();
+	    			
+	    		} else {
+	    			
+	    			Toast.makeText(getActivity(), "Created playlist " + playlistName, Toast.LENGTH_SHORT ).show();
+	    			
+	    		}
+	    		
+	    		dismiss();
+	    		
+    		}
     		
     	}
     	
