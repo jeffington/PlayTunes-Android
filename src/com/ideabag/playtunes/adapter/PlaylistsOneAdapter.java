@@ -16,7 +16,7 @@ import android.widget.ToggleButton;
 public class PlaylistsOneAdapter extends BaseAdapter {
 	
 	protected Context mContext;
-	protected Cursor cursor;
+	protected Cursor cursor = null;
 	
 	private PlaylistManager PlaylistManager;
 	private View.OnClickListener songMenuClickListener;
@@ -36,7 +36,8 @@ public class PlaylistsOneAdapter extends BaseAdapter {
     	MediaStore.Audio.Playlists.Members.ALBUM,
     	MediaStore.Audio.Playlists.Members.DATA,
     	MediaStore.Audio.Playlists.Members._ID,
-    	MediaStore.Audio.Playlists.Members.PLAYLIST_ID
+    	MediaStore.Audio.Playlists.Members.PLAYLIST_ID,
+    	
 		
 	};
     
@@ -51,7 +52,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		
 		//android.util.Log.i( "starred adapter", "" + playlist_id );
 		
-		
+		requery();
 		
 	}
 	
