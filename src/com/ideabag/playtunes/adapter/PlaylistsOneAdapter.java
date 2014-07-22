@@ -37,7 +37,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
     	MediaStore.Audio.Playlists.Members.DATA,
     	MediaStore.Audio.Playlists.Members._ID,
     	MediaStore.Audio.Playlists.Members.PLAYLIST_ID,
-    	
+    	MediaStore.Audio.Playlists.NAME
 		
 	};
     
@@ -51,6 +51,28 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		songMenuClickListener = menuClickListener;
 		
 		//android.util.Log.i( "starred adapter", "" + playlist_id );
+		
+		Cursor cursor = mContext.getContentResolver().query(
+				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+				new String[] {
+				    	
+				    	MediaStore.Audio.Playlists.NAME,
+						MediaStore.Audio.Playlists._ID
+					
+				},
+				MediaStore.Audio.Playlists._ID + " =?",
+				new String[] {
+					
+						PLAYLIST_ID
+						
+				},
+				null
+			);
+		
+		cursor.moveToFirst();
+		
+		PLAYLIST_NAME = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
+		cursor.close();
 		
 		requery();
 		
@@ -81,6 +103,10 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 				},
 				null
 			);
+		
+		cursor.moveToFirst();
+		
+		PLAYLIST_NAME = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
 		
 	}
 	
