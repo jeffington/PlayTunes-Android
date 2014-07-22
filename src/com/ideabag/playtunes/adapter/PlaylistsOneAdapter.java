@@ -37,7 +37,6 @@ public class PlaylistsOneAdapter extends BaseAdapter {
     	MediaStore.Audio.Playlists.Members.DATA,
     	MediaStore.Audio.Playlists.Members._ID,
     	MediaStore.Audio.Playlists.Members.PLAYLIST_ID,
-    	MediaStore.Audio.Playlists.NAME
 		
 	};
     
