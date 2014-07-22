@@ -103,10 +103,6 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 				null
 			);
 		
-		cursor.moveToFirst();
-		
-		PLAYLIST_NAME = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
-		
 	}
 	
 	@Override
