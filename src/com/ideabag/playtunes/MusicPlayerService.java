@@ -73,6 +73,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	public Class < ? extends Fragment > mPlaylistFragmentClass;
 	public String mPlaylistMediaID;
 	public String mPlaylistName;
+	private Bitmap mAlbumArtBitmap = null;
 	
 	private MusicPlayerService self;
 	
@@ -169,7 +170,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		mNotificationIntentFilter.addAction( ACTION_PLAY_OR_PAUSE );
 		mNotificationIntentFilter.addAction( ACTION_NEXT );
 		mNotificationIntentFilter.addAction( ACTION_CLOSE );
-		mNotificationIntentFilter.addAction( Intent.ACTION_MEDIA_BUTTON );
+		mNotificationIntentFilter.addAction( ACTION_BACK );
 		
 		
 		MediaPlayer.setPlaybackListener( MediaPlayerListener );
@@ -179,8 +180,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		startService( new Intent( this, MusicPlayerService.class ) );
 		
-		if (android.os.Build.VERSION.SDK_INT >= 8)
-            mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
+		mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
 		
 		if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
 			
@@ -431,12 +431,19 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			albumCursor.close();
 			
 			Uri imageUri = Uri.parse( newAlbumUri );
-			Bitmap albumArtBitmap = null;
+			
+			
+			if ( null != mAlbumArtBitmap ) {
+				
+				mAlbumArtBitmap.recycle();
+				
+			}
 			
 			
 			try {
-				albumArtBitmap = BitmapFactory.decodeStream( getContentResolver().openInputStream( imageUri ) );
-			} catch (FileNotFoundException e) {
+				mAlbumArtBitmap = BitmapFactory.decodeFile( newAlbumUri );
+				//albumArtBitmap = BitmapFactory.decodeStream( getContentResolver().openInputStream( imageUri ) );
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
@@ -457,7 +464,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	                .putString( MediaMetadataRetriever.METADATA_KEY_TITLE, mSongTitle )
 	                .putLong( MediaMetadataRetriever.METADATA_KEY_DURATION, mSongDuration )
 	                // TODO: fetch real item artwork
-	                .putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, albumArtBitmap )
+	                .putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, mAlbumArtBitmap )
 	                .apply();
 	        
 		}
