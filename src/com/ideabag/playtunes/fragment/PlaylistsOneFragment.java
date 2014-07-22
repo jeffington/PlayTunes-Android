@@ -30,8 +30,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	public static final String TAG = "One Playlist Fragment";
 	
 	MainActivity mActivity;
-	MergeAdapter adapter;
-	PlaylistsOneAdapter playlistAdapter;
+	PlaylistsOneAdapter adapter;
 	
 	private String PLAYLIST_ID;
 	
@@ -58,36 +57,29 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
 		setHasOptionsMenu( true );
 		
-		adapter = new MergeAdapter();
-		
-		
-    	playlistAdapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
+    	adapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
     	
-    	//adapter.addView( mActivity.AdContainer, true );
-    	adapter.addAdapter( playlistAdapter );
-    	
-    	bar.setTitle( "Playlist" );
-		bar.setSubtitle( playlistAdapter.getCount() + " " + ( playlistAdapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-		
-		
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
-		//getListView().setAdapter( adapter );
     	
 		getListView().setDivider( mActivity.getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
 		
-		//getListView().addHeaderView( mActivity.AdContainer, null, true );
 		setListAdapter( adapter );
+		
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, playlistsChanged );
+		
 		
 	}
 
 	@Override public void onResume() {
 		super.onResume();
 		
+		mActivity.setActionbarTitle( adapter.PLAYLIST_NAME );
+    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 
 		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity );
 
@@ -106,8 +98,6 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		
 		//mActivity.AdView.resume();
 		
-		getActivity().getContentResolver().registerContentObserver(
-				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, playlistsChanged );
 		
 		
 	}
@@ -117,13 +107,14 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		
 		//mActivity.AdView.pause();
 		
-		getActivity().getContentResolver().unregisterContentObserver( playlistsChanged );
+		
 		
 	}
 	
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
+		getActivity().getContentResolver().unregisterContentObserver( playlistsChanged );
 		//getListView().removeHeaderView( mActivity.AdContainer );
 		
 	}
@@ -139,7 +130,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( playlistAdapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
+		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
@@ -162,18 +153,19 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	         
 	    	  ActionBar bar = mActivity.getSupportActionBar();
 	    	  
-	    	  bar.setTitle("Editing Playlist");
-	    	  mActivity.actionbarTitle = bar.getTitle();
-	    	  bar.setSubtitle( null );
-	    	  mActivity.actionbarSubtitle = bar.getSubtitle();
-	    	  playlistAdapter.setEditing( true );
+	    	  
+	    	  //bar.setTitle("Editing Playlist");
+	    	  //mActivity.actionbarTitle = bar.getTitle();
+	    	  //bar.setSubtitle( null );
+	    	  //mActivity.actionbarSubtitle = bar.getSubtitle();
+	    	  adapter.setEditing( true );
 	    	  //ListView.invalidate();
 	    	  
 	         return true;
 	         
 	      case R.id.MenuPlaylistDone:
 	    	  
-	    	  playlistAdapter.setEditing( false );
+	    	  adapter.setEditing( false );
 	    	  //ListView.invalidate();
 	    	  
 	    	  return true;
@@ -188,14 +180,14 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 
         @Override public void onChange( boolean selfChange ) {
             
-            Log.i("onChange", "?" + selfChange);
+            //Log.i("onChange", "?" + selfChange);
             
             mActivity.runOnUiThread( new Runnable() {
 
 				@Override public void run() {
 					
-					playlistAdapter.requery();
-					playlistAdapter.notifyDataSetChanged();
+					adapter.requery();
+					adapter.notifyDataSetChanged();
 					//getListView().invalidate();
 				}
             	
