@@ -25,7 +25,7 @@ public class FooterControlsFragment extends Fragment {
 	
 	private MainActivity mActivity;
 	
-	private String lastAlbumUri;
+	private String lastAlbumUri = null;
 	private String current_media_id;
 	
 	private ImageButton mPlayPauseButton;
@@ -196,46 +196,46 @@ public class FooterControlsFragment extends Fragment {
 				
 				albumCursor.moveToFirst();
 				
-				String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+				String nextAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 				
 				ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
 				
 				// 
 				// This tests if we loaded previous album art and that it wasn't null
-				// If the newAlbumUri is null, it means there's no album art and 
+				// If the nextAlbumUri is null, it means there's no album art and 
 				// we load from an image resource.
 				// 
-				if ( null != lastAlbumUri && newAlbumUri != lastAlbumUri ) {
+				
+				
+				
+				if ( null == nextAlbumUri && null != lastAlbumUri) {
 					
-					BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+					recycleAlbumArt();
 					
-					if ( null != bd ) {
-						
-						bd.getBitmap().recycle();
-						mAlbumCover.setImageBitmap( null );
-						
-					}
+				} else if ( null != nextAlbumUri && null != lastAlbumUri && !lastAlbumUri.equals( nextAlbumUri ) ) {
+					
+					recycleAlbumArt();
 					
 				}
-				
-				if ( null == newAlbumUri ) {
+
+				if ( null == nextAlbumUri ) {
 					
 					mAlbumCover.setImageResource( R.drawable.no_album_art );
 					
-				} else if ( !newAlbumUri.equals( lastAlbumUri ) ) {
+				} else {
 					
-					//lastAlbumUri = newAlbumUri;
-					
-					Uri albumArtUri = Uri.parse( newAlbumUri );
-					
-					
-					
-					
+					Uri albumArtUri = Uri.parse( nextAlbumUri );
 					
 					mAlbumCover.setImageURI( albumArtUri );
 					
-					lastAlbumUri = newAlbumUri;
+					lastAlbumUri = nextAlbumUri;
+					
 				}
+				
+				// Otherwise, nextAlbumUri and lastAlbumUri are the same, we leave the ImageView alone
+				// and don't recycle the backing bitmap;
+				
+				lastAlbumUri = nextAlbumUri;
 				
 				albumCursor.close();
 				mSongCursor.close();
@@ -281,6 +281,21 @@ public class FooterControlsFragment extends Fragment {
 		   mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_pause_white );
 		   
 		   ( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setEllipsize( TextUtils.TruncateAt.MARQUEE );
+		   
+	   }
+	   
+	   private void recycleAlbumArt() {
+		   
+		   ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
+		   
+		   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+			
+			if ( null != bd && null != bd.getBitmap() ) {
+				
+				bd.getBitmap().recycle();
+				mAlbumCover.setImageBitmap( null );
+				
+			}
 		   
 	   }
 	
