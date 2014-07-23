@@ -35,7 +35,7 @@ public class AlbumsAllAdapter extends BaseAdapter {
     	cursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 				allAlbumsSelection,
-				null,
+				MediaStore.Audio.Media.ALBUM + "!='Music'",
 				null,
 				MediaStore.Audio.Albums.ALBUM
 			);
@@ -88,9 +88,20 @@ public class AlbumsAllAdapter extends BaseAdapter {
 		// Set the album art
 		//
 		
-		Uri albumArtUri = Uri.parse( cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) ) );
+		ImageView albumArtThumb = ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb );
+		String albumArtUriString = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 		
-		( ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb )).setImageURI( albumArtUri );
+		if ( null != albumArtUriString ) {
+			
+			Uri albumArtUri = Uri.parse( albumArtUriString );
+			
+			albumArtThumb.setImageURI( albumArtUri );
+			
+		} else {
+			
+			albumArtThumb.setImageResource( R.drawable.no_album_art );
+			
+		}
 		
 		return convertView;
 		
