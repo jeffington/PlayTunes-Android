@@ -9,6 +9,6 @@
         
         />
     
-    <item android:drawable="@drawable/ic_action_star_0_white" />
+    <item android:drawable="@drawable/ic_action_star_0" />
 
 </selector>
