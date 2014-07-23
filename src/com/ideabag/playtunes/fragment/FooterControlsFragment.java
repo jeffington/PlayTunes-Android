@@ -144,18 +144,6 @@ public class FooterControlsFragment extends Fragment {
 	    		
 	    	} else if ( media_id != this.current_media_id ) {
 	    		
-	    		if ( !isShowing ) {
-	    			
-	    			FragmentManager fm = getActivity().getSupportFragmentManager();
-	    			fm.beginTransaction()
-	    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
-	    			          .show( this )
-	    			          .commit();
-		    		
-		    		isShowing = true;
-	    			
-	    		}
-	    		
 	    		this.current_media_id = media_id;
 	    		
 	    		Cursor mSongCursor = mActivity.getContentResolver().query(
@@ -212,7 +200,29 @@ public class FooterControlsFragment extends Fragment {
 				
 				ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
 				
-				if ( !newAlbumUri.equals( lastAlbumUri ) ) {
+				// 
+				// This tests if we loaded previous album art and that it wasn't null
+				// If the newAlbumUri is null, it means there's no album art and 
+				// we load from an image resource.
+				// 
+				if ( null != lastAlbumUri && newAlbumUri != lastAlbumUri ) {
+					
+					BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+					
+					if ( null != bd ) {
+						
+						bd.getBitmap().recycle();
+						mAlbumCover.setImageBitmap( null );
+						
+					}
+					
+				}
+				
+				if ( null == newAlbumUri ) {
+					
+					mAlbumCover.setImageResource( R.drawable.no_album_art );
+					
+				} else if ( !newAlbumUri.equals( lastAlbumUri ) ) {
 					
 					//lastAlbumUri = newAlbumUri;
 					
@@ -220,18 +230,7 @@ public class FooterControlsFragment extends Fragment {
 					
 					
 					
-					if ( null != lastAlbumUri ) {
-						
-						BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
-						
-						if ( null != bd ) {
-							
-							bd.getBitmap().recycle();
-							mAlbumCover.setImageBitmap( null );
-							
-						}
-						
-					}
+					
 					
 					mAlbumCover.setImageURI( albumArtUri );
 					
@@ -244,6 +243,21 @@ public class FooterControlsFragment extends Fragment {
 				( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setText( title );
 				( ( TextView ) getView().findViewById( R.id.FooterControlsArtistName ) ).setText( artist );
 				
+				// Show the footer controls
+				
+	    		if ( !isShowing ) {
+	    			
+	    			FragmentManager fm = getActivity().getSupportFragmentManager();
+	    			fm.beginTransaction()
+	    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
+	    			          .show( this )
+	    			          .commit();
+		    		
+	    			//getActivity().findViewById( R.id.FooterShadow ).setVisibility( View.VISIBLE );
+	    			
+		    		isShowing = true;
+	    			
+	    		}
 				
 	    	}
 	    	
