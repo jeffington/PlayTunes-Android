@@ -106,7 +106,7 @@ public class NavigationListAdapter extends BaseAdapter {
 						MediaStore.Audio.Albums._ID	
 							
 					},
-					null,
+					MediaStore.Audio.Media.ALBUM + "!='Music'",
 					null,
 					null);
 			
