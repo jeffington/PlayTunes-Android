@@ -468,32 +468,46 @@ public class NowPlayingActivity extends ActionBarActivity {
 			
 			albumCursor.moveToFirst();
 			
-			String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+			String nextAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 			
-			if ( !newAlbumUri.equals( lastAlbumUri ) ) {
+			ImageView mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
+			
+			// 
+			// This tests if we loaded previous album art and that it wasn't null
+			// If the nextAlbumUri is null, it means there's no album art and 
+			// we load from an image resource.
+			// 
+			
+			
+			
+			if ( null == nextAlbumUri && null != lastAlbumUri) {
 				
-				ImageView mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
+				recycleAlbumArt();
 				
-				if ( null != lastAlbumUri ) {
-					
-					BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
-					
-					if ( null != bd ) {
-						
-						bd.getBitmap().recycle();
-						mAlbumCover.setImageBitmap( null );
-						
-					}
-					
-				}
+			} else if ( null != nextAlbumUri && null != lastAlbumUri && !lastAlbumUri.equals( nextAlbumUri ) ) {
 				
-				lastAlbumUri = newAlbumUri;
+				recycleAlbumArt();
 				
-				Uri albumArtUri = Uri.parse( newAlbumUri );
+			}
+
+			if ( null == nextAlbumUri ) {
+				
+				mAlbumCover.setImageResource( R.drawable.no_album_art );
+				
+			} else {
+				
+				Uri albumArtUri = Uri.parse( nextAlbumUri );
 				
 				mAlbumCover.setImageURI( albumArtUri );
 				
+				lastAlbumUri = nextAlbumUri;
+				
 			}
+			
+			// Otherwise, nextAlbumUri and lastAlbumUri are the same, we leave the ImageView alone
+			// and don't recycle the backing bitmap;
+			
+			lastAlbumUri = nextAlbumUri;
 			
 			albumCursor.close();
 			mSongCursor.close();
@@ -511,6 +525,21 @@ public class NowPlayingActivity extends ActionBarActivity {
     	}
     	
     }
+    
+	   private void recycleAlbumArt() {
+		   
+		   ImageView mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
+		   
+		   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+			
+			if ( null != bd && null != bd.getBitmap() ) {
+				
+				bd.getBitmap().recycle();
+				mAlbumCover.setImageBitmap( null );
+				
+			}
+		   
+	   }
     
     private PlaylistMediaPlayer.PlaybackListener mPlaybackListener = new PlaylistMediaPlayer.PlaybackListener() {
 
