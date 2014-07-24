@@ -38,7 +38,6 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		mContext = context;
 		ARTIST_ID = artist_id;
 		
-		
     	cursor = mContext.getContentResolver().query(
     			MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
     			albumsSelection,
@@ -53,8 +52,15 @@ public class ArtistsOneAdapter extends BaseAdapter {
     	
     	cursor.moveToFirst();
     	
-    	ArtistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
-    	
+    	try {
+    		
+    		ArtistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
+    		
+    	} catch( Exception e ) {
+    		
+    		ArtistName = mContext.getString( R.string.artist_unknown );
+    		
+    	}
     	
 	}
 	
