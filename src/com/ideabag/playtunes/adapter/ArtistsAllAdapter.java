@@ -74,14 +74,25 @@ public class ArtistsAllAdapter extends BaseAdapter {
 		}
 		cursor.moveToPosition( position );
 		
-		convertView.setTag( R.id.tag_artist_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists._ID ) ) );
 		
-		String artistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) );
+		String artistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ).trim();
 		int songCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_TRACKS ) );
 		int albumCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_ALBUMS ) );
 		
-		( ( TextView ) convertView.findViewById( R.id.Title )).setText( artistName );
 		
+		convertView.setTag( R.id.tag_artist_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists._ID ) ) );
+		
+		if ( mContext.getString( R.string.no_artist_string ).equals( artistName ) ) {
+			
+			( ( TextView ) convertView.findViewById( R.id.Title )).setText( mContext.getString( R.string.artist_unknown ) );
+			convertView.setTag( R.id.tag_artist_unknown, "1" );
+			
+		} else {
+			
+			( ( TextView ) convertView.findViewById( R.id.Title )).setText( artistName );
+			convertView.setTag( R.id.tag_artist_unknown, "0" );
+			
+		}
 		
 		LinearLayout songBadge, albumBadge;
 		
