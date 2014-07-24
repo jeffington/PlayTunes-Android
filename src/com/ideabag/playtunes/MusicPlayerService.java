@@ -430,8 +430,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 			albumCursor.close();
 			
-			Uri imageUri = Uri.parse( newAlbumUri );
-			
 			
 			if ( null != mAlbumArtBitmap ) {
 				
@@ -441,7 +439,18 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			
 			try {
-				mAlbumArtBitmap = BitmapFactory.decodeFile( newAlbumUri );
+				
+				if ( null == newAlbumUri ) {
+					
+					mAlbumArtBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.no_album_art );
+					
+				} else {
+					
+					Uri imageUri = Uri.parse( newAlbumUri );
+					
+					mAlbumArtBitmap = BitmapFactory.decodeFile( newAlbumUri );
+					
+				}
 				//albumArtBitmap = BitmapFactory.decodeStream( getContentResolver().openInputStream( imageUri ) );
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -458,6 +467,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	                RemoteControlClient.FLAG_KEY_MEDIA_STOP);
 	
 	        // Update the remote controls
+	        
 	        mRemoteControlClientCompat.editMetadata( true )
 	                .putString( MediaMetadataRetriever.METADATA_KEY_ARTIST, mSongArtist )
 	                .putString( MediaMetadataRetriever.METADATA_KEY_ALBUM, mSongAlbum )
