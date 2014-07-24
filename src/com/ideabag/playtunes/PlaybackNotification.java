@@ -147,13 +147,21 @@ public class PlaybackNotification {
 		
 		String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 		
-		if ( !newAlbumUri.equals( lastAlbumUri ) ) {
+		lastAlbumUri = newAlbumUri;
+		
+		if ( newAlbumUri == null ) {
 			
-			lastAlbumUri = newAlbumUri;
+			mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art );
+			
+		} else {
+			
+			
 			
 			Uri albumArtUri = Uri.parse( newAlbumUri );
 			
 			mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
+			
+			
 			
 		}
 		
