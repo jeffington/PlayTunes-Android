@@ -4,6 +4,7 @@ import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
+import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.util.PlaylistBrowser;
@@ -98,6 +99,10 @@ public class MainActivity extends ActionBarActivity {
         
 	    mFooterControlsFragment = ( FooterControlsFragment ) getSupportFragmentManager().findFragmentById( R.id.FooterControlsFragment );
         
+	    // Load the initial music browser fragment
+	    
+	    SongsFragment initialFragment = new SongsFragment();
+	    transactFragment( initialFragment );
 	    
 	}
 	
