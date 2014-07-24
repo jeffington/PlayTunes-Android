@@ -128,7 +128,7 @@ public class FooterControlsFragment extends Fragment {
 	    			fm.beginTransaction()
 	    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
 	    			          .hide( this )
-	    			          .commit();
+	    			          .commitAllowingStateLoss();
 	    			
 	    		} else {
 	    			
@@ -136,7 +136,7 @@ public class FooterControlsFragment extends Fragment {
 	    			fm.beginTransaction()
 	    			          //.setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
 	    			          .hide( this )
-	    			          .commit();
+	    			          .commitAllowingStateLoss();
 	    			
 	    			//getView().setVisibility( View.GONE );
 	    			
