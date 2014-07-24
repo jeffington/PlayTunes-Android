@@ -37,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	public PlaylistManager PlaylistManager;
 	
-	public CharSequence actionbarTitle, actionbarSubtitle;
+	private CharSequence mActionbarTitle, mActionbarSubtitle;
 	
 	
 	
@@ -62,15 +62,15 @@ public class MainActivity extends ActionBarActivity {
         	
             public void onDrawerClosed( View view ) {
             	
-            	getSupportActionBar().setTitle( actionbarTitle );
-            	getSupportActionBar().setSubtitle( actionbarSubtitle );
+            	getSupportActionBar().setTitle( mActionbarTitle );
+            	getSupportActionBar().setSubtitle( mActionbarSubtitle );
             	
             }
             
             public void onDrawerOpened( View drawerView ) {
                 
-            	actionbarTitle = getSupportActionBar().getTitle();
-            	actionbarSubtitle = getSupportActionBar().getSubtitle();
+            	mActionbarTitle = getSupportActionBar().getTitle();
+            	mActionbarSubtitle = getSupportActionBar().getSubtitle();
             	
             	getSupportActionBar().setTitle( getString( R.string.app_name ) );
             	getSupportActionBar().setSubtitle( null );
@@ -101,6 +101,32 @@ public class MainActivity extends ActionBarActivity {
 	    
 	}
 	
+	public void setActionbarTitle( String titleString ) {
+		
+		mActionbarTitle = ( CharSequence ) titleString;
+		
+		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
+		if ( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+			
+			getSupportActionBar().setTitle( mActionbarTitle );
+			
+		}
+		
+	}
+	
+	public void setActionbarSubtitle( String subtitleString ) {
+		
+		mActionbarSubtitle = ( CharSequence ) subtitleString;
+		
+		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
+		if ( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+			
+			getSupportActionBar().setSubtitle( mActionbarSubtitle );
+			
+		}
+		
+	}
+	
 	@Override public void onStart() {
 		super.onStart();
 		
@@ -111,24 +137,6 @@ public class MainActivity extends ActionBarActivity {
 			mBoundService.addPlaybackListener( mPlaybackListener );
 			
 		}
-		/*
-		if ( getIntent().hasExtra( "now_playing" ) ) {
-			
-			Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
-			
-			startActivityForResult( startNowPlayingActivity, 0 );
-			
-		}
-		*/
-	}
-	
-	@Override public void onPause() {
-		super.onPause();
-		
-	}
-	
-	@Override public void onResume() {
-		super.onResume();
 		
 	}
 	
@@ -161,13 +169,13 @@ public class MainActivity extends ActionBarActivity {
     		
     		mDrawerLayout.closeDrawer( GravityCompat.START );
     		//customActionBarToggle.showClose();
-    		getSupportActionBar().setTitle( actionbarTitle );
+    		getSupportActionBar().setTitle( mActionbarTitle );
     		
     	} else {
     		
     		mDrawerLayout.openDrawer( GravityCompat.START );
     		//customActionBarToggle.showOpen();
-    		actionbarTitle = getSupportActionBar().getTitle();
+    		mActionbarTitle = getSupportActionBar().getTitle();
     		getSupportActionBar().setTitle( "PlayTunes" );
     		
     	}
@@ -231,8 +239,7 @@ public class MainActivity extends ActionBarActivity {
 	        // service that we know is running in our own process, we can
 	        // cast its IBinder to a concrete class and directly access it.
 	    	mBoundService = ( ( MusicPlayerService.MusicPlayerServiceBinder ) service ).getService();
-	    	android.util.Log.i("Attached to service", "Main Activity connected to service." );
-	    	//BoundService.doAttachActivity();
+	    	
 	    	mBoundService.addPlaybackListener( mPlaybackListener );
 	        
 	    	mIsBound = true;
@@ -322,7 +329,7 @@ public class MainActivity extends ActionBarActivity {
 	// We use the onActivityResult mechanism to return from the NowPlayingActivity
 	// and display the Fragment of the currently playing playlist, if it's not already displayed.
 	// 
-	
+/*	
 	@Override protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
 		
 		if ( resultCode == RESULT_OK ) {
@@ -382,6 +389,68 @@ public class MainActivity extends ActionBarActivity {
 			
 			//this.transactFragment(newFragment)
 			//this.mBoundService.mPlaylistFragmentClass
+			
+		}
+		
+		
+	}
+*/
+	@Override protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
+		
+		if ( resultCode == RESULT_OK ) {
+			
+			Class < ? extends Fragment > nowPlayingFragmentClass = this.mBoundService.mPlaylistFragmentClass;
+			
+			String nowPlayingMediaID = this.mBoundService.mPlaylistMediaID;
+			
+			Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
+			
+			android.util.Log.i( "MainActivity", "Showing Fragment: " + ( showingFragment == null ? "Is Null" : "Is Not Null" ) );
+			
+			try {
+				
+				// 
+				// Check to see if the currently playing Fragment is already showing
+				// only create the new fragment if it isn't already showing.
+				//
+				
+				if ( showingFragment != null ) {
+					
+					String showingMediaID = ( ( PlaylistBrowser ) showingFragment ).getMediaID();
+					
+					boolean isSameClass = showingFragment.getClass().equals( nowPlayingFragmentClass );
+					
+					boolean isSameMediaID = showingMediaID.equals( nowPlayingMediaID );
+					
+					if ( !( isSameClass && isSameMediaID ) ) {
+						
+						Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
+						( ( PlaylistBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
+						
+						FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+				    	
+				    	// Replace whatever is in the fragment_container view with this fragment,
+				    	// and add the transaction to the back stack
+				    	transaction.replace( R.id.MusicBrowserContainer, nowPlayingFragment );
+				    	transaction.addToBackStack( null );
+				    	
+				    	
+				    	// Commit the transaction
+				    	transaction.commitAllowingStateLoss();
+						
+					}
+					
+				}
+				
+
+		    	
+			} catch ( InstantiationException e ) {
+				e.printStackTrace();
+			} catch ( IllegalAccessException e ) {
+				e.printStackTrace();
+			} catch ( ClassCastException e ) {
+				e.printStackTrace();
+			}
 			
 		}
 		

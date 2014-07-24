@@ -1,6 +1,5 @@
 package com.ideabag.playtunes.fragment;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
@@ -15,8 +14,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ToggleButton;
@@ -40,20 +37,12 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
-		
     	adapter = new MergeAdapter();
 		
 		songAdapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
     	
 		//adapter.addView( mActivity.AdContainer, false );
 		adapter.addAdapter( songAdapter );
-    	
-    	bar.setTitle( getString( R.string.all_songs ) );
-    	mActivity.actionbarTitle = bar.getTitle();
-		
-    	bar.setSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
@@ -68,9 +57,13 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
     	
 	}
 	
+
 	@Override public void onResume() {
 		super.onResume();
-		//mActivity.AdView.resume();
+		
+		mActivity.setActionbarTitle( getString( R.string.all_songs ) );
+    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
+		
 		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 		
 		tracker.setScreenName( TAG );
@@ -166,13 +159,10 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	};
 
 
+	// PlaylistBrowser interface methods
+	
 	@Override public void setMediaID(String media_id) { /* ... */ }
 
-	@Override public String getMediaID() {
-		
-		return null;
-		
-	}
-	
+	@Override public String getMediaID() { return ""; }
 	
 }

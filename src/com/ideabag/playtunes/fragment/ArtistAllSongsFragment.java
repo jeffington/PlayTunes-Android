@@ -5,16 +5,19 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistAllSongsAdapter;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ToggleButton;
 
 public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrowser {
 	
@@ -24,7 +27,7 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 	
 	private MainActivity mActivity;
 	
-	private String ARTIST_ID;
+	private String ARTIST_ID = "";
 	
 	@Override public void setMediaID( String media_id ) {
 		
@@ -45,15 +48,8 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
 		//android.util.Log.i( "ARTIST_ID", ARTIST_ID );
-    	adapter = new ArtistAllSongsAdapter( getActivity(), ARTIST_ID );
-    	
-    	
-    	bar.setTitle( adapter.ARTIST_NAME );
-    	mActivity.actionbarTitle = bar.getTitle();
-		bar.setSubtitle( "All Songs" );
-		mActivity.actionbarSubtitle = bar.getSubtitle();
+    	adapter = new ArtistAllSongsAdapter( getActivity(), ARTIST_ID, songMenuClickListener );
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
@@ -65,6 +61,9 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 	
 	@Override public void onResume() {
 		super.onResume();
+		
+    	mActivity.setActionbarTitle( adapter.ARTIST_NAME );
+    	mActivity.setActionbarSubtitle( getString( R.string.all_songs ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
@@ -110,6 +109,46 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 		mActivity.mBoundService.play();
 		
 	}
+	
+	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
+		
+		@Override public void onClick( View v ) {
+			
+			int viewID = v.getId();
+			String songID = "" + v.getTag( R.id.tag_song_id );
+			
+			if ( viewID == R.id.StarButton ) {
+				
+				ToggleButton starButton = ( ToggleButton ) v;
+				
+				if ( starButton.isChecked() ) {
+					
+					mActivity.PlaylistManager.addFavorite( songID );
+					//android.util.Log.i( "starred", songID );
+					
+				} else {
+					
+					mActivity.PlaylistManager.removeFavorite( songID );
+					//android.util.Log.i( "unstarred", songID );
+					
+				}
+				
+			} else if ( viewID == R.id.MenuButton ) {
+				
+				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	        	
+				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+				newFragment.setMediaID( songID );
+	        	
+	            newFragment.show( ft, "dialog" );
+				
+			}
+			
+			
+			
+		}
+		
+	};
 	
 	
 }

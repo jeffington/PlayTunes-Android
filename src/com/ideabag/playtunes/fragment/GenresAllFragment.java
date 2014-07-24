@@ -6,6 +6,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.GenresAllAdapter;
 import com.ideabag.playtunes.util.MergeAdapter;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -16,12 +17,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
 
-public class GenresAllFragment extends ListFragment {
+public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "All Genres Fragment";
 	
-	MergeAdapter adapter;
-	GenresAllAdapter genresAdapter;
+	GenresAllAdapter adapter;
 	
 	private MainActivity mActivity;
 	
@@ -36,19 +36,7 @@ public class GenresAllFragment extends ListFragment {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity()).getSupportActionBar();
-		adapter = new MergeAdapter();
-		genresAdapter = new GenresAllAdapter( getActivity() );
-		
-		//adapter.addView( mActivity.AdContainer, true );
-		adapter.addAdapter( genresAdapter );
-		
-    	
-    	bar.setTitle( getString( R.string.genres_plural) );
-    	mActivity.actionbarTitle = bar.getTitle();
-    	
-		bar.setSubtitle( genresAdapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.genre_singular ) : getString( R.string.genres_plural ) ) );
-		mActivity.actionbarSubtitle = bar.getSubtitle();
+		adapter = new GenresAllAdapter( getActivity() );
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
@@ -63,7 +51,8 @@ public class GenresAllFragment extends ListFragment {
 	@Override public void onResume() {
 		super.onResume();
 		
-		//mActivity.AdView.resume();
+    	mActivity.setActionbarTitle( getString( R.string.genres_plural) );
+    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.genre_singular ) : getString( R.string.genres_plural ) ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
@@ -109,5 +98,11 @@ public class GenresAllFragment extends ListFragment {
 		mActivity.transactFragment( genreFragment );
 		
 	}
+
+	// PlaylistBrowser interface methods
+	
+	@Override public void setMediaID(String media_id) { /* ... */ }
+
+	@Override public String getMediaID() { return ""; }
 	
 }

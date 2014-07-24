@@ -1,7 +1,5 @@
 package com.ideabag.playtunes.fragment;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
@@ -39,9 +37,8 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	ArtistsOneAdapter adapter;
 	
 	private MainActivity mActivity;
-    private AdView adView;
     
-	private String ARTIST_ID;
+	private String ARTIST_ID = "";
 	
 	@Override public void setMediaID( String media_id ) {
 		
@@ -62,7 +59,6 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
 		LayoutInflater inflater = mActivity.getLayoutInflater();
 		//android.util.Log.i( "ARTIST_ID", ARTIST_ID );
     	adapter = new ArtistsOneAdapter( getActivity(), ARTIST_ID );
@@ -101,13 +97,6 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 				},
 				null
 			);
-    	
-
-    	
-    	bar.setTitle( adapter.ArtistName );
-    	mActivity.actionbarTitle = bar.getTitle();
-    	bar.setSubtitle( "Artist" );
-    	mActivity.actionbarSubtitle = bar.getSubtitle();
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		
@@ -147,6 +136,10 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	
 	@Override public void onResume() {
 		super.onResume();
+
+    	
+    	mActivity.setActionbarTitle( adapter.ArtistName );
+    	mActivity.setActionbarSubtitle( getString( R.string.artist_singles ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
@@ -189,9 +182,12 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 			
 			mActivity.transactFragment( allSongsFragment );
 			
-		} else if ( null != Singles && v.equals( Singles ) ) {
+		} else if ( null != Singles && v.equals( Singles ) ) { // Load Singles
 			
-			// Load Singles
+			ArtistsOneFragment allSinglesFragment = new ArtistsOneFragment( );
+			allSinglesFragment.setMediaID( ARTIST_ID );
+			
+			mActivity.transactFragment( allSinglesFragment );
 			
 		} else {
 			

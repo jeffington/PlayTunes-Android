@@ -3,26 +3,18 @@ package com.ideabag.playtunes.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.AdRequest.Builder;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsAllAdapter;
-import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
-public class AlbumsAllFragment extends ListFragment {
+public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  {
 	
 	public static final String TAG = "All Albums Fragment";
 
@@ -40,14 +32,7 @@ public class AlbumsAllFragment extends ListFragment {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
-    	
     	adapter = new AlbumsAllAdapter( getActivity() );
-    	
-    	bar.setTitle( getString( R.string.albums_plural) );
-    	mActivity.actionbarTitle = bar.getTitle();
-		bar.setSubtitle( adapter.getCount() + " albums" );
-		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
@@ -60,6 +45,9 @@ public class AlbumsAllFragment extends ListFragment {
 	
 	@Override public void onResume() {
 		super.onResume();
+		
+    	mActivity.setActionbarTitle( getString( R.string.albums_plural) );
+    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.album_singular ) : getString( R.string.albums_plural ) ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 
@@ -108,5 +96,11 @@ public class AlbumsAllFragment extends ListFragment {
 		mActivity.transactFragment( albumFragment );
 		
 	}
+	
+	// PlaylistBrowser interface methods
+	
+	@Override public void setMediaID(String media_id) { /* ... */ }
+
+	@Override public String getMediaID() { return ""; }
 	
 }

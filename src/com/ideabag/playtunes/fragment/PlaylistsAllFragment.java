@@ -7,10 +7,8 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsAllAdapter;
 import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
 import com.ideabag.playtunes.dialog.PlaylistMenuDialogFragment;
-import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.MergeAdapter;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
-import com.ideabag.playtunes.view.AllPlaylistsDialogBuilder;
 
 import android.app.Activity;
 import android.database.ContentObserver;
@@ -20,8 +18,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,16 +29,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PlaylistsAllFragment extends ListFragment {
+public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "All Playlists Fragment";
 	
-	PlaylistsAllAdapter playslistsAdapter;
-	MergeAdapter adapter;
+	PlaylistsAllAdapter adapter;
+	//MergeAdapter adapter;
 	
 	MainActivity mActivity;
-	
-	//AllPlaylistsDialogBuilder dialogBuilder;
 	
 	
 	ContentObserver playlistsChanged = new ContentObserver( new Handler() ) {
@@ -53,8 +47,8 @@ public class PlaylistsAllFragment extends ListFragment {
 
 				@Override public void run() {
 					
-					playslistsAdapter.requery();
-					playslistsAdapter.notifyDataSetChanged();
+					adapter.requery();
+					adapter.notifyDataSetChanged();
 					
 				}
             	
@@ -77,10 +71,7 @@ public class PlaylistsAllFragment extends ListFragment {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity()).getSupportActionBar();
-		
-		adapter = new MergeAdapter();
-		playslistsAdapter = new PlaylistsAllAdapter( getActivity(), playlistMenuClickListener );
+		adapter = new PlaylistsAllAdapter( getActivity(), playlistMenuClickListener );
 		
 
     	
@@ -92,11 +83,6 @@ public class PlaylistsAllFragment extends ListFragment {
     	( ( TextView ) starredPlaylist.findViewById( R.id.BadgeCount ) ).setText( "" + mActivity.PlaylistManager.getStarredCursor().getCount() );
 		
     	
-    	bar.setTitle( getString( R.string.playlists_plural ) );
-    	mActivity.actionbarTitle = bar.getTitle();
-    	mActivity.actionbarSubtitle = null;
-		bar.setSubtitle( null );
-    	
     	setHasOptionsMenu( true );
     	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
@@ -105,8 +91,8 @@ public class PlaylistsAllFragment extends ListFragment {
 		getListView().setSelector( R.drawable.list_item_background );
 		
 		//adapter.addView( mActivity.AdContainer, false );
-		adapter.addView( starredPlaylist );
-		adapter.addAdapter( playslistsAdapter );
+		getListView().addHeaderView( starredPlaylist, null, true );
+		
 		
     	setListAdapter( adapter );
     	
@@ -117,7 +103,8 @@ public class PlaylistsAllFragment extends ListFragment {
 	@Override public void onResume() {
 		super.onResume();
 		
-		//dialogBuilder = new AllPlaylistsDialogBuilder( mActivity, mActivity.PlaylistManager );
+    	mActivity.setActionbarTitle( getString( R.string.playlists_plural ) );
+    	mActivity.setActionbarSubtitle( null );
 		
 		getActivity().getContentResolver().registerContentObserver( MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, playlistsChanged );
 		
@@ -226,5 +213,11 @@ public class PlaylistsAllFragment extends ListFragment {
 		
 	};
 
+
+	// PlaylistBrowser interface methods
+	
+	@Override public void setMediaID(String media_id) { /* ... */ }
+
+	@Override public String getMediaID() { return ""; }
 	
 }

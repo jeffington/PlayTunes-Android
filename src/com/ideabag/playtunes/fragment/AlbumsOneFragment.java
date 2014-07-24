@@ -1,21 +1,24 @@
 package com.ideabag.playtunes.fragment;
 
 import android.app.Activity;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -28,7 +31,7 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	AlbumsOneAdapter adapter;
 	private MainActivity mActivity;
 	
-	private String ALBUM_ID;
+	private String ALBUM_ID = "";
 	
 	private View albumArtHeader;
 	
@@ -61,7 +64,7 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 			
 		}
 		
-		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID );
+		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener );
 		
 		//View header = getLayoutInflater().inflate( R.layout.header, null );
 		
@@ -69,11 +72,7 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		
 		//lv.addHeaderView( );
 		//Resources r = getResources();
-		int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics() );
-		albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
-		albumArtHeader.setLayoutParams( new AbsListView.LayoutParams( AbsListView.LayoutParams.MATCH_PARENT, headerHeightPx ) );
 		
-		getListView().addHeaderView( albumArtHeader, null, false );
 		//getListView().addHeaderView(  );
 		//lv.setAdapter( adapter );
 		
@@ -81,22 +80,19 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		
     	setListAdapter( adapter );
     	
-    	ActionBar bar =	( ( ActionBarActivity ) getActivity() ).getSupportActionBar();
 		
-		ImageView iv = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
 		
 		if ( null != adapter.albumArtUri ) {
 			
-			iv.setImageURI( adapter.albumArtUri );
+			int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics() );
+			albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
+			albumArtHeader.setLayoutParams( new AbsListView.LayoutParams( AbsListView.LayoutParams.MATCH_PARENT, headerHeightPx ) );
 			
-		}
-		
-		if ( null != adapter.albumTitle ) {
+			ImageView iv = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
 			
-			bar.setTitle( adapter.albumTitle );
-			mActivity.actionbarTitle = bar.getTitle();
-			bar.setSubtitle( adapter.getCount() + " tracks" );
-			mActivity.actionbarSubtitle = bar.getSubtitle();
+			getListView().addHeaderView( albumArtHeader, null, false );
+			
+			iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
 			
 		}
 		
@@ -122,6 +118,13 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	@Override public void onResume() {
 		super.onResume();
+		
+		if ( null != adapter.albumTitle ) {
+			
+			mActivity.setActionbarTitle( adapter.albumTitle );
+			mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
+			
+		}
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 		
@@ -150,6 +153,21 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onDestroyView() {
 	    super.onDestroyView();
 	    
+	    ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.AlbumArtFull );
+	    
+	    if ( null != mAlbumCover ) {
+		    
+		    BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+			
+			if ( null != bd ) {
+				
+				bd.getBitmap().recycle();
+				mAlbumCover.setImageBitmap( null );
+				
+			}
+			
+	    }
+	    
 	    setListAdapter( null );
 	    
 	}
@@ -160,5 +178,45 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
         outState.putString( STATE_KEY_ALBUM_ID, ALBUM_ID );
         
 	}
+	
+	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
+		
+		@Override public void onClick( View v ) {
+			
+			int viewID = v.getId();
+			String songID = "" + v.getTag( R.id.tag_song_id );
+			
+			if ( viewID == R.id.StarButton ) {
+				
+				ToggleButton starButton = ( ToggleButton ) v;
+				
+				if ( starButton.isChecked() ) {
+					
+					mActivity.PlaylistManager.addFavorite( songID );
+					//android.util.Log.i( "starred", songID );
+					
+				} else {
+					
+					mActivity.PlaylistManager.removeFavorite( songID );
+					//android.util.Log.i( "unstarred", songID );
+					
+				}
+				
+			} else if ( viewID == R.id.MenuButton ) {
+				
+				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	        	
+				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+				newFragment.setMediaID( songID );
+	        	
+	            newFragment.show( ft, "dialog" );
+				
+			}
+			
+			
+			
+		}
+		
+	};
 	
 }

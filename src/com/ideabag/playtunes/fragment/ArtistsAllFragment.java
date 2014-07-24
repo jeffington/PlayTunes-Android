@@ -1,28 +1,22 @@
 package com.ideabag.playtunes.fragment;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdRequest.Builder;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistsAllAdapter;
-import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ArtistsAllFragment extends ListFragment {
+public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "All Artists Fragment";
 
@@ -99,9 +93,11 @@ public class ArtistsAllFragment extends ListFragment {
 		
 		String artistID = ( String ) v.getTag( R.id.tag_artist_id );
 		
+		boolean artistUnknown = v.getTag( R.id.tag_artist_unknown ).equals( "1" );
+		
 		int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.BadgeAlbum ).findViewById( R.id.BadgeCount ) ).getText().toString() );
 		
-		if ( 0 == albumCount ) {
+		if ( artistUnknown || 0 == albumCount ) {
 			
 			ArtistAllSongsFragment artistAllFragment = new ArtistAllSongsFragment();
 			artistAllFragment.setMediaID( artistID );
@@ -118,5 +114,12 @@ public class ArtistsAllFragment extends ListFragment {
 		}
 		
 	}
+	
+
+	// PlaylistBrowser interface methods
+	
+	@Override public void setMediaID(String media_id) { /* ... */ }
+
+	@Override public String getMediaID() { return ""; }
 	
 }

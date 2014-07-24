@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
@@ -14,6 +15,7 @@ import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -32,7 +34,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	MainActivity mActivity;
 	PlaylistsOneAdapter adapter;
 	
-	private String PLAYLIST_ID;
+	private String PLAYLIST_ID = "";
 	
 	//private MenuItem menuItemEdit, menuItemDoneEditing;
 	
@@ -224,7 +226,12 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 				
 			} else if ( viewID == R.id.MenuButton ) {
 				
-				
+				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	        	
+				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+				newFragment.setMediaID( songID );
+	        	
+	            newFragment.show( ft, "dialog" );
 				
 			}
 			

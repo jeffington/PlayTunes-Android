@@ -6,6 +6,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.GenresAllAdapter;
 import com.ideabag.playtunes.adapter.GenresOneAdapter;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -14,12 +15,14 @@ import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ToggleButton;
 
 public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	
@@ -28,7 +31,7 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	GenresOneAdapter adapter;
 	private MainActivity mActivity;
 	
-	private String GENRE_ID;
+	private String GENRE_ID = "";
 	
 	@Override public void setMediaID(String media_id) {
 		
@@ -49,14 +52,8 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	( ( ActionBarActivity ) getActivity()).getSupportActionBar();
-		
-		adapter = new GenresOneAdapter( getActivity(), GENRE_ID );
+		adapter = new GenresOneAdapter( getActivity(), GENRE_ID, songMenuClickListener );
     	
-    	
-    	bar.setTitle( "Genres" );
-		bar.setSubtitle( "Genre" );
-		mActivity.actionbarSubtitle = bar.getSubtitle();
     	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
@@ -71,6 +68,9 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 		
 	@Override public void onResume() {
 		super.onResume();
+		
+		mActivity.setActionbarTitle( "Genres" );
+		mActivity.setActionbarSubtitle( getString( R.string.genre_singular ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
@@ -124,27 +124,45 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 		// 
 			
 	}
-	/*
-	ContentObserver playlistsChanged = new ContentObserver(new Handler()) {
-
-        @Override public void onChange( boolean selfChange ) {
-            
-            mActivity.runOnUiThread( new Runnable() {
-
-				@Override public void run() {
+	
+	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
+		
+		@Override public void onClick( View v ) {
+			
+			int viewID = v.getId();
+			String songID = "" + v.getTag( R.id.tag_song_id );
+			
+			if ( viewID == R.id.StarButton ) {
+				
+				ToggleButton starButton = ( ToggleButton ) v;
+				
+				if ( starButton.isChecked() ) {
 					
-					adapter.requery();
-					adapter.notifyDataSetChanged();
+					mActivity.PlaylistManager.addFavorite( songID );
+					//android.util.Log.i( "starred", songID );
+					
+				} else {
+					
+					mActivity.PlaylistManager.removeFavorite( songID );
+					//android.util.Log.i( "unstarred", songID );
 					
 				}
-            	
-            });
-            
-            super.onChange( selfChange );
-            
-        }
-
+				
+			} else if ( viewID == R.id.MenuButton ) {
+				
+				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+	        	
+				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+				newFragment.setMediaID( songID );
+	        	
+	            newFragment.show( ft, "dialog" );
+				
+			}
+			
+			
+			
+		}
+		
 	};
-	*/
 
 }
