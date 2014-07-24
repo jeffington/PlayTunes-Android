@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.adapter;
 
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class AlbumsOneAdapter extends BaseAdapter {
 	
@@ -19,8 +21,11 @@ public class AlbumsOneAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private Cursor cursor;
+	private PlaylistManager PlaylistManager;
 	
-	public Uri albumArtUri = null;
+	View.OnClickListener songMenuClickListener;
+	
+	public String albumArtUri = null;
 	
 	public String albumTitle = null;
 	
@@ -39,13 +44,17 @@ public class AlbumsOneAdapter extends BaseAdapter {
 		
 	};
 	
-	public AlbumsOneAdapter( Context context, String album_id ) {
+	public AlbumsOneAdapter( Context context, String album_id, View.OnClickListener menuClickListener ) {
 		
 		mContext = context;
 		
 		ALBUM_ID = album_id;
 		
 		Log.i("ALBUM_ID", ALBUM_ID);
+		
+		PlaylistManager = new PlaylistManager( mContext );
+		
+		songMenuClickListener = menuClickListener;
 		
     	cursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -81,10 +90,10 @@ public class AlbumsOneAdapter extends BaseAdapter {
     	
     	String albumUriString = album.getString( album.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
     	
-    	albumArtUri = Uri.parse( albumUriString );
+    	albumArtUri = albumUriString;
     	
     	albumTitle = album.getString( album.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
-		
+		album.close();
 	}
 	
 	public Cursor getCursor() {
@@ -119,6 +128,9 @@ public class AlbumsOneAdapter extends BaseAdapter {
 			
 			convertView = li.inflate( R.layout.list_item_song_no_album, null );
 			
+			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
+			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
+			
 		}
 		
 		cursor.moveToPosition( position );
@@ -127,11 +139,20 @@ public class AlbumsOneAdapter extends BaseAdapter {
 		
 		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 		
+		String song_id = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+		
+		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
+		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		
 		convertView.findViewById(R.id.SongAlbum).setVisibility( View.GONE );
 		
 		
 		( ( TextView ) convertView.findViewById( R.id.SongTitle )).setText( songTitle );
 		( ( TextView ) convertView.findViewById( R.id.SongArtist )).setText( songArtist );
+		
+		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+		
+		starButton.setChecked( PlaylistManager.isStarred( song_id ) );
 		
 		return convertView;
 		
