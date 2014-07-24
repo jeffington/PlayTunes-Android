@@ -52,29 +52,75 @@
 		android:background="@drawable/list_item_background"
 	/>
     
-    <Button
-    	android:id="@+id/SongMenuArtist"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/list_item_height"
-		android:gravity="left|center_vertical"
-		android:textSize="@dimen/text_xlarge"
-		android:paddingLeft="@dimen/list_item_horizontal_spacing"
-		android:textColor="@color/textColorPrimary"
-		android:text="Artist"
-		android:background="@drawable/list_item_background"
+    <TextView android:id="@+id/SongMenuInfo"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/list_divider_height"
+	    android:background="@drawable/actionbar_background"
+	    android:text="SONG INFO"
+	    android:textSize="@dimen/text_medium"
+	    android:gravity="left|center_vertical"
+	    android:textColor="@color/textColorPrimaryDark"
+	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+	    android:textStyle="bold"
+	    android:paddingTop="8dp"
+	    android:paddingBottom="8dp"
 	/>
     
-    <Button
-    	android:id="@+id/SongMenuAlbum"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/list_item_height"
-		android:gravity="left|center_vertical"
-		android:textSize="@dimen/text_xlarge"
-		android:paddingLeft="@dimen/list_item_horizontal_spacing"
-		android:textColor="@color/textColorPrimary"
-		android:text="Album"
-		android:background="@drawable/list_item_background"
-	/>
+<LinearLayout android:id="@+id/SongMenuArtist"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/list_item_height"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    android:paddingRight="@dimen/list_item_horizontal_spacing"
+    android:background="@drawable/list_item_background">
+   	
+   	<ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_mic"
+            />
+        
+    <TextView android:id="@+id/SongMenuArtistTitle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Pink Floyd"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
+        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+        />
     
+</LinearLayout>
+<LinearLayout android:id="@+id/SongMenuAlbum"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/list_item_height"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    android:paddingRight="@dimen/list_item_horizontal_spacing"
+    android:background="@drawable/list_item_background">
+   	
+   	<ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_record"
+            />
+        
+    <TextView android:id="@+id/SongMenuAlbumTitle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Dark Side of the Moon"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
+        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+        />
+    
+</LinearLayout>
     
 </LinearLayout >
