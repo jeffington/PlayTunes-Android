@@ -6,8 +6,7 @@
 	<string name="song_singular">Song</string>
 	<string name="songs_plural">Songs</string>
 	<string name="all_songs">All Songs</string>
-	
-	<string name="artists_plural">Artists</string>
+	<string name="dialog_title_song_options">Song Options</string>
 	
 	<string name="genres_plural">Genres</string>
 	<string name="genre_singular">Genre</string>
@@ -26,7 +25,7 @@
 	<string name="favorites">Favorites</string>
 	
 	<string name="albums_plural">Albums</string>
-	
+	<string name="album_singular">Album</string>
 	<string name="albums_plural_caps">ALBUMS</string>
 	
 	
@@ -43,7 +42,11 @@
     
     <string name="artist_all_songs">All Songs</string>
     <string name="artist_singles">Singles</string>
+    <string name="artists_plural">Artists</string>
+    <string name="artist_singular">Artist</string>
+    <string name="artist_unknown">Unknown Artist</string>
     
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
+    
 </resources>
