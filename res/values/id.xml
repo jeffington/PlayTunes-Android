@@ -11,4 +11,6 @@
     
     <item type="id" name="tag_repeat_state" />
     
+    <item type="id" name="tag_artist_unknown" />
+    
 </resources>
