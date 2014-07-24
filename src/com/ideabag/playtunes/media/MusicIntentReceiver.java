@@ -37,14 +37,11 @@ public class MusicIntentReceiver extends BroadcastReceiver {
     	
     	String action = intent.getAction();
     	
-        /*if ( action.equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY ) ) {
+        if ( action.equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY ) ) {
         	
-            //Toast.makeText(context, "Headphones disconnected.", Toast.LENGTH_SHORT).show();
+        	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PAUSE ) );
 
-            // send an intent to our MusicService to telling it to pause the audio
-            context.startService( new Intent( MusicService.ACTION_PAUSE ) );
-
-        } else*/ if ( action.equals( Intent.ACTION_MEDIA_BUTTON ) ) {
+        } else if ( action.equals( Intent.ACTION_MEDIA_BUTTON ) ) {
         	
             KeyEvent keyEvent = ( KeyEvent ) intent.getExtras().get( Intent.EXTRA_KEY_EVENT );
             
