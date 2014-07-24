@@ -102,7 +102,13 @@ public class MainActivity extends ActionBarActivity {
 	    // Load the initial music browser fragment
 	    
 	    SongsFragment initialFragment = new SongsFragment();
-	    transactFragment( initialFragment );
+	    
+	    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    	transaction.replace( R.id.MusicBrowserContainer, initialFragment );
+    	// Don't add to back stack
+    	
+    	// Commit the transaction
+    	transaction.commit();
 	    
 	}
 	
