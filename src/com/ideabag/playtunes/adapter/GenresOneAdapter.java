@@ -19,6 +19,7 @@ public class GenresOneAdapter extends BaseAdapter {
 	private Context mContext;
 	private Cursor cursor;
 	private PlaylistManager mPlaylistManager;
+	View.OnClickListener songMenuClickListener;
 	
 	private String GENRE_ID;
 	
@@ -42,11 +43,13 @@ public class GenresOneAdapter extends BaseAdapter {
     	
     }
     
-	public GenresOneAdapter( Context context, String genre_id ) {
+	public GenresOneAdapter( Context context, String genre_id, View.OnClickListener menuClickListener ) {
 		super();
 		
 		mContext = context;
 		this.GENRE_ID = genre_id;
+		
+		songMenuClickListener = menuClickListener;
 		
 		cursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
@@ -85,6 +88,9 @@ public class GenresOneAdapter extends BaseAdapter {
 			
 			convertView = li.inflate( R.layout.list_item_song_no_album, null );
 			
+			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
+			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
+			
 		}
 		
 		cursor.moveToPosition( position );
@@ -100,9 +106,12 @@ public class GenresOneAdapter extends BaseAdapter {
 		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
 		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
 		
+		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
+		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		
 		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
 		
-		starButton.setChecked( mPlaylistManager.isStarred( song_id ) ); 
+		starButton.setChecked( mPlaylistManager.isStarred( song_id ) );
 		
 		return convertView;
 		

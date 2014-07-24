@@ -148,6 +148,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		( ( TextView ) convertView.findViewById( R.id.SongAlbum )).setText( songAlbum );
 		
 		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
+		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
 		
 		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
 		

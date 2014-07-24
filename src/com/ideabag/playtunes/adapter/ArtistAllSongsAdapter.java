@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.adapter;
 
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class ArtistAllSongsAdapter extends BaseAdapter {
 	
@@ -17,6 +19,9 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 	Cursor cursor;
 	private String ARTIST_ID;
 	public String ARTIST_NAME;
+	
+	private PlaylistManager mPlaylistManager;
+	View.OnClickListener songMenuClickListener;
 	
     private static final String[] allSongsSelection = new String[] {
     	
@@ -33,15 +38,19 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
     	
     };
     
-	public ArtistAllSongsAdapter( Context context, String artist_id ) {
+	public ArtistAllSongsAdapter( Context context, String artist_id, View.OnClickListener clickListener ) {
 		
 		mContext = context;
 		ARTIST_ID = artist_id;
 		
+		mPlaylistManager = new PlaylistManager( mContext );
+		
+		songMenuClickListener = clickListener;
+		
     	cursor = mContext.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					allSongsSelection,
-					MediaStore.Audio.Media.ARTIST_ID + "=?",
+					MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
 					new String[] {
 						
 						ARTIST_ID
@@ -52,7 +61,21 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
     	
     	cursor.moveToFirst();
     	
-    	ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+    	try {
+    		
+    		ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+    		
+    		if ( "<unknown>".equals( ARTIST_NAME ) ) {
+        		
+        		ARTIST_NAME = mContext.getString( R.string.artist_unknown );
+        		
+        	}
+    		
+    	} catch( Exception e ) {
+    		
+    		ARTIST_NAME = mContext.getString( R.string.artist_unknown );
+    		
+    	}
     	
 	}
 	
@@ -88,6 +111,9 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 			
 			convertView = li.inflate( R.layout.list_item_song_no_album, null );
 			
+			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
+			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
+			
 		}
 		
 		cursor.moveToPosition( position );
@@ -95,10 +121,18 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
 		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
+		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
 		( ( TextView ) convertView.findViewById( R.id.SongTitle ) ).setText( songTitle );
 		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
 		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
+		
+		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
+		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		
+		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+		
+		starButton.setChecked( mPlaylistManager.isStarred( song_id ) );
 		
 		return convertView;
 		
