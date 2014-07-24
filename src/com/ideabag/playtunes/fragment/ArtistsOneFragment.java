@@ -89,10 +89,11 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 					MediaStore.Audio.Media._ID
 					
 				},
-				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.ALBUM + "='Music'",
+				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.ALBUM + "=?",
 				new String[] {
 					
-					ARTIST_ID
+					ARTIST_ID,
+					getString( R.string.no_album_string )
 					
 				},
 				null
