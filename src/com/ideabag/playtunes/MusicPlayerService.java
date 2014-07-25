@@ -682,7 +682,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 
 	@Override
 	public void onLostAudioFocus(boolean canDuck) {
-		// TODO Auto-generated method stub
+		
+		pause();
 		
 	}
 	
