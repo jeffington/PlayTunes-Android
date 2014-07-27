@@ -39,6 +39,13 @@ public class NavigationListAdapter extends BaseAdapter {
 		
 	};
 	
+	private static int ARTISTS = 0;
+	private static int ALBUMS = 1;
+	private static int GENRES = 2;
+	private static int SONGS = 3;
+	private static int PLAYLISTS = 4;
+	
+	
 	private Context mContext;
 	
 	public NavigationListAdapter( Context context ) {
@@ -81,7 +88,7 @@ public class NavigationListAdapter extends BaseAdapter {
 		
 		int badgeCount = 0;
 		
-		if ( position == 0) {
+		if ( position == ARTISTS ) {
 			
 			Cursor artists = mContext.getContentResolver().query(
 					MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
@@ -97,7 +104,7 @@ public class NavigationListAdapter extends BaseAdapter {
 			badgeCount = artists.getCount();
 			artists.close();
 			
-		} else if ( position == 1 ) {
+		} else if ( position == ALBUMS ) {
 			
 			Cursor albums = mContext.getContentResolver().query(
 					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -106,14 +113,18 @@ public class NavigationListAdapter extends BaseAdapter {
 						MediaStore.Audio.Albums._ID	
 							
 					},
-					MediaStore.Audio.Media.ALBUM + "!='Music'",
-					null,
+					MediaStore.Audio.Media.ALBUM + "!=?",
+					new String[] {
+						
+						mContext.getString( R.string.no_album_string )
+						
+					},
 					null);
 			
 			badgeCount = albums.getCount();
 			albums.close();
 			
-		} else if ( position == 2 ) {
+		} else if ( position == GENRES ) {
 			
 			Cursor genres = mContext.getContentResolver().query(
 					MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
@@ -129,7 +140,7 @@ public class NavigationListAdapter extends BaseAdapter {
 			badgeCount = genres.getCount();
 			genres.close();
 			
-		} else if ( position == 3 ) {
+		} else if ( position == SONGS ) {
 			
 			Cursor songs = mContext.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -138,14 +149,14 @@ public class NavigationListAdapter extends BaseAdapter {
 						MediaStore.Audio.Media._ID	
 							
 					},
-					null,
+					MediaStore.Audio.Media.IS_MUSIC + " != 0",
 					null,
 					null);
 			
 			badgeCount = songs.getCount();
 			songs.close();
 			
-		} else if ( position == 4 ) {
+		} else if ( position == PLAYLISTS ) {
 			
 			Cursor playlists = mContext.getContentResolver().query(
 					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
