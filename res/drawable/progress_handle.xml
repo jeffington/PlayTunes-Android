@@ -16,26 +16,21 @@
         android:left="0dp"
         android:right="0dp" >
         
-        <inset android:insetLeft="16dp"
-            android:insetRight="16dp" android:drawable="@drawable/progress_handle_background" />
+        <inset android:insetLeft="8dp"
+            android:insetRight="8dp"
+            android:insetTop="2dp"
+            android:insetBottom="2dp"
+            android:drawable="@drawable/progress_handle_background" />
 		
 	</item>
     
     <item>
         
         <inset
-            android:insetLeft="16dp"
-            android:insetRight="16dp"
+            android:insetLeft="10dp"
+            android:insetRight="2dp"
             android:insetTop="4dp"
-            android:insetBottom="4dp">
-            
-            
-            <bitmap android:src="@drawable/ic_drawer"
-                
-                />
-            
-            
-        </inset>
+            android:insetBottom="6dp" android:drawable="@drawable/ic_drawer" />
         
     </item>
 
