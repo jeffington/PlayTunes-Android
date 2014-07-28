@@ -32,11 +32,11 @@
 		/>
         
     </RelativeLayout>
-	<ImageView
+	<View
         
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:src="@drawable/actionbar_shadow"
+        android:background="@drawable/actionbar_shadow"
         
 	/>
     
@@ -50,20 +50,6 @@
 		android:textColor="@color/textColorPrimary"
 		android:text="Add to..."
 		android:background="@drawable/list_item_background"
-	/>
-    
-    <TextView android:id="@+id/SongMenuInfo"
-	    android:layout_width="match_parent"
-	    android:layout_height="@dimen/list_divider_height"
-	    android:background="@drawable/actionbar_background"
-	    android:text="SONG INFO"
-	    android:textSize="@dimen/text_medium"
-	    android:gravity="left|center_vertical"
-	    android:textColor="@color/textColorPrimaryDark"
-	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
-	    android:textStyle="bold"
-	    android:paddingTop="8dp"
-	    android:paddingBottom="8dp"
 	/>
     
 <LinearLayout android:id="@+id/SongMenuArtist"

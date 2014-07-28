@@ -127,13 +127,6 @@ public class SongMenuDialogFragment extends DialogFragment {
         	
         }
         
-        if ( songAlbum.equals( getString( R.string.no_album_string ) )
-        		&& songArtist.equals( getString( R.string.no_artist_string ) ) ) {
-        	
-        	view.findViewById( R.id.SongMenuInfo ).setVisibility( View.GONE );
-        	
-        }
-        
         return view;
         
     }
