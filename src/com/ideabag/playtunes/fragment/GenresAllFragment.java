@@ -10,7 +10,10 @@ import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -45,7 +48,10 @@ public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 		
 		
     	setListAdapter( adapter );
-    	
+		
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+		
 	}
 		
 	@Override public void onResume() {
@@ -87,6 +93,13 @@ public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 	    
 	}
 	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		
+	}
+	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		String genre_id = (String) v.getTag( R.id.tag_genre_id );
@@ -104,5 +117,27 @@ public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void setMediaID(String media_id) { /* ... */ }
 
 	@Override public String getMediaID() { return ""; }
+	
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+				
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 	
 }

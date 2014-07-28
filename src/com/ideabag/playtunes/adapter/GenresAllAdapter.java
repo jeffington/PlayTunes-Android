@@ -15,7 +15,7 @@ import android.widget.TextView;
 public class GenresAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
-	private Cursor cursor;
+	private Cursor cursor = null;
 	
     private static final String[] allGenresSelection = new String[] {
     	
@@ -28,7 +28,18 @@ public class GenresAllAdapter extends BaseAdapter {
 		super();
 		
 		mContext = context;
-		// TODO Auto-generated constructor stub
+		
+		requery();
+		
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
 		
 		cursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
@@ -37,8 +48,6 @@ public class GenresAllAdapter extends BaseAdapter {
 				null,
 				MediaStore.Audio.Genres.NAME
 			);
-		
-		
 		
 	}
 
