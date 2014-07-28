@@ -140,7 +140,7 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 
     	
     	mActivity.setActionbarTitle( adapter.ArtistName );
-    	mActivity.setActionbarSubtitle( getString( R.string.artist_singles ) );
+    	mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
