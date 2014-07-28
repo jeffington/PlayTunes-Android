@@ -30,7 +30,7 @@
             android:insetBottom="4dp">
             
             
-            <bitmap android:src="@drawable/drawer_icon"
+            <bitmap android:src="@drawable/ic_drawer"
                 
                 />
             
