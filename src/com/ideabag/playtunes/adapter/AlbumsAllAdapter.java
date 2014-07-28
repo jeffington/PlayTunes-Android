@@ -16,7 +16,7 @@ import android.widget.TextView;
 public class AlbumsAllAdapter extends BaseAdapter {
 	
 	protected Context mContext;
-	protected Cursor cursor;
+	protected Cursor cursor = null;
 	
     private static final String[] allAlbumsSelection = new String[] {
     	
@@ -32,11 +32,25 @@ public class AlbumsAllAdapter extends BaseAdapter {
 		
 		mContext = context;
 		
+		requery();
+		
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
+		
     	cursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 				allAlbumsSelection,
-				MediaStore.Audio.Media.ALBUM + "!='Music'",
-				null,
+				MediaStore.Audio.Media.ALBUM + "!=?",
+				new String[] {
+						mContext.getString( R.string.no_album_string )
+				},
 				MediaStore.Audio.Albums.ALBUM
 			);
 		

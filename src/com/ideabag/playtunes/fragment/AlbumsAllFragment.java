@@ -1,7 +1,10 @@
 package com.ideabag.playtunes.fragment;
 
 import android.app.Activity;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
@@ -40,6 +43,9 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
 		getListView().setSelector( R.drawable.list_item_background );
 		
 		setListAdapter( adapter );
+		
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
 	}
 	
@@ -66,14 +72,10 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
     	.setValue( adapter.getCount() )
     	.build());
 		
-		//mActivity.AdView.resume();
-		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
-		
-		//mActivity.AdView.pause();
 		
 	}
 	
@@ -82,6 +84,13 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
 	    
 	    setListAdapter( null );
 	    
+	}
+	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
@@ -96,6 +105,27 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
 		mActivity.transactFragment( albumFragment );
 		
 	}
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+				
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 	
 	// PlaylistBrowser interface methods
 	
