@@ -11,7 +11,10 @@ import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -24,8 +27,7 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	
     private MainActivity mActivity;
     
-	MergeAdapter adapter;
-	SongsAllAdapter songAdapter;
+	SongsAllAdapter adapter;
 	
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );
@@ -37,12 +39,8 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-    	adapter = new MergeAdapter();
-		
-		songAdapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
+		adapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
     	
-		//adapter.addView( mActivity.AdContainer, false );
-		adapter.addAdapter( songAdapter );
     	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
@@ -54,6 +52,8 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
     	//getListView().addHeaderView( mActivity.AdContainer );
     	setListAdapter( adapter );
     	
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
 	}
 	
@@ -87,34 +87,30 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 	}
 	
+	@Override public void onDestroyView() {
+		super.onDestroyView();
+	    
+	    setListAdapter( null );
+	    
+	}
+	
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
-		//getListView().removeHeaderView( mActivity.AdContainer );
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
 		
-	}
-	
-	@Override public void onDestroyView() {
-		super.onDestroyView();
-	    //adapter = null;
-	    
-	    //getListView().removeHeaderView( mActivity.AdContainer );
-	    setListAdapter( null );
-	    
-	    
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( songAdapter.getCursor(), playlistName, SongsFragment.class, null );
+		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, SongsFragment.class, null );
 		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
 		
 		mActivity.mBoundService.setPlaylistPosition( position );
 		
 		mActivity.mBoundService.play();
-		
 		
 	}
 	
@@ -164,5 +160,26 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void setMediaID(String media_id) { /* ... */ }
 
 	@Override public String getMediaID() { return ""; }
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+				
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 	
 }

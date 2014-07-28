@@ -16,7 +16,7 @@ import android.widget.ToggleButton;
 public class SongsAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
-	Cursor cursor;
+	Cursor cursor = null;
 	private PlaylistManager PlaylistManager;
 	
 	View.OnClickListener songMenuClickListener;
@@ -47,6 +47,20 @@ public class SongsAllAdapter extends BaseAdapter {
 		mContext = context;
 		
 		PlaylistManager = new PlaylistManager( mContext );
+    	
+    	this.songMenuClickListener = menuClickListener;
+    	
+    	requery();
+		
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
 		
     	cursor = mContext.getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -55,8 +69,6 @@ public class SongsAllAdapter extends BaseAdapter {
 					null,
 					MediaStore.Audio.Media.TITLE
     			);
-    	
-    	this.songMenuClickListener = menuClickListener;
 		
 	}
 	
