@@ -1,18 +1,13 @@
 package com.ideabag.playtunes;
 
-import android.app.AlertDialog;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.text.InputType;
-import android.widget.EditText;
-import android.widget.Toast;
 
 public class PlaylistManager {
 	
@@ -126,7 +121,7 @@ public class PlaylistManager {
 	    }
 	
 	}
-	    // Projection to get high water mark of PLAY_ORDER in a particular playlist
+    // Projection to get high water mark of PLAY_ORDER in a particular playlist
 
 	// Projection to get the list of song IDs to be added to a playlist
 	/*
@@ -147,56 +142,6 @@ public class PlaylistManager {
 				);
 		
 		return true;
-		
-	}
-	
-	public void createPlaylistDialog() {
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder( mContext );
-		builder.setTitle("New Playlist Name");
-		
-		// Set up the input
-		final EditText input = new EditText( mContext );
-		//input.setTransformationMethod( SingleLineTransformationMethod.getInstance() );
-		// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-		input.setInputType( InputType.TYPE_CLASS_TEXT );
-		input.setFocusable( true );
-		input.setFocusableInTouchMode( true );
-		//input.clearFocus();
-		builder.setView( input );
-
-		// Set up the buttons
-		builder.setPositiveButton( "Ok", new DialogInterface.OnClickListener() {
-			
-		    @Override public void onClick( DialogInterface dialog, int which ) {
-		        // Create playlist
-		    	String playlistName = input.getText().toString();
-		    	createPlaylist( playlistName );
-		        Toast.makeText(mContext, "Created playlist " + playlistName, Toast.LENGTH_SHORT).show();
-		        
-		    }
-		    
-		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-		    
-			@Override public void onClick( DialogInterface dialog, int which ) {
-				
-		        dialog.cancel();
-		        
-		    }
-		    
-		});
-
-		
-		
-		builder.show();
-		
-		// TODO: Get the software keyboard to pop up so the user can immediately start writing the name
-		
-		input.performClick();
-		//InputMethodManager mgr = ( InputMethodManager ) mContext.getSystemService( Context.INPUT_METHOD_SERVICE );
-		// only will trigger it if no physical keyboard is open
-		//mgr.showSoftInput( input, InputMethodManager.SHOW_IMPLICIT );
 		
 	}
 	
@@ -340,21 +285,7 @@ public class PlaylistManager {
 		
 		
 		isStarred = ( null != starredQueryCursor && starredQueryCursor.getCount() > 0 );
-		/*
-		if ( starredQueryCursor.getCount() > 1 ) {
-			
-			android.util.Log.i( "Weird Case", song_id + " : " + starredQueryCursor.getCount() );
-			
-		} else if ( starredQueryCursor.getCount() == 1 ) {
-			
-			//android.util.Log.i( "Correct Case", song_id + " : " + starredQueryCursor.getCount() );
-			
-		} else {
-			
-			//android.util.Log.i( "Not starred", song_id + " : " + starredQueryCursor.getCount() );
-			
-		}
-		*/
+		
 		starredQueryCursor.close();
 		
 		
