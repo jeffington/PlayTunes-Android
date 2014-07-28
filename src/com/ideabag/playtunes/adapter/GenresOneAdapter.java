@@ -51,15 +51,27 @@ public class GenresOneAdapter extends BaseAdapter {
 		
 		songMenuClickListener = menuClickListener;
 		
+		mPlaylistManager = new PlaylistManager( mContext );
+		
+		requery();
+		
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
+		
 		cursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
+				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ),
 				oneGenreSelection,
 				null,
 				null,
 				null
 			);
-		
-		mPlaylistManager = new PlaylistManager( mContext );
 		
 	}
 

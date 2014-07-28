@@ -64,6 +64,9 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 		
 		setListAdapter( adapter );
     	
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ), true, mediaStoreChanged );
+		
 	}
 		
 	@Override public void onResume() {
@@ -86,13 +89,7 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
     	.setLabel( TAG )
     	.setValue( adapter.getCount() )
     	.build());
-		/*
-		getActivity().getContentResolver().registerContentObserver(
-				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ),
-				true,
-				playlistsChanged
-			);
-		*/
+		
 	}
 		
 	@Override public void onPause() {
@@ -108,6 +105,14 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	    setListAdapter( null );
 	    
 	}
+	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		
+	}
+	
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
@@ -163,6 +168,27 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 			
 		}
 		
+	};
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+				
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
 	};
 
 }
