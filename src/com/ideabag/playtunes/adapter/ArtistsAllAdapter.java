@@ -32,6 +32,18 @@ public class ArtistsAllAdapter extends BaseAdapter {
 		
 		mContext = context;
 		
+		requery();
+		
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
+		
     	cursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
 				artistsSelection,
@@ -39,10 +51,6 @@ public class ArtistsAllAdapter extends BaseAdapter {
 				null,
 				MediaStore.Audio.Artists.ARTIST
 			);
-    	
-    	cursor.moveToFirst();
-    	
-    	
 		
 	}
 	
