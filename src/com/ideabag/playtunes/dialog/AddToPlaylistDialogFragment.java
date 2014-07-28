@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
@@ -74,6 +75,8 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         lv.setOnItemClickListener( this );
         lv.setAdapter( new ChoosePlaylistAdapter( getActivity() ) );
         
+        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener );
+        
         return view;
         
     }
@@ -101,11 +104,15 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 			
 			mPlaylistManager.addFavorite( mMediaID );
 			
+			Toast.makeText( getActivity(), "Starred song.", Toast.LENGTH_SHORT ).show();
+			
 		} else {
 			
 			String playlist_id = "" + view.getTag( R.id.tag_playlist_id );
         	
 			mPlaylistManager.addSong( playlist_id, mMediaID );
+			
+			Toast.makeText( getActivity(), "Added song to playlist.", Toast.LENGTH_SHORT ).show();
 			
 		}
 		
@@ -230,5 +237,20 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 
     } 
     
+    private View.OnClickListener headerButtonClickListener = new View.OnClickListener() {
+		
+		@Override public void onClick(View v) {
+			
+			int id = v.getId();
+			
+			if ( id == R.id.DialogCloseButton ) {
+				
+				dismiss();
+				
+			}
+			
+		}
+		
+	};
     
 }
