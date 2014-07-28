@@ -39,27 +39,6 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 	MainActivity mActivity;
 	
 	
-	ContentObserver playlistsChanged = new ContentObserver( new Handler() ) {
-		
-        @Override public void onChange( boolean selfChange ) {
-            
-            mActivity.runOnUiThread( new Runnable() {
-
-				@Override public void run() {
-					
-					adapter.requery();
-					adapter.notifyDataSetChanged();
-					
-				}
-            	
-            });
-            
-            super.onChange( selfChange );
-            
-        }
-
-	};
-	
 	@Override public void onAttach( Activity activity ) {
 			
 		super.onAttach( activity );
@@ -96,6 +75,9 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 		
     	setListAdapter( adapter );
     	
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	
 	}
 	
 	
@@ -106,7 +88,7 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
     	mActivity.setActionbarTitle( getString( R.string.playlists_plural ) );
     	mActivity.setActionbarSubtitle( null );
 		
-		getActivity().getContentResolver().registerContentObserver( MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, playlistsChanged );
+
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 
@@ -133,7 +115,7 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 		
 		//dialogBuilder = null;
 		
-		getActivity().getContentResolver().unregisterContentObserver( playlistsChanged );
+		
 		
 		//mActivity.AdView.pause();
 		
@@ -144,7 +126,7 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 		
 		setHasOptionsMenu( false );
 		//getListView().removeHeaderView( mActivity.AdContainer );
-		
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
 	}
 	
 	@Override public void onDestroyView() {
@@ -220,5 +202,26 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 	@Override public void setMediaID(String media_id) { /* ... */ }
 
 	@Override public String getMediaID() { return ""; }
+	
+	ContentObserver mediaStoreChanged = new ContentObserver( new Handler() ) {
+		
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+					
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 	
 }
