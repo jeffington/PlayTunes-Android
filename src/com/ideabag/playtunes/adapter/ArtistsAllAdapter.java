@@ -14,7 +14,7 @@ import android.widget.TextView;
 public class ArtistsAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
-	private Cursor cursor;
+	private Cursor cursor = null;
 	
 	public String ARTIST_NAME;
 	
