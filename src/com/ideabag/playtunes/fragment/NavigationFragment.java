@@ -92,6 +92,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		super.onDestroy();
 		
 		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		
 	}
 	
 	private View.OnClickListener NavigationClickListener = new View.OnClickListener() {
@@ -174,8 +175,6 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
 
         @Override public void onChange( boolean selfChange ) {
-            
-            android.util.Log.i( TAG, "Changed? " + selfChange );
             
             mActivity.runOnUiThread( new Runnable() {
 
