@@ -24,7 +24,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 	private String PLAYLIST_ID;
 	public String PLAYLIST_NAME;
 	
-	private boolean isEditing = false;
+	public boolean isEditing = false;
 	
     private static final String[] singlePlaylistSelection = new String[] {
     	
@@ -129,7 +129,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			
 			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
-			convertView = li.inflate( R.layout.list_item_song_no_album, null );
+			convertView = li.inflate( R.layout.list_item_playlist_song, null );
 			
 			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
 			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
@@ -159,12 +159,14 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			convertView.findViewById( R.id.StarButton ).setVisibility( View.VISIBLE );
 			convertView.findViewById( R.id.MenuButton ).setVisibility( View.VISIBLE );
 			convertView.findViewById( R.id.DragButton ).setVisibility( View.GONE );
+			convertView.findViewById( R.id.RemoveButton ).setVisibility( View.GONE );
 			
 		} else {
 			
 			convertView.findViewById( R.id.StarButton ).setVisibility( View.GONE );
 			convertView.findViewById( R.id.MenuButton ).setVisibility( View.GONE );
 			convertView.findViewById( R.id.DragButton ).setVisibility( View.VISIBLE );
+			convertView.findViewById( R.id.RemoveButton ).setVisibility( View.VISIBLE );
 			
 		}
 		

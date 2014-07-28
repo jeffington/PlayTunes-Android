@@ -16,6 +16,7 @@
 	<string name="playlist_new">New Playlist</string>
 	<string name="playlist_rename">Rename Playlist</string>
 	<string name="playlist_delete">Delete Playlist?</string>
+	<string name="playlist_editing">Editing Playlist</string>
 	<string name="playlist_name_starred">Starred</string>
 	
 	<string name="settings">Settings</string>
@@ -48,6 +49,9 @@
     
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
+    
+    <string name="done">Done</string>
+    <string name="edit">Edit</string>
     
     <string name="no_album_string">Music</string>
     <string name="no_artist_string">&#60;unknown&#62;</string>

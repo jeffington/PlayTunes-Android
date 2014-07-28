@@ -9,6 +9,7 @@ import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.ContentObserver;
 import android.os.Bundle;
@@ -17,13 +18,13 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowser {
@@ -35,7 +36,9 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	
 	private String PLAYLIST_ID = "";
 	
-	//private MenuItem menuItemEdit, menuItemDoneEditing;
+	private MenuItem menuItemEdit, menuItemDoneEditing;
+	
+	private String mTitle, mSubtitle;
 	
 	//private DragNDropListView ListView;
 	
@@ -67,6 +70,10 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		getListView().setDivider( mActivity.getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
+		
+		// Dumb thing to have a bottom divider shown
+		getListView().setFooterDividersEnabled( true );
+		getListView().addFooterView( new View( getActivity() ), null, true);
 		
 		setListAdapter( adapter );
 		
@@ -116,7 +123,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		super.onDestroy();
 		setHasOptionsMenu( false );
 		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
-		//getListView().removeHeaderView( mActivity.AdContainer );
+		
 		
 	}
 	
@@ -129,19 +136,33 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
-		
-		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
-		
-		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
-		
-		mActivity.mBoundService.play();
+		if ( adapter.isEditing ) {
+			
+			Toast.makeText( getActivity(), "Can't play songs while editing playlist.", Toast.LENGTH_SHORT ).show();
+			
+		} else {
+			
+			String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+			
+			mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
+			
+			mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
+			
+			mActivity.mBoundService.play();
+			
+		}
 		
 	}
 	
 	@Override public void onCreateOptionsMenu( Menu menu, MenuInflater inflater) {
 		
 	   inflater.inflate( R.menu.menu_playlist_one, menu );
+	   
+	   menuItemEdit = menu.findItem( R.id.MenuPlaylistEdit );
+	   
+	   menuItemDoneEditing = menu.findItem( R.id.MenuPlaylistDone );
+	   
+	   menuItemDoneEditing.setVisible( false );
 	   
 	}
 	
@@ -152,24 +173,28 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	   
 	      case R.id.MenuPlaylistEdit:
 	         
-	    	  ActionBar bar = mActivity.getSupportActionBar();
-	    	  
-	    	  
-	    	  //bar.setTitle("Editing Playlist");
-	    	  //mActivity.actionbarTitle = bar.getTitle();
-	    	  //bar.setSubtitle( null );
-	    	  //mActivity.actionbarSubtitle = bar.getSubtitle();
+	    	  menuItemDoneEditing.setVisible( true );
+	    	  menuItemEdit.setVisible( false );
 	    	  adapter.setEditing( true );
 	    	  //ListView.invalidate();
+	    	  mTitle = (String) mActivity.getSupportActionBar().getTitle();
+	    	  mSubtitle = (String) mActivity.getSupportActionBar().getSubtitle();
+	    	  mActivity.setActionbarSubtitle( null );
+	    	  mActivity.setActionbarTitle( getActivity().getString( R.string.playlist_editing ) );
 	    	  
 	         return true;
 	         
 	      case R.id.MenuPlaylistDone:
 	    	  
+	    	  menuItemDoneEditing.setVisible( false );
+	    	  menuItemEdit.setVisible( true );
 	    	  adapter.setEditing( false );
 	    	  //ListView.invalidate();
+	    	  mActivity.setActionbarTitle( mTitle );
+	    	  mActivity.setActionbarSubtitle( mSubtitle );
 	    	  
 	    	  return true;
+	    	  
 	      default:
 	         return super.onOptionsItemSelected(item);
 	         
