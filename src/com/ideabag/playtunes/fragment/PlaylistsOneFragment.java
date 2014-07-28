@@ -6,7 +6,6 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 

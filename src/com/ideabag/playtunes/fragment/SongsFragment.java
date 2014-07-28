@@ -6,7 +6,6 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.SongsAllAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -49,7 +48,6 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		getListView().setSelector( R.drawable.list_item_background );
     	
 		
-    	//getListView().addHeaderView( mActivity.AdContainer );
     	setListAdapter( adapter );
     	
 		getActivity().getContentResolver().registerContentObserver(
