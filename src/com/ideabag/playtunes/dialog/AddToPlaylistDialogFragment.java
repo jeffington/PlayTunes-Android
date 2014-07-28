@@ -99,12 +99,13 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 			
 		} else if ( 1 == position ) { //starred
 			
-			
+			mPlaylistManager.addFavorite( mMediaID );
 			
 		} else {
 			
-			
+			String playlist_id = "" + view.getTag( R.id.tag_playlist_id );
         	
+			mPlaylistManager.addSong( playlist_id, mMediaID );
 			
 		}
 		
