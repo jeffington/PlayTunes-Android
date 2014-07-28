@@ -115,7 +115,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	
 	@Override public void onDestroy() {
 		super.onDestroy();
-		
+		setHasOptionsMenu( false );
 		getActivity().getContentResolver().unregisterContentObserver( playlistsChanged );
 		//getListView().removeHeaderView( mActivity.AdContainer );
 		
