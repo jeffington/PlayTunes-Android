@@ -72,7 +72,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 		setListAdapter( adapter );
 		
 		getActivity().getContentResolver().registerContentObserver(
-				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, playlistsChanged );
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, mediaStoreChanged );
 		
 		
 	}
@@ -116,7 +116,7 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	@Override public void onDestroy() {
 		super.onDestroy();
 		setHasOptionsMenu( false );
-		getActivity().getContentResolver().unregisterContentObserver( playlistsChanged );
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
 		//getListView().removeHeaderView( mActivity.AdContainer );
 		
 	}
@@ -177,29 +177,6 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 	   }
 	   
 	}
-
-	ContentObserver playlistsChanged = new ContentObserver(new Handler()) {
-
-        @Override public void onChange( boolean selfChange ) {
-            
-            //Log.i("onChange", "?" + selfChange);
-            
-            mActivity.runOnUiThread( new Runnable() {
-
-				@Override public void run() {
-					
-					adapter.requery();
-					adapter.notifyDataSetChanged();
-					//getListView().invalidate();
-				}
-            	
-            });
-            
-            super.onChange( selfChange );
-            
-        }
-
-	};
 	
 	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
@@ -239,6 +216,27 @@ public class PlaylistsOneFragment extends ListFragment implements PlaylistBrowse
 			
 		}
 		
+	};
+	
+	ContentObserver mediaStoreChanged = new ContentObserver( new Handler() ) {
+		
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+					
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
 	};
 	
 	
