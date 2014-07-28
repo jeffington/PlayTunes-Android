@@ -8,7 +8,10 @@ import com.ideabag.playtunes.dialog.FeedbackDialogFragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +25,11 @@ import android.widget.ListView;
 
 public class NavigationFragment extends Fragment implements OnItemClickListener {
 	
+	public static final String TAG = "NavigationFragment";
+	
 	private MainActivity mActivity;
+	
+	NavigationListAdapter adapter;
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
@@ -52,8 +59,10 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		//getView().findViewById( R.id.NavigationSettings ).setOnClickListener( NavigationClickListener );
 		
+		adapter = new NavigationListAdapter( getActivity() );
+		
 		ListView lv = ( ListView ) getView().findViewById( R.id.NavigationListView );
-		lv.setAdapter( new NavigationListAdapter( getActivity() ) );
+		lv.setAdapter( adapter );
 		
 		
 		
@@ -66,19 +75,23 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		lv.setDividerHeight( 1 );
 		lv.setSelector( R.drawable.list_item_background );
 		
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+		
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
-		
-		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
+	}
+	
+	@Override public void onDestroy() {
+		super.onDestroy();
 		
-		
-		
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
 	}
 	
 	private View.OnClickListener NavigationClickListener = new View.OnClickListener() {
@@ -157,5 +170,27 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		}
 		
 	}
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            android.util.Log.i( TAG, "Changed? " + selfChange );
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.notifyDataSetChanged();
+				
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 	
 }
