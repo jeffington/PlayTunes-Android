@@ -67,18 +67,34 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_action_mic"
             />
-        
+	
+   	<LinearLayout android:orientation="vertical"
+    	    android:layout_width="0dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical"
+    	    android:layout_weight="1"
+    	    android:padding="8dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing" >
+   	
     <TextView android:id="@+id/SongMenuArtistTitle"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:text="Pink Floyd"
-        android:gravity="left|center_vertical"
         android:textSize="@dimen/text_xlarge"
         android:textColor="@color/textColorPrimary"
-        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
         />
-    
+            <TextView
+            
+           	android:layout_width="match_parent"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+			android:textColor="@color/textColorSecondary"
+			android:textSize="@dimen/text_medium"
+           	android:text="@string/artist_singular"
+           	
+        />
+        
+        </LinearLayout>
 </LinearLayout>
 <LinearLayout android:id="@+id/SongMenuAlbum"
     android:layout_width="match_parent"
@@ -95,17 +111,34 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_action_record"
             />
-        
+<LinearLayout android:orientation="vertical"
+    	    android:layout_width="0dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical"
+    	    android:layout_weight="1"
+    	    android:padding="8dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing" >
+    	    
     <TextView android:id="@+id/SongMenuAlbumTitle"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:text="Dark Side of the Moon"
-        android:gravity="left|center_vertical"
         android:textSize="@dimen/text_xlarge"
         android:textColor="@color/textColorPrimary"
-        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
         />
+        
+        <TextView
+            
+           	android:layout_width="match_parent"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+			android:textColor="@color/textColorSecondary"
+			android:textSize="@dimen/text_medium"
+           	android:text="@string/album_singular"
+           	
+        />
+        
+        </LinearLayout>
     
 </LinearLayout>
     
