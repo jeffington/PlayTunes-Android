@@ -16,8 +16,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ToggleButton;
@@ -25,6 +23,8 @@ import android.widget.ToggleButton;
 public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "Artist All Songs";
+	
+	private static final char DASH_SYMBOL = 0x2013;
 	
 	ArtistAllSongsAdapter adapter;
 	
@@ -69,7 +69,13 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 		super.onResume();
 		
     	mActivity.setActionbarTitle( adapter.ARTIST_NAME );
-    	mActivity.setActionbarSubtitle( getString( R.string.all_songs ) );
+    	mActivity.setActionbarSubtitle( getString( R.string.all_songs )
+    			+ " "
+    			+ Character.toString( DASH_SYMBOL )
+    			+ " "
+    			+ adapter.getCount()
+    			+ " "
+    			+ (adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
