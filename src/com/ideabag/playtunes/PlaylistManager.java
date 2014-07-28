@@ -134,14 +134,14 @@ public class PlaylistManager {
 	public boolean removeSong( String playlist_id, String song_id ) {
 		
 		
-		mResolver.delete( MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( playlist_id ) ),
+		int rows = mResolver.delete( MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( playlist_id ) ),
 				MediaStore.Audio.Playlists.Members.AUDIO_ID + "=?",
 				new String[] {
 					song_id
 				}
 				);
 		
-		return true;
+		return ( rows == 1 );
 		
 	}
 	
@@ -389,5 +389,28 @@ public class PlaylistManager {
 	}
 	
 	// Reorder songs in a playlist
-	//moveItem(ContentResolver res, long playlistId, int from, int to)
+	
+	public boolean moveTrack( String playlist_id, int from, int to ) {
+		
+		boolean success = false;
+		
+		success = MediaStore.Audio.Playlists.Members.moveItem( mResolver, Long.parseLong( playlist_id ), from, to );
+		
+		/*
+		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", Long.parseLong( playlist_id ) )
+	            .buildUpon()
+	            .appendEncodedPath( String.valueOf( from ) )
+	            .appendQueryParameter("move", "true")
+	            .build();
+	    	
+	    ContentValues values = new ContentValues();
+	    values.put( MediaStore.Audio.Playlists.Members.PLAY_ORDER, to );
+	    
+	    return mResolver.update(uri, values, null, null) != 0;
+		*/
+		
+		return success;
+		
+	}
+	
 }

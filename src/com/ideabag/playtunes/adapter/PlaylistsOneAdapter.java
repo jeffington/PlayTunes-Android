@@ -37,6 +37,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
     	MediaStore.Audio.Playlists.Members.DATA,
     	MediaStore.Audio.Playlists.Members._ID,
     	MediaStore.Audio.Playlists.Members.PLAYLIST_ID,
+    	MediaStore.Audio.Playlists.Members.PLAY_ORDER
 		
 	};
     
@@ -100,7 +101,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 					PLAYLIST_ID
 					
 				},
-				null
+				MediaStore.Audio.Playlists.Members.PLAY_ORDER
 			);
 		
 	}
@@ -133,6 +134,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			
 			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
 			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
+			convertView.findViewById( R.id.RemoveButton ).setOnClickListener( songMenuClickListener );
 			
 		}
 		
@@ -149,6 +151,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		
 		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
 		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		convertView.findViewById( R.id.RemoveButton ).setTag( R.id.tag_song_id, song_id );
 		
 		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
 		

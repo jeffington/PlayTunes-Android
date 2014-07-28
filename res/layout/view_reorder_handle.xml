@@ -3,9 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background="@drawable/reorder_handle_background"
-    android:focusableInTouchMode="true"
-    android:clickable="true">
+    android:background="@drawable/reorder_handle_background">
     
     <View
         android:layout_height="match_parent"
