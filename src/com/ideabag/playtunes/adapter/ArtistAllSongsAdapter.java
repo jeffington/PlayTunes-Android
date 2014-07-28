@@ -16,7 +16,7 @@ import android.widget.ToggleButton;
 public class ArtistAllSongsAdapter extends BaseAdapter {
 	
 	private Context mContext;
-	Cursor cursor;
+	Cursor cursor = null;
 	private String ARTIST_ID;
 	public String ARTIST_NAME;
 	
@@ -47,36 +47,48 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 		
 		songMenuClickListener = clickListener;
 		
-    	cursor = mContext.getContentResolver().query(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					allSongsSelection,
-					MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
-					new String[] {
-						
-						ARTIST_ID
-						
-					},
-					MediaStore.Audio.Media.TITLE
-    			);
+    	requery();
     	
-    	cursor.moveToFirst();
-    	
-    	try {
-    		
-    		ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-    		
-    		if ( "<unknown>".equals( ARTIST_NAME ) ) {
-        		
-        		ARTIST_NAME = mContext.getString( R.string.artist_unknown );
-        		
-        	}
-    		
-    	} catch( Exception e ) {
-    		
-    		ARTIST_NAME = mContext.getString( R.string.artist_unknown );
-    		
-    	}
-    	
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
+		
+		cursor = mContext.getContentResolver().query(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				allSongsSelection,
+				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				new String[] {
+					
+					ARTIST_ID
+					
+				},
+				MediaStore.Audio.Media.TITLE
+			);
+	
+		cursor.moveToFirst();
+		
+		try {
+			
+			ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+			
+			if ( mContext.getString( R.string.no_artist_string ).equals( ARTIST_NAME ) ) {
+	    		
+	    		ARTIST_NAME = mContext.getString( R.string.artist_unknown );
+	    		
+	    	}
+			
+		} catch( Exception e ) {
+			
+			ARTIST_NAME = mContext.getString( R.string.artist_unknown );
+			
+		}
+		
 	}
 	
 	public Cursor getCursor() {

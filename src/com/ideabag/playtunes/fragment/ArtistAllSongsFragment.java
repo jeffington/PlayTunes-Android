@@ -10,7 +10,10 @@ import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
@@ -57,6 +60,9 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 		
     	setListAdapter( adapter );
 		
+    	getActivity().getContentResolver().registerContentObserver(
+    			MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	
 	}
 	
 	@Override public void onResume() {
@@ -96,6 +102,13 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 	    
 	    setListAdapter( null );
 	    
+	}
+	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
@@ -148,6 +161,27 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 			
 		}
 		
+	};
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					adapter.notifyDataSetChanged();
+				
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
 	};
 	
 	
