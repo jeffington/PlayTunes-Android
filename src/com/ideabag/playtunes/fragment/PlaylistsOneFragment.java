@@ -261,7 +261,9 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	   
 	   menuItemDoneEditing = menu.findItem( R.id.MenuPlaylistDone );
 	   
-	   menuItemDoneEditing.setVisible( false );
+	   menuItemDoneEditing.setVisible( isEditing );
+	   
+	   menuItemEdit.setVisible( !isEditing );
 	   
 	}
 	
