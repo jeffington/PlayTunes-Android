@@ -11,9 +11,8 @@
     
     <item android:id="@+id/MenuPlaylistDone"
         android:title="@string/done"
-        android:icon="@drawable/abc_ic_cab_done_holo_dark"
         android:orderInCategory="1"
-        compat:showAsAction="withText|always"
+        compat:showAsAction="always"
         />
     
 
