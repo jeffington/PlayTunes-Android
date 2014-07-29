@@ -37,13 +37,8 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		ActionBar bar =	mActivity.getSupportActionBar();
-    	
     	adapter = new ArtistsAllAdapter( getActivity() );
     	
-    	
-    	bar.setTitle( "Artists" );
-		bar.setSubtitle( adapter.getCount() + " artists" );
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
@@ -61,6 +56,9 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 		
 	@Override public void onResume() {
 		super.onResume();
+		
+		mActivity.setActionbarTitle( getString( R.string.artists_plural ) );
+		mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.artist_singular ) : getString( R.string.artists_plural ) ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
