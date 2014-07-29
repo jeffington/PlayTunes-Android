@@ -3,6 +3,8 @@ package com.ideabag.playtunes.activity;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
+import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
+import com.ideabag.playtunes.dialog.TourDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
@@ -101,15 +103,47 @@ public class MainActivity extends ActionBarActivity {
         
 	    // Load the initial music browser fragment
 	    
-	    SongsFragment initialFragment = new SongsFragment();
-	    
-	    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    	transaction.replace( R.id.MusicBrowserContainer, initialFragment );
-    	// Don't add to back stack
+	    if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
+		    
+		    SongsFragment initialFragment = new SongsFragment();
+		    
+		    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+	    	transaction.replace( R.id.MusicBrowserContainer, initialFragment );
+	    	// Don't add to back stack
+	    	
+	    	// Commit the transaction
+	    	transaction.commit();
+	    	
+	    }
+	    /*
+    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
     	
-    	// Commit the transaction
-    	transaction.commit();
-	    
+		Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+		
+	    if ( prev != null ) {
+	        
+	    	ft.remove( prev );
+	    	
+	    }
+		
+		TourDialogFragment tourFragment = new TourDialogFragment();
+		
+		tourFragment.addStep("Navigation",
+			"Navigate through your music by either swiping out the navigation drawer or pressing the title in the top left of the app's header.",
+			new Runnable() {
+				
+				@Override public void run() {
+				
+					toggleDrawer();
+				
+				}
+			
+			}
+		
+		);
+		
+		tourFragment.show( ft, "dialog" );
+    	*/
 	}
 	
 	public void setActionbarTitle( String titleString ) {
@@ -187,7 +221,7 @@ public class MainActivity extends ActionBarActivity {
     		mDrawerLayout.openDrawer( GravityCompat.START );
     		//customActionBarToggle.showOpen();
     		mActionbarTitle = getSupportActionBar().getTitle();
-    		getSupportActionBar().setTitle( "PlayTunes" );
+    		getSupportActionBar().setTitle( getString( R.string.app_name ) );
     		
     	}
     	
