@@ -26,8 +26,6 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	
 	public static final String TAG = "One Album Fragment";
 	
-	private final static String STATE_KEY_ALBUM_ID = "album_id";
-	
 	AlbumsOneAdapter adapter;
 	private MainActivity mActivity;
 	
@@ -49,20 +47,26 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		mActivity = ( MainActivity ) activity;
 		
 	}
+	
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		outState.putString( getString( R.string.key_state_media_id ), ALBUM_ID );
+		
+	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
     	
+		if ( null != savedInstanceState ) {
+			
+			ALBUM_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
+			
+		}
+		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
-		
-		if ( null != savedInstanceState && savedInstanceState.containsKey( STATE_KEY_ALBUM_ID ) ) {
-			
-			ALBUM_ID = savedInstanceState.getString( STATE_KEY_ALBUM_ID );
-			
-		}
 		
 		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener );
 		
@@ -170,13 +174,6 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	    
 	    setListAdapter( null );
 	    
-	}
-	
-	@Override public void onSaveInstanceState( Bundle outState ) {
-        super.onSaveInstanceState( outState );
-        
-        outState.putString( STATE_KEY_ALBUM_ID, ALBUM_ID );
-        
 	}
 	
 	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
