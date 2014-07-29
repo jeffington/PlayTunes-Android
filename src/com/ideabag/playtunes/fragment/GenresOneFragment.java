@@ -49,8 +49,20 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 		
 	}
     
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		outState.putString( getString( R.string.key_state_media_id ), GENRE_ID );
+		
+	}
+	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
+		
+		if ( null != savedInstanceState ) {
+			
+			GENRE_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
+			
+		}
 		
 		adapter = new GenresOneAdapter( getActivity(), GENRE_ID, songMenuClickListener );
     	
