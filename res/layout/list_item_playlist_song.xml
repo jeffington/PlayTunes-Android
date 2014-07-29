@@ -68,9 +68,11 @@
             
             />
        
-       <include android:id="@+id/DragButton"
-			layout="@layout/view_reorder_handle"
-            android:visibility="gone"
+       <View
+			android:id="@+id/DragButton"
+			android:layout_width="@dimen/drag_handle_width"
+			android:layout_height="match_parent"
+			android:background="@drawable/reorder_handle"
             />
 
 </LinearLayout>
