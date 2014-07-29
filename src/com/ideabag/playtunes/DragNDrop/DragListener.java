@@ -29,7 +29,7 @@ public interface DragListener {
 	 * Called when a drag starts.
 	 * @param itemView - the view of the item to be dragged i.e. the drag view
 	 */
-	void onStartDrag(View itemView);
+	void onStartDrag( int itemIndex, View itemView);
 	
 	/**
 	 * Called when a drag is to be performed.

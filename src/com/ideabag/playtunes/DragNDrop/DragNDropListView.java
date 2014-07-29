@@ -18,11 +18,11 @@ package com.ideabag.playtunes.DragNDrop;
 
 import com.ideabag.playtunes.R;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +32,8 @@ import android.widget.ListView;
 
 public class DragNDropListView extends ListView {
 	
+	// Used to toggle whether the list items can be dragged or not
+	
 	boolean mDraggingEnabled = false;
 	
 	boolean mDragMode;
@@ -40,8 +42,10 @@ public class DragNDropListView extends ListView {
 	int mEndPosition;
 	int mDragPointOffset;		//Used to adjust drag view location
 	
+	int mDragHandleWidth;
+	
 	ImageView mDragView;
-	GestureDetector mGestureDetector;
+	//GestureDetector mGestureDetector;
 	
 	DropListener mDropListener;
 	RemoveListener mRemoveListener;
@@ -49,6 +53,11 @@ public class DragNDropListView extends ListView {
 	
 	public DragNDropListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		Resources r = context.getResources();
+		
+		mDragHandleWidth = r.getDimensionPixelSize( R.dimen.drag_handle_width );
+		
 	}
 	
 	public void setDropListener(DropListener l) {
@@ -81,7 +90,9 @@ public class DragNDropListView extends ListView {
 			
 		}
 		
-		if ( action == MotionEvent.ACTION_DOWN && x >= ( 2 * this.getWidth() ) / 3 ) {
+		
+		
+		if ( action == MotionEvent.ACTION_DOWN && x >= ( this.getWidth() - mDragHandleWidth ) ) {
 			
 			mDragMode = true;
 			
@@ -131,9 +142,9 @@ public class DragNDropListView extends ListView {
 			WindowManager mWindowManager = (WindowManager) getContext()
 					.getSystemService(Context.WINDOW_SERVICE);
 			mWindowManager.updateViewLayout(mDragView, layoutParams);
-
+			
 			if (mDragListener != null)
-				mDragListener.onDrag(x, y, null);// change null to "this" when ready to use
+				mDragListener.onDrag( x, y, this );// change null to "this" when ready to use
 			
 		}
 		
@@ -148,7 +159,7 @@ public class DragNDropListView extends ListView {
 		if (item == null) return;
 		item.setDrawingCacheEnabled(true);
 		if (mDragListener != null)
-			mDragListener.onStartDrag(item);
+			mDragListener.onStartDrag( itemIndex, item);
 		
         // Create a copy of the drawing cache so that it does not get recycled
         // by the framework when the list tries to clean up memory
@@ -173,11 +184,10 @@ public class DragNDropListView extends ListView {
         
         Context context = getContext();
         
-        //View backgroundView = new View( context );
-        //backgroundView.setBackgroundColor( context.getResources().getColor( R.color.white ) );
+        
         ImageView v = new ImageView(context);
         v.setImageBitmap(bitmap);      
-        v.setBackgroundResource( R.drawable.list_item_dragging_background );
+        v.setBackgroundResource( R.drawable.drag_shadow );
         
         WindowManager mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         //mWindowManager.addView( backgroundView , mWindowParams );
