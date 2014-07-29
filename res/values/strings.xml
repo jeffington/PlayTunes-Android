@@ -16,7 +16,7 @@
 	<string name="playlist_new">New Playlist</string>
 	<string name="playlist_rename">Rename Playlist</string>
 	<string name="playlist_delete">Delete Playlist?</string>
-	<string name="playlist_editing">Editing Playlist</string>
+	<string name="playlist_editing">Editing</string>
 	<string name="playlist_name_starred">Starred</string>
 	
 	<string name="settings">Settings</string>

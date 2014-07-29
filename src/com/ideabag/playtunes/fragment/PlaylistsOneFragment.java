@@ -4,6 +4,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.DragNDrop.DragListener;
 import com.ideabag.playtunes.DragNDrop.DragNDropListView;
 import com.ideabag.playtunes.DragNDrop.DropListener;
 import com.ideabag.playtunes.activity.MainActivity;
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -45,6 +47,8 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	private String mTitle, mSubtitle;
 	
 	private DragNDropListView mListView;
+	
+	private int mListHeight, mListVisibleRows;
 	
 	@Override public void setMediaID( String media_id ) {
 		
@@ -87,19 +91,12 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
     	
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, mediaStoreChanged );
-		mListView.setDropListener( new DropListener() {
-
-			@Override public void onDrop( int from, int to ) {
-				
-				android.util.Log.i( TAG, "From: " + from + " To: " + to );
-				
-				boolean success = mActivity.PlaylistManager.moveTrack( PLAYLIST_ID, from, to );
-				
-				android.util.Log.i( TAG, "Successfully moved?: " + success );
-				
-			}
-			
-		});
+		
+		mListView.setDropListener( mSongDropListener );
+		
+		mListView.setDragListener( mSongDragListener );
+		
+		mListView.setChoiceMode( ListView.CHOICE_MODE_SINGLE );
 		
 	}
 	
@@ -132,18 +129,6 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
     	.setValue( adapter.getCount() )
     	.build());
 		
-		//mActivity.AdView.resume();
-		
-		
-		
-	}
-	
-	@Override public void onPause() {
-		super.onPause();
-		
-		//mActivity.AdView.pause();
-		
-		
 		
 	}
 	
@@ -155,14 +140,6 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		
 	}
 	
-	@Override public void onDestroyView() {
-	    super.onDestroyView();
-	    
-	    //setListAdapter( null );
-	    
-	}
-
-
 	@Override public void onItemClick( AdapterView<?> adapterView, View v, int position, long id ) {
 		
 		if ( adapter.isEditing ) {
@@ -182,6 +159,61 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		}
 		
 	}
+	
+	private DropListener mSongDropListener = new DropListener() {
+
+		@Override public void onDrop( int from, int to ) {
+			
+			android.util.Log.i( TAG, "From: " + from + " To: " + to );
+			
+			boolean success = mActivity.PlaylistManager.moveTrack( PLAYLIST_ID, from, to );
+			
+			android.util.Log.i( TAG, "Successfully moved?: " + success );
+			
+		}
+		
+	};
+	
+	private DragListener mSongDragListener = new DragListener() {
+
+		@Override public void onStartDrag( int itemIndex, View itemView ) {
+			
+			//android.util.Log.i( TAG, "" + itemView.getId() );
+			
+			mListView.setItemChecked( itemIndex, true );
+			
+			android.util.Log.i( TAG, "Should check: " + itemIndex + " Checked? " + mListView.getCheckedItemPosition());
+			
+		}
+
+		@Override public void onDrag( int x, int y, ListView listView ) {
+			/*
+			android.util.Log.i( TAG, "List height: " + listView.getHeight() + " y position: " + y );
+			//if ( listView.getHeight())
+			//listView.scrollBy(x, y)
+			
+			//listView.getScrollY()
+			
+			if ( y > ( listView.getHeight() - 100 ) ) {
+				
+				
+				listView.scrollBy(0, 100 );
+				
+				// API 19
+				//listView.scrollListBy(y)
+				
+			}
+			*/
+		}
+
+		@Override public void onStopDrag( View itemView ) {
+			
+			
+			
+		}
+		
+		
+	};
 	
 	@Override public void onCreateOptionsMenu( Menu menu, MenuInflater inflater) {
 		
@@ -209,7 +241,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	    	  //ListView.invalidate();
 	    	  mTitle = (String) mActivity.getSupportActionBar().getTitle();
 	    	  mSubtitle = (String) mActivity.getSupportActionBar().getSubtitle();
-	    	  mActivity.setActionbarSubtitle( null );
+	    	  mActivity.setActionbarSubtitle( mTitle );
 	    	  mActivity.setActionbarTitle( getActivity().getString( R.string.playlist_editing ) );
 	    	  
 	         return true;
@@ -273,8 +305,6 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 				Toast.makeText(getActivity(), "Removed song from playlist.", Toast.LENGTH_SHORT ).show();
 				
 			}
-			
-			
 			
 		}
 		
