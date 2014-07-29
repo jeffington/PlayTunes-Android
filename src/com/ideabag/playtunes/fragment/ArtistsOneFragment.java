@@ -55,12 +55,24 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 		mActivity = ( MainActivity ) activity;
 		
 	}
+	
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		outState.putString( getString( R.string.key_state_media_id ), ARTIST_ID );
+		
+	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
+		if ( null != savedInstanceState ) {
+			
+			ARTIST_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
+			
+		}
+		
 		LayoutInflater inflater = mActivity.getLayoutInflater();
-		//android.util.Log.i( "ARTIST_ID", ARTIST_ID );
+		
     	adapter = new ArtistsOneAdapter( getActivity(), ARTIST_ID );
     	
     	
