@@ -56,4 +56,6 @@
     <string name="no_album_string">Music</string>
     <string name="no_artist_string">&#60;unknown&#62;</string>
     
+    <string name="key_state_media_id">saved_state_media_id</string>
+    
 </resources>

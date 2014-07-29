@@ -37,6 +37,8 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	
 	public static final String TAG = "One Playlist Fragment";
 	
+	private static final int DRAG_DELAY_MS = 250;
+	
 	MainActivity mActivity;
 	PlaylistsOneAdapter adapter;
 	
@@ -50,6 +52,8 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	
 	private int mListHeight, mListVisibleRows;
 	
+	Handler handle;
+	
 	@Override public void setMediaID( String media_id ) {
 		
 		PLAYLIST_ID = media_id;
@@ -57,6 +61,12 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	}
 	
 	@Override public String getMediaID() { return PLAYLIST_ID; }
+	
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		outState.putString( getString( R.string.key_state_media_id ), PLAYLIST_ID );
+		
+	}
 	
 	@Override public void onAttach( Activity activity ) {
 			
@@ -69,7 +79,15 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
+		if ( null != savedInstanceState ) {
+			
+			PLAYLIST_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
+			
+		}
+		
 		setHasOptionsMenu( true );
+		
+		handle = new Handler();
 		
     	adapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
     	
@@ -96,7 +114,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		
 		mListView.setDragListener( mSongDragListener );
 		
-		mListView.setChoiceMode( ListView.CHOICE_MODE_SINGLE );
+		//mListView.setChoiceMode( ListView.CHOICE_MODE_SINGLE );
 		
 	}
 	
@@ -164,11 +182,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 
 		@Override public void onDrop( int from, int to ) {
 			
-			android.util.Log.i( TAG, "From: " + from + " To: " + to );
-			
-			boolean success = mActivity.PlaylistManager.moveTrack( PLAYLIST_ID, from, to );
-			
-			android.util.Log.i( TAG, "Successfully moved?: " + success );
+			mActivity.PlaylistManager.moveTrack( PLAYLIST_ID, from, to );
 			
 		}
 		
@@ -179,16 +193,15 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		@Override public void onStartDrag( int itemIndex, View itemView ) {
 			
 			//android.util.Log.i( TAG, "" + itemView.getId() );
+			//itemView.requestFocus();
+			//itemView.requestFocusFromTouch();
 			
-			mListView.setItemChecked( itemIndex, true );
-			
-			android.util.Log.i( TAG, "Should check: " + itemIndex + " Checked? " + mListView.getCheckedItemPosition());
 			
 		}
 
 		@Override public void onDrag( int x, int y, ListView listView ) {
-			/*
-			android.util.Log.i( TAG, "List height: " + listView.getHeight() + " y position: " + y );
+			
+			//android.util.Log.i( TAG, "List height: " + listView.getHeight() + " y position: " + y );
 			//if ( listView.getHeight())
 			//listView.scrollBy(x, y)
 			
@@ -196,14 +209,18 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 			if ( y > ( listView.getHeight() - 100 ) ) {
 				
+				android.util.Log.i( TAG, "Should scroll.");
+				//handle.postDelayed(mShouldScrollList, DRAG_DELAY_MS );
+				// Schedule a scroll in ~200-300ms and check the position of the dragged item again
+				// abort the scroll if the list can't be scrolled anymore or the list item gets dragged back
 				
-				listView.scrollBy(0, 100 );
+				//listView.scrollBy(0, 100 );
 				
 				// API 19
 				//listView.scrollListBy(y)
 				
 			}
-			*/
+			
 		}
 
 		@Override public void onStopDrag( View itemView ) {
@@ -212,6 +229,21 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 		}
 		
+		
+	};
+	
+	private Runnable mShouldScrollList = new Runnable() {
+
+		@Override public void run() {
+			
+			// Schedule a scroll in ~200-300ms and check the position of the dragged item again
+			// abort the scroll if the list can't be scrolled anymore or the list item gets dragged back
+			//mListView.scrollBy(0, 100 );
+			
+			// API 19
+			//mListView.scrollListBy(y)
+			
+		}
 		
 	};
 	
