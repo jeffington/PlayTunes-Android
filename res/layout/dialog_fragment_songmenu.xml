@@ -39,18 +39,35 @@
         android:background="@drawable/actionbar_shadow"
         
 	/>
-    
-    <Button
-    	android:id="@+id/SongMenuAddTo"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/list_item_height"
-		android:gravity="left|center_vertical"
-		android:textSize="@dimen/text_xlarge"
-		android:paddingLeft="@dimen/list_item_horizontal_spacing"
-		android:textColor="@color/textColorPrimary"
-		android:text="Add to..."
-		android:background="@drawable/list_item_background"
-	/>
+<LinearLayout android:id="@+id/SongMenuAddTo"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/list_item_height"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    android:paddingRight="@dimen/list_item_horizontal_spacing"
+    android:background="@drawable/list_item_background">
+   	
+   	<ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_add"
+            />
+	
+   	<TextView android:orientation="vertical"
+    	    android:layout_width="0dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical"
+    	    android:layout_weight="1"
+    	    android:padding="8dp"
+    	    android:gravity="left|center_vertical"
+			android:textSize="@dimen/text_xlarge"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    	    android:text="Add to Playlist"
+    	    />
+    	    
+</LinearLayout>
     
 <LinearLayout android:id="@+id/SongMenuArtist"
     android:layout_width="match_parent"
