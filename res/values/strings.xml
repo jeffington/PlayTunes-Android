@@ -57,5 +57,6 @@
     <string name="no_artist_string">&#60;unknown&#62;</string>
     
     <string name="key_state_media_id">saved_state_media_id</string>
+    <string name="key_state_playlist_editing">saved_state_is_editing</string>
     
 </resources>
