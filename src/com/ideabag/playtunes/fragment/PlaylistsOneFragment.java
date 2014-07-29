@@ -50,7 +50,9 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	
 	private DragNDropListView mListView;
 	
-	private int mListHeight, mListVisibleRows;
+	private boolean isEditing = false;
+	
+	//private int mListHeight, mListVisibleRows;
 	
 	Handler handle;
 	
@@ -65,6 +67,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), PLAYLIST_ID );
+		outState.putBoolean( getString( R.string.key_state_playlist_editing ), isEditing );
 		
 	}
 	
@@ -82,6 +85,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		if ( null != savedInstanceState ) {
 			
 			PLAYLIST_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
+			isEditing = savedInstanceState.getBoolean( getString( R.string.key_state_playlist_editing ) );
 			
 		}
 		
@@ -91,7 +95,9 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		
     	adapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
     	
-    	
+    	// Configure for editing (or not)
+    	adapter.setEditing( isEditing );
+    	mListView.setDraggingEnabled( isEditing );
     	
     	//getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
@@ -266,11 +272,14 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	   
 	      case R.id.MenuPlaylistEdit:
 	         
-	    	  menuItemDoneEditing.setVisible( true );
-	    	  menuItemEdit.setVisible( false );
-	    	  adapter.setEditing( true );
-	    	  mListView.setDraggingEnabled( true );
-	    	  //ListView.invalidate();
+	    	  isEditing = true;
+	    	  
+	    	  menuItemDoneEditing.setVisible( isEditing );
+	    	  menuItemEdit.setVisible( !isEditing );
+	    	  
+	    	  adapter.setEditing( isEditing );
+	    	  mListView.setDraggingEnabled( isEditing );
+	    	  
 	    	  mTitle = (String) mActivity.getSupportActionBar().getTitle();
 	    	  mSubtitle = (String) mActivity.getSupportActionBar().getSubtitle();
 	    	  mActivity.setActionbarSubtitle( mTitle );
@@ -280,11 +289,13 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	         
 	      case R.id.MenuPlaylistDone:
 	    	  
-	    	  menuItemDoneEditing.setVisible( false );
-	    	  menuItemEdit.setVisible( true );
-	    	  adapter.setEditing( false );
-	    	  mListView.setDraggingEnabled( false );
-	    	  //ListView.invalidate();
+	    	  isEditing = false;
+	    	  
+	    	  menuItemDoneEditing.setVisible( isEditing );
+	    	  menuItemEdit.setVisible( !isEditing );
+	    	  adapter.setEditing( isEditing );
+	    	  mListView.setDraggingEnabled( isEditing );
+	    	  
 	    	  mActivity.setActionbarTitle( mTitle );
 	    	  mActivity.setActionbarSubtitle( mSubtitle );
 	    	  
