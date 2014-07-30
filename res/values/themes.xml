@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
-      <item name="android:windowContentOverlay">@drawable/actionbar_shadow</item>
+      <item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowBackground">@null</item>
 		<item name="actionBarStyle">@style/MyActionBar</item>
 		<item name="android:listViewStyle">@style/CompatListView</item>
