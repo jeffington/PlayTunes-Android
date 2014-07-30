@@ -82,9 +82,6 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		
 		//lv.setOnItemClickListener( this );
 		
-    	setListAdapter( adapter );
-    	
-		
 		
 		if ( null != adapter.albumArtUri ) {
 			
@@ -99,6 +96,8 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 			iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
 			
 		}
+		
+    	setListAdapter( adapter );
 		
 	}
 	
