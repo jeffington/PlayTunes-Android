@@ -2,6 +2,7 @@ package com.ideabag.playtunes;
 
 import com.ideabag.playtunes.activity.MainActivity;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -48,23 +49,32 @@ public class PlaybackNotification {
 		
 		contentIntent = PendingIntent.getActivity( mContext, 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT );
 		
-		playIntent = new Intent( MusicPlayerService.ACTION_PLAY_OR_PAUSE );
-		nextTrackIntent = new Intent( MusicPlayerService.ACTION_NEXT );
-		closeIntent = new Intent( MusicPlayerService.ACTION_CLOSE );
+		// 
+		// Android 2.3 (and below) doesn't support clickable buttons in the notification. Ancient history!
+		// 
 		
-		
-		playPendingIntent = PendingIntent.getBroadcast( mContext, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT );
-		nextTrackPendingIntent = PendingIntent.getBroadcast( mContext, 0, nextTrackIntent, PendingIntent.FLAG_UPDATE_CURRENT );
-		closePendingIntent = PendingIntent.getBroadcast( mContext, 0, closeIntent, PendingIntent.FLAG_UPDATE_CURRENT );
-		
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
+				
+			playIntent = new Intent( MusicPlayerService.ACTION_PLAY_OR_PAUSE );
+			nextTrackIntent = new Intent( MusicPlayerService.ACTION_NEXT );
+			closeIntent = new Intent( MusicPlayerService.ACTION_CLOSE );
+			
+			
+			playPendingIntent = PendingIntent.getBroadcast( mContext, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT );
+			nextTrackPendingIntent = PendingIntent.getBroadcast( mContext, 0, nextTrackIntent, PendingIntent.FLAG_UPDATE_CURRENT );
+			closePendingIntent = PendingIntent.getBroadcast( mContext, 0, closeIntent, PendingIntent.FLAG_UPDATE_CURRENT );
+			
+		}
 		
 		mRemoteViews = new RemoteViews( mContext.getPackageName(), R.layout.notification_layout ); 
 		
-		mRemoteViews.setOnClickPendingIntent( R.id.NotificationPlayPauseButton, playPendingIntent );
-		
-		mRemoteViews.setOnClickPendingIntent( R.id.NotificationNextButton, nextTrackPendingIntent );
-		
-		mRemoteViews.setOnClickPendingIntent( R.id.NotificationCloseButton, closePendingIntent );
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
+			
+			mRemoteViews.setOnClickPendingIntent( R.id.NotificationPlayPauseButton, playPendingIntent );
+			mRemoteViews.setOnClickPendingIntent( R.id.NotificationNextButton, nextTrackPendingIntent );
+			mRemoteViews.setOnClickPendingIntent( R.id.NotificationCloseButton, closePendingIntent );
+			
+		}
 		
 	}
 	
@@ -91,7 +101,16 @@ public class PlaybackNotification {
                 .setTicker( tickerString )
 		        .setContentIntent( contentIntent );
 		
-		mNotificationManager.notify( PLAY_NOTIFICATION_ID, mBuilder.build() );
+		Notification mBuiltNotification = mBuilder.build();
+		
+		// Weird bug in compatibility library
+		if ( android.os.Build.VERSION.SDK_INT < 11 ) {
+			
+			mBuiltNotification.contentView = mRemoteViews;
+			
+		}
+		
+		mNotificationManager.notify( PLAY_NOTIFICATION_ID, mBuiltNotification );
 		
 	}
 	
@@ -123,45 +142,50 @@ public class PlaybackNotification {
 		
 		String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
 		String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-		String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
 		
-		Cursor albumCursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-			    new String[] {
-			    	
-			    	MediaStore.Audio.Albums.ALBUM_ART,
-			    	MediaStore.Audio.Albums._ID
-			    	
-			    },
-			    MediaStore.Audio.Albums._ID + "=?",
-				new String[] {
-					
-					album_id
-					
-				},
-				null
-			);
-		//android.util.Log.i( "album_id", album_id );
-		//android.util.Log.i( "album count" , "" + albumCursor.getCount() );
-		albumCursor.moveToFirst();
-		
-		String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-		
-		lastAlbumUri = newAlbumUri;
-		
-		if ( newAlbumUri == null ) {
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
 			
-			mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art );
+			String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
 			
-		} else {
+			Cursor albumCursor = mContext.getContentResolver().query(
+					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+				    new String[] {
+				    	
+				    	MediaStore.Audio.Albums.ALBUM_ART,
+				    	MediaStore.Audio.Albums._ID
+				    	
+				    },
+				    MediaStore.Audio.Albums._ID + "=?",
+					new String[] {
+						
+						album_id
+						
+					},
+					null
+				);
+			//android.util.Log.i( "album_id", album_id );
+			//android.util.Log.i( "album count" , "" + albumCursor.getCount() );
+			albumCursor.moveToFirst();
 			
+			String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 			
+			lastAlbumUri = newAlbumUri;
 			
-			Uri albumArtUri = Uri.parse( newAlbumUri );
-			
-			mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
-			
-			
+			if ( newAlbumUri == null ) {
+				
+				mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art );
+				
+			} else {
+				
+				
+				
+				Uri albumArtUri = Uri.parse( newAlbumUri );
+				
+				mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
+				
+				
+				
+			}
 			
 		}
 		
@@ -174,7 +198,11 @@ public class PlaybackNotification {
 	
 	public void showPlaying() {
 		
-		mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_pause_white );
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
+			
+			mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_pause_white );
+			
+		}
 		
 		buildAndShowNotification();
 		
@@ -182,7 +210,11 @@ public class PlaybackNotification {
 	
 	public void showPaused() {
 		
-		mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_play_white );
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
+			
+			mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_play_white );
+			
+		}
 		
 		buildAndShowNotification();
 		
