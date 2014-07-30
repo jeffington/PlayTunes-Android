@@ -64,7 +64,8 @@
     	    android:gravity="left|center_vertical"
 			android:textSize="@dimen/text_xlarge"
     	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
-    	    android:text="Add to Playlist"
+    	    android:text="@string/playlist_add"
+    	    android:textColor="@color/textColorPrimary"
     	    />
     	    
 </LinearLayout>
@@ -96,7 +97,6 @@
     <TextView android:id="@+id/SongMenuArtistTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Pink Floyd"
         android:textSize="@dimen/text_xlarge"
         android:textColor="@color/textColorPrimary"
         />
@@ -139,7 +139,6 @@
     <TextView android:id="@+id/SongMenuAlbumTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Dark Side of the Moon"
         android:textSize="@dimen/text_xlarge"
         android:textColor="@color/textColorPrimary"
         />
