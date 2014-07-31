@@ -67,7 +67,7 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         LinearLayout starredHeader = ( LinearLayout ) inflater.inflate( R.layout.list_item_playlist_starred, null );
         starredHeader.findViewById(R.id.BadgeSong).setVisibility( View.GONE );
         
-        LinearLayout createPlaylistHeader = ( LinearLayout ) inflater.inflate( R.layout.list_item_new_playlist, null );
+        TextView createPlaylistHeader = ( TextView ) inflater.inflate( R.layout.list_item_new_playlist, null );
         
         lv.addHeaderView( createPlaylistHeader, null, true );
         lv.addHeaderView( starredHeader, null, true );

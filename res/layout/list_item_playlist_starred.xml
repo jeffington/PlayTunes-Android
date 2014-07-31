@@ -23,6 +23,7 @@
         android:textSize="@dimen/text_xlarge"
         android:gravity="left|center_vertical"
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:textColor="@color/textColorPrimary"
         />
     
     <include android:id="@+id/BadgeSong"
