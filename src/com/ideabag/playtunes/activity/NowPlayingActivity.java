@@ -22,10 +22,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -71,26 +73,15 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 		mPlaylistManager = new PlaylistManager( this );
 		
-		//ActionBar bar = getSupportActionBar();
-		
-		//bar.setTitle( "Crosby, Stills, Nash & Young" );
-		//bar.setSubtitle( "Now Playing" );
-		
-		//Bundle extras = getIntent().getExtras();
-		
         ActionBar supportBar = getSupportActionBar();
         
-		//supportBar.setTitle( extras.getCharSequence( "title", "Now Playing" ) );
         
         supportBar.setSubtitle( "Now Playing" );
         
         supportBar.setIcon( android.R.color.transparent );
-        //supportBar.setLogo( R.drawable.ic_action_cancel );
-        //supportBar.setDisplayShowCustomEnabled( true );
         supportBar.setDisplayShowHomeEnabled( true );
         supportBar.setDisplayHomeAsUpEnabled( true );
         supportBar.setHomeButtonEnabled( true );
-        //supportBar.setDisplayUseLogoEnabled( true );
 		
 		findViewById( R.id.NowPlayingPrevButton ).setOnClickListener( controlsClickListener );
 		findViewById( R.id.NowPlayingPlayPauseButton ).setOnClickListener( controlsClickListener );
@@ -130,12 +121,9 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 		tracker = TrackerSingleton.getDefaultTracker( this );
 		
-		//Intent nextTest = new Intent( MusicPlayerService.ACTION_NEXT );
-		//nextTest.setAction(  );
+		getContentResolver().registerContentObserver(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
 		
-		//this.sendBroadcast( nextTest );
-		
-		//android.util.Log.i( TAG, "Sent broadcast" );
 		
 	}
 	
@@ -178,19 +166,10 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 	}
 	
-	@Override public void onStop() {
-		super.onStop();
-		
-		if ( mIsBound && mBoundService != null ) {
-			
-			mBoundService.removePlaybackListener( mPlaybackListener );
-			
-		}
-		
-	}
-	
 	@Override public void onDestroy() {
 		super.onDestroy();
+		
+		getContentResolver().unregisterContentObserver( mediaStoreChanged );
 		
 		doUnbindService();
 		
@@ -393,7 +372,6 @@ public class NowPlayingActivity extends ActionBarActivity {
         	.setLabel( "now playing" )
         	.build());
         	
-        	//Intent showNowPlaying = new Intent( getBaseContext(), MainActivity.class );
         	setResult( RESULT_OK );
         	finish();
         	
@@ -672,11 +650,36 @@ public class NowPlayingActivity extends ActionBarActivity {
 	    	//mBoundService.doDetachActivity();
 	    	//android.util.Log.i("Detached from service", "Now Playing Activity disconnected from service." );
 	    	// Detach our existing connection.
+	    	
+	    	mBoundService.removePlaybackListener( mPlaybackListener );
+	    	
 	        unbindService( mConnection );
 	        mIsBound = false;
 	        
 	    }
 	    
 	}
+	
+	ContentObserver mediaStoreChanged = new ContentObserver( new Handler() ) {
+		
+        @Override public void onChange( boolean selfChange ) {
+            
+            runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					ToggleButton starButton = (ToggleButton) findViewById( R.id.StarButton );
+					
+					starButton.setChecked( mPlaylistManager.isStarred( current_media_id ) );
+					
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 	
 }
