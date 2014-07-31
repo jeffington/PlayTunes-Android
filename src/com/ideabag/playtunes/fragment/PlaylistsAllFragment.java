@@ -12,6 +12,7 @@ import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -59,8 +60,11 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
     	
     	starredPlaylist.setTag( R.id.tag_playlist_id, mActivity.PlaylistManager.createStarredIfNotExist() );
     	
-    	( ( TextView ) starredPlaylist.findViewById( R.id.BadgeCount ) ).setText( "" + mActivity.PlaylistManager.getStarredCursor().getCount() );
+    	Cursor mStarredCursor = mActivity.PlaylistManager.getStarredCursor();
+    	
+    	( ( TextView ) starredPlaylist.findViewById( R.id.BadgeCount ) ).setText( "" + mStarredCursor.getCount() );
 		
+    	mStarredCursor.close();
     	
     	setHasOptionsMenu( true );
     	
