@@ -26,9 +26,10 @@ public class GenresOneAdapter extends BaseAdapter {
     private static final String[] oneGenreSelection = new String[] {
     	
     	// Audio media ID must always be at position 0
-    	MediaStore.Audio.Genres.Members.AUDIO_ID,
+    	MediaStore.Audio.Genres.Members._ID,
+    	//MediaStore.Audio.Genres.Members.AUDIO_ID,
     	
-		MediaStore.Audio.Genres.Members._ID,
+		
 		MediaStore.Audio.Genres.Members.ALBUM,
 		MediaStore.Audio.Genres.Members.TITLE,
 		MediaStore.Audio.Genres.Members.ARTIST,
@@ -108,7 +109,7 @@ public class GenresOneAdapter extends BaseAdapter {
 		cursor.moveToPosition( position );
 		
 		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.TITLE ) );
-		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.AUDIO_ID ) );
+		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members._ID ) );
 		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.ARTIST ) );
 		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.ALBUM ) );
 		
