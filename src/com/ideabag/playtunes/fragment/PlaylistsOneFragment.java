@@ -13,6 +13,7 @@ import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.ContentObserver;
 import android.os.Bundle;
@@ -205,6 +206,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 		}
 
+		@SuppressLint("NewApi")
 		@Override public void onDrag( int x, int y, ListView listView ) {
 			
 			//android.util.Log.i( TAG, "List height: " + listView.getHeight() + " y position: " + y );
@@ -213,20 +215,65 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 			//listView.getScrollY()
 			
+			int mListHeight = listView.getHeight();
+			
+			int mSafeYMin = mListHeight / 3;
+			int mSafeYMax = ( 2 * mListHeight ) / 3;
+			
+			int mAmountToScrollY = 0;
+			
+			if ( y < mSafeYMin ) {
+				
+				int mYDiff = Math.abs( y - mSafeYMin );
+				// Scrolling up means a negative distance
+				mAmountToScrollY = -1 * calculateScrollYDistance( mYDiff );
+				
+				//android.util.Log.i( TAG, "Scroll up: " + calculateScrollYDistance( mYDiff ) );
+				
+			} else if ( y > mSafeYMax ) {
+				
+				int mYDiff = y - mSafeYMax;
+				
+				mAmountToScrollY = calculateScrollYDistance( mYDiff );
+				//android.util.Log.i( TAG, "");
+				//android.util.Log.i( TAG, "Scroll down: " + calculateScrollYDistance( mYDiff ) );
+			}
+			
+			if ( mAmountToScrollY != 0 ) {
+				
+				if ( android.os.Build.VERSION.SDK_INT >= 19 ) {
+					
+					listView.scrollListBy( mAmountToScrollY );
+					
+				} else {
+					
+					listView.scrollBy( 0, mAmountToScrollY );
+					
+				}
+				
+			}
+			/*
 			if ( y > ( listView.getHeight() - 100 ) ) {
 				
 				android.util.Log.i( TAG, "Should scroll.");
+				
+				
 				//handle.postDelayed(mShouldScrollList, DRAG_DELAY_MS );
 				// Schedule a scroll in ~200-300ms and check the position of the dragged item again
 				// abort the scroll if the list can't be scrolled anymore or the list item gets dragged back
 				
-				//listView.scrollBy(0, 100 );
-				
-				// API 19
-				//listView.scrollListBy(y)
+				if ( android.os.Build.VERSION.SDK_INT >= 19 ) {
+					
+					listView.scrollListBy( 100 );
+					
+				} else {
+					
+					listView.scrollBy( 0, 100 );
+					
+				}
 				
 			}
-			
+			*/
 		}
 
 		@Override public void onStopDrag( View itemView ) {
@@ -376,5 +423,18 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 
 	};
 	
+	
+	// 
+	// The list is intended to scroll faster the closer the dragged item gets to the edge.
+	// 
+	// 
+	// 
+	private int calculateScrollYDistance( int diff ) {
+		
+		double scrollAmount = Math.pow( Math.E, ( 0.01 * diff ) ) - 1;
+		
+		return (int) scrollAmount;
+		
+	}
 	
 }
