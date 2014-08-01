@@ -17,6 +17,7 @@
 package com.ideabag.playtunes.DragNDrop;
 
 import com.ideabag.playtunes.R;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -24,9 +25,11 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -45,6 +48,8 @@ public class DragNDropListView extends ListView {
 	int mDragHandleWidth;
 	
 	ImageView mDragView;
+	//View mDragShadow;
+	
 	//GestureDetector mGestureDetector;
 	
 	DropListener mDropListener;
@@ -57,6 +62,9 @@ public class DragNDropListView extends ListView {
 		Resources r = context.getResources();
 		
 		mDragHandleWidth = r.getDimensionPixelSize( R.dimen.drag_handle_width );
+		
+		
+		//setOnScrollListener( mScrollListener );
 		
 	}
 	
@@ -151,6 +159,7 @@ public class DragNDropListView extends ListView {
 	}
 
 	// enable the drag view for dragging
+	@SuppressLint("NewApi")
 	private void startDrag(int itemIndex, int y) {
 		
 		stopDrag(itemIndex);
@@ -186,12 +195,29 @@ public class DragNDropListView extends ListView {
         
         
         ImageView v = new ImageView(context);
+        
         v.setImageBitmap(bitmap);      
         v.setBackgroundResource( R.drawable.drag_shadow );
         
+        if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
+        	
+        	v.setAlpha( 0.8f );
+        	
+        }/* else if ( android.os.Build.VERSION.SDK_INT >= 16 ) {
+        	
+        	v.setImageAlpha( (int) 0.8 * 255 );
+        	
+        }
+        */
+        //LayoutInflater inflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		//mDragShadow = inflater.inflate( R.layout.list_item_placeholder, null );
+        
         WindowManager mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-        //mWindowManager.addView( backgroundView , mWindowParams );
+        //mWindowManager.addView( mDragShadow , mWindowParams );
         mWindowManager.addView(v, mWindowParams );
+        
+        
+        
         mDragView = v;
         
 	}
@@ -205,6 +231,7 @@ public class DragNDropListView extends ListView {
             WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(mDragView);
             
+            //wm.removeView( mDragShadow );
             // Recycle the backing bitmap!
             BitmapDrawable bd = ( BitmapDrawable ) mDragView.getDrawable();
 			
@@ -217,8 +244,33 @@ public class DragNDropListView extends ListView {
             
             mDragView.setImageDrawable(null);
             mDragView = null;
-        }
+            //mDragShadow = null;
+            
+		}
+		
 	}
+	
+	private OnScrollListener mScrollListener = new OnScrollListener() {
+
+		@Override public void onScroll( AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+			
+			//if ( null != mDragShadow ) {
+				
+				//mDragShadow.setY( );
+				
+			//}
+			android.util.Log.i( "DragNDropListView", "Is scrolling");
+			
+		}
+
+		@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+			
+			
+			
+		}
+		
+	};
 
 //	private GestureDetector createFlingDetector() {
 //		return new GestureDetector(getContext(), new SimpleOnGestureListener() {
