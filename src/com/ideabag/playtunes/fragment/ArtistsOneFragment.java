@@ -32,7 +32,7 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	private ViewGroup AllSongs;
 	private ViewGroup Singles = null;
 	
-	private TextView albumDivider;
+	//private TextView albumDivider;
 	
 	ArtistsOneAdapter adapter;
 	
@@ -135,11 +135,13 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
     		getListView().addHeaderView( Singles, null, true );
     		
     	}
+    	/*
     	albumDivider = ( TextView ) inflater.inflate( R.layout.list_header_albums, null );
     	
     	
     	getListView().addHeaderView( albumDivider, null, false );
-    	
+    	*/
+    	getListView().setHeaderDividersEnabled( true );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
     	
