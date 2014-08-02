@@ -174,7 +174,8 @@ public class DragNDropListView extends ListView {
         // by the framework when the list tries to clean up memory
         Bitmap bitmap = Bitmap.createBitmap(item.getDrawingCache());
         
-        
+        item.setDrawingCacheEnabled(false);
+
         WindowManager.LayoutParams mWindowParams = new WindowManager.LayoutParams();
         mWindowParams.gravity = Gravity.TOP;
         mWindowParams.x = 0;
