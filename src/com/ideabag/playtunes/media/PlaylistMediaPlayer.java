@@ -34,6 +34,8 @@ public class PlaylistMediaPlayer {
 	
 	protected MediaPlayer mMediaPlayer;
 	
+	private boolean isDucking = false;
+	
 	
 	private PlaybackListener PlaybackChanged = null;
 	
@@ -601,6 +603,30 @@ public class PlaylistMediaPlayer {
 	    
 	}
 	
+// Volume Ducking
+	
+	public void startVolumeDucking() {
+		
+		if ( !isDucking ) {
+			
+			mMediaPlayer.setVolume( 0.4f, 0.4f );
+			
+			isDucking = true;
+			
+		}
+		
+	}
+	
+	public void stopVolumeDucking() {
+		
+		if ( isDucking ) {
+			
+			mMediaPlayer.setVolume( 1.0f, 1.0f );
+			
+		}
+		
+	}
+/*	
 	private void generateRandomSeed() {
 		
 		Random gen = new Random( System.currentTimeMillis() );
@@ -636,6 +662,7 @@ public class PlaylistMediaPlayer {
 		return value;
 		
 	}
+*/
 	
 	//
 	// Responding to Hardware Events

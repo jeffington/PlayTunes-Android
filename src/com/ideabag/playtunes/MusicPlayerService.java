@@ -1,7 +1,5 @@
 package com.ideabag.playtunes;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
@@ -23,8 +21,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.KeyEvent;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -49,6 +45,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	public static final String ACTION_BACK = "com.ideabag.playtunes.BACK";
 	public static final String ACTION_CLOSE = "com.ideabag.playtunes.CLOSE";
 	
+	@SuppressWarnings("unused")
 	private static final String TAG = "MusicPlayerService";
 	
 	private PlaylistMediaPlayer MediaPlayer;
@@ -182,25 +179,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
 		
-		if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
-			
-			mMediaButtonReceiverComponent = new ComponentName( this, MusicIntentReceiver.class );
-			MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
-			
-	        if ( mRemoteControlClientCompat == null ) {
-	        	
-	            Intent intent = new Intent( Intent.ACTION_MEDIA_BUTTON );
-	            //intent.setAction(  );
-	            intent.setComponent( mMediaButtonReceiverComponent );
-	            mRemoteControlClientCompat = new RemoteControlClientCompat(
-	                    PendingIntent.getBroadcast(this /*context*/,
-	                            0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
-	            
-	            RemoteControlHelper.registerRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
-	            
-	        }
-	        
-		}
 		
 	}
 	
@@ -215,12 +193,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		ChangedListeners.clear();
 		
-		if ( null != mRemoteControlClientCompat ) {
-			
-			RemoteControlHelper.unregisterRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
-			MediaButtonHelper.unregisterMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
-			
-		}
+		destroyRemoteControlClient();
 		
 		MediaPlayer.pause();
 		MediaPlayer.destroy();
@@ -347,30 +320,64 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 	}
 	
-	private void updateRemoteControlClientPause() {
+	
+	private void createRemoteControlClient() {
+		
+		if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
+			
+	        if ( mRemoteControlClientCompat == null ) {
+	        	
+				mMediaButtonReceiverComponent = new ComponentName( this, MusicIntentReceiver.class );
+				MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
+	            Intent intent = new Intent( Intent.ACTION_MEDIA_BUTTON );
+	            //intent.setAction(  );
+	            intent.setComponent( mMediaButtonReceiverComponent );
+	            mRemoteControlClientCompat = new RemoteControlClientCompat(
+	                    PendingIntent.getBroadcast(this /*context*/,
+	                            0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
+	            
+	            RemoteControlHelper.registerRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
+	            
+	        }
+	        
+		}
+		
+	}
+	
+	private void destroyRemoteControlClient() {
 		
 		if ( null != mRemoteControlClientCompat ) {
 			
-			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
+			RemoteControlHelper.unregisterRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
+			MediaButtonHelper.unregisterMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
+			
+			mRemoteControlClientCompat = null;
 			
 		}
 		
 	}
 	
+	private void updateRemoteControlClientPause() {
+		
+		createRemoteControlClient();
+			
+		mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
+		
+	}
+	
 	private void updateRemoteControlClientPlay() {
 		
-		if ( null != mRemoteControlClientCompat ) {
+		createRemoteControlClient();
 			
-			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
-			
-		}
+		mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
+		
 		
 	}
 	
 	@SuppressLint("InlinedApi")
 	private void updateRemoteControlClientMedia( String media_id ) {
 		
-		if ( null != mRemoteControlClientCompat ) {
+		createRemoteControlClient();
 				
 			
 			Cursor mSongCursor = getContentResolver().query(
@@ -446,7 +453,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 					
 				} else {
 					
-					Uri imageUri = Uri.parse( newAlbumUri );
+					//Uri imageUri = Uri.parse( newAlbumUri );
 					
 					mAlbumArtBitmap = BitmapFactory.decodeFile( newAlbumUri );
 					
@@ -456,7 +463,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				e.printStackTrace();
 			}
 			
-			mAudioFocusHelper.requestFocus();
 			
 	        mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
 	        
@@ -473,11 +479,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	                .putString( MediaMetadataRetriever.METADATA_KEY_ALBUM, mSongAlbum )
 	                .putString( MediaMetadataRetriever.METADATA_KEY_TITLE, mSongTitle )
 	                .putLong( MediaMetadataRetriever.METADATA_KEY_DURATION, mSongDuration )
-	                // TODO: fetch real item artwork
 	                .putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, mAlbumArtBitmap )
 	                .apply();
-	        
-		}
 		
 	}
 	
@@ -576,10 +579,18 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			}
 			
+			if ( MediaPlayer.isPlaying() ) {
+				
+				mAudioFocusHelper.requestFocus();
+				
+			}
+			
 		}
 
 
 		@Override public void onPlaylistDone() {
+			
+			mAudioFocusHelper.abandonFocus();
 			
 			int count = ChangedListeners.size();
 			
@@ -588,12 +599,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				ChangedListeners.get( x ).onPlaylistDone();
 				
 			}
-			
-			//if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
-				
-				//updateRemoteControlClient( media_id );
-				
-			//}
 			
 			if ( 0 == count ) {
 				
@@ -633,6 +638,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		@Override public void onPlay(int playbackPositionMilliseconds ) {
 			
 			int count = ChangedListeners.size();
+			
+			mAudioFocusHelper.requestFocus();
 			
 			for ( int x = 0; x < count; x++ ) {
 				
@@ -674,16 +681,27 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	};
 
 	@Override public void onGainedAudioFocus() {
-		// TODO Auto-generated method stub
+		
+		// TODO:
+		android.util.Log.i( TAG, "Audio Focus Gained");
+		MediaPlayer.stopVolumeDucking();
 		
 	}
 	
 
 
-	@Override
-	public void onLostAudioFocus(boolean canDuck) {
+	@Override public void onLostAudioFocus( boolean canDuck ) {
 		
-		pause();
+		if ( !canDuck ) {
+			
+			destroyRemoteControlClient();
+			pause();
+			
+		} else {
+			
+			MediaPlayer.startVolumeDucking();
+			
+		}
 		
 	}
 	
