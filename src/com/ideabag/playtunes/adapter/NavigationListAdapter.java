@@ -1,4 +1,5 @@
 package com.ideabag.playtunes.adapter;
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 
 import android.annotation.SuppressLint;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 public class NavigationListAdapter extends BaseAdapter {
 	
-	private static final int ROW_COUNT = 5;
+	private static final int ROW_COUNT = 6;
 	
 	private static final int[] badge_resources = {
 		
@@ -25,6 +26,7 @@ public class NavigationListAdapter extends BaseAdapter {
 		R.drawable.ic_action_record,
 		R.drawable.ic_action_guitar,
 		R.drawable.ic_action_music_2,
+		R.drawable.ic_action_star_10,
 		R.drawable.ic_action_list_2
 		
 	};
@@ -35,15 +37,17 @@ public class NavigationListAdapter extends BaseAdapter {
 		R.string.albums_plural,
 		R.string.genres_plural,
 		R.string.songs_plural,
+		R.string.playlist_name_starred,
 		R.string.playlists_plural
 		
 	};
 	
-	private static int ARTISTS = 0;
-	private static int ALBUMS = 1;
-	private static int GENRES = 2;
-	private static int SONGS = 3;
-	private static int PLAYLISTS = 4;
+	public static final int ARTISTS = 0;
+	public static final int ALBUMS = 1;
+	public static final int GENRES = 2;
+	public static final int SONGS = 3;
+	public static final int STARRED = 4;
+	public static final int PLAYLISTS = 5;
 	
 	
 	private Context mContext;
@@ -156,6 +160,14 @@ public class NavigationListAdapter extends BaseAdapter {
 			badgeCount = songs.getCount();
 			songs.close();
 			
+		} else if ( position == STARRED) {
+			
+			PlaylistManager mPlaylistManager = new PlaylistManager( mContext );
+			Cursor starredPlaylist = mPlaylistManager.getStarredCursor();
+			
+			badgeCount = starredPlaylist.getCount();
+			starredPlaylist.close();
+			
 		} else if ( position == PLAYLISTS ) {
 			
 			Cursor playlists = mContext.getContentResolver().query(
@@ -181,8 +193,12 @@ public class NavigationListAdapter extends BaseAdapter {
 		int badgeColor = mContext.getResources().getColor( R.color.textColorPrimary );
 		
 		
+		if ( position != STARRED ) {
+			
+			badgeIcon.setColorFilter( new LightingColorFilter( badgeColor, badgeColor ) );
+			
+		}
 		
-		badgeIcon.setColorFilter( new LightingColorFilter( badgeColor, badgeColor ) );
 		( ( TextView ) convertView.findViewById( R.id.BadgeCount )).setText( "" + badgeCount );
 		
 		//.setColorFilter( Color.RED, Mode.MULTIPLY );

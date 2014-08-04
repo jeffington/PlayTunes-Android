@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.fragment;
 
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.SettingsActivity;
@@ -134,23 +135,32 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		switch ( position ) {
 		
-		case 0:
+		case NavigationListAdapter.ARTISTS:
 			mNewFragment = new ArtistsAllFragment();
 			break;
 			
-		case 1:
+		case NavigationListAdapter.ALBUMS:
 			mNewFragment = new AlbumsAllFragment();
 			break;
 			
-		case 2:
+		case NavigationListAdapter.GENRES:
 	    	mNewFragment = new GenresAllFragment();
 			break;
 			
-		case 3:
+		case NavigationListAdapter.SONGS:
 			
 	    	mNewFragment = new SongsFragment();
 			break;
 		
+		case NavigationListAdapter.STARRED:
+			
+			PlaylistManager pMan = new PlaylistManager( getActivity() );
+			
+			mNewFragment = new PlaylistsOneFragment();
+			((PlaylistsOneFragment)mNewFragment).setMediaID( pMan.createStarredIfNotExist() );
+			
+			break;
+			
 		default:
 			
 			mNewFragment = new PlaylistsAllFragment();
