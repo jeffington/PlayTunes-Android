@@ -2,8 +2,6 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.cursor.MediaQueryCursor;
-import com.ideabag.playtunes.cursor.StaticMediaQueries;
 
 import android.content.Context;
 import android.database.Cursor;
