@@ -5,15 +5,6 @@
     android:orientation="vertical"
     android:background="#222222">
     
-    <ImageView
-        
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:src="@drawable/footer_shadow"
-        android:layout_alignParentBottom="true"
-        
-	/>
-    
     <ImageView android:id="@+id/AlbumArtFull"
         
         android:layout_width="240dp"
@@ -21,5 +12,12 @@
         android:scaleType="fitXY"
         android:layout_centerInParent="true"
         />
-
+    <View
+        
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/footer_shadow"
+        android:layout_alignParentBottom="true"
+        
+	/>
 </RelativeLayout>
