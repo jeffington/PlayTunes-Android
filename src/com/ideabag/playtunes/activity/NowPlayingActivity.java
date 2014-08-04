@@ -112,8 +112,6 @@ public class NowPlayingActivity extends ActionBarActivity {
 		// Start loading the ad in the background.
 		adView.loadAd(adRequest);
 		
-		doBindService();
-		
 		tracker = TrackerSingleton.getDefaultTracker( this );
 		
 		getContentResolver().registerContentObserver(
@@ -127,12 +125,30 @@ public class NowPlayingActivity extends ActionBarActivity {
 	@Override public void onStart() {
 		super.onStart();
 		
+		
 		if ( mIsBound && mBoundService != null ) {
 			
 			mBoundService.addPlaybackListener( mPlaybackListener );
 			getSupportActionBar().setTitle( mBoundService.mPlaylistName );
 			
+		} else {
+			
+			doBindService();
+			
 		}
+		
+	}
+	
+	@Override public void onStop() {
+		super.onStop();
+		
+		if ( mIsBound && mBoundService != null ) {
+			
+			mBoundService.removePlaybackListener( mPlaybackListener );
+			
+		}
+		
+		doUnbindService();
 		
 	}
 	
@@ -161,12 +177,14 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 	}
 	
+	
+	
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
 		getContentResolver().unregisterContentObserver( mediaStoreChanged );
 		
-		doUnbindService();
+		//doUnbindService();
 		
 		
 	}
