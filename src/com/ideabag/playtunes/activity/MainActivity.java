@@ -126,7 +126,7 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    	toggleDrawer();
 	    	
-	    } else if ( openCount == 5 ) {
+	    } else if ( openCount == 20 ) {
 	    	
 	    	// Show rate dialog
 	    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -145,7 +145,7 @@ public class MainActivity extends ActionBarActivity {
 			
 	    }
 	    
-	    if ( openCount <= 5 ) {
+	    if ( openCount <= 20 ) {
 	    	
 	    	openCount++;
 	    	SharedPreferences.Editor edit = prefs.edit();
