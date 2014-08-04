@@ -23,12 +23,12 @@ public class ArtistsOneAdapter extends BaseAdapter {
 	
     private static final String[] albumsSelection = new String[] {
     	
-    	MediaStore.Audio.Albums.ALBUM,
-    	MediaStore.Audio.Albums.ARTIST,
-    	MediaStore.Audio.Albums.NUMBER_OF_SONGS,
-    	MediaStore.Audio.Albums.ALBUM_ART,
-    	MediaStore.Audio.Albums._ID,
-    	MediaStore.Audio.Artists._ID
+    	MediaStore.Audio.Artists.Albums.ALBUM,
+    	MediaStore.Audio.Artists.Albums.ALBUM_ART,
+    	MediaStore.Audio.Artists.Albums.NUMBER_OF_SONGS,
+    	MediaStore.Audio.Artists.Albums.ARTIST,
+    	MediaStore.Audio.Albums._ID
+    	
     	
     };
 	
@@ -39,22 +39,18 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		ARTIST_ID = artist_id;
 		
     	cursor = mContext.getContentResolver().query(
-    			MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+    			MediaStore.Audio.Artists.Albums.getContentUri( "external", Long.parseLong( ARTIST_ID ) ),
     			albumsSelection,
-				MediaStore.Audio.Artists._ID + "=?",
-				new String[] {
-					
-					ARTIST_ID
-					
-				},
-				MediaStore.Audio.Albums._ID
+				null,
+				null,
+				MediaStore.Audio.Artists.Albums.ALBUM
 			);
     	
     	cursor.moveToFirst();
     	
     	try {
     		
-    		ArtistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
+    		ArtistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.Albums.ARTIST ) );
     		
     	} catch( Exception e ) {
     		
@@ -97,7 +93,7 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		
 		//String artistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
 		String albumName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.Albums.ALBUM ) );
-		
+		//MediaStore.Audio.Artists.Albums.ARTIST
 		int songCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.Albums.NUMBER_OF_SONGS ) );
 		
 		convertView.findViewById( R.id.AlbumArtist ).setVisibility( View.GONE );
@@ -110,9 +106,23 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		// Set the album art
 		//
 		
-		Uri albumArtUri = Uri.parse( cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.Albums.ALBUM_ART ) ) );
+		Uri albumArtUri = null;
 		
-		( ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb )).setImageURI( albumArtUri );
+		try {
+			
+			albumArtUri = Uri.parse( cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.Albums.ALBUM_ART ) ) );
+			
+		} catch( Exception e ) { /* ... */ }
+		
+		if ( albumArtUri != null ) {
+			
+			( ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb )).setImageURI( albumArtUri );
+			
+		} else {
+			
+			( ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb )).setImageResource( R.drawable.no_album_art_thumb );
+			
+		}
 		
 		return convertView;
 		
