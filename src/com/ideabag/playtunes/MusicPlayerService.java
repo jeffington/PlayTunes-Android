@@ -449,7 +449,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 				if ( null == newAlbumUri ) {
 					
-					mAlbumArtBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.no_album_art );
+					mAlbumArtBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.no_album_art_full );
 					
 				} else {
 					
