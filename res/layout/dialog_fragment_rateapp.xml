@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:minWidth="280dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    
+<RelativeLayout android:id="@+id/DialogHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:background="@drawable/actionbar_background">
+        
+	    <TextView android:id="@+id/DialogHeaderTitle"
+	        
+	        android:layout_width="match_parent"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:textColor="@color/textColorPrimaryDark"
+	        android:textSize="@dimen/text_xlarge"
+	        android:gravity="center"
+	        android:text="Support PlayTunes"
+		/>
+	    
+		<ImageButton android:id="@+id/DialogCloseButton"
+	        
+	        android:layout_width="@dimen/touch_target_minimum"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:src="@drawable/abc_ic_clear"
+	        android:background="@drawable/button_background_dark"
+			android:layout_alignParentLeft="true"
+		/>
+        
+    </RelativeLayout>
+    
+    <View
+        
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/actionbar_shadow"
+        
+	/>
+	
+    <TextView android:id="@+id/DeletePlaylistMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="@dimen/text_xlarge"
+        
+        android:text="If you are enjoying PlayTunes, please support further development by rating us in the Google Play Store.\n\nThank you!"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/footer_shadow"
+        />
+    <LinearLayout
+        
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:background="@drawable/actionbar_background">
+        
+		<Button android:id="@+id/DialogCancel"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:textSize="@dimen/text_large"
+			android:textColor="@color/textColorPrimaryDark"
+			android:text="No Thanks"
+			android:background="@drawable/button_background_dark"
+		/>
+		
+		<View
+        	android:layout_width="1dp"
+        	android:layout_height="match_parent"
+        	android:background="@drawable/list_divider"
+        />
+		
+		<Button android:id="@+id/DialogConfirm"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:textSize="@dimen/text_large"
+			android:textColor="@color/textColorPrimaryDark"
+			android:text="Rate App"
+			android:background="@drawable/button_background_dark"
+		/>
+        
+    </LinearLayout>
+    
+</LinearLayout>
