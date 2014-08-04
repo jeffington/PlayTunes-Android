@@ -70,18 +70,6 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		
 		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener );
 		
-		//View header = getLayoutInflater().inflate( R.layout.header, null );
-		
-		//ListView lv = ( ListView ) getView().findViewById( R.id.AlbumListView );
-		
-		//lv.addHeaderView( );
-		//Resources r = getResources();
-		
-		//getListView().addHeaderView(  );
-		//lv.setAdapter( adapter );
-		
-		//lv.setOnItemClickListener( this );
-		
 		
 		if ( null != adapter.albumArtUri ) {
 			
