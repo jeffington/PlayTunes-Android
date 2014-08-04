@@ -13,7 +13,7 @@
         android:text="Pink Floyd"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/text_xlarge"
-        android:paddingLeft="16dp"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
         android:textColor="@color/textColorPrimary"
         />
     
