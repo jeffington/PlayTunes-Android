@@ -47,7 +47,7 @@
         
     	<activity android:name="com.ideabag.playtunes.activity.SettingsActivity"
     	    android:label="@string/activity_title_settings"
-    	    android:icon="@drawable/ic_action_settings"
+    	    android:icon="@drawable/ic_launcher"
     	    android:parentActivityName="com.ideabag.playtunes.activity.MainActivity">
             
             <intent-filter>
