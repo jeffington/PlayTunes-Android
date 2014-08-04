@@ -3,8 +3,6 @@ package com.ideabag.playtunes.activity;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
-import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
-import com.ideabag.playtunes.dialog.TourDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
@@ -144,6 +142,8 @@ public class MainActivity extends ActionBarActivity {
 		
 		tourFragment.show( ft, "dialog" );
     	*/
+
+	    
 	}
 	
 	public void setActionbarTitle( String titleString ) {
@@ -175,11 +175,13 @@ public class MainActivity extends ActionBarActivity {
 	@Override public void onStart() {
 		super.onStart();
 		
-		doBindService();
-		
 		if ( mIsBound && mBoundService != null ) {
 			
 			mBoundService.addPlaybackListener( mPlaybackListener );
+			
+		} else {
+			
+			doBindService();
 			
 		}
 		
