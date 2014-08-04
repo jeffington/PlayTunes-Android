@@ -3,6 +3,7 @@ package com.ideabag.playtunes.activity;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
+import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
@@ -22,6 +23,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -113,36 +115,46 @@ public class MainActivity extends ActionBarActivity {
 	    	transaction.commit();
 	    	
 	    }
-	    /*
-    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-    	
-		Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-		
-	    if ( prev != null ) {
-	        
-	    	ft.remove( prev );
+	    
+	    
+	    SharedPreferences prefs = getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
+	    //SharedPreferences.Editor edit = prefs.edit();
+	    
+	    int openCount = prefs.getInt( getString( R.string.pref_key_appopen ), 0 );
+	    
+	    if ( openCount == 0 ) {
+	    	
+	    	toggleDrawer();
+	    	
+	    } else if ( openCount == 5 ) {
+	    	
+	    	// Show rate dialog
+	    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        	
+			Fragment prev = getSupportFragmentManager().findFragmentByTag( "dialog" );
+			
+		    if ( prev != null ) {
+		        
+		    	ft.remove( prev );
+		    	
+		    }
+			
+		    RateAppDialogFragment rateFragment = new RateAppDialogFragment();
+			
+			rateFragment.show( ft, "dialog" );
+			
+	    }
+	    
+	    if ( openCount <= 5 ) {
+	    	
+	    	openCount++;
+	    	SharedPreferences.Editor edit = prefs.edit();
+	    	edit.putInt( getString( R.string.pref_key_appopen ), openCount );
+	    	edit.commit();
 	    	
 	    }
-		
-		TourDialogFragment tourFragment = new TourDialogFragment();
-		
-		tourFragment.addStep("Navigation",
-			"Navigate through your music by either swiping out the navigation drawer or pressing the title in the top left of the app's header.",
-			new Runnable() {
-				
-				@Override public void run() {
-				
-					toggleDrawer();
-				
-				}
-			
-			}
-		
-		);
-		
-		tourFragment.show( ft, "dialog" );
-    	*/
-
+	    
+	    
 	    
 	}
 	
@@ -376,72 +388,6 @@ public class MainActivity extends ActionBarActivity {
 	// We use the onActivityResult mechanism to return from the NowPlayingActivity
 	// and display the Fragment of the currently playing playlist, if it's not already displayed.
 	// 
-/*	
-	@Override protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
-		
-		if ( resultCode == RESULT_OK ) {
-			
-			Class < ? extends Fragment > nowPlayingFragmentClass = this.mBoundService.mPlaylistFragmentClass;
-			
-			String nowPlayingMediaID = this.mBoundService.mPlaylistMediaID;
-			
-			Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
-			
-			android.util.Log.i( "MainActivity", "Showing Fragment: " + ( showingFragment == null ? "Is Null" : "Is Not Null" ) );
-			
-			try {
-				
-				// 
-				// Check to see if the currently playing Fragment is already showing
-				// only create the new fragment if it isn't already showing.
-				//
-				
-				boolean mClassEquals = showingFragment != null && showingFragment.getClass().equals( nowPlayingFragmentClass );
-				boolean mMediaIDEquals = showingFragment != null && ( ( PlaylistBrowser ) showingFragment ).getMediaID().equals( nowPlayingMediaID );
-				
-				if ( !( mClassEquals && mMediaIDEquals ) ) {
-					
-					Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
-					
-					if ( null != nowPlayingMediaID ) {
-						
-						( ( PlaylistBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
-						
-					}
-					
-					FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			    	
-			    	// Replace whatever is in the fragment_container view with this fragment,
-			    	// and add the transaction to the back stack
-			    	transaction.replace( R.id.MusicBrowserContainer, nowPlayingFragment );
-			    	transaction.addToBackStack( null );
-			    	
-			    	
-			    	// Commit the transaction
-			    	transaction.commitAllowingStateLoss();
-			    	
-					
-				}
-				
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch ( ClassCastException e ) {
-				
-				
-			}
-			
-			//this.transactFragment(newFragment)
-			//this.mBoundService.mPlaylistFragmentClass
-			
-		}
-		
-		
-	}
-*/
 	@Override protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
 		
 		if ( resultCode == RESULT_OK ) {
