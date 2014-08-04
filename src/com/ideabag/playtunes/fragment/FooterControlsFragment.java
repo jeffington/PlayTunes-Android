@@ -4,10 +4,13 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.NowPlayingActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -110,6 +113,7 @@ public class FooterControlsFragment extends Fragment {
 		
 	};
 	
+	@SuppressLint("NewApi")
 	public void setMediaID( String media_id ) {
 		
 		if ( null == media_id ) {
@@ -220,8 +224,9 @@ public class FooterControlsFragment extends Fragment {
 
 				if ( null == nextAlbumUri ) {
 					
-					mAlbumCover.setImageResource( R.drawable.no_album_art );
+					mAlbumCover.setImageResource( R.drawable.no_album_art_thumb );
 					
+				    
 				} else {
 					
 					Uri albumArtUri = Uri.parse( nextAlbumUri );

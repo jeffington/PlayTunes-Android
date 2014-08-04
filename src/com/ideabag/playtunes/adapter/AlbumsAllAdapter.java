@@ -24,7 +24,8 @@ public class AlbumsAllAdapter extends BaseAdapter {
     	MediaStore.Audio.Albums.ARTIST,
     	MediaStore.Audio.Albums.NUMBER_OF_SONGS,
     	MediaStore.Audio.Albums.ALBUM_ART,
-    	MediaStore.Audio.Albums._ID
+    	MediaStore.Audio.Albums._ID,
+    	
     	
     };
 	
@@ -51,7 +52,7 @@ public class AlbumsAllAdapter extends BaseAdapter {
 				new String[] {
 						mContext.getString( R.string.no_album_string )
 				},
-				MediaStore.Audio.Albums.ALBUM
+				MediaStore.Audio.Albums.DEFAULT_SORT_ORDER
 			);
 		
 	}
@@ -113,9 +114,11 @@ public class AlbumsAllAdapter extends BaseAdapter {
 			
 		} else {
 			
-			albumArtThumb.setImageResource( R.drawable.no_album_art );
+			albumArtThumb.setImageResource( R.drawable.no_album_art_thumb );
 			
 		}
+		
+		
 		
 		return convertView;
 		

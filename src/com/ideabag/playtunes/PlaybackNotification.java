@@ -173,7 +173,7 @@ public class PlaybackNotification {
 			
 			if ( newAlbumUri == null ) {
 				
-				mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art );
+				mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art_thumb );
 				
 			} else {
 				
