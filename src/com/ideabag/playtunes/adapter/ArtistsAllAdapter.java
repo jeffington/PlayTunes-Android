@@ -49,7 +49,7 @@ public class ArtistsAllAdapter extends BaseAdapter {
 				artistsSelection,
 				null,
 				null,
-				MediaStore.Audio.Artists.ARTIST
+				MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
 			);
 		
 	}
