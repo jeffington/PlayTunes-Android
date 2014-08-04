@@ -120,19 +120,19 @@ public class PlaylistMediaPlayer {
 				
 				if ( mLoopState == LoopState.LOOP_ALL ) {
 					
-					android.util.Log.i( TAG, "LOOP_ALL");
+					//android.util.Log.i( TAG, "LOOP_ALL");
 					
 					setPlaylistPosition( ( mPlaylistPosition + 1 ) % mPlaylistSize ); // Will always loop the whole thing
 					
 				} else if ( mLoopState == LoopState.LOOP_NO ) {
 					
-					android.util.Log.i( TAG, "LOOP_NO");
+					//android.util.Log.i( TAG, "LOOP_NO");
 					
 					setPlaylistPosition( mPlaylistPosition + 1 );
 					
 				} else if ( mLoopState == LoopState.LOOP_ONE ) { // We don't need to change the media on LOOP_ONE, but we need to alert the client
 					
-					android.util.Log.i( TAG, "LOOP_ONE");
+					//android.util.Log.i( TAG, "LOOP_ONE");
 					
 					setPlaylistPosition( mPlaylistPosition );
 					
@@ -559,16 +559,6 @@ public class PlaylistMediaPlayer {
 		}
 		
 		shuffleArray( mShuffledPlaylist );
-		
-		String shuffledList = "";
-		
-		for ( int i = 0; i < mShuffledPlaylist.length; i++ ) {
-			
-			shuffledList += mShuffledPlaylist[ i ] + ",";
-			
-		}
-		
-		android.util.Log.i( TAG, shuffledList );
 		
 	}
 	
