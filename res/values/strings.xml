@@ -60,4 +60,7 @@
     <string name="key_state_media_id">saved_state_media_id</string>
     <string name="key_state_playlist_editing">saved_state_is_editing</string>
     
+    <string name="prefs_file">playtunes_preferences</string>
+    <string name="pref_key_appopen">app_open</string>
+    
 </resources>
