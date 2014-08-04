@@ -99,12 +99,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 		// Set up ad banner
 		
-		adView = new AdView( this );
-	    adView.setAdSize( AdSize.BANNER );
-	    adView.setAdUnitId( getString( R.string.admob_unit_id_nowplaying_activity_id ) );
-		
-		FrameLayout adFrame = ( FrameLayout ) findViewById( R.id.NowPlayingAdContainer );
-		adFrame.addView( adView );
+		adView = (AdView) findViewById( R.id.adView );
 	    
 		Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
 	    AdmobUtil.AddTestDevices( this, adRequestBuilder );
