@@ -54,11 +54,11 @@
         
 	/>
 	
-	<ImageView
+	<View
 		
 		android:layout_width="match_parent"
     	android:layout_height="2dp"
-    	android:src="@drawable/footer_shadow"
+    	android:background="@drawable/footer_shadow"
     	android:layout_above="@id/Toolbar"
 	
 	/>
