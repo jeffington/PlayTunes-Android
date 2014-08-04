@@ -151,7 +151,7 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	
 	@Override public void onResume() {
 		super.onResume();
-
+		
     	
     	mActivity.setActionbarTitle( adapter.ArtistName );
     	mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
@@ -199,7 +199,7 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 			
 		} else if ( null != Singles && v.equals( Singles ) ) { // Load Singles
 			
-			ArtistsOneFragment allSinglesFragment = new ArtistsOneFragment( );
+			ArtistSinglesFragment allSinglesFragment = new ArtistSinglesFragment( );
 			allSinglesFragment.setMediaID( ARTIST_ID );
 			
 			mActivity.transactFragment( allSinglesFragment );
