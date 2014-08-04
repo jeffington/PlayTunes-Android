@@ -22,7 +22,7 @@ import android.widget.ToggleButton;
 
 public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrowser {
 	
-	public static final String TAG = "Artist All Songs";
+	public static final String TAG = "Artist All Songs Fragment";
 	
 	private static final char DASH_SYMBOL = 0x2013;
 	
