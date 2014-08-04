@@ -16,7 +16,7 @@ import android.widget.ToggleButton;
 public class ArtistSinglesAdapter extends BaseAdapter {
 	
 	private Context mContext;
-	Cursor cursor;
+	Cursor cursor = null;
 	private String ARTIST_ID;
 	public String ARTIST_NAME;
 	
@@ -43,25 +43,39 @@ public class ArtistSinglesAdapter extends BaseAdapter {
 		mContext = context;
 		ARTIST_ID = artist_id;
 		
-		songMenuClickListener = clickListener;
+		mPlaylistManager = new PlaylistManager( mContext );
 		
-    	cursor = mContext.getContentResolver().query(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					allSongsSelection,
-					MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.ALBUM + "=?",
-					new String[] {
-						
-						ARTIST_ID,
-						mContext.getString( R.string.no_album_string )
-						
-					},
-					MediaStore.Audio.Media.TITLE
-    			);
+		songMenuClickListener = clickListener;
     	
-    	cursor.moveToFirst();
-    	
-    	ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-    	
+		requery();
+		
+	}
+	
+	public void requery() {
+		
+		if ( null != cursor && !cursor.isClosed() ) {
+			
+			cursor.close();
+			
+		}
+		
+		cursor = mContext.getContentResolver().query(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				allSongsSelection,
+				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.ALBUM + "=?  AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				new String[] {
+					
+					ARTIST_ID,
+					mContext.getString( R.string.no_album_string )
+					
+				},
+				MediaStore.Audio.Media.TITLE
+			);
+		
+		cursor.moveToFirst();
+		
+		ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+		
 	}
 	
 	public Cursor getCursor() {
@@ -78,13 +92,11 @@ public class ArtistSinglesAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
