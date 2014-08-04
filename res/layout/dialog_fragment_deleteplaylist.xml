@@ -43,11 +43,11 @@
         
     </LinearLayout>
     
-    <ImageView
+    <View
         
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:src="@drawable/actionbar_shadow"
+        android:background="@drawable/actionbar_shadow"
         
 	/>
 	
@@ -55,18 +55,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:textSize="@dimen/text_large"
-        android:gravity="center_horizontal"
+        android:textSize="@dimen/text_xlarge"
         />
-    <ImageView
+    <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:src="@drawable/footer_shadow"
+        android:background="@drawable/footer_shadow"
         />
     <LinearLayout
         
         android:layout_width="match_parent"
-        android:layout_height="@dimen/touch_target_minimum">
+        android:layout_height="@dimen/touch_target_minimum"
+        android:background="@drawable/actionbar_background">
         
 		<Button android:id="@+id/DialogDeleteCancel"
 			android:layout_width="0dp"
@@ -74,14 +74,14 @@
 			android:layout_weight="1"
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
-			android:textColor="@color/textColorPrimary"
+			android:textColor="@color/textColorPrimaryDark"
 			android:text="@string/cancel"
-			android:background="@drawable/list_item_background"
+			android:background="@drawable/button_background_dark"
 		/>
-		    <ImageView
+		    <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:src="@drawable/list_divider"
+        android:background="@drawable/list_divider"
         />
 		<Button android:id="@+id/DialogDeleteConfirm"
 			android:layout_width="0dp"
@@ -89,9 +89,9 @@
 			android:layout_weight="1"
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
-			android:textColor="@color/textColorPrimary"
+			android:textColor="@color/textColorPrimaryDark"
 			android:text="@string/delete"
-			android:background="@drawable/list_item_background"
+			android:background="@drawable/button_background_dark"
 		/>
         
     </LinearLayout>
