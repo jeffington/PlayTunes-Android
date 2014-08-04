@@ -52,6 +52,8 @@ public class PlaylistManager {
 		
 		addSongsInCursorToPlaylist( songCursor, playlist_id);
 		
+		songCursor.close();
+		
 		return true;
 		
 	}
