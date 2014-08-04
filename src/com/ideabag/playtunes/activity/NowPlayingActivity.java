@@ -465,7 +465,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 
 			if ( null == nextAlbumUri ) {
 				
-				mAlbumCover.setImageResource( R.drawable.no_album_art );
+				mAlbumCover.setImageResource( R.drawable.no_album_art_full );
 				
 			} else {
 				
