@@ -1,7 +1,10 @@
 package com.ideabag.playtunes.dialog;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -39,6 +42,20 @@ public class RateAppDialogFragment extends DialogFragment {
         
     }
 	
+    // 
+    // Set the app open count to 20, so we don't bother the user about ratings again
+    // 
+    @Override public void onDismiss(DialogInterface dialog) {
+    	
+    	SharedPreferences prefs = getActivity().getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
+    	SharedPreferences.Editor edit = prefs.edit();
+    	edit.putInt( getString( R.string.pref_key_appopen ), 20 );
+    	edit.commit();
+    	
+    	super.onDismiss(dialog);
+    	
+    }
+    
     @Override public void onStart() {
     	super.onStart();
     	

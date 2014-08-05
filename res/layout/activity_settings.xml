@@ -5,13 +5,94 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
     
-    <TextView
+<LinearLayout android:id="@+id/SettingsButtonSupport"
+    	android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:minHeight="@dimen/list_item_height"
+        android:background="@drawable/list_item_background">
+        
+    	<LinearLayout android:orientation="vertical"
+    	    android:layout_width="0dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical"
+    	    android:layout_weight="1"
+    	    android:paddingTop="4dp"
+    	    android:paddingBottom="4dp"
+    	    android:paddingRight="2dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing" >
+    	    
+        <TextView android:id="@+id/Title"
+            
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+           	android:text="Support Us"
+           	
+        />
+        
+        <TextView android:id="@+id/Subtitle"
+            
+           	android:layout_width="match_parent"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+           	android:ellipsize="marquee"
+			android:textColor="@color/textColorSecondary"
+			android:textSize="@dimen/text_medium"
+			android:text="Please rate this app in the Play Store"
+           	
+        />
+        
+        
+        </LinearLayout>
+
+</LinearLayout>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider_color"
+        />
+    <Button android:id="@+id/SettingsButtonFeedback"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height"
-        android:text="SETTINGS PAGE"
-        android:textSize="@dimen/text_large"
+        android:text="Give Feedback"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:paddingRight="@dimen/list_item_horizontal_spacing"
+        android:background="@drawable/list_item_background"
         />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider_color"
+        />
+    <Button android:id="@+id/SettingsButtonHelp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:text="Help"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:paddingRight="@dimen/list_item_horizontal_spacing"
+        android:background="@drawable/list_item_background"
+        />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider_color"
+        />
+    
+    
 
 </LinearLayout>
