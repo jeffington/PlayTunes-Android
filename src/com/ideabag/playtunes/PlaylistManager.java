@@ -352,7 +352,7 @@ public class PlaylistManager {
 					null
 				);
 			
-			if ( 0 == starredQueryCursor.getCount()) {
+			if ( null == starredQueryCursor || 0 == starredQueryCursor.getCount()) {
 				
 				if ( starredQueryCursor != null && !starredQueryCursor.isClosed() ) {
 					
