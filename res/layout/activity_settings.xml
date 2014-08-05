@@ -75,23 +75,6 @@
         android:layout_height="1dp"
         android:background="@color/list_divider_color"
         />
-    <Button android:id="@+id/SettingsButtonHelp"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_height"
-        android:text="Help"
-        android:textSize="@dimen/text_xlarge"
-        android:textColor="@color/textColorPrimary"
-        android:gravity="center_vertical"
-        android:paddingLeft="@dimen/list_item_horizontal_spacing"
-        android:paddingRight="@dimen/list_item_horizontal_spacing"
-        android:background="@drawable/list_item_background"
-        />
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/list_divider_color"
-        />
     
     
 

@@ -33,7 +33,7 @@ public class SettingsActivity extends ActionBarActivity {
         
         findViewById(R.id.SettingsButtonSupport).setOnClickListener(mSettingsClickListener);
         findViewById(R.id.SettingsButtonFeedback).setOnClickListener(mSettingsClickListener);
-        findViewById(R.id.SettingsButtonHelp).setOnClickListener(mSettingsClickListener);
+        //findViewById(R.id.SettingsButtonHelp).setOnClickListener(mSettingsClickListener);
         
 	}
 	
@@ -74,11 +74,11 @@ public class SettingsActivity extends ActionBarActivity {
 	        	
 	            mNewFragment.show(ft, "dialog");
 				
-			} else if ( id == R.id.SettingsButtonHelp ) {
+			}/* else if ( id == R.id.SettingsButtonHelp ) {
 				
 				
 				
-			}
+			}*/
 			
 		}
 	};
