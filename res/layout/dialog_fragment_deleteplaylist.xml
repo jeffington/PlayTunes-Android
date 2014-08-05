@@ -42,25 +42,14 @@
 		/>
         
     </LinearLayout>
-    
-    <View
-        
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/actionbar_shadow"
-        
-	/>
 	
     <TextView android:id="@+id/DeletePlaylistMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:textSize="@dimen/text_xlarge"
-        />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/footer_shadow"
         />
     <LinearLayout
         

@@ -61,13 +61,5 @@
 		android:background="@drawable/list_item_background"
 	/>
     
-    <ImageView
-        android:layout_below="@id/DialogHeader"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:src="@drawable/actionbar_shadow"
-        
-	/>
-    
 </RelativeLayout>
 

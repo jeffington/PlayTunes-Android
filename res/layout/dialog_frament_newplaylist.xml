@@ -42,14 +42,6 @@
 		/>
         
     </LinearLayout>
-    
-    <ImageView
-        
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:src="@drawable/actionbar_shadow"
-        
-	/>
 	
     <EditText android:id="@+id/NewPlaylistName"
         android:layout_width="match_parent"

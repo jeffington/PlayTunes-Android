@@ -30,7 +30,7 @@
 	        android:textColor="#FFFFFF"
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
-	        android:text="Add Song to Playlist"
+	        android:text="@string/playlist_add"
 	        android:paddingRight="@dimen/touch_target_minimum"
 	        
 		/>
@@ -42,15 +42,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 		android:layout_below="@id/AddToPlaylistHeader"
-        
-	/>
-    
-    
-    <ImageView
-        android:layout_below="@id/AddToPlaylistHeader"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:src="@drawable/actionbar_shadow"
         
 	/>
     
