@@ -95,11 +95,20 @@ public class PlaybackNotification {
 		
 		NotificationCompat.Builder mBuilder =
 		        new NotificationCompat.Builder( mContext )
-		        .setSmallIcon( TUNE_ICON_RESOURCE )
 				.setContent( mRemoteViews )
                 .setOngoing( true )
                 .setTicker( tickerString )
 		        .setContentIntent( contentIntent );
+		
+		if ( android.os.Build.VERSION.SDK_INT < 9 ) {
+			
+	        mBuilder.setSmallIcon( R.drawable.ic_action_music_2 );
+			
+		} else {
+			
+			mBuilder.setSmallIcon( R.drawable.ic_action_music_2_white );
+			
+		}
 		
 		Notification mBuiltNotification = mBuilder.build();
 		
@@ -168,6 +177,7 @@ public class PlaybackNotification {
 			albumCursor.moveToFirst();
 			
 			String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+			albumCursor.close();
 			
 			lastAlbumUri = newAlbumUri;
 			
@@ -188,6 +198,8 @@ public class PlaybackNotification {
 			}
 			
 		}
+		
+		
 		
 		mRemoteViews.setTextViewText( R.id.NotificationSongName, title );
 		mRemoteViews.setTextViewText( R.id.NotificationArtistName, artist );
