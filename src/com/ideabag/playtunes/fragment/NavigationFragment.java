@@ -29,6 +29,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	public static final String TAG = "NavigationFragment";
 	
 	private MainActivity mActivity;
+	private PlaylistManager mPlaylistManager;
 	
 	NavigationListAdapter adapter;
 	
@@ -44,22 +45,14 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		mActivity = ( MainActivity ) activity;
 		
+		mPlaylistManager = new PlaylistManager( getActivity() );
+		
 	}
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		
 		super.onActivityCreated( savedInstanceState );
         
-		//this.getListView().setSelector(R.drawable.nav_list_item_back);
-		//getActivity().getResources().getDimension(resourceID) 
-		//this.setListAdapter( listAdapter );
-		//this.getListView().setDivider( new ColorDrawable( 0xCCCCCC ) );
-		//this.getListView().setDividerHeight( 1 );
-		//this.getListView().setChoiceMode( ListView.CHOICE_MODE_SINGLE );
-		//this.getListView().setHeaderDividersEnabled( true );
-		
-		//getView().findViewById( R.id.NavigationSettings ).setOnClickListener( NavigationClickListener );
-		
 		adapter = new NavigationListAdapter( getActivity() );
 		
 		ListView lv = ( ListView ) getView().findViewById( R.id.NavigationListView );
@@ -68,7 +61,6 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		
 		lv.setOnItemClickListener( this );
-		//lv.setOnItemLongClickListener( this );
 		
 		getView().findViewById( R.id.NavigationToolbarSettings ).setOnClickListener( NavigationClickListener );
 		getView().findViewById( R.id.NavigationToolbarFeedback ).setOnClickListener( NavigationClickListener );
@@ -78,6 +70,10 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+		
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external",
+						Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
 		
 	}
 	
@@ -154,10 +150,8 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		case NavigationListAdapter.STARRED:
 			
-			PlaylistManager pMan = new PlaylistManager( getActivity() );
-			
 			mNewFragment = new PlaylistsOneFragment();
-			((PlaylistsOneFragment)mNewFragment).setMediaID( pMan.createStarredIfNotExist() );
+			((PlaylistsOneFragment)mNewFragment).setMediaID( mPlaylistManager.createStarredIfNotExist() );
 			
 			break;
 			

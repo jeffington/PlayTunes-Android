@@ -87,7 +87,7 @@ public class NavigationListAdapter extends BaseAdapter {
 			
 		}
 		
-		String title = mContext.getResources().getString( label_string_resources[ position] );
+		String title = mContext.getResources().getString( label_string_resources[ position ] );
 		int icon_resource = badge_resources[ position ];
 		
 		int badgeCount = 0;
