@@ -103,7 +103,7 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, SongsFragment.class, null );
+		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, SongsFragment.class, null );
 		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
 		
 		mActivity.mBoundService.setPlaylistPosition( position );

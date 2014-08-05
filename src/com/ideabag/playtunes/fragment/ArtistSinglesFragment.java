@@ -132,7 +132,7 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, ArtistAllSongsFragment.class, ARTIST_ID );
+		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, ArtistAllSongsFragment.class, ARTIST_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		

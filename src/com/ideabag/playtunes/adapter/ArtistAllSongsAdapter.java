@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	Cursor cursor = null;
+	private MediaQuery mQuery;
 	private String ARTIST_ID;
 	public String ARTIST_NAME;
 	
@@ -47,6 +49,18 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 		
 		songMenuClickListener = clickListener;
 		
+		mQuery = new MediaQuery(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				allSongsSelection,
+				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				new String[] {
+					
+					ARTIST_ID
+					
+				},
+				MediaStore.Audio.Media.TITLE
+			);
+		
     	requery();
     	
 	}
@@ -59,18 +73,8 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				allSongsSelection,
-				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
-				new String[] {
-					
-					ARTIST_ID
-					
-				},
-				MediaStore.Audio.Media.TITLE
-			);
-	
+		cursor = MediaQuery.execute( mContext, mQuery );
+		
 		cursor.moveToFirst();
 		
 		try {
@@ -91,9 +95,9 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 		
 	}
 	
-	public Cursor getCursor() {
+	public MediaQuery getQuery() {
 		
-		return cursor;
+		return mQuery;
 		
 	}
 	

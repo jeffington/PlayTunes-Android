@@ -183,7 +183,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 			String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 			
-			mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
+			mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, PlaylistsOneFragment.class, PLAYLIST_ID );
 			
 			mActivity.mBoundService.setPlaylistPosition( position );
 			

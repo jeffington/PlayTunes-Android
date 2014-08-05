@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,6 +22,8 @@ public class AlbumsOneAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private Cursor cursor;
+	private MediaQuery mQuery;
+	
 	private PlaylistManager PlaylistManager;
 	
 	View.OnClickListener songMenuClickListener;
@@ -50,13 +53,11 @@ public class AlbumsOneAdapter extends BaseAdapter {
 		
 		ALBUM_ID = album_id;
 		
-		Log.i("ALBUM_ID", ALBUM_ID);
-		
 		PlaylistManager = new PlaylistManager( mContext );
 		
 		songMenuClickListener = menuClickListener;
 		
-    	cursor = mContext.getContentResolver().query(
+		mQuery = new MediaQuery(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				singleAlbumSelection,
 				MediaStore.Audio.Media.ALBUM_ID + "=?",
@@ -68,6 +69,8 @@ public class AlbumsOneAdapter extends BaseAdapter {
 				MediaStore.Audio.Media.TRACK
 			);
     	
+		cursor = mQuery.execute( mContext, mQuery );
+		
     	Cursor album = mContext.getContentResolver().query(
     			MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
     			new String[] {
@@ -96,9 +99,9 @@ public class AlbumsOneAdapter extends BaseAdapter {
 		album.close();
 	}
 	
-	public Cursor getCursor() {
+	public MediaQuery getQuery() {
 		
-		return cursor;
+		return mQuery;
 		
 	}
 	

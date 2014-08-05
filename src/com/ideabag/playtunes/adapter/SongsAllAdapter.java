@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -16,7 +17,10 @@ import android.widget.ToggleButton;
 public class SongsAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
+	
 	Cursor cursor = null;
+	MediaQuery mQuery = null;
+	
 	private PlaylistManager PlaylistManager;
 	
 	View.OnClickListener songMenuClickListener;
@@ -36,9 +40,9 @@ public class SongsAllAdapter extends BaseAdapter {
     	
     };
     
-    public Cursor getCursor() {
+    public MediaQuery getQuery() {
     	
-    	return cursor;
+    	return mQuery;
     	
     }
     
@@ -49,6 +53,14 @@ public class SongsAllAdapter extends BaseAdapter {
 		PlaylistManager = new PlaylistManager( mContext );
     	
     	this.songMenuClickListener = menuClickListener;
+    	
+    	mQuery = new MediaQuery(
+    				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    				allSongsSelection,
+    				MediaStore.Audio.Media.IS_MUSIC + " != 0",
+    				null,
+    				MediaStore.Audio.Media.TITLE
+    				);
     	
     	requery();
 		
@@ -62,13 +74,7 @@ public class SongsAllAdapter extends BaseAdapter {
 			
 		}
 		
-    	cursor = mContext.getContentResolver().query(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					allSongsSelection,
-					MediaStore.Audio.Media.IS_MUSIC + " != 0",
-					null,
-					MediaStore.Audio.Media.TITLE
-    			);
+    	cursor = MediaQuery.execute( mContext, mQuery );
 		
 	}
 	

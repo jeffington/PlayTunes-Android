@@ -94,7 +94,7 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, AlbumsOneFragment.class, ALBUM_ID );
+		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, AlbumsOneFragment.class, ALBUM_ID );
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
 		mActivity.mBoundService.play();

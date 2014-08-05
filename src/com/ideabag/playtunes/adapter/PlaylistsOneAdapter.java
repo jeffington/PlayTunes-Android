@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 	
 	protected Context mContext;
 	protected Cursor cursor = null;
+	private MediaQuery mQuery = null;
 	
 	private PlaylistManager PlaylistManager;
 	private View.OnClickListener songMenuClickListener;
@@ -74,13 +76,25 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		PLAYLIST_NAME = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
 		cursor.close();
 		
+		mQuery = new MediaQuery(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ),
+				singlePlaylistSelection,
+				MediaStore.Audio.Playlists.Members.PLAYLIST_ID + "=?",
+				new String[] {
+					
+					PLAYLIST_ID
+					
+				},
+				MediaStore.Audio.Playlists.Members.PLAY_ORDER
+			);
+		
 		requery();
 		
 	}
 	
-	public Cursor getCursor() {
+	public MediaQuery getQuery() {
 		
-		return cursor;
+		return mQuery;
 		
 	}
 	
@@ -92,17 +106,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ),
-				singlePlaylistSelection,
-				MediaStore.Audio.Playlists.Members.PLAYLIST_ID + "=?",
-				new String[] {
-					
-					PLAYLIST_ID
-					
-				},
-				MediaStore.Audio.Playlists.Members.PLAY_ORDER
-			);
+		cursor = MediaQuery.execute( mContext, mQuery );
 		
 	}
 	

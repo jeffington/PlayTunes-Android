@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.AudioFocusHelper;
 import com.ideabag.playtunes.media.MediaButtonHelper;
 import com.ideabag.playtunes.media.MusicFocusable;
@@ -225,11 +226,11 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		return mBinder;
 	}
 	
-	public void setPlaylist( Cursor c, String playlistName, Class < ? extends Fragment > fragmentClass, String playlistMediaID ) {
+	public void setPlaylist( MediaQuery query, String playlistName, Class < ? extends Fragment > fragmentClass, String playlistMediaID ) {
 		
 		if ( null != MediaPlayer ) {
 			
-			MediaPlayer.setPlaylistCursor( c );
+			MediaPlayer.setPlaylistQuery( query );
 			this.mPlaylistFragmentClass = fragmentClass;
 			this.mPlaylistMediaID = playlistMediaID;
 			this.mPlaylistName = playlistName;

@@ -8,8 +8,12 @@ package com.ideabag.playtunes.media;
 
 import java.util.Random;
 
+import com.ideabag.playtunes.database.MediaQuery;
+
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWrapper;
+import android.database.DataSetObserver;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
 import android.provider.MediaStore;
@@ -23,6 +27,10 @@ public class PlaylistMediaPlayer {
 	protected boolean isShuffling, isPlaying;
 	
 	protected Cursor mPlaylistCursor;
+	
+	// Local copy of the playlist Cursor that we keep in case the cursor is closed or changed
+	protected MediaQuery mMediaQuery = null;
+	
 	protected int mPlaylistPosition = -1;
 	protected int mPlaylistSize = -1;
 	
@@ -197,11 +205,21 @@ public class PlaylistMediaPlayer {
 		
 	}
 	
-	public void setPlaylistCursor( Cursor c ) {
+	public void setPlaylistQuery( MediaQuery query ) {
 		
-		if ( null == mPlaylistCursor || !mPlaylistCursor.equals( c ) ) {
+		if ( null == mMediaQuery || !mMediaQuery.equals( query ) ) {
 			
-			mPlaylistCursor = c;
+			mMediaQuery = query;
+			
+			if ( mPlaylistCursor != null && !mPlaylistCursor.isClosed() ) {
+				
+				mPlaylistCursor.close();
+				
+			}
+			
+			mPlaylistCursor = MediaQuery.execute( mContext, mMediaQuery );
+			
+			//mPlaylistCursor.registerDataSetObserver( mPlaylistCursorObserver );
 			
 			mPlaylistSize = mPlaylistCursor.getCount();
 			mPlaylistPosition = 0;
@@ -616,82 +634,7 @@ public class PlaylistMediaPlayer {
 		}
 		
 	}
-/*	
-	private void generateRandomSeed() {
-		
-		Random gen = new Random( System.currentTimeMillis() );
-		
-		shuffleRandomNumberSeed = gen.nextLong();
-		
-		String sequence = "";
-		
-		for ( int i = 0; i < mPlaylistSize; i++ ) {
-			
-			sequence += "" + getNthInt( i ) + ", ";
-			
-		}
-		
-		android.util.Log.i( TAG, "Shuffle sequence:" + sequence );
-		
-	}
 	
-	private int getNthInt( int n ) {
-		
-		Random mRandom = new Random( shuffleRandomNumberSeed );
-		
-		int mSize = mPlaylistSize;
-		
-		int value = 0;
-		
-		for ( int i = 0; i < n; i++ ) {
-			
-			value = mRandom.nextInt( mSize + 1 );
-			
-		}
-		
-		return value;
-		
-	}
-*/
-	
-	//
-	// Responding to Hardware Events
-	// 
-	// There are some hardware conditions where we want the media player to emergency stop/pause
-	// This includes:
-	// receiving a phone call, headphones being unplugged, and the SD card being disconnected
-	// 
-	/*
-	private IntentFilter hardwareStopIntents = new IntentFilter();
-	
-	private BroadcastReceiver HardwareStopReceiver = new BroadcastReceiver() {
-		
-		@Override public void onReceive( Context context, Intent intent ) {
-			
-			// android.intent.action.HEADSET_PLUG when headphones are plugged in or out
-			
-			// Shut down when either the media is ejected or when the headphones are unplugged
-			
-			pause();
-			
-		}
-		
-	};
-	
-	PhoneStateListener phoneListener = new PhoneStateListener() {
-		
-		public void onCallStateChanged( int state, String incomingNumber ) {
-			
-			if ( state == TelephonyManager.CALL_STATE_OFFHOOK || state == TelephonyManager.CALL_STATE_RINGING ) {
-				
-				pause();
-				
-			}
-			
-		}
-		
-	};
-	*/
 	
 }
 

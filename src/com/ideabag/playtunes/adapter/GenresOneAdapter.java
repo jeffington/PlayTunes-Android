@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ public class GenresOneAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private Cursor cursor;
+	private MediaQuery mQuery;
 	private PlaylistManager mPlaylistManager;
 	View.OnClickListener songMenuClickListener;
 	
@@ -38,9 +40,9 @@ public class GenresOneAdapter extends BaseAdapter {
 		
     };
     
-    public Cursor getCursor() {
+    public MediaQuery getQuery() {
     	
-    	return cursor;
+    	return mQuery;
     	
     }
     
@@ -54,6 +56,11 @@ public class GenresOneAdapter extends BaseAdapter {
 		
 		mPlaylistManager = new PlaylistManager( mContext );
 		
+		mQuery = new MediaQuery(
+				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ),
+				oneGenreSelection
+			);
+		
 		requery();
 		
 	}
@@ -66,13 +73,7 @@ public class GenresOneAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ),
-				oneGenreSelection,
-				null,
-				null,
-				null
-			);
+		cursor = MediaQuery.execute( mContext, mQuery );
 		
 	}
 

@@ -130,7 +130,7 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getCursor(), playlistName, GenresOneFragment.class, GENRE_ID );
+		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, GenresOneFragment.class, GENRE_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
