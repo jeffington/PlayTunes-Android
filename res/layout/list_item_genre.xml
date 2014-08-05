@@ -5,7 +5,8 @@
     android:orientation="horizontal"
     android:minHeight="@dimen/list_item_height"
     android:gravity="center_vertical"
-    android:paddingLeft="@dimen/list_item_horizontal_spacing">
+    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    android:paddingRight="@dimen/spacing_medium">
     
     <TextView android:id="@+id/Title"
         android:layout_width="0dp"
@@ -15,6 +16,12 @@
         android:textSize="@dimen/text_xlarge"
         />
     
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="top|right">
+        
     <include android:id="@+id/BadgeAlbum"
         
         layout="@layout/view_badge_album"
@@ -26,6 +33,7 @@
         layout="@layout/view_badge_song"
 		
 	/>
+    </LinearLayout>
     
 
 
