@@ -320,6 +320,8 @@ public class PlaylistManager {
 	
 	public String createStarredIfNotExist() {
 		
+		Cursor starredQueryCursor = null;
+		
 		if ( null == STARRED_PLAYLIST_ID ) {
 			
 			STARRED_PLAYLIST_ID = prefs.getString( STARRED_PLAYLIST_NAME, null );
@@ -328,7 +330,7 @@ public class PlaylistManager {
 		
 		if ( null == STARRED_PLAYLIST_ID) {
 			
-			Cursor starredQueryCursor = mResolver.query(
+			starredQueryCursor = mResolver.query(
 					
 					playlistsUri,
 				    
@@ -352,23 +354,13 @@ public class PlaylistManager {
 			
 			if ( 0 == starredQueryCursor.getCount()) {
 				
-				createPlaylist( STARRED_PLAYLIST_NAME );
+				if ( starredQueryCursor != null && !starredQueryCursor.isClosed() ) {
+					
+					starredQueryCursor.close();
+					
+				}
 				
-				starredQueryCursor = mResolver.query(
-						playlistsUri,
-					    new String[] {
-					    	
-					    	MediaStore.Audio.Playlists.NAME,
-							MediaStore.Audio.Playlists._ID
-							
-					    },
-						null,
-						null,
-						null
-					);
-				
-				starredQueryCursor.moveToFirst();
-				STARRED_PLAYLIST_ID = starredQueryCursor.getString( starredQueryCursor.getColumnIndex( MediaStore.Audio.Playlists._ID ) );
+				STARRED_PLAYLIST_ID = "" + createPlaylist( STARRED_PLAYLIST_NAME );
 				
 			} else {
 				
@@ -383,6 +375,11 @@ public class PlaylistManager {
 			
 			editor.commit();
 			
+		}
+		
+		if ( starredQueryCursor != null && !starredQueryCursor.isClosed() ) {
+			
+			starredQueryCursor.close();
 			
 		}
 		
