@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	private CharSequence mActionbarTitle, mActionbarSubtitle;
 	
-	private boolean mShouldHideActionItems;
+	public boolean mShouldHideActionItems;
 	
 	@Override public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -486,7 +486,7 @@ public class MainActivity extends ActionBarActivity {
 	private void hideMenuItems( Menu menu, boolean visible ) {
 		
 	    for ( int i = 0; i < menu.size(); i++ ) {
-
+	    	
 	        menu.getItem( i ).setVisible( visible );
 	        
 	    }
