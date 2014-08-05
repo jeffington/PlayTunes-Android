@@ -285,6 +285,20 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	   
 	}
 	
+	@Override public void onPrepareOptionsMenu( Menu menu ) {
+		
+		super.onPrepareOptionsMenu( menu );
+		
+		if ( !mActivity.mShouldHideActionItems ) {
+			
+			menuItemDoneEditing.setVisible( isEditing );
+			
+			menuItemEdit.setVisible( !isEditing );
+	    	
+		}
+	    
+	}
+	
 	
 	@Override public boolean onOptionsItemSelected( MenuItem item ) {
 		
