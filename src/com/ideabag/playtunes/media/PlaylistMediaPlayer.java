@@ -12,13 +12,9 @@ import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorWrapper;
-import android.database.DataSetObserver;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
 import android.provider.MediaStore;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 
 public class PlaylistMediaPlayer {
 	
@@ -47,12 +43,12 @@ public class PlaylistMediaPlayer {
 	
 	private PlaybackListener PlaybackChanged = null;
 	
-	private Context mContext;
+	protected Context mContext;
 	
 	private long shuffleRandomNumberSeed = -1;
 	
-	PowerManager pm;
-	PowerManager.WakeLock wl;
+	private PowerManager pm;
+	private PowerManager.WakeLock wl;
 	
 	//
 	//
