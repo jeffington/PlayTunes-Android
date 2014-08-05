@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.content.ComponentName;
 import android.content.Context;
@@ -42,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	private CharSequence mActionbarTitle, mActionbarSubtitle;
 	
-	
+	private boolean mShouldHideActionItems;
 	
 	@Override public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -63,14 +64,21 @@ public class MainActivity extends ActionBarActivity {
                 R.string.drawer_open,
                 R.string.drawer_close ) {
         	
-            public void onDrawerClosed( View view ) {
+        	float mPreviousOffset = 0f;
+        	
+            public void onDrawerClosed( View drawerView ) {
+            	super.onDrawerClosed( drawerView );
             	
             	getSupportActionBar().setTitle( mActionbarTitle );
             	getSupportActionBar().setSubtitle( mActionbarSubtitle );
             	
+            	mShouldHideActionItems = false;
+            	supportInvalidateOptionsMenu();
+            	
             }
             
             public void onDrawerOpened( View drawerView ) {
+                super.onDrawerOpened( drawerView );
                 
             	mActionbarTitle = getSupportActionBar().getTitle();
             	mActionbarSubtitle = getSupportActionBar().getSubtitle();
@@ -78,12 +86,28 @@ public class MainActivity extends ActionBarActivity {
             	getSupportActionBar().setTitle( getString( R.string.app_name ) );
             	getSupportActionBar().setSubtitle( null );
                 
+            	mShouldHideActionItems = true;
+            	supportInvalidateOptionsMenu();
+            	
            }
             
             public void onDrawerSlide( View drawerView, float slideOffset ) {
+            	super.onDrawerSlide( drawerView, slideOffset);
             	
-            	
-            	
+            	if ( slideOffset > mPreviousOffset && !mShouldHideActionItems ) {
+                	
+                	mShouldHideActionItems = true;
+                	supportInvalidateOptionsMenu();
+                   
+               } else if( mPreviousOffset > slideOffset && slideOffset < 0.5f && mShouldHideActionItems ) {
+            	   
+            	   mShouldHideActionItems = false;
+            	   supportInvalidateOptionsMenu();
+                   
+               }
+                
+               mPreviousOffset = slideOffset;
+               
             }
             
         };
@@ -398,8 +422,6 @@ public class MainActivity extends ActionBarActivity {
 			
 			Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
 			
-			android.util.Log.i( "MainActivity", "Showing Fragment: " + ( showingFragment == null ? "Is Null" : "Is Not Null" ) );
-			
 			try {
 				
 				// 
@@ -448,6 +470,27 @@ public class MainActivity extends ActionBarActivity {
 		}
 		
 		
+	}
+	
+	@Override public boolean onPrepareOptionsMenu( Menu menu ) {
+
+	    // If the nav drawer is open, hide action items related to the content view
+	    boolean drawerOpen = mShouldHideActionItems;
+	    
+	    hideMenuItems( menu, !drawerOpen );
+	    
+	    return super.onPrepareOptionsMenu( menu );
+	    
+	}
+
+	private void hideMenuItems( Menu menu, boolean visible ) {
+		
+	    for ( int i = 0; i < menu.size(); i++ ) {
+
+	        menu.getItem( i ).setVisible( visible );
+	        
+	    }
+	    
 	}
 	
 }
