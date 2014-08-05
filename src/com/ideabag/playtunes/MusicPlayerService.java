@@ -361,17 +361,24 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	private void updateRemoteControlClientPause() {
 		
 		createRemoteControlClient();
+		
+		if ( null != mRemoteControlClientCompat ) {
 			
-		mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
+			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
+			
+		}
 		
 	}
 	
 	private void updateRemoteControlClientPlay() {
 		
 		createRemoteControlClient();
-			
-		mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
 		
+		if ( null != mRemoteControlClientCompat ) {
+			
+			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
+			
+		}
 		
 	}
 	
@@ -379,7 +386,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	private void updateRemoteControlClientMedia( String media_id ) {
 		
 		createRemoteControlClient();
-				
+		
+		if ( null != mRemoteControlClientCompat ) {
 			
 			Cursor mSongCursor = getContentResolver().query(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -482,7 +490,9 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	                .putLong( MediaMetadataRetriever.METADATA_KEY_DURATION, mSongDuration )
 	                .putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, mAlbumArtBitmap )
 	                .apply();
-		
+	        
+		}
+	        
 	}
 	
 	// 
