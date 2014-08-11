@@ -44,10 +44,10 @@ public class NavigationListAdapter extends BaseAdapter {
 		
 	};
 	
-	public static final int ARTISTS = 4;
-	public static final int ALBUMS = 1;
-	public static final int GENRES = 2;
-	public static final int SONGS = 3;
+	public static final int ARTISTS = 1;
+	public static final int ALBUMS = 2;
+	public static final int GENRES = 3;
+	public static final int SONGS = 4;
 	public static final int STARRED = 0;
 	public static final int PLAYLISTS = 5;
 	
