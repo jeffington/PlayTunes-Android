@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 public class NavigationListAdapter extends BaseAdapter {
 	
-	private static final int ROW_COUNT = 6;
+	private static final int ROW_COUNT = 7;
 	
 	private static final int[] badge_resources = {
 		
@@ -28,7 +28,8 @@ public class NavigationListAdapter extends BaseAdapter {
 		R.drawable.ic_action_guitar,
 		R.drawable.ic_action_music_2,
 		
-		R.drawable.ic_action_list_2
+		R.drawable.ic_action_list_2,
+		R.drawable.ic_action_search
 		
 	};
 	
@@ -40,7 +41,8 @@ public class NavigationListAdapter extends BaseAdapter {
 		R.string.genres_plural,
 		R.string.songs_plural,
 		
-		R.string.playlists_plural
+		R.string.playlists_plural,
+		R.string.search
 		
 	};
 	
@@ -50,7 +52,7 @@ public class NavigationListAdapter extends BaseAdapter {
 	public static final int SONGS = 4;
 	public static final int STARRED = 0;
 	public static final int PLAYLISTS = 5;
-	
+	public static final int SEARCH = 6;
 	
 	private Context mContext;
 	
@@ -185,6 +187,10 @@ public class NavigationListAdapter extends BaseAdapter {
 			
 			badgeCount = playlists.getCount();
 			playlists.close();
+			
+		} else if ( position == SEARCH ) {
+			
+			convertView.findViewById( R.id.BadgeCount ).setVisibility( View.GONE );
 			
 		}
 		

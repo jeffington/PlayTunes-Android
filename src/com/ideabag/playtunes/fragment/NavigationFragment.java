@@ -155,6 +155,12 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 			
 			break;
 			
+		case NavigationListAdapter.SEARCH:
+			
+			mNewFragment = new SongSearchFragment();
+			
+			break;
+			
 		default:
 			
 			mNewFragment = new PlaylistsAllFragment();
