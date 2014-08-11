@@ -1,6 +1,7 @@
 #PlayTunes
 
-PlayTunes is a simple music player that was originally released in 2010 for Android 1.5.
+PlayTunes is a simple music player that was originally released in 2010 for Android 1.5. It has been completely overhauled and can be found for download here: [https://play.google.com/store/apps/details?id=com.ideabag.playtunes](https://play.google.com/store/apps/details?id=com.ideabag.playtunes)
+
 
 For any questions or comments, you can email me at jeff@jdmlabs.org or follow me on Google+ at [http://plus.google.com/+JeffMeyerhoff](http://plus.google.com/+JeffMeyerhoff).
 
