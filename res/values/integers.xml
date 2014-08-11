@@ -3,6 +3,6 @@
 	
 	<integer name="footer_controls_slide_animation_duration">200</integer>
 	
-	<integer name="rate_app_prompt_count">15</integer>
+	<integer name="rate_app_prompt_count">16</integer>
 	
 </resources>

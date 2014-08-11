@@ -145,12 +145,13 @@ public class MainActivity extends ActionBarActivity {
 	    //SharedPreferences.Editor edit = prefs.edit();
 	    
 	    int openCount = prefs.getInt( getString( R.string.pref_key_appopen ), 0 );
+	    int rateAppPromptCount = getResources().getInteger( R.integer.rate_app_prompt_count );
 	    
 	    if ( openCount == 0 ) {
 	    	
 	    	toggleDrawer();
 	    	
-	    } else if ( openCount == 20 ) {
+	    } else if ( openCount == rateAppPromptCount ) {
 	    	
 	    	// Show rate dialog
 	    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
