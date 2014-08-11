@@ -22,31 +22,33 @@ public class NavigationListAdapter extends BaseAdapter {
 	
 	private static final int[] badge_resources = {
 		
+		R.drawable.ic_action_star_10,
 		R.drawable.ic_action_mic,
 		R.drawable.ic_action_record,
 		R.drawable.ic_action_guitar,
 		R.drawable.ic_action_music_2,
-		R.drawable.ic_action_star_10,
+		
 		R.drawable.ic_action_list_2
 		
 	};
 	
 	private static final int[] label_string_resources = {
 		
+		R.string.playlist_name_starred,
 		R.string.artists_plural,
 		R.string.albums_plural,
 		R.string.genres_plural,
 		R.string.songs_plural,
-		R.string.playlist_name_starred,
+		
 		R.string.playlists_plural
 		
 	};
 	
-	public static final int ARTISTS = 0;
+	public static final int ARTISTS = 4;
 	public static final int ALBUMS = 1;
 	public static final int GENRES = 2;
 	public static final int SONGS = 3;
-	public static final int STARRED = 4;
+	public static final int STARRED = 0;
 	public static final int PLAYLISTS = 5;
 	
 	
