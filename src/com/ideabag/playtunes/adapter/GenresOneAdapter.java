@@ -1,37 +1,20 @@
 package com.ideabag.playtunes.adapter;
 
-import com.ideabag.playtunes.PlaylistManager;
-import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
-public class GenresOneAdapter extends BaseAdapter {
+public class GenresOneAdapter extends SongListAdapter {
 	
-	private Context mContext;
-	private Cursor cursor;
-	private MediaQuery mQuery;
-	private PlaylistManager mPlaylistManager;
-	View.OnClickListener songMenuClickListener;
-	
-	private String GENRE_ID;
+	protected String GENRE_ID;
 	
     private static final String[] oneGenreSelection = new String[] {
     	
     	// Audio media ID must always be at position 0
     	MediaStore.Audio.Genres.Members._ID,
-    	//MediaStore.Audio.Genres.Members.AUDIO_ID,
     	
-		
 		MediaStore.Audio.Genres.Members.ALBUM,
 		MediaStore.Audio.Genres.Members.TITLE,
 		MediaStore.Audio.Genres.Members.ARTIST,
@@ -40,21 +23,10 @@ public class GenresOneAdapter extends BaseAdapter {
 		
     };
     
-    public MediaQuery getQuery() {
-    	
-    	return mQuery;
-    	
-    }
-    
 	public GenresOneAdapter( Context context, String genre_id, View.OnClickListener menuClickListener ) {
-		super();
+		super( context, menuClickListener );
 		
-		mContext = context;
 		this.GENRE_ID = genre_id;
-		
-		songMenuClickListener = menuClickListener;
-		
-		mPlaylistManager = new PlaylistManager( mContext );
 		
 		mQuery = new MediaQuery(
 				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ),
@@ -64,72 +36,5 @@ public class GenresOneAdapter extends BaseAdapter {
 		requery();
 		
 	}
-	
-	public void requery() {
-		
-		if ( null != cursor && !cursor.isClosed() ) {
-			
-			cursor.close();
-			
-		}
-		
-		cursor = MediaQuery.execute( mContext, mQuery );
-		
-	}
-
-	@Override public int getCount() {
-		
-		return cursor.getCount();
-	}
-
-	@Override
-	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override public View getView( int position, View convertView, ViewGroup parent ) {
-		
-		if ( null == convertView ) {
-			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-			
-			convertView = li.inflate( R.layout.list_item_song_no_album, null );
-			
-			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
-			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
-			
-		}
-		
-		cursor.moveToPosition( position );
-		
-		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.TITLE ) );
-		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members._ID ) );
-		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.ARTIST ) );
-		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.Members.ALBUM ) );
-		
-		convertView.setTag( R.id.tag_song_id, song_id );
-		
-		( ( TextView ) convertView.findViewById( R.id.SongTitle ) ).setText( songTitle );
-		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
-		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
-		
-		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
-		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
-		
-		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
-		
-		starButton.setChecked( mPlaylistManager.isStarred( song_id ) );
-		
-		return convertView;
-		
-	}
-	
 
 }

@@ -1,32 +1,15 @@
 package com.ideabag.playtunes.adapter;
 
-import com.ideabag.playtunes.PlaylistManager;
-import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
-public class AlbumsOneAdapter extends BaseAdapter {
+public class AlbumsOneAdapter extends SongListAdapter {
 	
 	private String ALBUM_ID;
-	
-	private Context mContext;
-	private Cursor cursor;
-	private MediaQuery mQuery;
-	
-	private PlaylistManager PlaylistManager;
-	
-	View.OnClickListener songMenuClickListener;
 	
 	public String albumArtUri = null;
 	
@@ -48,14 +31,9 @@ public class AlbumsOneAdapter extends BaseAdapter {
 	};
 	
 	public AlbumsOneAdapter( Context context, String album_id, View.OnClickListener menuClickListener ) {
-		
-		mContext = context;
+		super( context, menuClickListener );
 		
 		ALBUM_ID = album_id;
-		
-		PlaylistManager = new PlaylistManager( mContext );
-		
-		songMenuClickListener = menuClickListener;
 		
 		mQuery = new MediaQuery(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -69,7 +47,12 @@ public class AlbumsOneAdapter extends BaseAdapter {
 				MediaStore.Audio.Media.TRACK
 			);
     	
-		cursor = mQuery.execute( mContext, mQuery );
+		requery();
+		
+	}
+	
+	@Override public void requery() {
+		super.requery();
 		
     	Cursor album = mContext.getContentResolver().query(
     			MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -97,68 +80,9 @@ public class AlbumsOneAdapter extends BaseAdapter {
     	
     	albumTitle = album.getString( album.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
 		album.close();
-	}
-	
-	public MediaQuery getQuery() {
-		
-		return mQuery;
 		
 	}
 	
-	@Override public int getCount() {
-		
-		return cursor.getCount();
-		
-	}
-
-	@Override public Object getItem( int position ) {
-		
-		return null;
-		
-	}
-
-	@Override public long getItemId( int position ) {
-		
-		return 0;
-		
-	}
 	
-	@Override public View getView( int position, View convertView, ViewGroup parent ) {
-		
-		if ( null == convertView ) {
-			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-			
-			convertView = li.inflate( R.layout.list_item_song_no_album, null );
-			
-			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
-			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
-			
-		}
-		
-		cursor.moveToPosition( position );
-		
-		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-		
-		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-		
-		String song_id = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
-		
-		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
-		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
-		
-		convertView.findViewById(R.id.SongAlbum).setVisibility( View.GONE );
-		
-		
-		( ( TextView ) convertView.findViewById( R.id.SongTitle )).setText( songTitle );
-		( ( TextView ) convertView.findViewById( R.id.SongArtist )).setText( songArtist );
-		
-		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
-		
-		starButton.setChecked( PlaylistManager.isStarred( song_id ) );
-		
-		return convertView;
-		
-	}
 
 }
