@@ -49,7 +49,7 @@ public class RateAppDialogFragment extends DialogFragment {
     	
     	SharedPreferences prefs = getActivity().getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
     	SharedPreferences.Editor edit = prefs.edit();
-    	edit.putInt( getString( R.string.pref_key_appopen ), 20 );
+    	edit.putInt( getString( R.string.pref_key_appopen ), 100 );
     	edit.commit();
     	
     	super.onDismiss(dialog);
