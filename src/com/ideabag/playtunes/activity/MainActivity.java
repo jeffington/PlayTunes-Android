@@ -169,7 +169,7 @@ public class MainActivity extends ActionBarActivity {
 			
 	    }
 	    
-	    if ( openCount <= 20 ) {
+	    if ( openCount <= getResources().getInteger( R.integer.rate_app_prompt_count ) ) {
 	    	
 	    	openCount++;
 	    	SharedPreferences.Editor edit = prefs.edit();
