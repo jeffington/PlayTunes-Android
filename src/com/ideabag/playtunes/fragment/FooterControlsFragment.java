@@ -55,6 +55,13 @@ public class FooterControlsFragment extends Fragment {
 		mPlayPauseButton = ( ImageButton ) getView().findViewById( R.id.FooterControlsPlayPauseButton );
 		mPlayPauseButton.setOnClickListener( controlsClickListener );
 		
+		View mNextButton = getView().findViewById( R.id.FooterControlsNextButton );
+		
+		if ( null != mNextButton ) {
+			
+			mNextButton.setOnClickListener( controlsClickListener );
+			
+		}
 		
 		//mActivity.BoundService.setOnSongInfoChangedListener( MusicStateChanged );
 		
@@ -105,6 +112,10 @@ public class FooterControlsFragment extends Fragment {
 					mActivity.mBoundService.play();
 					
 				}
+				
+			} else if ( id == R.id.FooterControlsNextButton ) {
+				
+				mActivity.mBoundService.next();
 				
 			}
 			
