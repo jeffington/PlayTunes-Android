@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/touch_target_minimum"
         android:orientation="horizontal"
-        android:background="@drawable/actionbar_background">
+        android:background="@color/primaryAccentColor">
         
 		<ImageButton android:id="@+id/DialogCloseButton"
 	        
 	        android:layout_width="@dimen/touch_target_minimum"
 	        android:layout_height="@dimen/touch_target_minimum"
-	        android:src="@drawable/abc_ic_clear"
+	        android:src="@drawable/ic_action_cancel"
 	        android:background="@drawable/button_background_dark"
 			
 		/>
@@ -26,7 +26,7 @@
 	        android:layout_width="0dp"
 	        android:layout_height="@dimen/touch_target_minimum"
 	        android:layout_weight="1"
-	        android:textColor="#FFFFFF"
+	        android:textColor="@color/textColorPrimaryDark"
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
 	        android:text="@string/playlist_rename"
@@ -36,7 +36,7 @@
 	        
 	        android:layout_width="@dimen/touch_target_minimum"
 	        android:layout_height="@dimen/touch_target_minimum"
-	        android:src="@drawable/abc_ic_cab_done_holo_dark"
+	        android:src="@drawable/ic_action_tick"
 	        android:background="@drawable/button_background_dark"
 			
 		/>

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:textColor="@android:color/white"
-        android:background="@drawable/actionbar_background"
+        android:background="@color/primaryAccentColor"
         android:orientation="horizontal"
         android:gravity="fill_horizontal">
         
