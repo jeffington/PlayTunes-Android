@@ -5,6 +5,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
+import com.ideabag.playtunes.fragment.SongSearchFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
@@ -277,6 +278,13 @@ public class MainActivity extends ActionBarActivity {
             	
             	toggleDrawer();
                 return true;
+                
+            case KeyEvent.KEYCODE_SEARCH:
+            	
+            	Fragment mSearchFragment = new SongSearchFragment();
+            	transactFragment( mSearchFragment );
+            	
+            	return true;
                 
         }
 
