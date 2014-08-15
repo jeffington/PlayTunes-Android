@@ -8,14 +8,6 @@
         android:height="24dp"
         />
     
-    <gradient
-        android:angle="270"
-        android:centerX="50%"
-        android:centerY="25%"
-        android:endColor="#444444"
-        android:startColor="#555555"
-        android:type="linear">
-        
-	</gradient>
+    <solid android:color="@color/primaryAccentColor" />
 	
 </shape>
