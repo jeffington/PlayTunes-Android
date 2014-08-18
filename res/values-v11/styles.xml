@@ -9,7 +9,7 @@
 		<item name="android:subtitleTextStyle">@style/MyActionBarSubtitleText</item>
 		<item name="android:displayOptions">showTitle</item>
 		<item name="android:actionBarItemBackground" tools:ignore="NewApi">@drawable/button_background_dark</item>
-	    <item name="android:actionButtonStyle">@style/ActionButtonCompat</item>
+	    
 		
 	</style>
 	

@@ -5,13 +5,12 @@
 		
 	    <item name="displayOptions">showTitle</item>
 	    
-		<item name="android:background">@color/primaryAccentColor</item>
+		
 		
 		<!-- Support library compatibility -->
-		<item name="background">@drawable/actionbar_background</item>
+		<item name="background">@color/primaryAccentColor</item>
 		<item name="titleTextStyle">@style/MyActionBarTitleText</item>
 		<item name="subtitleTextStyle">@style/MyActionBarSubtitleText</item>
-		<item name="actionButtonStyle">@style/ActionButtonCompat</item>
 		
 		
 	</style>
@@ -24,7 +23,7 @@
 	
 	<style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
 	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:gravity">center_horizontal</item>
+	    
 	    <item name="android:textColor">@color/textColorPrimaryDark</item>
 	    <item name="android:background">@drawable/button_background_dark</item>
 	    <!-- The textColor property is backward compatible with the Support Library -->

@@ -10,6 +10,8 @@
 		
 		<item name="actionBarStyle">@style/MyActionBar</item>
 		
+		<item name="android:actionButtonStyle">@style/ActionButtonCompat</item>
+		
     </style>
     
 </resources>
