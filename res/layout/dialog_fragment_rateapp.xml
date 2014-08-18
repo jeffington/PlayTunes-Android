@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:textSize="@dimen/text_xlarge"
-        
+        android:textColor="@color/textColorPrimary"
         android:text="@string/rate_beg"
         />
 	

@@ -3,7 +3,7 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto">
     
     <item android:id="@+id/MenuPlaylistsAdd"
-        android:title="New Playlist"
+        android:title="@string/playlist_new"
         android:icon="@drawable/ic_action_add_white"
         android:orderInCategory="2"
         compat:showAsAction="always"
