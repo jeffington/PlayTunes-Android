@@ -18,7 +18,7 @@
 	        android:textColor="@color/textColorPrimaryDark"
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
-	        android:text="Support PlayTunes"
+	        android:text="@string/support_us"
 		/>
 	    
 		<ImageButton android:id="@+id/DialogCloseButton"
@@ -38,7 +38,7 @@
         android:padding="8dp"
         android:textSize="@dimen/text_xlarge"
         
-        android:text="If you are enjoying PlayTunes, please support further development by rating us in the Google Play Store.\n\nThank you!"
+        android:text="@string/rate_beg"
         />
 	
     <LinearLayout
@@ -54,7 +54,7 @@
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
 			android:textColor="@color/textColorPrimaryDark"
-			android:text="No Thanks"
+			android:text="@string/no_thanks"
 			android:background="@drawable/button_background_dark"
 		/>
 		
@@ -71,7 +71,7 @@
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
 			android:textColor="@color/textColorPrimaryDark"
-			android:text="Rate App"
+			android:text="@string/rate_app"
 			android:background="@drawable/button_background_dark"
 		/>
         

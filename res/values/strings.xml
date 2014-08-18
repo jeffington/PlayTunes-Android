@@ -31,6 +31,7 @@
 	<string name="albums_plural_caps">ALBUMS</string>
 	
 	<string name="search">Search</string>
+	<string name="search_hint">Search for Songs, Albums, and Artists</string>
 	
 	<string name="activity_title_now_playing">Now Playing</string>
 	<string name="activity_title_settings">PlayTunes Settings</string>
@@ -54,6 +55,16 @@
     
     <string name="done">Done</string>
     <string name="edit">Edit</string>
+    
+    <string name="send_feedback">Send Feedback</string>
+    <string name="feedback_form_hint">Tell us how we can make PlayTunes better. :-)</string>
+    
+    <string name="support_us">Support Us</string>
+    <string name="rate_beg">If you are enjoying PlayTunes, please support further development by rating us in the Google Play Store.\n\nThank you!</string>
+    <string name="rate_app">Rate App</string>
+    <string name="no_thanks">No Thanks</string>
+    
+    <string name="playlist_name">Playlist Name</string>
     
     <string name="no_album_string">Music</string>
     <string name="no_artist_string">&#60;unknown&#62;</string>

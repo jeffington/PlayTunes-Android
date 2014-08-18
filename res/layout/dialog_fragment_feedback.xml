@@ -29,7 +29,7 @@
 	        android:textColor="#FFFFFF"
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
-	        android:text="Send Feedback"
+	        android:text="@string/send_feedback"
 		/>
 	    
 		<ImageButton android:id="@+id/DialogConfirmButton"
@@ -49,7 +49,7 @@
 		android:inputType="textMultiLine|textLongMessage|textAutoCorrect|textCapSentences"
         android:gravity="top|left"
         android:maxLength="1500"
-        android:hint="Tell us how we can make PlayTunes better. :-)"
+        android:hint="@string/feedback_form_hint"
         android:lines="3"
         android:minLines="3"
         android:layout_marginTop="16dp"
