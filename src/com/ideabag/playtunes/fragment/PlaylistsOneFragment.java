@@ -38,6 +38,7 @@ import android.widget.ToggleButton;
 public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, AdapterView.OnItemClickListener {
 	
 	public static final String TAG = "One Playlist Fragment";
+	public static final String STARRED_TAG = "Starred Playlist Fragment";
 	
 	private static final int DRAG_DELAY_MS = 250;
 	
@@ -53,6 +54,8 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	private DragNDropListView mListView;
 	
 	private boolean isEditing = false;
+	
+	private boolean isStarred = false;
 	
 	//private int mListHeight, mListVisibleRows;
 	
@@ -89,6 +92,14 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 			PLAYLIST_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
 			isEditing = savedInstanceState.getBoolean( getString( R.string.key_state_playlist_editing ) );
+			
+		}
+		
+		PlaylistManager pm = new PlaylistManager( getActivity() );
+		
+		if ( PLAYLIST_ID == pm.createStarredIfNotExist() ) {
+			
+			isStarred = true;
 			
 		}
 		
@@ -158,7 +169,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		tracker.send( new HitBuilders.EventBuilder()
     	.setCategory( "playlist" )
     	.setAction( "show" )
-    	.setLabel( TAG )
+    	.setLabel( isStarred ? STARRED_TAG : TAG )
     	.setValue( adapter.getCount() )
     	.build());
 		
