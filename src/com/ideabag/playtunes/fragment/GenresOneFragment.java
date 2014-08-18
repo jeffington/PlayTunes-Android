@@ -84,7 +84,7 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onResume() {
 		super.onResume();
 		
-		mActivity.setActionbarTitle( "Genres" );
+		mActivity.setActionbarTitle( adapter.GenreName );
 		mActivity.setActionbarSubtitle( getString( R.string.genre_singular ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );

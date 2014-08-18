@@ -3,12 +3,14 @@ package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.provider.MediaStore;
 import android.view.View;
 
 public class GenresOneAdapter extends SongListAdapter {
 	
 	protected String GENRE_ID;
+	public String GenreName;
 	
     private static final String[] oneGenreSelection = new String[] {
     	
@@ -34,6 +36,32 @@ public class GenresOneAdapter extends SongListAdapter {
 			);
 		
 		requery();
+		
+	}
+	
+	@Override public void requery() {
+		super.requery();
+		
+    	Cursor genre = mContext.getContentResolver().query(
+    			MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+    			new String[] {
+    				
+    				MediaStore.Audio.Genres.NAME
+    				
+    			},
+    			MediaStore.Audio.Genres._ID + "=?",
+				new String[] {
+    				
+    					GENRE_ID
+    				
+    			},
+    			null);
+    			
+    	
+    	genre.moveToFirst();
+    	
+    	GenreName = genre.getString( genre.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
+    	genre.close();
 		
 	}
 
