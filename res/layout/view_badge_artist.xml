@@ -14,7 +14,6 @@
         
         <TextView android:id="@+id/BadgeCount"
             style="@style/BadgeNumber"
-			android:text="40"
             />
         
 </LinearLayout>

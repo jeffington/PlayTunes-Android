@@ -18,7 +18,6 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Pink Floyd"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/text_xlarge"
         android:textColor="@color/textColorPrimary"
@@ -27,7 +26,6 @@
     
         <TextView android:id="@+id/BadgeCount"
             style="@style/BadgeNumber"
-			android:text="1200"
 			android:textColor="@color/textColorSecondary"
             />
 

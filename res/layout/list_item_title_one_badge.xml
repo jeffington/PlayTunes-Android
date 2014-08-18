@@ -10,7 +10,6 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="Pink Floyd"
         android:gravity="left|center_vertical"
         android:textSize="@dimen/text_xlarge"
         android:paddingLeft="@dimen/list_item_horizontal_spacing"

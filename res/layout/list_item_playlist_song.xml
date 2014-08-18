@@ -40,7 +40,6 @@
            	android:ellipsize="marquee"
 			android:textColor="@color/textColorSecondary"
 			android:textSize="@dimen/text_medium"
-           	android:text="asdfasdf"
            	
         />
         
@@ -51,7 +50,6 @@
         	android:layout_height="wrap_content"
            	android:textColor="@color/textColorSecondary"
            	android:textSize="@dimen/text_small"
-        	android:text="asdfasdf"
         	android:ellipsize="end"
         	android:lines="1"
         	android:singleLine="true"

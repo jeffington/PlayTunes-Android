@@ -20,7 +20,6 @@
             
            	android:layout_height="wrap_content"
            	android:layout_width="match_parent"
-           	android:text="asdfasdf"
            	android:textColor="@color/textColorPrimary"
            	android:textSize="@dimen/text_large"
            	android:lines="1"
@@ -37,7 +36,6 @@
            	android:ellipsize="marquee"
 			android:textColor="@color/textColorSecondary"
 			android:textSize="@dimen/text_medium"
-           	android:text="asdfasdf"
            	
         />
         
@@ -48,7 +46,6 @@
         	android:layout_height="wrap_content"
            	android:textColor="@color/textColorSecondary"
            	android:textSize="@dimen/text_small"
-        	android:text="asdfasdf"
         	android:ellipsize="end"
         	android:lines="1"
         	android:singleLine="true"
