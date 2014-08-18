@@ -9,7 +9,7 @@
 		
 		<!-- Support library compatibility -->
 		<item name="background">@color/primaryAccentColor</item>
-		<item name="titleTextStyle">@style/MyActionBarTitleText</item>
+		
 		<item name="subtitleTextStyle">@style/MyActionBarSubtitleText</item>
 		
 		

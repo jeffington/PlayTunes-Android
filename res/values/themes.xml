@@ -7,5 +7,7 @@
 		<item name="android:listViewStyle">@style/CompatListView</item>
 		
 		<item name="actionButtonStyle">@style/ActionButtonCompat</item>
+		<item name="titleTextStyle">@style/MyActionBarTitleText</item>
+		<item name="actionBarItemBackground">@drawable/button_background_dark</item>
     </style>
 </resources>

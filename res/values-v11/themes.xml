@@ -11,7 +11,7 @@
 		<item name="actionBarStyle">@style/MyActionBar</item>
 		
 		<item name="android:actionButtonStyle">@style/ActionButtonCompat</item>
-		
+		<item name="actionBarItemBackground">@drawable/button_background_dark</item>
     </style>
     
 </resources>
