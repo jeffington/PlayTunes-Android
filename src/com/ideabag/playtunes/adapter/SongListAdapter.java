@@ -56,7 +56,7 @@ public class SongListAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		
-		return cursor.getCount();
+		return ( null == cursor ? 0 : cursor.getCount() );
 	}
 
 	@Override
