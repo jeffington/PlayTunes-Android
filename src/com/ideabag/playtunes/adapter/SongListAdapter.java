@@ -11,12 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class SongListAdapter extends BaseAdapter {
 	
 	protected Context mContext;
+	protected LayoutInflater inflater;
 	
 	Cursor cursor = null;
 	protected MediaQuery mQuery = null;
@@ -38,6 +40,8 @@ public class SongListAdapter extends BaseAdapter {
 		PlaylistManager = new PlaylistManager( mContext );
     	
     	this.songMenuClickListener = menuClickListener;
+    	
+    	inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
 	}
 	
@@ -73,15 +77,28 @@ public class SongListAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
 		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			convertView = inflater.inflate( R.layout.list_item_song_no_album, null );
 			
-			convertView = li.inflate( R.layout.list_item_song_no_album, null );
+			holder = new ViewHolder();
 			
-			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
-			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
+			holder.starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.MenuButton );
+			holder.songTitle = ( TextView ) convertView.findViewById( R.id.SongTitle );
+			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
+			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
+			
+			holder.starButton.setOnClickListener( songMenuClickListener );
+			holder.menuButton.setOnClickListener( songMenuClickListener );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -92,22 +109,29 @@ public class SongListAdapter extends BaseAdapter {
 		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
 		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
-		( ( TextView ) convertView.findViewById( R.id.SongTitle ) ).setText( songTitle );
-		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
-		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
+		holder.songTitle.setText( songTitle );
+		holder.songArtist.setText( songArtist );
+		holder.songAlbum.setText( songAlbum );
 		
-		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
-		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		holder.starButton.setTag( R.id.tag_song_id, song_id );
+		holder.menuButton.setTag( R.id.tag_song_id, song_id );
 		
-		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
-		
-		starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
+		holder.starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
 		
 		
 		return convertView;
 		
 	}
 	
-
+	static class ViewHolder {
+		
+		ToggleButton starButton;
+		ImageButton menuButton;
+		TextView songTitle;
+		TextView songArtist;
+		TextView songAlbum;
+		
+		
+	}
 
 }
