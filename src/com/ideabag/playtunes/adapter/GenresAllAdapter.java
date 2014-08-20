@@ -9,12 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class GenresAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
+	private LayoutInflater inflater;
 	private Cursor cursor = null;
 	
     private static final String[] allGenresSelection = new String[] {
@@ -28,6 +28,8 @@ public class GenresAllAdapter extends BaseAdapter {
 		super();
 		
 		mContext = context;
+		
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
 		requery();
 		
@@ -70,11 +72,23 @@ public class GenresAllAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
-			convertView = li.inflate( R.layout.list_item_genre, null );
+			convertView = inflater.inflate( R.layout.list_item_genre, null );
+			
+			holder.genreName = ( TextView ) convertView.findViewById( R.id.Title );
+			holder.songCount =  ( TextView ) convertView.findViewById( R.id.SongCount );
+			holder.albumCount =  ( TextView ) convertView.findViewById( R.id.AlbumCount );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -119,16 +133,23 @@ public class GenresAllAdapter extends BaseAdapter {
 		
 		convertView.setTag( R.id.tag_genre_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
 		
-		( ( TextView ) convertView.findViewById( R.id.Title ) ).setText( genreName );
+		holder.genreName.setText( genreName );
 		
 		
 		
-		( ( TextView ) convertView.findViewById( R.id.BadgeAlbum ).findViewById( R.id.BadgeCount ) ).setText( "" + albumCount );
-		( ( TextView ) convertView.findViewById( R.id.BadgeSong ).findViewById( R.id.BadgeCount ) ).setText( "" + songCount );
+		holder.albumCount.setText( "" + albumCount );
+		holder.songCount.setText( "" + songCount );
 		
 		return convertView;
 		
 	}
 	
+	static class ViewHolder {
+		
+		TextView albumCount;
+		TextView songCount;
+		TextView genreName;
+		
+	}
 
 }

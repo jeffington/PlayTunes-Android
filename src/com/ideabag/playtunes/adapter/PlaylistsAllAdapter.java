@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class PlaylistsAllAdapter extends BaseAdapter {
 	
 	protected Context mContext;
+	private LayoutInflater inflater;
 	protected Cursor cursor = null;
 	
 	private PlaylistManager mPlaylistManager;
@@ -35,7 +37,7 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 		
 		mContext = context;
 		
-		
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
     	
 		playlistMenuClickListener = menuClickListener;
 		
@@ -85,13 +87,26 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
-			convertView = li.inflate( R.layout.list_item_playlist, null );
+			convertView = inflater.inflate( R.layout.list_item_playlist, null );
 			
-			convertView.findViewById( R.id.PlaylistMenuButton ).setOnClickListener( playlistMenuClickListener );
+			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.PlaylistMenuButton );
+			
+			holder.menuButton.setOnClickListener( playlistMenuClickListener );
+			
+			holder.playlistName = ( TextView ) convertView.findViewById( R.id.PlaylistTitle );
+			holder.songCount = ( TextView ) convertView.findViewById( R.id.SongCount );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -118,13 +133,21 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 		
 		songs.close();
 		
-		( ( TextView ) convertView.findViewById( R.id.PlaylistTitle ) ).setText( playlistTitle );
+		holder.playlistName.setText( playlistTitle );
 		
-		( ( TextView ) convertView.findViewById( R.id.BadgeCount ) ).setText( "" + song_count );
+		holder.songCount.setText( "" + song_count );
 		
 		
 		
 		return convertView;
+		
+	}
+	
+	static class ViewHolder {
+		
+		TextView songCount;
+		TextView playlistName;
+		ImageButton menuButton;
 		
 	}
 

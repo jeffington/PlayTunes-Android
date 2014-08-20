@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,8 +34,8 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 	PlaylistManager mPlaylistManager;
 	
     public AddToPlaylistDialogFragment() {
-        // Empty constructor required for DialogFragment
-    	setStyle( STYLE_NORMAL, 0 );
+        
+    	setStyle( STYLE_NORMAL , 0 );
     	
     }
     
@@ -192,13 +193,27 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 
     	@Override public View getView( int position, View convertView, ViewGroup parent ) {
     		
+    		ViewHolder holder;
+    		
     		if ( null == convertView ) {
     			
-    			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+    			holder = new ViewHolder();
     			
-    			convertView = li.inflate( R.layout.list_item_playlist, null );
+    			LayoutInflater inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+    			convertView = inflater.inflate( R.layout.list_item_playlist, null );
     			
-    			convertView.findViewById( R.id.PlaylistMenuButton ).setVisibility( View.GONE );
+    			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.PlaylistMenuButton );
+    			holder.menuButton.setVisibility( View.GONE );
+    			
+    			holder.playlistName =  ( TextView ) convertView.findViewById( R.id.PlaylistTitle );
+    			holder.songCount = ( TextView ) convertView.findViewById( R.id.SongCount );
+    			
+    			
+    			convertView.setTag( holder );
+    			
+    		} else {
+    			
+    			holder = ( ViewHolder ) convertView.getTag();
     			
     		}
     		
@@ -225,17 +240,23 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
     		
     		songs.close();
     		
-    		( ( TextView ) convertView.findViewById( R.id.PlaylistTitle ) ).setText( playlistTitle );
+    		holder.playlistName.setText( playlistTitle );
     		
-    		( ( TextView ) convertView.findViewById( R.id.BadgeCount ) ).setText( "" + song_count );
-    		
-    		
+    		holder.songCount.setText( "" + song_count );
     		
     		return convertView;
     		
     	}
 
     } 
+    
+	static class ViewHolder {
+		
+		TextView playlistName;
+		TextView songCount;
+		ImageButton menuButton;
+		
+	}
     
     private View.OnClickListener headerButtonClickListener = new View.OnClickListener() {
 		

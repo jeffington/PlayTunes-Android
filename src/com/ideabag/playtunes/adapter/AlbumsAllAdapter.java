@@ -16,6 +16,7 @@ import android.widget.TextView;
 public class AlbumsAllAdapter extends BaseAdapter {
 	
 	protected Context mContext;
+	private LayoutInflater inflater;
 	protected Cursor cursor = null;
 	
     private static final String[] allAlbumsSelection = new String[] {
@@ -32,7 +33,8 @@ public class AlbumsAllAdapter extends BaseAdapter {
 	public AlbumsAllAdapter( Context context ) {
 		
 		mContext = context;
-		
+
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		requery();
 		
 	}
@@ -77,11 +79,24 @@ public class AlbumsAllAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
-			convertView = li.inflate( R.layout.list_item_album, null );
+			convertView = inflater.inflate( R.layout.list_item_album, null );
+			
+			holder.albumArtist = ( TextView ) convertView.findViewById( R.id.AlbumArtist );
+			holder.albumTitle = ( TextView ) convertView.findViewById( R.id.AlbumTitle );
+			holder.albumThumb = ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb );
+			holder.songCount = ( TextView ) convertView.findViewById( R.id.SongCount );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -94,33 +109,40 @@ public class AlbumsAllAdapter extends BaseAdapter {
 		
 		int songCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.NUMBER_OF_SONGS ) );
 		
-		( ( TextView ) convertView.findViewById( R.id.AlbumArtist )).setText( artistName );
-		( ( TextView ) convertView.findViewById( R.id.AlbumTitle )).setText( albumName );
+		holder.albumArtist.setText( artistName );
+		holder.albumTitle.setText( albumName );
 		
-		( ( TextView ) convertView.findViewById( R.id.BadgeCount )).setText( "" + songCount );
+		holder.songCount.setText( "" + songCount );
 		
 		//
 		// Set the album art
 		//
 		
-		ImageView albumArtThumb = ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb );
 		String albumArtUriString = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 		
 		if ( null != albumArtUriString ) {
 			
 			Uri albumArtUri = Uri.parse( albumArtUriString );
 			
-			albumArtThumb.setImageURI( albumArtUri );
+			holder.albumThumb.setImageURI( albumArtUri );
 			
 		} else {
 			
-			albumArtThumb.setImageResource( R.drawable.no_album_art_thumb );
+			holder.albumThumb.setImageResource( R.drawable.no_album_art_thumb );
 			
 		}
 		
 		
-		
 		return convertView;
+		
+	}
+	
+	static class ViewHolder {
+		
+		ImageView albumThumb;
+		TextView songCount;
+		TextView albumTitle;
+		TextView albumArtist;
 		
 	}
 	
