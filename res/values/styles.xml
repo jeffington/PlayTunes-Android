@@ -105,4 +105,9 @@
     <item name="android:listSelector">@drawable/button_background_dark</item>
 </style>
 
+<style name="SearchField" parent="android:Widget.EditText">
+	  <item name="android:background">@drawable/textfield_activated_holo_light</item>
+	  <item name="android:textColor">#FFFFFF</item>
+</style>
+
 </resources>
