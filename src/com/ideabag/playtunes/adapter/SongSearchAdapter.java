@@ -8,6 +8,8 @@ import android.view.View.OnClickListener;
 
 public class SongSearchAdapter extends SongListAdapter {
 
+	public static final String TAG = "SongSearchAdapter";
+	
     /* $sql_query = "SELECT (";
 	$words = explode(" ", $text);
 	for ($x = 0, $count = count($words); $x < $count; $x++)
@@ -16,14 +18,23 @@ public class SongSearchAdapter extends SongListAdapter {
 	public SongSearchAdapter( Context context, OnClickListener menuClickListener, String searchTerms ) {
 		super(context, menuClickListener);
 		
-
-    	buildSearchQuery( searchTerms );
+		if ( null != searchTerms && searchTerms.length() > 0 ) {
+			
+			setQuery( searchTerms );
+    		
+		}
 		
 	}
 	
-	public void buildSearchQuery( String searchTerms ) {
+	public void setQuery( String searchTerms ) {
 		
-		String mRelevanceSelection = "(" + MediaStore.Audio.Media.TITLE + " LIKE '%" + searchTerms + "%' ) WEIGHT";
+		String mRelevance = "("; 
+		
+		mRelevance += "(" + MediaStore.Audio.Media.TITLE + " LIKE '%" + searchTerms + "%' )";
+		mRelevance += "+ 10 * (" + MediaStore.Audio.Media.TITLE + " LIKE '" + searchTerms + "%' )";
+		mRelevance += "+ 3 * (" + MediaStore.Audio.Media.TITLE + " LIKE '% " + searchTerms + "%' )";
+		
+		mRelevance += ") WEIGHT";
 		
 	    String[] songSearchSelection = new String[] {
 		    	
@@ -36,19 +47,21 @@ public class SongSearchAdapter extends SongListAdapter {
 		    	MediaStore.Audio.Media.DATA,
 		    	MediaStore.Audio.Media.ALBUM_ID,
 		    	MediaStore.Audio.Media.ARTIST_ID,
-		    	mRelevanceSelection
+		    	mRelevance
 		    	
 		    };
+	    
+	    //android.util.Log.i( TAG + "@setQuery", "Weight projection: " + mRelevance );
 		
     	mQuery = new MediaQuery(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				songSearchSelection,
-				MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				MediaStore.Audio.Media.IS_MUSIC + " != 0 AND WEIGHT > 0",
 				null,
-				"WEIGHT"
+				"WEIGHT DESC"
 				);
 		
-    	requery();
+    	super.requery();
     	
 	}
 	
