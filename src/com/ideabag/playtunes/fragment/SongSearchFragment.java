@@ -9,15 +9,31 @@ import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SearchViewCompat;
+import android.support.v4.widget.SearchViewCompat.OnQueryTextListenerCompat;
+import android.support.v7.app.ActionBar;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.ToggleButton;
 
 public class SongSearchFragment extends ListFragment implements PlaylistBrowser {
@@ -25,22 +41,38 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
 	public static final String TAG = "Song Search Fragment";
 	
     private MainActivity mActivity;
+	private AutoCompleteTextView mQueryTextView;
     
 	SongSearchAdapter adapter;
 	
-	protected String mSearchTerms = null;
+	protected String mSearchQuery = null;
+	
+	public SongSearchFragment() { }
+	
+	public SongSearchFragment( String query ) {
+		
+		setMediaID( query );
+		
+		
+		
+	}
+	
+	
 	
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
 		
+		
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		adapter = new SongSearchAdapter( getActivity(), songMenuClickListener, mSearchTerms );
+		setHasOptionsMenu( true );
+		
+		//adapter = new SongSearchAdapter( getActivity(), songMenuClickListener, mSearchQuery );
     	
     	
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
@@ -50,20 +82,65 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
 		getListView().setSelector( R.drawable.list_item_background );
     	
 		
-    	setListAdapter( adapter );
+    	//setListAdapter( adapter );
     	
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
+		ActionBar mBar = mActivity.getSupportActionBar();
+			
+		mBar.setCustomView( R.layout.view_search_compat );
+		mBar.setDisplayShowCustomEnabled( true );
+		
+		mQueryTextView = ( AutoCompleteTextView ) mBar.getCustomView().findViewById( R.id.SearchQuery );
+		
+		if ( null != mSearchQuery ) {
+			
+			mQueryTextView.setText( mSearchQuery );
+			
+		}
+		
+		mBar.getCustomView().findViewById( R.id.SearchButton ).setOnClickListener( new OnClickListener() {
+
+			@Override public void onClick( View v ) {
+				// TODO Auto-generated method stub
+				setMediaID( mQueryTextView.getEditableText().toString() );
+				
+			}
+			
+		});
+		
+		
+		
+		mQueryTextView.setOnEditorActionListener( new OnEditorActionListener() {
+
+			@Override public boolean onEditorAction( TextView view, int actionId, KeyEvent event ) {
+				
+				if ( actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == KeyEvent.KEYCODE_ENTER ) {
+					
+					// Do search
+					setMediaID( mQueryTextView.getEditableText().toString() );
+					
+					return true;
+					
+				}
+				
+				// TODO Auto-generated method stub
+				return false;
+				
+			}
+			
+		});
+		
 	}
 	
-
+	
 	@Override public void onResume() {
 		super.onResume();
 		
-		mActivity.setActionbarTitle( getString( R.string.all_songs ) );
-    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-		
+		mActivity.setActionbarTitle( null );
+    	mActivity.setActionbarSubtitle( null );
+		/*
 		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 		
 		tracker.setScreenName( TAG );
@@ -78,7 +155,7 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
     	.build());
 	        // Send a screen view.
 		
-		
+		*/
 	}
 		
 	@Override public void onPause() {
@@ -91,11 +168,17 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
 		super.onDestroyView();
 	    
 	    setListAdapter( null );
-	    
+	    mActivity.getSupportActionBar().getCustomView().setVisibility( View.GONE );
+		mActivity.getSupportActionBar().setCustomView( null );
+		
 	}
 	
 	@Override public void onDestroy() {
 		super.onDestroy();
+		
+		setHasOptionsMenu( false );
+		
+		
 		
 		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
 		
@@ -148,8 +231,6 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
 				
 			}
 			
-			
-			
 		}
 		
 	};
@@ -159,15 +240,27 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
 	
 	@Override public void setMediaID(String media_id) {
 		
-		mSearchTerms = media_id;
+		mSearchQuery = media_id;
 		
-		adapter.buildSearchQuery( mSearchTerms );
+		if ( null == adapter ) {
+			
+			adapter = new SongSearchAdapter( getActivity(), songMenuClickListener, mSearchQuery );
+			
+			setListAdapter( adapter );
+			
+		} else {
+			
+			adapter.setQuery( mSearchQuery );
+			
+		}
+		
+		adapter.notifyDataSetChanged();
 		
 	}
 
 	@Override public String getMediaID() {
 		
-		return mSearchTerms;
+		return mSearchQuery;
 		
 	}
 	
@@ -176,12 +269,12 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
         @Override public void onChange( boolean selfChange ) {
             
             mActivity.runOnUiThread( new Runnable() {
-
+            	
 				@Override public void run() {
 					
 					adapter.requery();
 					adapter.notifyDataSetChanged();
-				
+					
 				}
             	
             });
@@ -191,5 +284,5 @@ public class SongSearchFragment extends ListFragment implements PlaylistBrowser 
         }
 
 	};
-	
+
 }
