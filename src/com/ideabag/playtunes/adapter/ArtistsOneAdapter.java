@@ -15,6 +15,7 @@ import android.widget.TextView;
 public class ArtistsOneAdapter extends BaseAdapter {
 	
 	private Context mContext;
+	private LayoutInflater inflater;
 	private Cursor cursor;
 	
 	private String ARTIST_ID;
@@ -38,7 +39,9 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		mContext = context;
 		ARTIST_ID = artist_id;
 		
-    	cursor = mContext.getContentResolver().query(
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+    	
+		cursor = mContext.getContentResolver().query(
     			MediaStore.Audio.Artists.Albums.getContentUri( "external", Long.parseLong( ARTIST_ID ) ),
     			albumsSelection,
 				null,
@@ -79,11 +82,23 @@ public class ArtistsOneAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
-			convertView = li.inflate( R.layout.list_item_album, null );
+			convertView = inflater.inflate( R.layout.list_item_album, null );
+			
+			holder.albumThumb = ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb );
+			holder.albumTitle = ( TextView ) convertView.findViewById( R.id.AlbumTitle );
+			//holder.albumArtist = 
+			holder.songCount = ( TextView ) convertView.findViewById( R.id.BadgeCount );
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -98,9 +113,9 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		
 		convertView.findViewById( R.id.AlbumArtist ).setVisibility( View.GONE );
 		//( ( TextView ) convertView.findViewById( R.id.AlbumArtist )).setText( artistName );
-		( ( TextView ) convertView.findViewById( R.id.AlbumTitle )).setText( albumName );
+		holder.albumTitle.setText( albumName );
 		
-		( ( TextView ) convertView.findViewById( R.id.BadgeCount )).setText( "" + songCount );
+		holder.songCount.setText( "" + songCount );
 		
 		//
 		// Set the album art
@@ -116,15 +131,24 @@ public class ArtistsOneAdapter extends BaseAdapter {
 		
 		if ( albumArtUri != null ) {
 			
-			( ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb )).setImageURI( albumArtUri );
+			holder.albumThumb.setImageURI( albumArtUri );
 			
 		} else {
 			
-			( ( ImageView ) convertView.findViewById( R.id.AlbumArtThumb )).setImageResource( R.drawable.no_album_art_thumb );
+			holder.albumThumb.setImageResource( R.drawable.no_album_art_thumb );
 			
 		}
 		
 		return convertView;
+		
+	}
+	
+	static class ViewHolder {
+		
+		TextView albumTitle;
+		//TextView albumArtist;
+		TextView songCount;
+		ImageView albumThumb;
 		
 	}
 

@@ -14,6 +14,7 @@ import android.widget.TextView;
 public class ArtistsAllAdapter extends BaseAdapter {
 	
 	private Context mContext;
+	private LayoutInflater inflater;
 	private Cursor cursor = null;
 	
 	public String ARTIST_NAME;
@@ -31,6 +32,7 @@ public class ArtistsAllAdapter extends BaseAdapter {
 		super();
 		
 		mContext = context;
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
 		requery();
 		
@@ -73,13 +75,26 @@ public class ArtistsAllAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
-			convertView = li.inflate( R.layout.list_item_genre, null );
+			convertView = inflater.inflate( R.layout.list_item_genre, null );
+			
+			holder.albumCount = ( TextView ) convertView.findViewById( R.id.AlbumCount );
+			holder.songCount = ( TextView ) convertView.findViewById( R.id.SongCount );
+			holder.artistName = ( TextView ) convertView.findViewById( R.id.Title );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
+		
 		cursor.moveToPosition( position );
 		
 		
@@ -92,26 +107,29 @@ public class ArtistsAllAdapter extends BaseAdapter {
 		
 		if ( mContext.getString( R.string.no_artist_string ).equals( artistName ) ) {
 			
-			( ( TextView ) convertView.findViewById( R.id.Title )).setText( mContext.getString( R.string.artist_unknown ) );
+			holder.artistName.setText( mContext.getString( R.string.artist_unknown ) );
 			convertView.setTag( R.id.tag_artist_unknown, "1" );
 			
 		} else {
 			
-			( ( TextView ) convertView.findViewById( R.id.Title )).setText( artistName );
+			holder.artistName.setText( artistName );
 			convertView.setTag( R.id.tag_artist_unknown, "0" );
 			
 		}
 		
-		LinearLayout songBadge, albumBadge;
-		
-		songBadge = ( LinearLayout ) convertView.findViewById( R.id.BadgeSong );
-		
-		albumBadge = ( LinearLayout ) convertView.findViewById( R.id.BadgeAlbum );
-		
-		( ( TextView ) songBadge.findViewById( R.id.BadgeCount )).setText( "" + songCount );
-		( ( TextView ) albumBadge.findViewById( R.id.BadgeCount )).setText( "" + albumCount );
+		holder.songCount.setText( "" + songCount );
+		holder.albumCount.setText( "" + albumCount );
 		
 		return convertView;
+		
+	}
+	
+	static class ViewHolder {
+		
+		TextView artistName;
+		TextView songCount;
+		TextView albumCount;
+		
 		
 	}
 
