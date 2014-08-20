@@ -62,7 +62,7 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
     	
     	Cursor mStarredCursor = mActivity.PlaylistManager.getStarredCursor();
     	
-    	( ( TextView ) starredPlaylist.findViewById( R.id.BadgeCount ) ).setText( "" + mStarredCursor.getCount() );
+    	( ( TextView ) starredPlaylist.findViewById( R.id.SongCount ) ).setText( "" + mStarredCursor.getCount() );
 		
     	mStarredCursor.close();
     	
