@@ -11,12 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class PlaylistsOneAdapter extends BaseAdapter {
 	
 	protected Context mContext;
+	protected LayoutInflater inflater;
 	protected Cursor cursor = null;
 	private MediaQuery mQuery = null;
 	
@@ -51,6 +53,8 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		PlaylistManager = new PlaylistManager( mContext );
 		
 		songMenuClickListener = menuClickListener;
+		
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
 		//android.util.Log.i( "starred adapter", "" + playlist_id );
 		
@@ -122,23 +126,43 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		return null;
 	}
 
-	@Override
-	public long getItemId( int position ) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Override public long getItemId( int position ) {
+		//cursor.moveToPosition( position );
+		
+		return 0;//cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
+		
 	}
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
-			convertView = li.inflate( R.layout.list_item_playlist_song, null );
+			convertView = inflater.inflate( R.layout.list_item_playlist_song, null );
 			
-			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
-			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
-			convertView.findViewById( R.id.RemoveButton ).setOnClickListener( songMenuClickListener );
+			holder.starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+			holder.starButton.setOnClickListener( songMenuClickListener );
+			
+			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.MenuButton );
+			holder.menuButton.setOnClickListener( songMenuClickListener );
+			
+			holder.removeButton = ( ImageButton ) convertView.findViewById( R.id.RemoveButton );
+			holder.removeButton.setOnClickListener( songMenuClickListener );
+			
+			holder.dragButton = convertView.findViewById( R.id.DragButton );
+			
+			holder.songTitle = ( TextView ) convertView.findViewById( R.id.SongTitle );
+			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
+			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -149,31 +173,29 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
 		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
 		
-		( ( TextView ) convertView.findViewById( R.id.SongTitle )).setText( songTitle );
-		( ( TextView ) convertView.findViewById( R.id.SongArtist )).setText( songArtist );
-		( ( TextView ) convertView.findViewById( R.id.SongAlbum )).setText( songAlbum );
+		holder.songTitle.setText( songTitle );
+		holder.songArtist.setText( songArtist );
+		holder.songAlbum.setText( songAlbum );
 		
-		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
-		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
-		convertView.findViewById( R.id.RemoveButton ).setTag( R.id.tag_song_id, song_id );
+		holder.starButton.setTag( R.id.tag_song_id, song_id );
+		holder.menuButton.setTag( R.id.tag_song_id, song_id );
+		holder.removeButton.setTag( R.id.tag_song_id, song_id );
 		
-		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
-		
-		starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
+		holder.starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
 		
 		if ( !this.isEditing ) {
 			
-			convertView.findViewById( R.id.StarButton ).setVisibility( View.VISIBLE );
-			convertView.findViewById( R.id.MenuButton ).setVisibility( View.VISIBLE );
-			convertView.findViewById( R.id.DragButton ).setVisibility( View.GONE );
-			convertView.findViewById( R.id.RemoveButton ).setVisibility( View.GONE );
+			holder.starButton.setVisibility( View.VISIBLE );
+			holder.menuButton.setVisibility( View.VISIBLE );
+			holder.dragButton.setVisibility( View.GONE );
+			holder.removeButton.setVisibility( View.GONE );
 			
 		} else {
 			
-			convertView.findViewById( R.id.StarButton ).setVisibility( View.GONE );
-			convertView.findViewById( R.id.MenuButton ).setVisibility( View.GONE );
-			convertView.findViewById( R.id.DragButton ).setVisibility( View.VISIBLE );
-			convertView.findViewById( R.id.RemoveButton ).setVisibility( View.VISIBLE );
+			holder.starButton.setVisibility( View.GONE );
+			holder.menuButton.setVisibility( View.GONE );
+			holder.dragButton.setVisibility( View.VISIBLE );
+			holder.removeButton.setVisibility( View.VISIBLE );
 			
 		}
 		
@@ -188,6 +210,17 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		this.notifyDataSetChanged();
 		
 	}
-
+	
+	static class ViewHolder {
+		
+		View dragButton;
+		ToggleButton starButton;
+		ImageButton menuButton;
+		ImageButton removeButton;
+		TextView songTitle;
+		TextView songArtist;
+		TextView songAlbum;
+		
+	}
 
 }
