@@ -34,7 +34,7 @@
 	    android:bottom="0dp">
 		
 	    <bitmap
-	        android:src="@drawable/ic_drawer"
+	        android:src="@drawable/ic_navigation_drawer_light"
 	        android:gravity="center"
 	        />
 	    
