@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
         
@@ -11,7 +12,7 @@
 		<item name="actionBarStyle">@style/MyActionBar</item>
 		
 		<item name="android:actionButtonStyle">@style/ActionButtonCompat</item>
-		<item name="actionBarItemBackground">@drawable/button_background_dark</item>
+		<item name="android:actionBarItemBackground" tools:ignore="NewApi">@drawable/button_background_dark</item>
     </style>
     
 </resources>
