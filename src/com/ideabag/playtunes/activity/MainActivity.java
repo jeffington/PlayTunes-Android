@@ -3,7 +3,6 @@ package com.ideabag.playtunes.activity;
 import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
-import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.SongSearchFragment;
@@ -28,11 +27,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.view.View;
 
 public class MainActivity extends ActionBarActivity {
@@ -138,56 +134,7 @@ public class MainActivity extends ActionBarActivity {
 	    // If the activity is being called upon to do a search, the initial fragment should be the SongSearchFragment
 	    
 	    Intent intent = getIntent();
-	    
-	    if ( Intent.ACTION_SEND.equals( intent.getAction() ) ) {
-	    	String type = intent.getType();
-	    	
-	    	if ( type.startsWith( "audio/" ) ) {
-	    		
-	    		Uri audioUri = ( Uri ) intent.getParcelableExtra( Intent.EXTRA_STREAM );
-	    		
-	    		// Check if the AudioUri is in the MediaStore
-	    		MediaQuery mQuery = new MediaQuery( MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-	    				new String[] {
-	    	    	MediaStore.Audio.Media._ID,
-	    	    	
-	    	    	MediaStore.Audio.Media.TITLE,
-	    	    	MediaStore.Audio.Media.ARTIST,
-	    	    	MediaStore.Audio.Media.ALBUM,
-	    	    	MediaStore.Audio.Media.TRACK,
-	    	    	MediaStore.Audio.Media.DATA,
-	    	    	MediaStore.Audio.Media.ALBUM_ID,
-	    	    	MediaStore.Audio.Media.ARTIST_ID
-	    	    },
-	    	    MediaStore.Audio.Media.IS_MUSIC + " != 0 AND " + MediaStore.Audio.Media.DATA + "=?",
-				new String[] {
-	    				
-	    				audioUri.toString()
-	    				
-	    		},
-				null);
-	    		
-	    		Cursor mSentSongCursor = MediaQuery.execute( this, mQuery );
-	    		
-	    		if ( null != mSentSongCursor && mSentSongCursor.getCount() > 0 ) {
-	    			
-	    			mSentSongCursor.moveToFirst();
-	    			
-	    			String title = mSentSongCursor.getString( mSentSongCursor.getColumnIndex( MediaStore.Audio.Media.TITLE ) );
-	    			
-	    			
-	    			mBoundService.setPlaylist( mQuery, title, SongsFragment.class, null );
-	    			mBoundService.setPlaylistPosition( 0 );
-	    			mBoundService.play();
-	    			
-	    			
-	    			mSentSongCursor.close();
-	    			
-	    		}
-	    		
-	    	}
-	    	
-	    } else if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
+	    if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
 		    
 		    SongsFragment initialFragment = new SongsFragment();
 		    

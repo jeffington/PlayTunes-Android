@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.ideabag.playtunes"
       android:versionCode="8"
-      android:versionName="3.02">
+      android:versionName="3.1b">
     
 	<uses-sdk android:minSdkVersion="9" android:targetSdkVersion="15" />
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -46,12 +46,19 @@
                 
             </intent-filter>
             
+			<intent-filter>
+            	<action android:name="android.intent.action.SEARCH" />
+        	</intent-filter>
+        	
+        	<meta-data android:name="android.app.searchable"
+                   android:resource="@xml/searchable"/>
+            
         </activity>
         
     	<activity android:name="com.ideabag.playtunes.activity.SettingsActivity"
     	    android:label="@string/activity_title_settings"
     	    android:icon="@drawable/ic_launcher"
-    	    android:parentActivityName="com.ideabag.playtunes.activity.MainActivity">
+    	    android:parentActivityName=".activity.MainActivity">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -64,12 +71,14 @@
             	android:value="com.ideabag.playtunes.activity.MainActivity"
             	
             />
-            
+            <!-- enable the search dialog to send searches to SearchableActivity -->
+        	<meta-data android:name="android.app.default_searchable"
+                   android:value=".activity.MainActivity" />
         </activity>
         
     	<activity android:name="com.ideabag.playtunes.activity.NowPlayingActivity"
     	    android:label="@string/activity_title_now_playing"
-    	    android:parentActivityName="com.ideabag.playtunes.activity.MainActivity">
+    	    android:parentActivityName=".activity.MainActivity">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -79,9 +88,12 @@
             <meta-data
             	
             	android:name="android.support.PARENT_ACTIVITY"
-            	android:value="com.ideabag.playtunes.activity.MainActivity"
+            	android:value=".activity.MainActivity"
             
             />
+            
+			<meta-data android:name="android.app.default_searchable"
+				android:value=".activity.MainActivity" />
             
         </activity>
 		
