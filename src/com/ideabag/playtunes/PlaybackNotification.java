@@ -180,26 +180,31 @@ public class PlaybackNotification {
 					);
 				//android.util.Log.i( "album_id", album_id );
 				//android.util.Log.i( "album count" , "" + albumCursor.getCount() );
-				albumCursor.moveToFirst();
 				
-				String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-				albumCursor.close();
-				
-				lastAlbumUri = newAlbumUri;
-				
-				if ( newAlbumUri == null ) {
+				if ( null != albumCursor && albumCursor.getCount() > 0 ) {
 					
-					mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art_thumb );
+					albumCursor.moveToFirst();
 					
-				} else {
+					String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+					albumCursor.close();
 					
+					lastAlbumUri = newAlbumUri;
 					
-					
-					Uri albumArtUri = Uri.parse( newAlbumUri );
-					
-					mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
-					
-					
+					if ( newAlbumUri == null ) {
+						
+						mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art_thumb );
+						
+					} else {
+						
+						
+						
+						Uri albumArtUri = Uri.parse( newAlbumUri );
+						
+						mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
+						
+						
+						
+					}
 					
 				}
 				
