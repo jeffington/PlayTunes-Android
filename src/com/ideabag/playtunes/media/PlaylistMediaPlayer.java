@@ -328,7 +328,7 @@ public class PlaylistMediaPlayer {
 	
 	public boolean hasNextTrack() {
 		
-		return ( mLoopState != LoopState.LOOP_NO || mPlaylistPosition < mPlaylistCursor.getCount() );
+		return ( mLoopState != LoopState.LOOP_NO || mPlaylistPosition < mPlaylistCursor.getCount() - 1 );
 		
 	}
 	
