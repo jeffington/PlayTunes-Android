@@ -313,6 +313,16 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		MediaPlayer.setLooping( repeat );
 		
+		if ( MediaPlayer.isPlaying() ) {
+			
+			updateRemoteControlClientPlay();
+			
+		} else {
+			
+			updateRemoteControlClientPause();
+			
+		}
+		
 	}
 	
 	public void setShuffle( boolean isShuffling ) {
@@ -364,6 +374,22 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		if ( null != mRemoteControlClientCompat ) {
 			
+	        int mFlags = RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE;
+	        
+	        if ( MediaPlayer.hasNextTrack() ) {
+	        	
+	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_NEXT;
+	        	
+	        }
+	        
+	        if ( MediaPlayer.hasPreviousTrack() ) {
+	        	
+	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS;
+	        	
+	        }
+	        
+	        mRemoteControlClientCompat.setTransportControlFlags( mFlags );
+	        
 			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
 			
 		}
@@ -376,6 +402,22 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		if ( null != mRemoteControlClientCompat ) {
 			
+	        int mFlags = RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE;
+	        
+	        if ( MediaPlayer.hasNextTrack() ) {
+	        	
+	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_NEXT;
+	        	
+	        }
+	        
+	        if ( MediaPlayer.hasPreviousTrack() ) {
+	        	
+	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS;
+	        	
+	        }
+	        
+	        mRemoteControlClientCompat.setTransportControlFlags( mFlags );
+	        
 			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
 			
 		}
@@ -475,11 +517,21 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 	        mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
 	        
-	        mRemoteControlClientCompat.setTransportControlFlags(
-	                RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE |
-	                RemoteControlClient.FLAG_KEY_MEDIA_NEXT |
-	                RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS |
-	                RemoteControlClient.FLAG_KEY_MEDIA_STOP);
+	        int mFlags = RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE;
+	        
+	        if ( MediaPlayer.hasNextTrack() ) {
+	        	
+	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_NEXT;
+	        	
+	        }
+	        
+	        if ( MediaPlayer.hasPreviousTrack() ) {
+	        	
+	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS;
+	        	
+	        }
+	        
+	        mRemoteControlClientCompat.setTransportControlFlags( mFlags );
 	
 	        // Update the remote controls
 	        
