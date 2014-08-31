@@ -326,6 +326,18 @@ public class PlaylistMediaPlayer {
 		
 	}
 	
+	public boolean hasNextTrack() {
+		
+		return ( mLoopState != LoopState.LOOP_NO || mPlaylistPosition < mPlaylistCursor.getCount() );
+		
+	}
+	
+	public boolean hasPreviousTrack() {
+		
+		return ( mLoopState != LoopState.LOOP_NO || mPlaylistPosition > 0 );
+		
+	}
+	
 	// 
 	// Abstracting out collecting information on the current song
 	// 
