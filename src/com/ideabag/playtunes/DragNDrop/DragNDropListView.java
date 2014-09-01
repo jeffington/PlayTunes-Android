@@ -129,6 +129,25 @@ public class DragNDropListView extends ListView {
 			default:
 				mDragMode = false;
 				mEndPosition = pointToPosition(x,y);
+				// Where is the pointToPosition when dragged above?
+				
+				if ( mEndPosition == INVALID_POSITION && mStartPosition != INVALID_POSITION ) {
+					
+					if ( getFirstVisiblePosition() == 0 ) { // Above the first
+						
+						mEndPosition = 0;
+						
+					} else { // Below the last
+						
+						mEndPosition = getLastVisiblePosition();
+						
+					}
+					//android.util.Log.i( "DragNDropListView", "First visible: " + getFirstVisiblePosition() );
+					
+				}
+				
+				android.util.Log.i( "DragNDropListView", "Dropped: " + mEndPosition );
+				
 				stopDrag(mStartPosition - getFirstVisiblePosition());
 				if (mDropListener != null && mStartPosition != INVALID_POSITION && mEndPosition != INVALID_POSITION) 
 	        		 mDropListener.onDrop(mStartPosition, mEndPosition);
