@@ -16,6 +16,8 @@ import com.ideabag.playtunes.R;
 
 public class RateAppDialogFragment extends DialogFragment {
 	
+	SharedPreferences prefs;
+	
 	public RateAppDialogFragment() {
 		
 		setStyle( STYLE_NORMAL, 0 );
@@ -25,6 +27,7 @@ public class RateAppDialogFragment extends DialogFragment {
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );
 		
+		prefs = activity.getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
 		
 	}
 	
@@ -43,14 +46,21 @@ public class RateAppDialogFragment extends DialogFragment {
     }
 	
     // 
-    // Set the app open count to 20, so we don't bother the user about ratings again
+    // Set the app open count to 100, so we don't bother the user about ratings again
     // 
     @Override public void onDismiss(DialogInterface dialog) {
     	
-    	SharedPreferences prefs = getActivity().getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
-    	SharedPreferences.Editor edit = prefs.edit();
-    	edit.putInt( getString( R.string.pref_key_appopen ), 100 );
-    	edit.commit();
+    	try {
+    		
+    		SharedPreferences.Editor edit = prefs.edit();
+    		edit.putInt( getString( R.string.pref_key_appopen ), 100 );
+    		edit.commit();
+    		
+    	} catch ( Exception e ) {
+    		
+    		//IllegalStateException (@RateAppDialogFragment:onDismiss:50) {main}
+    		
+    	}
     	
     	super.onDismiss(dialog);
     	
