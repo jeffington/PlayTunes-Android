@@ -5,10 +5,11 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
-import com.ideabag.playtunes.fragment.SongSearchFragment;
+import com.ideabag.playtunes.fragment.SearchFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
+import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
 import com.ideabag.playtunes.util.PlaylistBrowser;
 
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -52,81 +53,93 @@ public class MainActivity extends ActionBarActivity {
 		
 		setContentView( R.layout.activity_main );
 		
+		ActionBar supportBar = getSupportActionBar();
+		
 		PlaylistManager = new PlaylistManager( this );
 		
 		
-        mDrawerLayout = ( DrawerLayout ) findViewById( R.id.drawer_layout );
+        View mDrawerView = findViewById( R.id.drawer_layout );
         
-        mDrawerLayout.setDrawerShadow( R.drawable.drawer_shadow, GravityCompat.START );
-        
-        mDrawerToggle = new ActionBarDrawerToggle(
-        		this,
-        		mDrawerLayout,
-                R.drawable.ic_drawer,
-                R.string.drawer_open,
-                R.string.drawer_close ) {
+        if ( null != mDrawerView ) {
+	        
+        	mDrawerLayout = ( DrawerLayout ) mDrawerView;
         	
-        	float mPreviousOffset = 0f;
-        	
-            public void onDrawerClosed( View drawerView ) {
-            	super.onDrawerClosed( drawerView );
-            	
-            	getSupportActionBar().setTitle( mActionbarTitle );
-            	getSupportActionBar().setSubtitle( mActionbarSubtitle );
-            	
-            	mShouldHideActionItems = false;
-            	supportInvalidateOptionsMenu();
-            	
-            }
-            
-            public void onDrawerOpened( View drawerView ) {
-                super.onDrawerOpened( drawerView );
-                
-            	mActionbarTitle = getSupportActionBar().getTitle();
-            	mActionbarSubtitle = getSupportActionBar().getSubtitle();
-            	
-            	getSupportActionBar().setTitle( getString( R.string.app_name ) );
-            	getSupportActionBar().setSubtitle( null );
-                
-            	mShouldHideActionItems = true;
-            	supportInvalidateOptionsMenu();
-            	getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
-            	
-           }
-            
-            public void onDrawerSlide( View drawerView, float slideOffset ) {
-            	super.onDrawerSlide( drawerView, slideOffset);
-            	
-            	if ( slideOffset > mPreviousOffset && !mShouldHideActionItems ) {
-                	
-                	mShouldHideActionItems = true;
-                	supportInvalidateOptionsMenu();
-                	getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
-                   
-               } else if( mPreviousOffset > slideOffset && slideOffset < 0.5f && mShouldHideActionItems ) {
-            	   
-            	   mShouldHideActionItems = false;
-            	   supportInvalidateOptionsMenu();
-            	   getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
-            	   
-               }
-                
-               mPreviousOffset = slideOffset;
-               
-            }
-            
-        };
+	        mDrawerLayout.setDrawerShadow( R.drawable.drawer_shadow, GravityCompat.START );
+	        
+	        mDrawerToggle = new ActionBarDrawerToggle(
+	        		this,
+	        		mDrawerLayout,
+	                R.drawable.ic_drawer,
+	                R.string.drawer_open,
+	                R.string.drawer_close ) {
+	        	
+	        	float mPreviousOffset = 0f;
+	        	
+	            public void onDrawerClosed( View drawerView ) {
+	            	super.onDrawerClosed( drawerView );
+	            	
+	            	getSupportActionBar().setTitle( mActionbarTitle );
+	            	getSupportActionBar().setSubtitle( mActionbarSubtitle );
+	            	
+	            	mShouldHideActionItems = false;
+	            	supportInvalidateOptionsMenu();
+	            	
+	            }
+	            
+	            public void onDrawerOpened( View drawerView ) {
+	                super.onDrawerOpened( drawerView );
+	                
+	            	mActionbarTitle = getSupportActionBar().getTitle();
+	            	mActionbarSubtitle = getSupportActionBar().getSubtitle();
+	            	
+	            	getSupportActionBar().setTitle( getString( R.string.app_name ) );
+	            	getSupportActionBar().setSubtitle( null );
+	                
+	            	mShouldHideActionItems = true;
+	            	supportInvalidateOptionsMenu();
+	            	getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	            	
+	           }
+	            
+	            public void onDrawerSlide( View drawerView, float slideOffset ) {
+	            	super.onDrawerSlide( drawerView, slideOffset);
+	            	
+	            	if ( slideOffset > mPreviousOffset && !mShouldHideActionItems ) {
+	                	
+	                	mShouldHideActionItems = true;
+	                	supportInvalidateOptionsMenu();
+	                	getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	                   
+	               } else if( mPreviousOffset > slideOffset && slideOffset < 0.5f && mShouldHideActionItems ) {
+	            	   
+	            	   mShouldHideActionItems = false;
+	            	   supportInvalidateOptionsMenu();
+	            	   getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	            	   
+	               }
+	                
+	               mPreviousOffset = slideOffset;
+	               
+	            }
+	            
+	        };
+	        
+	        
+	        mDrawerLayout.setDrawerListener( mDrawerToggle );
+	        
+	        supportBar.setLogo( R.drawable.ic_drawer );
+	        supportBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
+	        supportBar.setDisplayUseLogoEnabled( false ); // Hides the icon
+	        
+        }
         
         
-        mDrawerLayout.setDrawerListener( mDrawerToggle );
-        ActionBar supportBar = getSupportActionBar();
         
-        supportBar.setLogo( R.drawable.ic_drawer );
+        
         //supportBar.setDisplayShowCustomEnabled( true );
         supportBar.setDisplayShowHomeEnabled( true );
         supportBar.setDisplayHomeAsUpEnabled( false );
-        supportBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
-        supportBar.setDisplayUseLogoEnabled( true ); // Hides the icon
+        
         
 	    mFooterControlsFragment = ( FooterControlsFragment ) getSupportFragmentManager().findFragmentById( R.id.FooterControlsFragment );
         
@@ -175,6 +188,13 @@ public class MainActivity extends ActionBarActivity {
 			
 			rateFragment.show( ft, "dialog" );
 			
+	    } else {
+	    	
+	    	// We don't want to show multiple dialogs
+	    	
+	    	//new CheckRemoteVersionFileTask( this ).execute( new String[]{} );
+	    	
+	    	
 	    }
 	    
 	    if ( openCount <= getResources().getInteger( R.integer.rate_app_prompt_count ) ) {
@@ -199,7 +219,7 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    	String query = intent.getStringExtra( SearchManager.QUERY );
 	    	
-	    	SongSearchFragment initialFragment = new SongSearchFragment( query );
+	    	SearchFragment initialFragment = new SearchFragment( query );
 		    
 		    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 	    	transaction.replace( R.id.MusicBrowserContainer, initialFragment );
@@ -218,7 +238,7 @@ public class MainActivity extends ActionBarActivity {
 		mActionbarTitle = ( CharSequence ) titleString;
 		
 		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
-		if ( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
 			
 			getSupportActionBar().setTitle( mActionbarTitle );
 			
@@ -231,7 +251,7 @@ public class MainActivity extends ActionBarActivity {
 		mActionbarSubtitle = ( CharSequence ) subtitleString;
 		
 		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
-		if ( !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
 			
 			getSupportActionBar().setSubtitle( mActionbarSubtitle );
 			
@@ -279,19 +299,26 @@ public class MainActivity extends ActionBarActivity {
 	
     public void toggleDrawer() {
     	
-    	if ( mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
-    		
-    		mDrawerLayout.closeDrawer( GravityCompat.START );
-    		//customActionBarToggle.showClose();
-    		getSupportActionBar().setTitle( mActionbarTitle );
-    		
-    	} else {
-    		
-    		mDrawerLayout.openDrawer( GravityCompat.START );
-    		//customActionBarToggle.showOpen();
-    		mActionbarTitle = getSupportActionBar().getTitle();
-    		getSupportActionBar().setTitle( getString( R.string.app_name ) );
-    		
+    	if ( mDrawerLayout != null ) {
+	    	
+	    	if ( mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	    		
+	    		mDrawerLayout.closeDrawer( GravityCompat.START );
+	    		//customActionBarToggle.showClose();
+	    		getSupportActionBar().setTitle( mActionbarTitle );
+	    		
+	    	} else {
+	    		
+	    		mDrawerLayout.openDrawer( GravityCompat.START );
+	    		//customActionBarToggle.showOpen();
+	    		mActionbarTitle = getSupportActionBar().getTitle();
+	    		getSupportActionBar().setTitle( getString( R.string.app_name ) );
+	    		//getSupportActionBar().setIcon( getResources().getDrawable( R.drawable.ic_launcher ) );
+	    		getSupportActionBar().setDisplayUseLogoEnabled( true );
+	    		
+	    		
+	    	}
+	    	
     	}
     	
     }
@@ -310,7 +337,7 @@ public class MainActivity extends ActionBarActivity {
                 
             case KeyEvent.KEYCODE_SEARCH:
             	
-            	Fragment mSearchFragment = new SongSearchFragment();
+            	Fragment mSearchFragment = new SearchFragment();
             	transactFragment( mSearchFragment );
             	
             	return true;
@@ -325,7 +352,7 @@ public class MainActivity extends ActionBarActivity {
     	
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if ( mDrawerToggle.onOptionsItemSelected( item ) ) {
+        if ( mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected( item ) ) {
         	
         	return true;
         	
@@ -445,6 +472,69 @@ public class MainActivity extends ActionBarActivity {
 		@Override public void onShuffleChanged( boolean isShuffling ) { /* ... */ }
 		
 	};
+	
+	public void showNowPlayingActivity() {
+		
+		Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
+		
+		startActivityForResult( startNowPlayingActivity, 0 );
+		
+	}
+	
+	public void loadNowPlayingFragment() {
+		
+		Class < ? extends Fragment > nowPlayingFragmentClass = this.mBoundService.mPlaylistFragmentClass;
+		
+		String nowPlayingMediaID = this.mBoundService.mPlaylistMediaID;
+		
+		Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
+		
+		try {
+			
+			// 
+			// Check to see if the currently playing Fragment is already showing
+			// only create the new fragment if it isn't already showing.
+			//
+			
+			if ( showingFragment != null ) {
+				
+				String showingMediaID = ( ( PlaylistBrowser ) showingFragment ).getMediaID();
+				
+				boolean isSameClass = showingFragment.getClass().equals( nowPlayingFragmentClass );
+				
+				boolean isSameMediaID = showingMediaID.equals( nowPlayingMediaID );
+				
+				if ( !( isSameClass && isSameMediaID ) ) {
+					
+					Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
+					( ( PlaylistBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
+					
+					FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			    	
+			    	// Replace whatever is in the fragment_container view with this fragment,
+			    	// and add the transaction to the back stack
+			    	transaction.replace( R.id.MusicBrowserContainer, nowPlayingFragment );
+			    	transaction.addToBackStack( null );
+			    	
+			    	
+			    	// Commit the transaction
+			    	transaction.commitAllowingStateLoss();
+					
+				}
+				
+			}
+			
+
+	    	
+		} catch ( InstantiationException e ) {
+			e.printStackTrace();
+		} catch ( IllegalAccessException e ) {
+			e.printStackTrace();
+		} catch ( ClassCastException e ) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	// 
 	// We use the onActivityResult mechanism to return from the NowPlayingActivity
