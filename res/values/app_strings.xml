@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="app_name">PlayTunes</string>
+	<string name="no_album_string">Music</string>
+    <string name="no_artist_string">&#60;unknown&#62;</string>
+    
+    <string name="key_state_media_id">saved_state_media_id</string>
+    <string name="key_state_playlist_editing">saved_state_is_editing</string>
+    <string name="key_state_query_string">saved_state_query_string</string>
+    <string name="key_state_scroll">saved_state_scroll_position</string>
+    
+    <string name="prefs_file">playtunes_preferences</string>
+    <string name="pref_key_appopen">app_open</string>
+</resources>
