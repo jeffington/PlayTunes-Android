@@ -52,7 +52,7 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), GENRE_ID );
-		
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 	}
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -78,6 +78,13 @@ public class GenresOneFragment extends ListFragment implements PlaylistBrowser {
     	
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( GENRE_ID ) ), true, mediaStoreChanged );
+    	
+		// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
 		
 	}
 		

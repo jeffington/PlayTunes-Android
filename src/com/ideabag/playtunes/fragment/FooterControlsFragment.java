@@ -97,9 +97,7 @@ public class FooterControlsFragment extends Fragment {
 			
 			if ( id == R.id.FooterControls ) {
 				
-				Intent startNowPlayingActivity = new Intent( getActivity(), NowPlayingActivity.class );
-				
-				getActivity().startActivityForResult( startNowPlayingActivity, 0 );
+				mActivity.showNowPlayingActivity();
 				
 			} else if ( id == R.id.FooterControlsPlayPauseButton ) {
 				

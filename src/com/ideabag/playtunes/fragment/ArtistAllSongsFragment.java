@@ -51,7 +51,7 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), ARTIST_ID );
-		
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -73,6 +73,13 @@ public class ArtistAllSongsFragment extends ListFragment implements PlaylistBrow
 		
     	getActivity().getContentResolver().registerContentObserver(
     			MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	
+    	// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
     	
 	}
 	

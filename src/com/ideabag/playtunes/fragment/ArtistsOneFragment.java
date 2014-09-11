@@ -59,6 +59,7 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), ARTIST_ID );
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 		
 	}
     
@@ -123,14 +124,14 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
     	
     	
     	AllSongs = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
-    	( ( TextView ) AllSongs.findViewById( R.id.BadgeCount ) ).setText( "" + songCount );
+    	( ( TextView ) AllSongs.findViewById( R.id.SongCount ) ).setText( "" + songCount );
     	( ( TextView ) AllSongs.findViewById( R.id.Title ) ).setText( getString( R.string.artist_all_songs ) );
     	getListView().addHeaderView( AllSongs, null, true );
     	
     	if ( singlesCount > 0) {
     		
     		Singles = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
-    		( ( TextView ) Singles.findViewById( R.id.BadgeCount ) ).setText( "" + singlesCount );
+    		( ( TextView ) Singles.findViewById( R.id.SongCount ) ).setText( "" + singlesCount );
     		( ( TextView ) Singles.findViewById( R.id.Title ) ).setText( getString( R.string.artist_singles ) );
     		getListView().addHeaderView( Singles, null, true );
     		
@@ -146,6 +147,13 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 		getListView().setDividerHeight( 1 );
     	
     	setListAdapter( adapter );
+    	
+    	// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
     	
 	}
 	

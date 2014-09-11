@@ -52,6 +52,18 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
+    	// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
+		
+	}
+	
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 	}
 		
 	@Override public void onResume() {
@@ -106,7 +118,7 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 		
 		boolean artistUnknown = v.getTag( R.id.tag_artist_unknown ).equals( "1" );
 		
-		int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.BadgeAlbum ).findViewById( R.id.BadgeCount ) ).getText().toString() );
+		int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.AlbumCount ) ).getText().toString() );
 		
 		if ( artistUnknown || 0 == albumCount ) {
 			

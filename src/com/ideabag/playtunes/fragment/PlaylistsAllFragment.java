@@ -41,7 +41,7 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 	
 	
 	@Override public void onAttach( Activity activity ) {
-			
+		
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
@@ -82,9 +82,20 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
+    	// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
+		
 	}
 	
-	
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
+		
+	}
 	
 	@Override public void onResume() {
 		super.onResume();

@@ -47,6 +47,19 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
+		if ( null != savedInstanceState ) {
+			
+			getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+			
+		}
+		
+	}
+	
+	@Override public void onSaveInstanceState( Bundle outState ) {
+		super.onSaveInstanceState( outState );
+		
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
+		
 	}
 	
 	@Override public void onResume() {

@@ -73,7 +73,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), PLAYLIST_ID );
 		outState.putBoolean( getString( R.string.key_state_playlist_editing ), isEditing );
-		
+		outState.putInt( getString( R.string.key_state_scroll ), mListView.getScrollY() );
 	}
 	
 	@Override public void onAttach( Activity activity ) {
@@ -141,6 +141,13 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		mListView.setDragListener( mSongDragListener );
 		
 		//mListView.setChoiceMode( ListView.CHOICE_MODE_SINGLE );
+    	// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		mListView.scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
+		
 		
 	}
 	

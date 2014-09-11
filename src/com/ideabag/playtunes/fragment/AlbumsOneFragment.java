@@ -47,11 +47,11 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		mActivity = ( MainActivity ) activity;
 		
 	}
-	
+
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), ALBUM_ID );
-		
+		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -86,6 +86,13 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		}
 		
     	setListAdapter( adapter );
+    	
+    	// Restore scroll position of ListView
+    	if ( null != savedInstanceState ) {
+    		
+    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
+    		
+    	}
 		
 	}
 	
