@@ -1,6 +1,7 @@
 package com.ideabag.playtunes.activity;
 
 import com.ideabag.playtunes.MusicPlayerService;
+import com.ideabag.playtunes.PlaybackNotification;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
@@ -127,15 +128,15 @@ public class MainActivity extends ActionBarActivity {
 	        
 	        mDrawerLayout.setDrawerListener( mDrawerToggle );
 	        
-	        supportBar.setLogo( R.drawable.ic_drawer );
-	        supportBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
-	        supportBar.setDisplayUseLogoEnabled( false ); // Hides the icon
+	        
 	        
         }
         
         
         
-        
+        supportBar.setLogo( R.drawable.ic_drawer );
+        supportBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
+        supportBar.setDisplayUseLogoEnabled( true ); // Hides the icon
         //supportBar.setDisplayShowCustomEnabled( true );
         supportBar.setDisplayShowHomeEnabled( true );
         supportBar.setDisplayHomeAsUpEnabled( false );
@@ -146,7 +147,7 @@ public class MainActivity extends ActionBarActivity {
 	    // Load the initial music browser fragment
 	    // If the activity is being called upon to do a search, the initial fragment should be the SongSearchFragment
 	    
-	    Intent intent = getIntent();
+	    
 	    if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
 		    
 		    SongsFragment initialFragment = new SongsFragment();
@@ -215,6 +216,16 @@ public class MainActivity extends ActionBarActivity {
 		
 		android.util.Log.i( "MainActivity", "New Intent");
 		
+	    
+	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) ) {
+	    	
+	    	android.util.Log.i( "MainActivity", "Now playing Extra received.");
+	    	loadNowPlayingFragment();
+	    	showNowPlayingActivity();
+	    	
+	    }
+		
+		/*
 		if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) ) {
 	    	
 	    	String query = intent.getStringExtra( SearchManager.QUERY );
@@ -230,6 +241,7 @@ public class MainActivity extends ActionBarActivity {
 	    	transaction.commit();
 	    	
 	    }
+	    */
 		
 	}
 	
@@ -313,8 +325,8 @@ public class MainActivity extends ActionBarActivity {
 	    		//customActionBarToggle.showOpen();
 	    		mActionbarTitle = getSupportActionBar().getTitle();
 	    		getSupportActionBar().setTitle( getString( R.string.app_name ) );
+	    		//getSupportActionBar().setDisplayUseLogoEnabled( false );
 	    		//getSupportActionBar().setIcon( getResources().getDrawable( R.drawable.ic_launcher ) );
-	    		getSupportActionBar().setDisplayUseLogoEnabled( true );
 	    		
 	    		
 	    	}
@@ -544,56 +556,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		if ( resultCode == RESULT_OK ) {
 			
-			Class < ? extends Fragment > nowPlayingFragmentClass = this.mBoundService.mPlaylistFragmentClass;
-			
-			String nowPlayingMediaID = this.mBoundService.mPlaylistMediaID;
-			
-			Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
-			
-			try {
-				
-				// 
-				// Check to see if the currently playing Fragment is already showing
-				// only create the new fragment if it isn't already showing.
-				//
-				
-				if ( showingFragment != null ) {
-					
-					String showingMediaID = ( ( PlaylistBrowser ) showingFragment ).getMediaID();
-					
-					boolean isSameClass = showingFragment.getClass().equals( nowPlayingFragmentClass );
-					
-					boolean isSameMediaID = showingMediaID.equals( nowPlayingMediaID );
-					
-					if ( !( isSameClass && isSameMediaID ) ) {
-						
-						Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
-						( ( PlaylistBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
-						
-						FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-				    	
-				    	// Replace whatever is in the fragment_container view with this fragment,
-				    	// and add the transaction to the back stack
-				    	transaction.replace( R.id.MusicBrowserContainer, nowPlayingFragment );
-				    	transaction.addToBackStack( null );
-				    	
-				    	
-				    	// Commit the transaction
-				    	transaction.commitAllowingStateLoss();
-						
-					}
-					
-				}
-				
-
-		    	
-			} catch ( InstantiationException e ) {
-				e.printStackTrace();
-			} catch ( IllegalAccessException e ) {
-				e.printStackTrace();
-			} catch ( ClassCastException e ) {
-				e.printStackTrace();
-			}
+			loadNowPlayingFragment();
 			
 		}
 		

@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.StaleDataException;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
@@ -16,6 +17,8 @@ import android.widget.RemoteViews;
 public class PlaybackNotification {
 	
 	private static final char DASH_SYMBOL = 0x2013;
+	
+	public static final String NOW_PLAYING_EXTRA = "now_playing";
 	
 	private static final int PAUSE_ICON_RESOURCE = R.drawable.ic_action_playback_pause_white;
 	private static final int TUNE_ICON_RESOURCE = R.drawable.ic_action_music_2_white;
@@ -31,7 +34,7 @@ public class PlaybackNotification {
 	private RemoteViews mRemoteViews;
 	
 	PendingIntent playPendingIntent, nextTrackPendingIntent, closePendingIntent, contentIntent;
-	Intent playIntent, closeIntent, nextTrackIntent, openIntent;	
+	Intent playIntent, closeIntent, nextTrackIntent, openIntent;
 	
 	private String MEDIA_ID;
 	
@@ -43,7 +46,7 @@ public class PlaybackNotification {
 		
 		openIntent = new Intent( mContext, MainActivity.class );
 		
-		openIntent.putExtra( "now_playing", true );
+		openIntent.putExtra( NOW_PLAYING_EXTRA, true );
 		
 		contentIntent = PendingIntent.getActivity( mContext, 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT );
 		
@@ -76,13 +79,53 @@ public class PlaybackNotification {
 		
 	}
 	
+	private void requery() {
+		
+		if ( null != mSongCursor && !mSongCursor.isClosed() ) {
+			
+			mSongCursor.close();
+			
+		}
+		
+		mSongCursor = mContext.getContentResolver().query(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				new String[] {
+					
+					MediaStore.Audio.Media.ALBUM,
+					MediaStore.Audio.Media.ARTIST,
+					MediaStore.Audio.Media.TITLE,
+					MediaStore.Audio.Media.ALBUM_ID,
+					MediaStore.Audio.Media._ID
+					
+				},
+				MediaStore.Audio.Media._ID + "=?",
+				new String[] {
+					
+					MEDIA_ID
+					
+				},
+				null
+			);
+		
+		mSongCursor.moveToFirst();
+		
+	}
+	
 	private void buildAndShowNotification() {
 		
 		String tickerString = "";
 		
 		if ( null != mSongCursor ) {
 			
-			mSongCursor.moveToFirst();
+			try {
+				
+				mSongCursor.moveToFirst();
+				
+			} catch ( StaleDataException e ) {
+				
+				requery();
+				
+			}
 			
 			String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
 			String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
@@ -127,31 +170,7 @@ public class PlaybackNotification {
 			
 			MEDIA_ID = song_content_id;
 			
-			if ( null != mSongCursor && !mSongCursor.isClosed() ) {
-				
-				mSongCursor.close();
-				
-			}
-			
-			mSongCursor = mContext.getContentResolver().query(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					new String[] {
-						
-						MediaStore.Audio.Media.ALBUM,
-						MediaStore.Audio.Media.ARTIST,
-						MediaStore.Audio.Media.TITLE,
-						MediaStore.Audio.Media.ALBUM_ID,
-						MediaStore.Audio.Media._ID
-						
-					},
-					MediaStore.Audio.Media._ID + "=?",
-					new String[] {
-						
-						MEDIA_ID
-						
-					},
-					null
-				);
+			requery();
 			
 			mSongCursor.moveToFirst();
 			
