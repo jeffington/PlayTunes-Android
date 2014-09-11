@@ -18,41 +18,46 @@ import android.widget.TextView;
 
 public class NavigationListAdapter extends BaseAdapter {
 	
-	private static final int ROW_COUNT = 7;
+	private static final int ROW_COUNT = 6;
 	
 	private static final int[] badge_resources = {
 		
+		//R.drawable.ic_action_search,
 		R.drawable.ic_action_star_10,
 		R.drawable.ic_action_mic,
 		R.drawable.ic_action_record,
-		R.drawable.ic_action_guitar,
-		R.drawable.ic_action_music_2,
 		
+		R.drawable.ic_action_music_2,
+		R.drawable.ic_action_guitar,
 		R.drawable.ic_action_list_2,
-		R.drawable.ic_action_search
+		
 		
 	};
 	
 	private static final int[] label_string_resources = {
 		
+		//R.string.search,
 		R.string.playlist_name_starred,
 		R.string.artists_plural,
 		R.string.albums_plural,
-		R.string.genres_plural,
-		R.string.songs_plural,
 		
+		R.string.songs_plural,
+		R.string.genres_plural,
 		R.string.playlists_plural,
-		R.string.search
+		
 		
 	};
 	
+	//public static final int SEARCH = 0;
+	public static final int STARRED = 0;
+	
 	public static final int ARTISTS = 1;
 	public static final int ALBUMS = 2;
-	public static final int GENRES = 3;
-	public static final int SONGS = 4;
-	public static final int STARRED = 0;
+	public static final int SONGS = 3;
+	public static final int GENRES = 4;
 	public static final int PLAYLISTS = 5;
-	public static final int SEARCH = 6;
+	
+	
 	
 	private Context mContext;
 	
@@ -83,11 +88,24 @@ public class NavigationListAdapter extends BaseAdapter {
 	
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
-			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+			holder = new ViewHolder();
 			
+			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			convertView = li.inflate( R.layout.list_item_navigation_title, null );
+			
+			holder.title = ( TextView ) convertView.findViewById( R.id.Title );
+			holder.badgeCount =  ( TextView ) convertView.findViewById( R.id.BadgeCount );
+			holder.badgeIcon = ( ImageView ) convertView.findViewById( R.id.BadgeIcon );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
@@ -186,32 +204,38 @@ public class NavigationListAdapter extends BaseAdapter {
 					null);
 			
 			badgeCount = playlists.getCount();
+			
+			
 			playlists.close();
-			
-		} else if ( position == SEARCH ) {
-			
-			convertView.findViewById( R.id.BadgeCount ).setVisibility( View.GONE );
 			
 		}
 		
-		( ( TextView ) convertView.findViewById( R.id.Title )).setText( title );
-		ImageView badgeIcon = ( ImageView ) convertView.findViewById( R.id.BadgeIcon );
-		badgeIcon.setImageResource( icon_resource );
+		holder.title.setText( title );
+		
+		holder.badgeIcon.setImageResource( icon_resource );
 		
 		int badgeColor = mContext.getResources().getColor( R.color.textColorPrimary );
 		
 		
 		if ( position != STARRED ) {
 			
-			badgeIcon.setColorFilter( new LightingColorFilter( badgeColor, badgeColor ) );
+			holder.badgeIcon.setColorFilter( new LightingColorFilter( badgeColor, badgeColor ) );
 			
 		}
 		
-		( ( TextView ) convertView.findViewById( R.id.BadgeCount )).setText( "" + badgeCount );
+		holder.badgeCount.setText( "" + badgeCount );
 		
 		//.setColorFilter( Color.RED, Mode.MULTIPLY );
 		
 		return convertView;
+		
+	}
+	
+	static class ViewHolder {
+		
+		TextView badgeCount;
+		ImageView badgeIcon;
+		TextView title;
 		
 	}
 
