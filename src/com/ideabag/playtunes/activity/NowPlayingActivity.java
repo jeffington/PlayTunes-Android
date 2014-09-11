@@ -76,7 +76,7 @@ public class NowPlayingActivity extends ActionBarActivity {
         ActionBar supportBar = getSupportActionBar();
         
         
-        supportBar.setSubtitle( "Now Playing" );
+        supportBar.setSubtitle( getString( R.string.activity_title_now_playing ) );
         
         supportBar.setIcon( android.R.color.transparent );
         supportBar.setDisplayShowHomeEnabled( true );
@@ -183,7 +183,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		super.onDestroy();
 		
 		getContentResolver().unregisterContentObserver( mediaStoreChanged );
-		
+		adView.destroy();
 		//doUnbindService();
 		
 		
