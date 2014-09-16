@@ -121,36 +121,62 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
+		ViewHolder holder;
+		
 		if ( null == convertView ) {
 			
+			holder = new ViewHolder();
 			LayoutInflater li = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
 			convertView = li.inflate( R.layout.list_item_song_no_album, null );
 			
-			convertView.findViewById( R.id.StarButton ).setOnClickListener( songMenuClickListener );
-			convertView.findViewById( R.id.MenuButton ).setOnClickListener( songMenuClickListener );
+			holder.songTitle =  ( TextView ) convertView.findViewById( R.id.SongTitle );
+			holder.songAlbum =  ( TextView ) convertView.findViewById( R.id.SongAlbum );
+			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
+			
+			holder.songArtist.setVisibility( View.GONE );
+			//holder
+			holder.starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+			holder.starButton.setOnClickListener( songMenuClickListener );
+			
+			holder.menuButton = convertView.findViewById( R.id.MenuButton );
+			holder.menuButton.setOnClickListener( songMenuClickListener );
+			
+			convertView.setTag( holder );
+			
+		} else {
+			
+			holder = ( ViewHolder ) convertView.getTag();
 			
 		}
 		
 		cursor.moveToPosition( position );
 		
 		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+		//String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
 		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
-		( ( TextView ) convertView.findViewById( R.id.SongTitle ) ).setText( songTitle );
-		( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
-		( ( TextView ) convertView.findViewById( R.id.SongAlbum ) ).setText( songAlbum );
+		holder.songTitle.setText( songTitle );
+		//( ( TextView ) convertView.findViewById( R.id.SongArtist ) ).setText( songArtist );
+		holder.songAlbum.setText( songAlbum );
 		
-		convertView.findViewById( R.id.StarButton ).setTag( R.id.tag_song_id, song_id );
-		convertView.findViewById( R.id.MenuButton ).setTag( R.id.tag_song_id, song_id );
+		holder.starButton.setTag( R.id.tag_song_id, song_id );
+		holder.menuButton.setTag( R.id.tag_song_id, song_id );
 		
-		ToggleButton starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
-		
-		starButton.setChecked( mPlaylistManager.isStarred( song_id ) );
+		holder.starButton.setChecked( mPlaylistManager.isStarred( song_id ) );
 		
 		return convertView;
+		
+	}
+	
+	static class ViewHolder {
+		
+		TextView songTitle;
+		TextView songAlbum;
+		TextView songArtist;
+		ToggleButton starButton;
+		View menuButton;
 		
 	}
 
