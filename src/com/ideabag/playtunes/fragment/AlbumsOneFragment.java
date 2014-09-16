@@ -1,16 +1,20 @@
 package com.ideabag.playtunes.fragment;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -19,10 +23,11 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.IMusicBrowser;
+import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
-public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
+public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicBrowser, IPlayableList {
 	
 	public static final String TAG = "One Album Fragment";
 	
@@ -51,7 +56,7 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), ALBUM_ID );
-		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
+		
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -69,30 +74,45 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		getListView().setSelector( R.drawable.list_item_background );
 		
 		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener );
-		
+		adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
 		
 		if ( null != adapter.albumArtUri ) {
 			
-			int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 240, getResources().getDisplayMetrics() );
+			int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 196, getResources().getDisplayMetrics() );
 			albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
 			albumArtHeader.setLayoutParams( new AbsListView.LayoutParams( AbsListView.LayoutParams.MATCH_PARENT, headerHeightPx ) );
 			
 			ImageView iv = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
 			
+			ImageView background = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtBackground );
+			
+			TextView mAlbumTitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtTitle );
+			TextView mAlbumSubtitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtSubtitle );
+			
+			mAlbumTitle.setText( adapter.albumTitle );
+			mAlbumSubtitle.setText( adapter.albumArtist );
+			
+			Bitmap albumArtBitmap;
+			
+			albumArtBitmap = BitmapFactory.decodeFile( adapter.albumArtUri );
+			
+			Bitmap newAlbumArt = albumArtBitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+			
+			
 			getListView().addHeaderView( albumArtHeader, null, false );
 			
-			iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
+			background.setImageBitmap( newAlbumArt );
+			//albumArtHeader.setBackground( new BitmapDrawable( getResources(), newAlbumArt ) );
+			//albumArtHeader.setBackgroundDrawable( new BitmapDrawable( getResources(), newAlbumArt ) );
+			
+			background.setColorFilter( getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
+			
+			iv.setImageBitmap( albumArtBitmap );
+			//iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
 			
 		}
 		
     	setListAdapter( adapter );
-    	
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
 		
 	}
 	
@@ -209,5 +229,11 @@ public class AlbumsOneFragment extends ListFragment implements PlaylistBrowser {
 		}
 		
 	};
+
+	@Override public void onNowPlayingMediaChanged( String media_id ) {
+		
+		adapter.setNowPlayingMedia( media_id );
+		
+	}
 	
 }
