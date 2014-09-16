@@ -1,9 +1,10 @@
 package com.ideabag.playtunes.util;
 
-public interface PlaylistBrowser {
+public interface IMusicBrowser {
 	
 	public void setMediaID( String media_id );
 	
 	public String getMediaID();
+	
 	
 }
