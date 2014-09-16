@@ -17,7 +17,14 @@
         android:textColor="@color/textColorPrimary"
         />
     
-    <include layout="@layout/view_badge_song" />
+	<TextView android:id="@+id/SongCount"
+           style="@style/BadgeNumber"
+           android:layout_width="wrap_content"
+           android:layout_height="match_parent"
+           android:gravity="center_vertical|right"
+           android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+           android:layout_marginRight="@dimen/list_item_horizontal_spacing"
+           />
     
 	<ImageButton android:id="@+id/PlaylistMenuButton"
 	    style="@style/MenuButton"
