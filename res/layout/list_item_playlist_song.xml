@@ -8,6 +8,7 @@
            <ImageButton android:id="@+id/RemoveButton"
             style="@style/MenuButton"
 			android:src="@drawable/abc_ic_clear_holo_light"
+			android:scaleType="centerInside"
             />
         
     	<LinearLayout android:orientation="vertical"
@@ -18,7 +19,7 @@
     	    android:paddingTop="4dp"
     	    android:paddingBottom="4dp"
     	    android:paddingRight="2dp"
-    	    android:paddingLeft="8dp" >
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing" >
     	    
         <TextView android:id="@+id/SongTitle"
             
