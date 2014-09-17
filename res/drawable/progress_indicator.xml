@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 <item android:id="@android:id/background">
-        <inset android:insetTop="4dp"
-        android:insetBottom="4dp">
+        <inset android:insetTop="6dp"
+        android:insetBottom="6dp">
     <shape>
         <corners
         android:radius="4dp" />
@@ -31,8 +31,8 @@
     android:id="@android:id/progress">
  
     <clip>
-    <inset android:insetTop="4dp"
-        android:insetBottom="4dp">
+    <inset android:insetTop="6dp"
+        android:insetBottom="6dp">
     <shape>
         
         <corners android:radius="4dp" />
