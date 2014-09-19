@@ -10,7 +10,7 @@ import com.ideabag.playtunes.DragNDrop.DropListener;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.annotation.SuppressLint;
@@ -35,7 +35,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, AdapterView.OnItemClickListener {
+public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, AdapterView.OnItemClickListener {
 	
 	public static final String TAG = "One Playlist Fragment";
 	public static final String STARRED_TAG = "Starred Playlist Fragment";
@@ -57,6 +57,8 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 	
 	private boolean isStarred = false;
 	
+	private int scrollPosition = 0;
+	
 	//private int mListHeight, mListVisibleRows;
 	
 	Handler handle;
@@ -73,7 +75,8 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), PLAYLIST_ID );
 		outState.putBoolean( getString( R.string.key_state_playlist_editing ), isEditing );
-		outState.putInt( getString( R.string.key_state_scroll ), mListView.getScrollY() );
+		outState.putInt( getString( R.string.key_state_scroll ), scrollPosition );
+		
 	}
 	
 	@Override public void onAttach( Activity activity ) {
@@ -92,6 +95,7 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 			
 			PLAYLIST_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
 			isEditing = savedInstanceState.getBoolean( getString( R.string.key_state_playlist_editing ) );
+			scrollPosition = savedInstanceState.getInt( getString( R.string.key_state_scroll ), 0 );
 			
 		}
 		
@@ -140,14 +144,6 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		
 		mListView.setDragListener( mSongDragListener );
 		
-		//mListView.setChoiceMode( ListView.CHOICE_MODE_SINGLE );
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		mListView.scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
-		
 		
 	}
 	
@@ -158,9 +154,18 @@ public class PlaylistsOneFragment extends Fragment implements PlaylistBrowser, A
 		return mListView;
 		
 	}
-
+	
+	@Override public void onPause() {
+		super.onPause();
+		
+		scrollPosition = mListView.getScrollY();
+		
+	}
+	
 	@Override public void onResume() {
 		super.onResume();
+		
+		mListView.scrollTo( 0, scrollPosition );
 		
 		mActivity.setActionbarTitle( adapter.PLAYLIST_NAME );
     	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
