@@ -74,9 +74,10 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		getListView().setSelector( R.drawable.list_item_background );
 		
 		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener );
-		adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
+		// TODO: A start at showing an indicator next to the song that's playing in the list.
+		//adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
 		
-		if ( null != adapter.albumArtUri ) {
+		//if ( null != adapter.albumArtUri ) {
 			
 			int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 196, getResources().getDisplayMetrics() );
 			albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
@@ -94,9 +95,16 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 			Bitmap albumArtBitmap;
 			
-			albumArtBitmap = BitmapFactory.decodeFile( adapter.albumArtUri );
-			
-			Bitmap newAlbumArt = albumArtBitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+			if ( null != adapter.albumArtUri ) {
+				
+				albumArtBitmap = BitmapFactory.decodeFile( adapter.albumArtUri );
+				
+			} else {
+				
+				albumArtBitmap = BitmapFactory.decodeResource( getResources(), R.drawable.no_album_art_full );
+				
+			}
+			Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
 			
 			
 			getListView().addHeaderView( albumArtHeader, null, false );
@@ -105,12 +113,12 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			//albumArtHeader.setBackground( new BitmapDrawable( getResources(), newAlbumArt ) );
 			//albumArtHeader.setBackgroundDrawable( new BitmapDrawable( getResources(), newAlbumArt ) );
 			
-			background.setColorFilter( getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
+			background.setColorFilter( getResources().getColor( R.color.now_playing_background ), PorterDuff.Mode.MULTIPLY );
 			
 			iv.setImageBitmap( albumArtBitmap );
 			//iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
 			
-		}
+		//}
 		
     	setListAdapter( adapter );
 		
