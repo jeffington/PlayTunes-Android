@@ -8,12 +8,12 @@ import android.widget.ListView;
 
 public class SaveScrollListFragment extends ListFragment {
 	
-	private int scrollPosition = 0;
+	protected int mSavedScrollPosition = 0;
 	
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		
-		outState.putInt( getString( R.string.key_state_scroll ), scrollPosition );
+		outState.putInt( getString( R.string.key_state_scroll ), mSavedScrollPosition );
 		try {
 			
 			ListView lv = getListView();
@@ -32,7 +32,7 @@ public class SaveScrollListFragment extends ListFragment {
     	
 		if ( null != savedInstanceState ) {
 			
-			scrollPosition = savedInstanceState.getInt( getString( R.string.key_state_scroll ), 0 );
+			mSavedScrollPosition = savedInstanceState.getInt( getString( R.string.key_state_scroll ), 0 );
 			
 		}
 		
@@ -41,13 +41,13 @@ public class SaveScrollListFragment extends ListFragment {
 	@Override public void onResume() {
 		super.onResume();
 		
-		getListView().scrollTo( 0, scrollPosition );
+		getListView().scrollTo( 0, mSavedScrollPosition );
 		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
-		scrollPosition = getListView().getScrollY();
+		mSavedScrollPosition = getListView().getScrollY();
 		
 	}
 	
