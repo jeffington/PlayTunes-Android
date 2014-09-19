@@ -14,10 +14,10 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsAllAdapter;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
-public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  {
+public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicBrowser  {
 	
 	public static final String TAG = "All Albums Fragment";
 
@@ -46,19 +46,6 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
 		
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
-    	
-		if ( null != savedInstanceState ) {
-			
-			getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-			
-		}
-		
-	}
-	
-	@Override public void onSaveInstanceState( Bundle outState ) {
-		super.onSaveInstanceState( outState );
-		
-		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 		
 	}
 	
@@ -145,5 +132,6 @@ public class AlbumsAllFragment extends ListFragment implements PlaylistBrowser  
 	@Override public void setMediaID(String media_id) { /* ... */ }
 
 	@Override public String getMediaID() { return ""; }
+
 	
 }
