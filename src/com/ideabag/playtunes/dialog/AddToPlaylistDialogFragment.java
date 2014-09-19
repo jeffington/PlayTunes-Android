@@ -66,7 +66,7 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         lv.setDividerHeight( 1 );
         lv.setSelector( R.drawable.list_item_background );
         LinearLayout starredHeader = ( LinearLayout ) inflater.inflate( R.layout.list_item_playlist_starred, null );
-        starredHeader.findViewById(R.id.BadgeSong).setVisibility( View.GONE );
+        starredHeader.findViewById(R.id.SongCount).setVisibility( View.GONE );
         
         TextView createPlaylistHeader = ( TextView ) inflater.inflate( R.layout.list_item_new_playlist, null );
         
