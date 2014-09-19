@@ -37,6 +37,8 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	private String ALBUM_ID = "";
 	
 	private View albumArtHeader;
+	private ImageView mAlbumArt;
+	private ImageView mAlbumArtBackground;
 	
 	@Override public void setMediaID( String media_id ) {
 		
@@ -83,9 +85,9 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
 			albumArtHeader.setLayoutParams( new AbsListView.LayoutParams( AbsListView.LayoutParams.MATCH_PARENT, headerHeightPx ) );
 			
-			ImageView iv = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
+			mAlbumArt = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
 			
-			ImageView background = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtBackground );
+			mAlbumArtBackground = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtBackground );
 			
 			TextView mAlbumTitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtTitle );
 			TextView mAlbumSubtitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtSubtitle );
@@ -109,13 +111,13 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 			getListView().addHeaderView( albumArtHeader, null, false );
 			
-			background.setImageBitmap( newAlbumArt );
+			mAlbumArtBackground.setImageBitmap( newAlbumArt );
 			//albumArtHeader.setBackground( new BitmapDrawable( getResources(), newAlbumArt ) );
 			//albumArtHeader.setBackgroundDrawable( new BitmapDrawable( getResources(), newAlbumArt ) );
 			
-			background.setColorFilter( getResources().getColor( R.color.now_playing_background ), PorterDuff.Mode.MULTIPLY );
+			mAlbumArtBackground.setColorFilter( getResources().getColor( R.color.now_playing_background ), PorterDuff.Mode.MULTIPLY );
 			
-			iv.setImageBitmap( albumArtBitmap );
+			mAlbumArt.setImageBitmap( albumArtBitmap );
 			//iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
 			
 		//}
@@ -179,16 +181,27 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	@Override public void onDestroyView() {
 	    super.onDestroyView();
 	    
-	    ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.AlbumArtFull );
-	    
-	    if ( null != mAlbumCover ) {
+	    if ( null != mAlbumArt ) {
 		    
-		    BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+		    BitmapDrawable mAlbumArtDrawable = ( BitmapDrawable ) mAlbumArt.getDrawable();
 			
-			if ( null != bd ) {
+			if ( null != mAlbumArtDrawable ) {
 				
-				bd.getBitmap().recycle();
-				mAlbumCover.setImageBitmap( null );
+				mAlbumArtDrawable.getBitmap().recycle();
+				mAlbumArt.setImageBitmap( null );
+				
+			}
+			
+	    }
+	    
+	    if ( null != mAlbumArtBackground ) {
+		    
+		    BitmapDrawable mAlbumArtBackgroundDrawable = ( BitmapDrawable ) mAlbumArtBackground.getDrawable();
+			
+			if ( null != mAlbumArtBackgroundDrawable ) {
+				
+				mAlbumArtBackgroundDrawable.getBitmap().recycle();
+				mAlbumArtBackground.setImageBitmap( null );
 				
 			}
 			
