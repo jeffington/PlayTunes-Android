@@ -3,41 +3,61 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:orientation="horizontal"
-    android:gravity="center"
-    android:paddingLeft="@dimen/list_item_horizontal_spacing"
-	android:paddingRight="@dimen/list_item_horizontal_spacing">
+    android:gravity="center|fill_horizontal"
+    android:paddingLeft="@dimen/spacing_medium"
+	android:paddingRight="@dimen/spacing_medium">
     
     <ImageButton android:id="@+id/NowPlayingRepeatButton"
-        android:layout_width="@dimen/list_item_height"
+        
+        android:layout_width="@dimen/touch_target_minimum"
+        android:minWidth="@dimen/touch_target_minimum"
         android:layout_height="match_parent"
         android:src="@drawable/ic_action_playback_repeat_white"
         android:background="@drawable/button_background_dark"
-        />
+        
+	/>
     
     <ImageButton android:id="@+id/NowPlayingPrevButton"
-	    android:layout_width="@dimen/list_item_height"
+        
+	    android:layout_width="0dp"
+	    android:layout_weight="1"
+	    android:minWidth="@dimen/list_item_height"
 	    android:layout_height="match_parent"
 	    android:src="@drawable/ic_action_playback_prev_white"
 	    android:background="@drawable/button_background_dark"
+	    
 	    />
     
     <ImageButton android:id="@+id/NowPlayingPlayPauseButton"
-	    android:layout_width="@dimen/list_item_height"
+        
+        android:minWidth="@dimen/list_item_height"
+	    android:layout_width="0dp"
+	    android:layout_weight="1"
 	    android:layout_height="match_parent"
 	    android:src="@drawable/ic_action_playback_pause_white"
 	    android:background="@drawable/button_background_dark"
+	    
 	    />
         
-        <ImageButton android:id="@+id/NowPlayingNextButton"
-	    android:layout_width="@dimen/list_item_height"
+	<ImageButton android:id="@+id/NowPlayingNextButton"
+        
+	    android:layout_width="0dp"
+	    android:layout_weight="1"
+	    android:minWidth="@dimen/list_item_height"
 	    android:layout_height="match_parent"
 	    android:src="@drawable/ic_action_playback_next_white"
 	    android:background="@drawable/button_background_dark"
-	    />
+		
+	/>
+	
     <ImageButton android:id="@+id/NowPlayingShuffleButton"
-        android:layout_width="@dimen/list_item_height"
+        
+        android:layout_width="@dimen/touch_target_minimum"
+        android:minWidth="@dimen/touch_target_minimum"
         android:layout_height="match_parent"
         android:src="@drawable/ic_action_playback_schuffle_white"
         android:background="@drawable/button_background_dark"
-        />
+        
+	/>
+    
 </LinearLayout>
