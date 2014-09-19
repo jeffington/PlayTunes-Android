@@ -42,54 +42,58 @@ public class MusicIntentReceiver extends BroadcastReceiver {
         	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PAUSE ) );
 
         } else if ( action.equals( Intent.ACTION_MEDIA_BUTTON ) ) {
+	        	
+	        if ( intent.hasExtra( Intent.EXTRA_KEY_EVENT ) ) {
+	        	
+	            KeyEvent keyEvent = ( KeyEvent ) intent.getExtras().get( Intent.EXTRA_KEY_EVENT );
+	            
+	            if ( keyEvent.getAction() != KeyEvent.ACTION_DOWN )
+	                return;
+	
+	            switch ( keyEvent.getKeyCode() ) {
+	            	
+	                case KeyEvent.KEYCODE_HEADSETHOOK:
+	                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+	                    
+	                	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PLAY_OR_PAUSE ) );
+	                    
+	                    break;
+	                    
+	                case KeyEvent.KEYCODE_MEDIA_PLAY:
+	                	
+	                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PLAY ) );
+	                    
+	                    break;
+	                    
+	                case KeyEvent.KEYCODE_MEDIA_PAUSE:
+	                    
+	                	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PAUSE ) );
+	                    
+	                    break;
+	                /*
+	                case KeyEvent.KEYCODE_MEDIA_STOP:
+	                	
+	                    context.startService( new Intent( MusicPlayerService.ACTION_STOP ) );
+	                    
+	                    break;
+	                 */
+	                case KeyEvent.KEYCODE_MEDIA_NEXT:
+	                	
+	                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_NEXT ) );
+	                    
+	                    break;
+	                    
+	                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+	                    // TODO: ensure that doing this in rapid succession actually plays the
+	                    // previous song
+	                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_BACK ) );
+	                    
+	                    break;
+	                    
+	            }
+	            
+	        }
         	
-            KeyEvent keyEvent = ( KeyEvent ) intent.getExtras().get( Intent.EXTRA_KEY_EVENT );
-            
-            if ( keyEvent.getAction() != KeyEvent.ACTION_DOWN )
-                return;
-
-            switch ( keyEvent.getKeyCode() ) {
-            	
-                case KeyEvent.KEYCODE_HEADSETHOOK:
-                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                    
-                	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PLAY_OR_PAUSE ) );
-                    
-                    break;
-                    
-                case KeyEvent.KEYCODE_MEDIA_PLAY:
-                	
-                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PLAY ) );
-                    
-                    break;
-                    
-                case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                    
-                	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PAUSE ) );
-                    
-                    break;
-                /*
-                case KeyEvent.KEYCODE_MEDIA_STOP:
-                	
-                    context.startService( new Intent( MusicPlayerService.ACTION_STOP ) );
-                    
-                    break;
-                 */
-                case KeyEvent.KEYCODE_MEDIA_NEXT:
-                	
-                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_NEXT ) );
-                    
-                    break;
-                    
-                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    // TODO: ensure that doing this in rapid succession actually plays the
-                    // previous song
-                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_BACK ) );
-                    
-                    break;
-                    
-            }
-            
         }
         
     }
