@@ -24,6 +24,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,7 +62,11 @@ public class NowPlayingActivity extends ActionBarActivity {
 	//private int currentPlayback = 0;
 	
 	private String lastAlbumUri = null;
-	private AdView adView;
+	
+	// Bound for activity_nowplaying.xml
+	protected AdView adView;
+	protected ImageView mAlbumArtBackground;
+	protected ImageView mAlbumCover;
 	
 	private String current_media_id;
 	
@@ -94,6 +101,8 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 		mProgressFragment = ( TrackProgressFragment ) getSupportFragmentManager().findFragmentById( R.id.TrackProgressFragment );
 		
+		mAlbumArtBackground = ( ImageView ) findViewById( R.id.NowPlayingBackground );
+		mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
 		// Show Playlist
 		
 		
@@ -461,8 +470,6 @@ public class NowPlayingActivity extends ActionBarActivity {
 			
 			String nextAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 			
-			ImageView mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
-			
 			// 
 			// This tests if we loaded previous album art and that it wasn't null
 			// If the nextAlbumUri is null, it means there's no album art and 
@@ -480,7 +487,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 				recycleAlbumArt();
 				
 			}
-
+			
 			if ( null == nextAlbumUri ) {
 				
 				mAlbumCover.setImageResource( R.drawable.no_album_art_full );
@@ -492,6 +499,13 @@ public class NowPlayingActivity extends ActionBarActivity {
 				mAlbumCover.setImageURI( albumArtUri );
 				
 				lastAlbumUri = nextAlbumUri;
+				
+				Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri );
+				Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+				
+				mAlbumArtBackground.setImageBitmap( newAlbumArt );
+				//findViewById( R.id.NowPlayingBackground ).setBackgroundDrawable( new BitmapDrawable( newAlbumArt ) );
+				mAlbumArtBackground.setColorFilter( getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
 				
 			}
 			
@@ -517,20 +531,28 @@ public class NowPlayingActivity extends ActionBarActivity {
     	
     }
     
-	   private void recycleAlbumArt() {
-		   
-		   ImageView mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
-		   
-		   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+   private void recycleAlbumArt() {
+	   
+	   BitmapDrawable mAlbumDrawable = ( BitmapDrawable ) mAlbumCover.getDrawable();
+	   BitmapDrawable mBackgroundDrawable = ( BitmapDrawable ) mAlbumArtBackground.getDrawable();
+	   
+	   if ( null != mAlbumDrawable && null != mAlbumDrawable.getBitmap() ) {
 			
-			if ( null != bd && null != bd.getBitmap() ) {
-				
-				bd.getBitmap().recycle();
-				mAlbumCover.setImageBitmap( null );
-				
-			}
+		   mAlbumDrawable.getBitmap().recycle();
+		   mAlbumCover.setImageBitmap( null );
 		   
 	   }
+	   
+	   if ( null != mBackgroundDrawable && null != mBackgroundDrawable.getBitmap() ) {
+			
+		   mBackgroundDrawable.getBitmap().recycle();
+		   mAlbumArtBackground.setImageBitmap( null );
+		   
+	   }
+	   
+		
+		
+   }
     
     private PlaylistMediaPlayer.PlaybackListener mPlaybackListener = new PlaylistMediaPlayer.PlaybackListener() {
 
