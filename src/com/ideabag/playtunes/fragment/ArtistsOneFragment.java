@@ -4,8 +4,10 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.adapter.ArtistsOneAdapter;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.adapter.ArtistAlbumsAdapter;
+import com.ideabag.playtunes.adapter.ArtistAllSongsAdapter;
+import com.ideabag.playtunes.util.IMusicBrowser;
+import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -25,7 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser {
+public class ArtistsOneFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "One Artist Fragment";
 	
@@ -34,7 +36,9 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	
 	//private TextView albumDivider;
 	
-	ArtistsOneAdapter adapter;
+	//ArtistAlbumsAdapter adapter;
+	
+	MergeAdapter adapter;
 	
 	private MainActivity mActivity;
     
@@ -59,12 +63,13 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), ARTIST_ID );
-		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 		
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
+		
+		adapter = new MergeAdapter();
 		
 		if ( null != savedInstanceState ) {
 			
@@ -74,7 +79,7 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
 		
 		LayoutInflater inflater = mActivity.getLayoutInflater();
 		
-    	adapter = new ArtistsOneAdapter( getActivity(), ARTIST_ID );
+    	adapter.addAdapter( new ArtistAlbumsAdapter( getActivity(), ARTIST_ID ) );
     	
     	
     	Cursor songCountCursor = getActivity().getContentResolver().query(
@@ -122,18 +127,19 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
     	int singlesCount = singlesCountCursor.getCount();
     	singlesCountCursor.close();
     	
-    	
+    	/*
     	AllSongs = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
     	( ( TextView ) AllSongs.findViewById( R.id.SongCount ) ).setText( "" + songCount );
     	( ( TextView ) AllSongs.findViewById( R.id.Title ) ).setText( getString( R.string.artist_all_songs ) );
     	getListView().addHeaderView( AllSongs, null, true );
-    	
+    	*/
     	if ( singlesCount > 0) {
     		
-    		Singles = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
-    		( ( TextView ) Singles.findViewById( R.id.SongCount ) ).setText( "" + singlesCount );
+    		Singles = ( ViewGroup ) inflater.inflate( R.layout.list_item_navigation_title, null );
+    		( ( TextView ) Singles.findViewById( R.id.BadgeCount ) ).setText( "" + singlesCount );
     		( ( TextView ) Singles.findViewById( R.id.Title ) ).setText( getString( R.string.artist_singles ) );
-    		getListView().addHeaderView( Singles, null, true );
+    		//getListView().addHeaderView( Singles, null, true );
+    		adapter.addView( Singles );
     		
     	}
     	/*
@@ -142,26 +148,23 @@ public class ArtistsOneFragment extends ListFragment implements PlaylistBrowser 
     	
     	getListView().addHeaderView( albumDivider, null, false );
     	*/
-    	getListView().setHeaderDividersEnabled( true );
+    	
+    	adapter.addAdapter( new ArtistAllSongsAdapter( getActivity(), ARTIST_ID, null ) );
+    	//getListView().setHeaderDividersEnabled( true );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
     	
     	setListAdapter( adapter );
     	
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
+    	
     	
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
 		
-    	
-    	mActivity.setActionbarTitle( adapter.ArtistName );
+    	// TODO:
+    	//mActivity.setActionbarTitle( adapter.ArtistName );
     	mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
