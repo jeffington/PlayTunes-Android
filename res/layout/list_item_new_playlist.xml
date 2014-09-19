@@ -9,5 +9,5 @@
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
         android:textColor="@color/textColorPrimary"
         android:drawableLeft="@drawable/ic_action_add"
-        android:drawablePadding="@dimen/list_item_horizontal_spacing"
+        android:drawablePadding="32dp"
 	/>
