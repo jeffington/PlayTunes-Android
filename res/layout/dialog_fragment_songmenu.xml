@@ -33,36 +33,29 @@
 		/>
         
     </RelativeLayout>
-<LinearLayout android:id="@+id/SongMenuAddTo"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
-    android:orientation="horizontal"
-    android:minHeight="@dimen/list_item_height"
-    android:gravity="center_vertical"
-    android:paddingLeft="@dimen/list_item_horizontal_spacing"
-    android:paddingRight="@dimen/list_item_horizontal_spacing"
-    android:background="@drawable/list_item_background">
-   	
-   	<ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_action_add"
-            />
-	
-   	<TextView android:orientation="vertical"
-    	    android:layout_width="0dp"
-    	    android:layout_height="wrap_content"
+
+   	<TextView android:id="@+id/SongMenuAddTo"
+   	    android:orientation="vertical"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="@dimen/list_item_height"
+    	    android:minHeight="@dimen/list_item_height"
     	    android:layout_gravity="center_vertical"
     	    android:layout_weight="1"
-    	    android:padding="8dp"
     	    android:gravity="left|center_vertical"
 			android:textSize="@dimen/text_xlarge"
-    	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
     	    android:text="@string/playlist_add"
     	    android:textColor="@color/textColorPrimary"
+    	    android:drawableLeft="@drawable/ic_action_add"
+    	    android:drawablePadding="8dp"
+		    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+		    android:paddingRight="@dimen/list_item_horizontal_spacing"
+		    android:background="@drawable/list_item_background"
     	    />
-    	    
-</LinearLayout>
+   	<View
+   	    android:layout_width="match_parent"
+   	    android:layout_height="1px"
+   	    android:background="@color/list_divider_color"
+   	    />
     
 <LinearLayout android:id="@+id/SongMenuArtist"
     android:layout_width="match_parent"
@@ -107,6 +100,13 @@
         
         </LinearLayout>
 </LinearLayout>
+
+   	<View
+   	    android:layout_width="match_parent"
+   	    android:layout_height="1px"
+   	    android:background="@color/list_divider_color"
+   	    />
+
 <LinearLayout android:id="@+id/SongMenuAlbum"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
