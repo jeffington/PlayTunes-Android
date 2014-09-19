@@ -3,30 +3,29 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/list_item_horizontal_spacing"
-		android:paddingRight="@dimen/list_item_horizontal_spacing">
+        android:paddingLeft="@dimen/spacing_medium"
+		android:paddingRight="@dimen/spacing_medium">
         
        <ToggleButton android:id="@+id/StarButton"
            style="@style/DarkStarButton"
             android:layout_height="@dimen/list_item_height"
             android:layout_width="@dimen/touch_target_minimum"
+            android:minWidth="@dimen/list_item_height"
             />
     
     	<LinearLayout
     	    android:layout_width="0dp"
     	    android:layout_height="wrap_content"
-    	    android:layout_gravity="top"
-    	    android:layout_weight="1"
-    	    android:orientation="vertical"
-    	    android:padding="8dp"
-    	    android:paddingLeft="@dimen/list_item_horizontal_spacing" >
+    	    android:layout_gravity="center"
+    	    android:layout_weight="3"
+    	    android:orientation="vertical" >
     	    
         <TextView
            	android:id="@+id/SongTitle"
            	android:layout_height="wrap_content"
            	android:layout_width="match_parent"
            	android:textColor="@color/textColorPrimaryDark"
-           	android:textSize="@dimen/text_xlarge"
+           	android:textSize="@dimen/text_large"
            	android:lines="1"
            	android:ellipsize="end"
            	android:singleLine="true"
@@ -39,7 +38,7 @@
            	android:singleLine="true"
            	android:ellipsize="marquee"
 			android:textColor="@color/textColorPrimaryDark"
-			android:textSize="@dimen/text_large"
+			android:textSize="@dimen/text_medium"
            	android:gravity="center"
         />
         
@@ -49,7 +48,7 @@
         	android:layout_height="wrap_content"
            	android:textColor="@color/textColorSecondaryDark"
            	android:textSize="@dimen/text_medium"
-        	
+        	android:visibility="gone"
         	android:ellipsize="end"
         	android:lines="1"
         	android:singleLine="true"
@@ -62,6 +61,7 @@
             style="@style/AddButtonDark"
             android:layout_height="@dimen/list_item_height"
             android:layout_width="@dimen/touch_target_minimum"
+            
             />
 
 </LinearLayout>
