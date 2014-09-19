@@ -3,6 +3,8 @@ package com.ideabag.playtunes.fragment;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.NowPlayingActivity;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,17 +32,25 @@ public class FooterControlsFragment extends Fragment {
 	
 	private String lastAlbumUri = null;
 	private String current_media_id;
-	
-	private ImageButton mPlayPauseButton;
 	private boolean isPlaying = false;
-	
 	private boolean isShowing = false;
+	
+	//
+	// Views from fragment_footer_controls.xml
+	//
+	private ImageButton mPlayPauseButton;
+	private ImageView mAlbumCover;
+	private TextView mTitle, mArtist;
+	
+	private Fragment mFragmentSelf;
 	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		
+		mFragmentSelf = this;
 		
 	}
 	
@@ -55,6 +65,10 @@ public class FooterControlsFragment extends Fragment {
 		mPlayPauseButton = ( ImageButton ) getView().findViewById( R.id.FooterControlsPlayPauseButton );
 		mPlayPauseButton.setOnClickListener( controlsClickListener );
 		
+		mTitle = ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle );
+		mArtist = ( TextView ) getView().findViewById( R.id.FooterControlsArtistName );
+		mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
+		 
 		View mNextButton = getView().findViewById( R.id.FooterControlsNextButton );
 		
 		if ( null != mNextButton ) {
@@ -72,20 +86,6 @@ public class FooterControlsFragment extends Fragment {
 		return inflater.inflate( R.layout.fragment_footer_controls, container, false );
 		
 	}
-	
-	@Override public void onResume() {
-		super.onResume();
-		
-		
-	}
-		
-	@Override public void onPause() {
-		super.onPause();
-		
-		
-	}
-	
-
 	
 	
 	View.OnClickListener controlsClickListener = new View.OnClickListener() {
@@ -122,9 +122,25 @@ public class FooterControlsFragment extends Fragment {
 		
 	};
 	
-	@SuppressLint("NewApi")
-	public void setMediaID( String media_id ) {
-		
+	   
+	   
+	   private void recycleAlbumArt() {
+		   
+		   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+			
+			if ( null != bd && null != bd.getBitmap() ) {
+				
+				bd.getBitmap().recycle();
+				mAlbumCover.setImageBitmap( null );
+				
+			}
+		   
+	   }
+	
+	   public PlaybackListener PlaybackListener = new PlaybackListener() {
+
+		@Override public void onTrackChanged(String media_id) {
+			
 		if ( null == media_id ) {
 	    		
 	    		if ( isShowing ) {
@@ -140,7 +156,7 @@ public class FooterControlsFragment extends Fragment {
 	    			FragmentManager fm = getActivity().getSupportFragmentManager();
 	    			fm.beginTransaction()
 	    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
-	    			          .hide( this )
+	    			          .hide( mFragmentSelf )
 	    			          .commitAllowingStateLoss();
 	    			
 	    		} else {
@@ -148,16 +164,16 @@ public class FooterControlsFragment extends Fragment {
 	    			FragmentManager fm = getActivity().getSupportFragmentManager();
 	    			fm.beginTransaction()
 	    			          //.setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
-	    			          .hide( this )
+	    			          .hide( mFragmentSelf )
 	    			          .commitAllowingStateLoss();
 	    			
 	    			//getView().setVisibility( View.GONE );
 	    			
 	    		}
 	    		
-	    	} else if ( media_id != this.current_media_id ) {
+	    	} else if ( media_id != current_media_id ) {
 	    		
-	    		this.current_media_id = media_id;
+	    		current_media_id = media_id;
 	    		
 	    		Cursor mSongCursor = mActivity.getContentResolver().query(
 						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -211,8 +227,6 @@ public class FooterControlsFragment extends Fragment {
 				
 				String nextAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 				
-				ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
-				
 				// 
 				// This tests if we loaded previous album art and that it wasn't null
 				// If the nextAlbumUri is null, it means there's no album art and 
@@ -254,8 +268,8 @@ public class FooterControlsFragment extends Fragment {
 				albumCursor.close();
 				mSongCursor.close();
 				
-				( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setText( title );
-				( ( TextView ) getView().findViewById( R.id.FooterControlsArtistName ) ).setText( artist );
+				mTitle.setText( title );
+				mArtist.setText( artist );
 				
 				// Show the footer controls
 				
@@ -264,7 +278,7 @@ public class FooterControlsFragment extends Fragment {
 	    			FragmentManager fm = getActivity().getSupportFragmentManager();
 	    			fm.beginTransaction()
 	    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
-	    			          .show( this )
+	    			          .show( mFragmentSelf )
 	    			          .commit();
 		    		
 	    			//getActivity().findViewById( R.id.FooterShadow ).setVisibility( View.VISIBLE );
@@ -274,43 +288,45 @@ public class FooterControlsFragment extends Fragment {
 	    		}
 				
 	    	}
-	    	
-	    }
-	   
-	   
-	   public void showPaused() {
-		   
-		   this.isPlaying = false;
-		   
-		   mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_play_white );
-		   
-		   ( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setEllipsize( null );
-		   
-	   }
-	   
-	   public void showPlaying() {
-		   
-		   this.isPlaying = true;
-		   
-		   mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_pause_white );
-		   
-		   ( ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle ) ).setEllipsize( TextUtils.TruncateAt.MARQUEE );
-		   
-	   }
-	   
-	   private void recycleAlbumArt() {
-		   
-		   ImageView mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
-		   
-		   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
 			
-			if ( null != bd && null != bd.getBitmap() ) {
-				
-				bd.getBitmap().recycle();
-				mAlbumCover.setImageBitmap( null );
-				
-			}
-		   
-	   }
-	
+		}
+
+		@Override public void onPlay(int playbackPositionMilliseconds) {
+			   
+			isPlaying = true;
+			   
+			mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_pause_white );
+			mTitle.setSelected( true );
+		    mTitle.setSingleLine( true );
+			mTitle.setEllipsize( TextUtils.TruncateAt.MARQUEE );
+			   
+		}
+
+		@Override public void onPause(int playbackPositionMilliseconds) {
+			
+			   isPlaying = false;
+			   
+			   mPlayPauseButton.setImageResource( R.drawable.ic_action_playback_play_white );
+			   
+			   mTitle.setEllipsize( TextUtils.TruncateAt.END );
+			
+		}
+
+		@Override public void onPlaylistDone() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override public void onLoopingChanged(LoopState loop) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override public void onShuffleChanged(boolean isShuffling) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	   };
+	   
 }

@@ -6,12 +6,10 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
-import com.ideabag.playtunes.fragment.SearchFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
-import com.ideabag.playtunes.media.PlaylistMediaPlayer;
-import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
+import com.ideabag.playtunes.fragment.search.SearchFragment;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.IMusicBrowser;
 
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -22,8 +20,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
 	private ActionBarDrawerToggle mDrawerToggle;
 	
 	public MusicPlayerService mBoundService;
-	private boolean mIsBound = false;
+	public boolean mIsBound = false;
 	
 	private FooterControlsFragment mFooterControlsFragment;
 	
@@ -75,30 +73,32 @@ public class MainActivity extends ActionBarActivity {
 	                R.string.drawer_close ) {
 	        	
 	        	float mPreviousOffset = 0f;
+	        	ActionBar bar = getSupportActionBar();
 	        	
 	            public void onDrawerClosed( View drawerView ) {
 	            	super.onDrawerClosed( drawerView );
 	            	
-	            	getSupportActionBar().setTitle( mActionbarTitle );
-	            	getSupportActionBar().setSubtitle( mActionbarSubtitle );
+	            	//bar.setTitle( mActionbarTitle );
+	            	//bar.setSubtitle( mActionbarSubtitle );
 	            	
 	            	mShouldHideActionItems = false;
 	            	supportInvalidateOptionsMenu();
-	            	
+	            	bar.setDisplayUseLogoEnabled( true );
 	            }
 	            
 	            public void onDrawerOpened( View drawerView ) {
 	                super.onDrawerOpened( drawerView );
 	                
-	            	mActionbarTitle = getSupportActionBar().getTitle();
-	            	mActionbarSubtitle = getSupportActionBar().getSubtitle();
+	            	//mActionbarTitle = getSupportActionBar().getTitle();
+	            	//mActionbarSubtitle = getSupportActionBar().getSubtitle();
 	            	
-	            	getSupportActionBar().setTitle( getString( R.string.app_name ) );
-	            	getSupportActionBar().setSubtitle( null );
+	            	//bar.setTitle( getString( R.string.app_name ) );
+	            	//bar.setSubtitle( null );
 	                
 	            	mShouldHideActionItems = true;
 	            	supportInvalidateOptionsMenu();
-	            	getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	            	bar.setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	            	bar.setDisplayUseLogoEnabled( false );
 	            	
 	           }
 	            
@@ -108,14 +108,24 @@ public class MainActivity extends ActionBarActivity {
 	            	if ( slideOffset > mPreviousOffset && !mShouldHideActionItems ) {
 	                	
 	                	mShouldHideActionItems = true;
+	                	
+	                	mActionbarTitle = bar.getTitle();
+		            	mActionbarSubtitle = bar.getSubtitle();
+	                	
+	                	bar.setTitle( getString( R.string.app_name ) );
+		            	bar.setSubtitle( null );
 	                	supportInvalidateOptionsMenu();
-	                	getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
-	                   
+	                	bar.setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	                	bar.setDisplayUseLogoEnabled( false );
+	                	
 	               } else if( mPreviousOffset > slideOffset && slideOffset < 0.5f && mShouldHideActionItems ) {
 	            	   
 	            	   mShouldHideActionItems = false;
+	            	   bar.setTitle( mActionbarTitle );
+	            	   bar.setSubtitle( mActionbarSubtitle );
 	            	   supportInvalidateOptionsMenu();
 	            	   getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
+	            	   bar.setDisplayUseLogoEnabled( true );
 	            	   
 	               }
 	                
@@ -147,6 +157,11 @@ public class MainActivity extends ActionBarActivity {
 	    // Load the initial music browser fragment
 	    // If the activity is being called upon to do a search, the initial fragment should be the SongSearchFragment
 	    
+	    if ( null != savedInstanceState ) {
+	    	
+	    	
+	    	
+	    }
 	    
 	    if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
 		    
@@ -170,7 +185,11 @@ public class MainActivity extends ActionBarActivity {
 	    
 	    if ( openCount == 0 ) {
 	    	
-	    	toggleDrawer();
+	    	if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	    		
+	    		mDrawerLayout.openDrawer( GravityCompat.START );
+	    		
+	    	}
 	    	
 	    } else if ( openCount == rateAppPromptCount ) {
 	    	
@@ -193,7 +212,7 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    	// We don't want to show multiple dialogs
 	    	
-	    	//new CheckRemoteVersionFileTask( this ).execute( new String[]{} );
+	    	new CheckRemoteVersionFileTask( this ).execute( new String[]{} );
 	    	
 	    	
 	    }
@@ -214,12 +233,9 @@ public class MainActivity extends ActionBarActivity {
 	@Override protected void onNewIntent( Intent intent ) {
 		super.onNewIntent( intent );
 		
-		android.util.Log.i( "MainActivity", "New Intent");
-		
 	    
 	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) ) {
 	    	
-	    	android.util.Log.i( "MainActivity", "Now playing Extra received.");
 	    	loadNowPlayingFragment();
 	    	showNowPlayingActivity();
 	    	
@@ -274,11 +290,7 @@ public class MainActivity extends ActionBarActivity {
 	@Override public void onStart() {
 		super.onStart();
 		
-		if ( mIsBound && mBoundService != null ) {
-			
-			mBoundService.addPlaybackListener( mPlaybackListener );
-			
-		} else {
+		if ( !mIsBound || mBoundService == null ) {
 			
 			doBindService();
 			
@@ -289,13 +301,12 @@ public class MainActivity extends ActionBarActivity {
 	@Override public void onStop() {
 		super.onStop();
 		
-		if ( mIsBound && mBoundService != null ) {
+		if ( mIsBound || mBoundService != null ) {
 			
-			mBoundService.removePlaybackListener( mPlaybackListener );
+			doUnbindService();
 			
 		}
 		
-		doUnbindService();
 		
 	}
 	
@@ -307,7 +318,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		
 	}
-
+	
 	
     public void toggleDrawer() {
     	
@@ -355,23 +366,8 @@ public class MainActivity extends ActionBarActivity {
             	return true;
                 
         }
-
+        
         return super.onKeyDown( keycode, e );
-        
-    }
-    
-    @Override public boolean onOptionsItemSelected( MenuItem item ) {
-    	
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if ( mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected( item ) ) {
-        	
-        	return true;
-        	
-        }
-        // Handle your other action bar items...
-        
-        return super.onOptionsItemSelected( item );
         
     }
     
@@ -400,7 +396,7 @@ public class MainActivity extends ActionBarActivity {
 	        // cast its IBinder to a concrete class and directly access it.
 	    	mBoundService = ( ( MusicPlayerService.MusicPlayerServiceBinder ) service ).getService();
 	    	
-	    	mBoundService.addPlaybackListener( mPlaybackListener );
+	    	mBoundService.addPlaybackListener( mFooterControlsFragment.PlaybackListener );
 	        
 	    	mIsBound = true;
 	    	
@@ -437,7 +433,7 @@ public class MainActivity extends ActionBarActivity {
 	        
 	    	
 	    	// Remove service's reference to local object
-	    	mBoundService.removePlaybackListener( mPlaybackListener );
+	    	mBoundService.removePlaybackListener( mFooterControlsFragment.PlaybackListener );
 	    	//BoundService.doDetachActivity();
 	    	//android.util.Log.i("Detached from service", "Main Activity disconnected from service." );
 	    	// Detach our existing connection.
@@ -447,44 +443,7 @@ public class MainActivity extends ActionBarActivity {
 	    }
 	    
 	}
-     
-    private PlaylistMediaPlayer.PlaybackListener mPlaybackListener = new PlaylistMediaPlayer.PlaybackListener() {
-
-		@Override public void onTrackChanged( String media_id ) {
-			
-			mFooterControlsFragment.setMediaID( media_id );
-			
-		}
-
-
-		@Override public void onPlay(int playbackPositionMilliseconds) {
-			
-			mFooterControlsFragment.showPlaying();
-			
-		}
-
-
-		@Override public void onPause(int playbackPositionMilliseconds) {
-			
-			mFooterControlsFragment.showPaused();
-			
-		}
-
-
-		@Override public void onPlaylistDone() {
-			
-			mFooterControlsFragment.setMediaID( null );
-			
-		}
-
-
-		@Override public void onLoopingChanged( LoopState loop ) { /* ... */ }
-
-
-		@Override public void onShuffleChanged( boolean isShuffling ) { /* ... */ }
-		
-	};
-	
+    
 	public void showNowPlayingActivity() {
 		
 		Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
@@ -510,7 +469,7 @@ public class MainActivity extends ActionBarActivity {
 			
 			if ( showingFragment != null ) {
 				
-				String showingMediaID = ( ( PlaylistBrowser ) showingFragment ).getMediaID();
+				String showingMediaID = ( ( IMusicBrowser ) showingFragment ).getMediaID();
 				
 				boolean isSameClass = showingFragment.getClass().equals( nowPlayingFragmentClass );
 				
@@ -519,7 +478,7 @@ public class MainActivity extends ActionBarActivity {
 				if ( !( isSameClass && isSameMediaID ) ) {
 					
 					Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
-					( ( PlaylistBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
+					( ( IMusicBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
 					
 					FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 			    	
@@ -563,6 +522,50 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
+	//
+	// Menu and MenuItem related code goes here
+	//
+	//
+	//
+	
+	@Override public boolean onCreateOptionsMenu( Menu menu ) {
+		
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate( R.menu.menu_search, menu );
+	    
+	    return true;
+		
+	}
+	
+    @Override public boolean onOptionsItemSelected( MenuItem item ) {
+    	
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if ( mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected( item ) ) {
+        	
+        	return true;
+        	
+        }
+        
+        if ( item.getItemId() == R.id.MenuSearch ) {
+        	
+        	SearchFragment mSearchFragment = new SearchFragment();
+        	
+        	transactFragment( mSearchFragment );
+        	
+	    	if ( null != mDrawerLayout && mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	    		
+	    		mDrawerLayout.closeDrawer( GravityCompat.START );
+	    		
+	    	}
+        	
+        }
+        // Handle your other action bar items...
+        
+        return super.onOptionsItemSelected( item );
+        
+    }
+	
 	@Override public boolean onPrepareOptionsMenu( Menu menu ) {
 
 	    // If the nav drawer is open, hide action items related to the content view
@@ -573,13 +576,26 @@ public class MainActivity extends ActionBarActivity {
 	    return super.onPrepareOptionsMenu( menu );
 	    
 	}
-
+	
+	public boolean mShowSearch = true;
+	
 	private void hideMenuItems( Menu menu, boolean visible ) {
 		
 	    for ( int i = 0; i < menu.size(); i++ ) {
 	    	
-	        menu.getItem( i ).setVisible( visible );
-	        
+	    	MenuItem item = menu.getItem( i );
+	    	int id = item.getItemId();
+	    	
+	    	if ( id == R.id.MenuSearch ) {
+	    		
+	    		item.setVisible( mShowSearch );
+	    		
+	    	} else {
+	    		
+	    		item.setVisible( visible );
+	        	
+	    	}
+	    	
 	    }
 	    
 	}
