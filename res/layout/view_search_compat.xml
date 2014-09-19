@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="right|center_vertical"
-    android:gravity="center_vertical"
-    android:paddingRight="8dp" >
-    
+    android:gravity="fill_vertical"
+    android:orientation="horizontal">
+     
     <ImageButton android:id="@+id/SearchButton"
         android:layout_width="@dimen/touch_target_minimum"
-        android:layout_height="@dimen/touch_target_minimum"
+        android:layout_height="36dp"
         android:src="@drawable/ic_action_search_white"
-        android:padding="4dp"
+        android:paddingLeft="8dp"
         android:background="@drawable/button_background_dark"
         />
     
@@ -18,9 +18,22 @@
         style="@style/SearchField"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"
+        android:hint="@string/search_hint"
+        android:textColorHint="@color/textColorSecondaryDark"
+        android:textColor="@color/textColorPrimaryDark"
+    />
+    
+	<ImageButton android:id="@+id/ClearSearchButton"
+        android:layout_width="@dimen/touch_target_minimum"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_action_cancel"
+        android:paddingRight="8dp"
+        android:background="@drawable/button_background_dark"
         />
-
+	
 </LinearLayout>
