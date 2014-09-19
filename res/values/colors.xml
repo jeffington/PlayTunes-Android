@@ -7,15 +7,15 @@
 	<color name="button_pressed_dark">#22FFFFFF</color>
 	<color name="button_selected_dark">#44FFFFFF</color>
 	
-	<color name="textColorPrimary">#333333</color>
-	<color name="textColorSecondary">#666666</color>
+	<color name="textColorPrimary">#222222</color>
+	<color name="textColorSecondary">#555555</color>
 	<color name="textColorTertiary">#999999</color>
 	
 	<color name="textColorPrimaryDark">#FFFFFF</color>
 	<color name="textColorSecondaryDark">#DDDDDD</color>
 	<color name="textColorTertiaryDark">#999999</color>
 	
-	<color name="footer_background">#333333</color>
+	<color name="footer_background">#222222</color>
 	
 	<color name="list_item_default">#FFFFFF</color>
 	<color name="list_item_pressed">#EEEEEE</color>
@@ -24,5 +24,7 @@
 	<color name="list_divider_color">#CCCCCC</color>
 	
 	<color name="primaryAccentColor">#F1510B</color>
+	
+	<color name="now_playing_background">#222222</color>
 	
 </resources>
