@@ -7,7 +7,7 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsAllAdapter;
 import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
 import com.ideabag.playtunes.dialog.PlaylistMenuDialogFragment;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
@@ -30,7 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowser {
+public class PlaylistsAllFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "All Playlists Fragment";
 	
@@ -82,18 +82,6 @@ public class PlaylistsAllFragment extends ListFragment implements PlaylistBrowse
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
-		
-	}
-	
-	@Override public void onSaveInstanceState( Bundle outState ) {
-		super.onSaveInstanceState( outState );
-		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 		
 	}
 	
