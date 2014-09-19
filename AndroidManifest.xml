@@ -48,13 +48,6 @@
                 
             </intent-filter>
             
-			<intent-filter>
-            	<action android:name="android.intent.action.SEARCH" />
-        	</intent-filter>
-        	
-        	<meta-data android:name="android.app.searchable"
-                   android:resource="@xml/searchable"/>
-            
         </activity>
         
     	<activity android:name="com.ideabag.playtunes.activity.SettingsActivity"
@@ -108,8 +101,6 @@
             </intent-filter>
         </receiver>
         
-		<provider android:name=".util.RecentQuerySuggestionProvider"
-              android:authorities="com.ideabag.playtunes.RecentQuerySuggestionProvider" />
     	
 	</application>
 	
