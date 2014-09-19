@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    
-	<string name="app_name">PlayTunes</string>
 	
 	<string name="song_singular">Song</string>
 	<string name="songs_plural">Songs</string>
@@ -24,22 +22,22 @@
 	
 	<string name="discover">Discover</string>
 	
-	<string name="favorites">Favorites</string>
-	
 	<string name="albums_plural">Albums</string>
 	<string name="album_singular">Album</string>
-	<string name="albums_plural_caps">ALBUMS</string>
 	
 	<string name="search">Search</string>
-	<string name="search_hint">Search for Songs, Albums, and Artists</string>
+	<string name="clear_search_history">Clear Search History</string>
+	<string name="search_hint">Search for Music</string>
+	<string name="see_all">See All</string>
 	
 	<string name="activity_title_now_playing">Now Playing</string>
 	<string name="activity_title_settings">PlayTunes Settings</string>
 	
 	<string name="cancel">Cancel</string>
+	<string name="update">Update</string>
 	
-	<string name="shuffle_on">Shuffle on.</string>
-	<string name="shuffle_off">Shuffle off.</string>
+	<string name="shuffle_on">Shuffle on</string>
+	<string name="shuffle_off">Shuffle off</string>
 	
 	<string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -57,22 +55,18 @@
     <string name="edit">Edit</string>
     
     <string name="send_feedback">Send Feedback</string>
-    <string name="feedback_form_hint">Tell us how we can make PlayTunes better. :-)</string>
+    <string name="feedback_form_hint">Tell us how we can improve PlayTunes</string>
     
     <string name="support_us">Support Us</string>
-    <string name="rate_beg">If you are enjoying PlayTunes, please support further development by rating us in the Google Play Store.\n\nThank you!</string>
+    <string name="rate_beg">Rate in Google Play</string>
     <string name="rate_app">Rate App</string>
     <string name="no_thanks">No Thanks</string>
     
+    <string name="update_app">Update App</string>
+    <string name="version_outdated">This version of PlayTunes is out of date. Go to the Google Play Store to update.</string>
+    
     <string name="playlist_name">Playlist Name</string>
     
-    <string name="no_album_string">Music</string>
-    <string name="no_artist_string">&#60;unknown&#62;</string>
-    
-    <string name="key_state_media_id">saved_state_media_id</string>
-    <string name="key_state_playlist_editing">saved_state_is_editing</string>
-    
-    <string name="prefs_file">playtunes_preferences</string>
-    <string name="pref_key_appopen">app_open</string>
+  
     
 </resources>

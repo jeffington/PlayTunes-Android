@@ -10,6 +10,9 @@
     <string name="key_state_query_string">saved_state_query_string</string>
     <string name="key_state_scroll">saved_state_scroll_position</string>
     
+    <string name="key_state_class_name">saved_state_class_name</string>
+    
     <string name="prefs_file">playtunes_preferences</string>
     <string name="pref_key_appopen">app_open</string>
+    <string name="pref_key_search_history">search_history</string>
 </resources>
