@@ -3,10 +3,17 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/NowPlayingShowButton"
         android:icon="@drawable/ic_action_list_2_white"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/activity_title_now_playing"
         compat:showAsAction="always"
         
         />
-
+    <item android:id="@+id/MenuSearch"
+        android:title="@string/edit"
+        android:icon="@drawable/ic_action_search_white"
+        android:orderInCategory="100"
+        
+        compat:showAsAction="always"
+        
+        />
 </menu>
