@@ -6,6 +6,7 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.SettingsActivity;
 import com.ideabag.playtunes.adapter.NavigationListAdapter;
 import com.ideabag.playtunes.dialog.FeedbackDialogFragment;
+import com.ideabag.playtunes.fragment.search.SearchFragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -35,6 +36,8 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	
 	private MainActivity mActivity;
 	private PlaylistManager mPlaylistManager;
+	
+	private MusicBrowserFragment MusicBrowserFragment;
 	
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -181,6 +184,8 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		        mDrawerLayout.setDrawerListener( mDrawerToggle );
 		        
 	        }
+		 
+		 MusicBrowserFragment = ( MusicBrowserFragment ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserFragment );
 		
 	}
 	
@@ -277,7 +282,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		if ( null != mNewFragment ) {
 			
-			mActivity.transactFragment( mNewFragment );
+			MusicBrowserFragment.transactFragment( mNewFragment );
 			
 		}
 		
@@ -311,11 +316,28 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	
 	public void showNavigation() {
 		
+		if ( mDrawerLayout != null && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+			
+			mDrawerLayout.openDrawer( GravityCompat.START );
+			//customActionBarToggle.showOpen();
+			mActionbarTitle = mActivity.getSupportActionBar().getTitle();
+			mActivity.getSupportActionBar().setTitle( getString( R.string.app_name ) );
+			//getSupportActionBar().setDisplayUseLogoEnabled( false );
+			//getSupportActionBar().setIcon( getResources().getDrawable( R.drawable.ic_launcher ) );
+			
+		}
 		
 	}
 	
 	public void hideNavigation() {
 		
+		if ( mDrawerLayout != null && mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+    		
+    		mDrawerLayout.closeDrawer( GravityCompat.START );
+    		//customActionBarToggle.showClose();
+    		mActivity.getSupportActionBar().setTitle( mActionbarTitle );
+    		
+    	}
 		
 	}
 	
@@ -325,19 +347,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	    	
 	    	if ( mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
 	    		
-	    		mDrawerLayout.closeDrawer( GravityCompat.START );
-	    		//customActionBarToggle.showClose();
-	    		mActivity.getSupportActionBar().setTitle( mActionbarTitle );
+	    		hideNavigation();
 	    		
 	    	} else {
 	    		
-	    		mDrawerLayout.openDrawer( GravityCompat.START );
-	    		//customActionBarToggle.showOpen();
-	    		mActionbarTitle = mActivity.getSupportActionBar().getTitle();
-	    		mActivity.getSupportActionBar().setTitle( getString( R.string.app_name ) );
-	    		//getSupportActionBar().setDisplayUseLogoEnabled( false );
-	    		//getSupportActionBar().setIcon( getResources().getDrawable( R.drawable.ic_launcher ) );
-	    		
+	    		showNavigation();
 	    		
 	    	}
 	    	
@@ -383,4 +397,25 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     	
     }
 	
+    
+    public void showNowPlaying() {
+    	
+    	MusicBrowserFragment.showNowPlaying();
+    	
+    }
+    
+    public void showSearch() {
+    	
+    	Fragment mSearchFragment = new SearchFragment();
+    	
+    	MusicBrowserFragment.transactFragment( mSearchFragment );
+    	
+    }
+    
+    public void transactFragment( Fragment mFragment ) {
+    	
+    	MusicBrowserFragment.transactFragment( mFragment );
+    	
+    }
+    
 }

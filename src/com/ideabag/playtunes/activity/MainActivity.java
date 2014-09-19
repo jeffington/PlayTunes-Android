@@ -69,7 +69,7 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    	
 	    }
-	    
+	    /*
 	    if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
 		    
 		    SongsFragment initialFragment = new SongsFragment();
@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
 	    	transaction.commit();
 	    	
 	    }
-	    
+	    */
 	    
 	    SharedPreferences prefs = getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
 	    //SharedPreferences.Editor edit = prefs.edit();
@@ -143,7 +143,7 @@ public class MainActivity extends ActionBarActivity {
 	    
 	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) ) {
 	    	
-	    	loadNowPlayingFragment();
+	    	NavigationFragment.showNowPlaying();//loadNowPlayingFragment();
 	    	showNowPlayingActivity();
 	    	
 	    }
@@ -212,33 +212,6 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
-	/*
-    public void toggleDrawer() {
-    	
-    	if ( mDrawerLayout != null ) {
-	    	
-	    	if ( mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
-	    		
-	    		mDrawerLayout.closeDrawer( GravityCompat.START );
-	    		//customActionBarToggle.showClose();
-	    		getSupportActionBar().setTitle( mActionbarTitle );
-	    		
-	    	} else {
-	    		
-	    		mDrawerLayout.openDrawer( GravityCompat.START );
-	    		//customActionBarToggle.showOpen();
-	    		mActionbarTitle = getSupportActionBar().getTitle();
-	    		getSupportActionBar().setTitle( getString( R.string.app_name ) );
-	    		//getSupportActionBar().setDisplayUseLogoEnabled( false );
-	    		//getSupportActionBar().setIcon( getResources().getDrawable( R.drawable.ic_launcher ) );
-	    		
-	    		
-	    	}
-	    	
-    	}
-    	
-    }
-    */
     // 
     // Now the hardware menu button will toggle the drawer layout
     // 
@@ -253,9 +226,7 @@ public class MainActivity extends ActionBarActivity {
                 
             case KeyEvent.KEYCODE_SEARCH:
             	
-            	Fragment mSearchFragment = new SearchFragment();
-            	transactFragment( mSearchFragment );
-            	
+            	NavigationFragment.showSearch();
             	return true;
                 
         }
@@ -264,21 +235,12 @@ public class MainActivity extends ActionBarActivity {
         
     }
     
-    public void transactFragment( Fragment newFragment ) {
+    public void transactFragment( Fragment mFragment ) {
     	
-    	FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    	
-    	// Replace whatever is in the fragment_container view with this fragment,
-    	// and add the transaction to the back stack
-    	transaction.replace( R.id.MusicBrowserContainer, newFragment );
-    	transaction.addToBackStack( null );
-    	
-    	
-    	// Commit the transaction
-    	transaction.commit();
+    	NavigationFragment.transactFragment( mFragment );
     	
     }
-    	
+    
 	private ServiceConnection mConnection = new ServiceConnection() {
 		
 	    public void onServiceConnected( ComponentName className, IBinder service ) {
@@ -345,61 +307,6 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
-	public void loadNowPlayingFragment() {
-		
-		Class < ? extends Fragment > nowPlayingFragmentClass = this.mBoundService.mPlaylistFragmentClass;
-		
-		String nowPlayingMediaID = this.mBoundService.mPlaylistMediaID;
-		
-		Fragment showingFragment = getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
-		
-		try {
-			
-			// 
-			// Check to see if the currently playing Fragment is already showing
-			// only create the new fragment if it isn't already showing.
-			//
-			
-			if ( showingFragment != null ) {
-				
-				String showingMediaID = ( ( IMusicBrowser ) showingFragment ).getMediaID();
-				
-				boolean isSameClass = showingFragment.getClass().equals( nowPlayingFragmentClass );
-				
-				boolean isSameMediaID = showingMediaID.equals( nowPlayingMediaID );
-				
-				if ( !( isSameClass && isSameMediaID ) ) {
-					
-					Fragment nowPlayingFragment = nowPlayingFragmentClass.newInstance();
-					( ( IMusicBrowser ) nowPlayingFragment ).setMediaID( nowPlayingMediaID );
-					
-					FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			    	
-			    	// Replace whatever is in the fragment_container view with this fragment,
-			    	// and add the transaction to the back stack
-			    	transaction.replace( R.id.MusicBrowserContainer, nowPlayingFragment );
-			    	transaction.addToBackStack( null );
-			    	
-			    	
-			    	// Commit the transaction
-			    	transaction.commitAllowingStateLoss();
-					
-				}
-				
-			}
-			
-
-	    	
-		} catch ( InstantiationException e ) {
-			e.printStackTrace();
-		} catch ( IllegalAccessException e ) {
-			e.printStackTrace();
-		} catch ( ClassCastException e ) {
-			e.printStackTrace();
-		}
-		
-	}
-	
 	// 
 	// We use the onActivityResult mechanism to return from the NowPlayingActivity
 	// and display the Fragment of the currently playing playlist, if it's not already displayed.
@@ -408,7 +315,8 @@ public class MainActivity extends ActionBarActivity {
 		
 		if ( resultCode == RESULT_OK ) {
 			
-			loadNowPlayingFragment();
+			//loadNowPlayingFragment();
+			//NavigationFragment.showNowPlaying();
 			
 		}
 		
