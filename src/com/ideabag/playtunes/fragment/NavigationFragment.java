@@ -13,10 +13,15 @@ import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,7 +36,12 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	private MainActivity mActivity;
 	private PlaylistManager mPlaylistManager;
 	
+	private DrawerLayout mDrawerLayout;
+	private ActionBarDrawerToggle mDrawerToggle;
+	
 	NavigationListAdapter adapter;
+	
+	public CharSequence mActionbarTitle, mActionbarSubtitle;
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
@@ -62,8 +72,18 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		lv.setOnItemClickListener( this );
 		
-		getView().findViewById( R.id.NavigationToolbarSettings ).setOnClickListener( NavigationClickListener );
-		getView().findViewById( R.id.NavigationToolbarFeedback ).setOnClickListener( NavigationClickListener );
+		// Set up the toolbar
+		if ( null != getView().findViewById( R.id.Toolbar ) ) {
+			
+			getView().findViewById( R.id.NavigationToolbarSettings ).setOnClickListener( NavigationClickListener );
+			getView().findViewById( R.id.NavigationToolbarFeedback ).setOnClickListener( NavigationClickListener );
+			
+		} else {
+			
+			// Add extra options into the app overflow menu
+			
+		}
+		
 		lv.setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		lv.setDividerHeight( 1 );
 		lv.setSelector( R.drawable.list_item_background );
@@ -74,6 +94,93 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external",
 						Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
+		
+		// 
+		// Set up navigation drawer ( if we have one )
+		// 
+		
+		 View mDrawerView = getActivity().findViewById( R.id.drawer_layout );
+	        
+		 if ( null != mDrawerView ) {
+		        
+	        	mDrawerLayout = ( DrawerLayout ) mDrawerView;
+	        	
+		        mDrawerLayout.setDrawerShadow( R.drawable.drawer_shadow, GravityCompat.START );
+		        
+		        mDrawerToggle = new ActionBarDrawerToggle(
+		        		mActivity,
+		        		mDrawerLayout,
+		                R.drawable.ic_drawer,
+		                R.string.drawer_open,
+		                R.string.drawer_close ) {
+		        	
+		        	float mPreviousOffset = 0f;
+		        	ActionBar bar = mActivity.getSupportActionBar();
+		        	
+		            public void onDrawerClosed( View drawerView ) {
+		            	super.onDrawerClosed( drawerView );
+		            	
+		            	//bar.setTitle( mActionbarTitle );
+		            	//bar.setSubtitle( mActionbarSubtitle );
+		            	
+		            	mActivity.mShouldHideActionItems = false;
+		            	getActivity().supportInvalidateOptionsMenu();
+		            	bar.setDisplayUseLogoEnabled( true );
+		            }
+		            
+		            public void onDrawerOpened( View drawerView ) {
+		                super.onDrawerOpened( drawerView );
+		                
+		            	//mActionbarTitle = getSupportActionBar().getTitle();
+		            	//mActionbarSubtitle = getSupportActionBar().getSubtitle();
+		            	
+		            	//bar.setTitle( getString( R.string.app_name ) );
+		            	//bar.setSubtitle( null );
+		                
+		                mActivity.mShouldHideActionItems = true;
+		            	getActivity().supportInvalidateOptionsMenu();
+		            	bar.setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+		            	bar.setDisplayUseLogoEnabled( false );
+		            	
+		           }
+		            
+		            public void onDrawerSlide( View drawerView, float slideOffset ) {
+		            	super.onDrawerSlide( drawerView, slideOffset);
+		            	
+		            	if ( slideOffset > mPreviousOffset && !mActivity.mShouldHideActionItems ) {
+		                	
+		            		mActivity.mShouldHideActionItems = true;
+		                	
+		            		mActivity.setActionbarTitle( (String) bar.getTitle() );
+		            		mActivity.setActionbarSubtitle( (String) bar.getSubtitle() );
+		                	
+		                	bar.setTitle( getString( R.string.app_name ) );
+			            	bar.setSubtitle( null );
+			            	mActivity.supportInvalidateOptionsMenu();
+		                	bar.setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+		                	bar.setDisplayUseLogoEnabled( false );
+		                	
+		               } else if( mPreviousOffset > slideOffset && slideOffset < 0.5f && mActivity.mShouldHideActionItems ) {
+		            	   
+		            	   mActivity.mShouldHideActionItems = false;
+		            	   bar.setTitle( mActionbarTitle );
+		            	   bar.setSubtitle( mActionbarSubtitle );
+		            	   mActivity.supportInvalidateOptionsMenu();
+		            	   mActivity.getSupportActionBar().setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+		            	   bar.setDisplayUseLogoEnabled( true );
+		            	   
+		               }
+		                
+		               mPreviousOffset = slideOffset;
+		               
+		            }
+		            
+		        };
+		        
+		        
+		        mDrawerLayout.setDrawerListener( mDrawerToggle );
+		        
+	        }
 		
 	}
 	
@@ -154,13 +261,13 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 			((PlaylistsOneFragment)mNewFragment).setMediaID( mPlaylistManager.createStarredIfNotExist() );
 			
 			break;
-			
+		/*
 		case NavigationListAdapter.SEARCH:
 			
-			mNewFragment = new SongSearchFragment();
+			mNewFragment = new SearchFragment();
 			
 			break;
-			
+		*/
 		default:
 			
 			mNewFragment = new PlaylistsAllFragment();
@@ -176,7 +283,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		if ( !silent ) {
 			
-			mActivity.toggleDrawer();
+			hideNavigation();
 			
 		}
 		
@@ -191,7 +298,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 				@Override public void run() {
 					
 					adapter.notifyDataSetChanged();
-				
+					
 				}
             	
             });
@@ -201,5 +308,79 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
         }
 
 	};
+	
+	public void showNavigation() {
+		
+		
+	}
+	
+	public void hideNavigation() {
+		
+		
+	}
+	
+	public void toggleNavigation() {
+		
+    	if ( mDrawerLayout != null ) {
+	    	
+	    	if ( mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	    		
+	    		mDrawerLayout.closeDrawer( GravityCompat.START );
+	    		//customActionBarToggle.showClose();
+	    		mActivity.getSupportActionBar().setTitle( mActionbarTitle );
+	    		
+	    	} else {
+	    		
+	    		mDrawerLayout.openDrawer( GravityCompat.START );
+	    		//customActionBarToggle.showOpen();
+	    		mActionbarTitle = mActivity.getSupportActionBar().getTitle();
+	    		mActivity.getSupportActionBar().setTitle( getString( R.string.app_name ) );
+	    		//getSupportActionBar().setDisplayUseLogoEnabled( false );
+	    		//getSupportActionBar().setIcon( getResources().getDrawable( R.drawable.ic_launcher ) );
+	    		
+	    		
+	    	}
+	    	
+    	}
+		
+	}
+	
+	public void setActionbarTitle( String titleString ) {
+		
+		mActionbarTitle = ( CharSequence ) titleString;
+		
+		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
+		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+			
+			mActivity.getSupportActionBar().setTitle( mActionbarTitle );
+			
+		}
+		
+	}
+	
+	public void setActionbarSubtitle( String subtitleString ) {
+		
+		mActionbarSubtitle = ( CharSequence ) subtitleString;
+		
+		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
+		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+			
+			mActivity.getSupportActionBar().setSubtitle( mActionbarSubtitle );
+			
+		}
+		
+	}
+	
+    @Override public boolean onOptionsItemSelected( MenuItem item ) {
+		
+    	if ( null != mDrawerToggle && mDrawerToggle.onOptionsItemSelected( item ) ) {
+    		
+    		return true;
+    		
+    	}
+    	
+    	return false;
+    	
+    }
 	
 }

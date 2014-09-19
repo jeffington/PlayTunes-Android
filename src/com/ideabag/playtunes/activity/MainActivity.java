@@ -6,16 +6,14 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
+import com.ideabag.playtunes.fragment.NavigationFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.fragment.search.SearchFragment;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
 import com.ideabag.playtunes.util.IMusicBrowser;
 
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
@@ -29,21 +27,16 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.View;
 
 public class MainActivity extends ActionBarActivity {
-	
-	private DrawerLayout mDrawerLayout;
-	private ActionBarDrawerToggle mDrawerToggle;
 	
 	public MusicPlayerService mBoundService;
 	public boolean mIsBound = false;
 	
 	private FooterControlsFragment mFooterControlsFragment;
+	public NavigationFragment NavigationFragment;
 	
 	public PlaylistManager PlaylistManager;
-	
-	private CharSequence mActionbarTitle, mActionbarSubtitle;
 	
 	public boolean mShouldHideActionItems;
 	
@@ -55,92 +48,6 @@ public class MainActivity extends ActionBarActivity {
 		ActionBar supportBar = getSupportActionBar();
 		
 		PlaylistManager = new PlaylistManager( this );
-		
-		
-        View mDrawerView = findViewById( R.id.drawer_layout );
-        
-        if ( null != mDrawerView ) {
-	        
-        	mDrawerLayout = ( DrawerLayout ) mDrawerView;
-        	
-	        mDrawerLayout.setDrawerShadow( R.drawable.drawer_shadow, GravityCompat.START );
-	        
-	        mDrawerToggle = new ActionBarDrawerToggle(
-	        		this,
-	        		mDrawerLayout,
-	                R.drawable.ic_drawer,
-	                R.string.drawer_open,
-	                R.string.drawer_close ) {
-	        	
-	        	float mPreviousOffset = 0f;
-	        	ActionBar bar = getSupportActionBar();
-	        	
-	            public void onDrawerClosed( View drawerView ) {
-	            	super.onDrawerClosed( drawerView );
-	            	
-	            	//bar.setTitle( mActionbarTitle );
-	            	//bar.setSubtitle( mActionbarSubtitle );
-	            	
-	            	mShouldHideActionItems = false;
-	            	supportInvalidateOptionsMenu();
-	            	bar.setDisplayUseLogoEnabled( true );
-	            }
-	            
-	            public void onDrawerOpened( View drawerView ) {
-	                super.onDrawerOpened( drawerView );
-	                
-	            	//mActionbarTitle = getSupportActionBar().getTitle();
-	            	//mActionbarSubtitle = getSupportActionBar().getSubtitle();
-	            	
-	            	//bar.setTitle( getString( R.string.app_name ) );
-	            	//bar.setSubtitle( null );
-	                
-	            	mShouldHideActionItems = true;
-	            	supportInvalidateOptionsMenu();
-	            	bar.setDisplayShowCustomEnabled( !mShouldHideActionItems );
-	            	bar.setDisplayUseLogoEnabled( false );
-	            	
-	           }
-	            
-	            public void onDrawerSlide( View drawerView, float slideOffset ) {
-	            	super.onDrawerSlide( drawerView, slideOffset);
-	            	
-	            	if ( slideOffset > mPreviousOffset && !mShouldHideActionItems ) {
-	                	
-	                	mShouldHideActionItems = true;
-	                	
-	                	mActionbarTitle = bar.getTitle();
-		            	mActionbarSubtitle = bar.getSubtitle();
-	                	
-	                	bar.setTitle( getString( R.string.app_name ) );
-		            	bar.setSubtitle( null );
-	                	supportInvalidateOptionsMenu();
-	                	bar.setDisplayShowCustomEnabled( !mShouldHideActionItems );
-	                	bar.setDisplayUseLogoEnabled( false );
-	                	
-	               } else if( mPreviousOffset > slideOffset && slideOffset < 0.5f && mShouldHideActionItems ) {
-	            	   
-	            	   mShouldHideActionItems = false;
-	            	   bar.setTitle( mActionbarTitle );
-	            	   bar.setSubtitle( mActionbarSubtitle );
-	            	   supportInvalidateOptionsMenu();
-	            	   getSupportActionBar().setDisplayShowCustomEnabled( !mShouldHideActionItems );
-	            	   bar.setDisplayUseLogoEnabled( true );
-	            	   
-	               }
-	                
-	               mPreviousOffset = slideOffset;
-	               
-	            }
-	            
-	        };
-	        
-	        
-	        mDrawerLayout.setDrawerListener( mDrawerToggle );
-	        
-	        
-	        
-        }
         
         
         
@@ -153,7 +60,7 @@ public class MainActivity extends ActionBarActivity {
         
         
 	    mFooterControlsFragment = ( FooterControlsFragment ) getSupportFragmentManager().findFragmentById( R.id.FooterControlsFragment );
-        
+        NavigationFragment = ( NavigationFragment ) getSupportFragmentManager().findFragmentById( R.id.left_drawer );
 	    // Load the initial music browser fragment
 	    // If the activity is being called upon to do a search, the initial fragment should be the SongSearchFragment
 	    
@@ -184,13 +91,13 @@ public class MainActivity extends ActionBarActivity {
 	    int rateAppPromptCount = getResources().getInteger( R.integer.rate_app_prompt_count );
 	    
 	    if ( openCount == 0 ) {
-	    	
+	    	/*
 	    	if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
 	    		
 	    		mDrawerLayout.openDrawer( GravityCompat.START );
 	    		
 	    	}
-	    	
+	    	*/
 	    } else if ( openCount == rateAppPromptCount ) {
 	    	
 	    	// Show rate dialog
@@ -263,27 +170,13 @@ public class MainActivity extends ActionBarActivity {
 	
 	public void setActionbarTitle( String titleString ) {
 		
-		mActionbarTitle = ( CharSequence ) titleString;
-		
-		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
-		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
-			
-			getSupportActionBar().setTitle( mActionbarTitle );
-			
-		}
+		NavigationFragment.setActionbarTitle( titleString );
 		
 	}
 	
 	public void setActionbarSubtitle( String subtitleString ) {
 		
-		mActionbarSubtitle = ( CharSequence ) subtitleString;
-		
-		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
-		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
-			
-			getSupportActionBar().setSubtitle( mActionbarSubtitle );
-			
-		}
+		NavigationFragment.setActionbarSubtitle( subtitleString );
 		
 	}
 	
@@ -319,7 +212,7 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
-	
+	/*
     public void toggleDrawer() {
     	
     	if ( mDrawerLayout != null ) {
@@ -345,7 +238,7 @@ public class MainActivity extends ActionBarActivity {
     	}
     	
     }
-    
+    */
     // 
     // Now the hardware menu button will toggle the drawer layout
     // 
@@ -355,7 +248,7 @@ public class MainActivity extends ActionBarActivity {
         
             case KeyEvent.KEYCODE_MENU:
             	
-            	toggleDrawer();
+            	NavigationFragment.toggleNavigation();
                 return true;
                 
             case KeyEvent.KEYCODE_SEARCH:
@@ -541,11 +434,13 @@ public class MainActivity extends ActionBarActivity {
     	
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if ( mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected( item ) ) {
+        if ( NavigationFragment.onOptionsItemSelected( item ) ) {
         	
         	return true;
         	
         }
+        
+        
         
         if ( item.getItemId() == R.id.MenuSearch ) {
         	
@@ -553,11 +448,7 @@ public class MainActivity extends ActionBarActivity {
         	
         	transactFragment( mSearchFragment );
         	
-	    	if ( null != mDrawerLayout && mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
-	    		
-	    		mDrawerLayout.closeDrawer( GravityCompat.START );
-	    		
-	    	}
+	    	NavigationFragment.hideNavigation();
         	
         }
         // Handle your other action bar items...
