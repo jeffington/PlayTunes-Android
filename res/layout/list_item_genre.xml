@@ -3,38 +3,51 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:orientation="horizontal"
-    android:minHeight="@dimen/list_item_height"
     android:gravity="center_vertical"
-    android:paddingLeft="@dimen/list_item_horizontal_spacing"
-    android:paddingRight="@dimen/spacing_medium">
+    android:minHeight="@dimen/list_item_height"
+    android:paddingLeft="@dimen/list_item_horizontal_spacing">
     
-    <TextView android:id="@+id/Title"
+	<LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="left|center_vertical"
-        android:textSize="@dimen/text_xlarge"
-        />
-    
-    <LinearLayout
-        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="top|right">
-        
-    <include android:id="@+id/BadgeAlbum"
-        
-        layout="@layout/view_badge_album"
-        
-	/>
+        android:gravity="center_vertical" >
     
-    <include android:id="@+id/BadgeSong"
-        
-        layout="@layout/view_badge_song"
-		
-	/>
+	    <TextView android:id="@+id/Title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="left|center_vertical"
+	        android:textSize="@dimen/text_xlarge"
+	        />
+	    
+	    <TextView android:id="@+id/Subtitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="left|center_vertical"
+	        android:textSize="@dimen/text_medium"
+	        android:textColor="@color/textColorSecondary"
+	        />
+    
     </LinearLayout>
     
-
+	<ImageView android:id="@+id/ArtistAlbumThree"
+	    android:layout_width="36dp"
+	    android:layout_height="36dp"
+	    android:src="@drawable/no_album_art_full"
+	    android:layout_marginRight="-16dp"
+	/>
+	<ImageView android:id="@+id/ArtistAlbumTwo"
+	    android:layout_width="36dp"
+	    android:layout_height="36dp"
+	    android:src="@drawable/no_album_art_full"
+	    android:layout_marginRight="-16dp"
+	/>
+	<ImageView android:id="@+id/ArtistAlbumOne"
+	    android:layout_width="36dp"
+	    android:layout_height="36dp"
+	    android:src="@drawable/no_album_art_full"
+	    android:layout_marginRight="8dp"
+	/>
 
 </LinearLayout>
