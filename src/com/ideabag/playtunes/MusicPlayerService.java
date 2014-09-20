@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +25,7 @@ import android.support.v4.app.Fragment;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.AudioFocusHelper;
 import com.ideabag.playtunes.media.MediaButtonHelper;
@@ -46,11 +48,19 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	public static final String ACTION_BACK = "com.ideabag.playtunes.BACK";
 	public static final String ACTION_CLOSE = "com.ideabag.playtunes.CLOSE";
 	
+	private static final String PREF_KEY_NOWPLAYING_CLASS = "now_playing_class";
+	private static final String PREF_KEY_NOWPLAYING_NAME = "now_playing_name";
+	private static final String PREF_KEY_NOWPLAYING_ID = "now_playing_media_id";
+	private static final String PREF_KEY_NOWPLAYING_QUERY = "now_playing_media_query";
+	private static final String PREF_KEY_NOWPLAYING_POSITION = "now_playing_position";
+	
 	@SuppressWarnings("unused")
 	private static final String TAG = "MusicPlayerService";
 	
 	private PlaylistMediaPlayer MediaPlayer;
 	private PlaybackNotification Notification;
+	
+	private SharedPreferences mSharedPrefs;
 	
 	// our RemoteControlClient object, which will use remote control APIs available in
     // SDK level >= 14, if they're available.
@@ -162,6 +172,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		Notification = new PlaybackNotification( getBaseContext() );
 		
+		mSharedPrefs = this.getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
+		
 		mAudioManager = ( AudioManager ) getSystemService( AUDIO_SERVICE );
 		
 		IntentFilter mNotificationIntentFilter = new IntentFilter();
@@ -176,10 +188,55 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		registerReceiver( NotificationActionReceiver, mNotificationIntentFilter );
 		
-		startService( new Intent( this, MusicPlayerService.class ) );
-		
 		mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
 		
+		//private static final String PREF_KEY_NOWPLAYING_CLASS = "now_playing_class";
+		//private static final String PREF_KEY_NOWPLAYING_NAME = "now_playing_name";
+		//private static final String PREF_KEY_NOWPLAYING_ID = "now_playing_media_id";
+		
+		//String className = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_CLASS, "" );
+		//String nowPlayingName, nowPlayingMediaID;
+		
+		//if ( null != className && className.length() > 0 ) {
+			
+			//nowPlayingName = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_NAME, "" );
+			//nowPlayingMediaID = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_ID, "" );
+			
+			//this.setP
+			
+		//}
+		
+		//Gson gson = new Gson();
+		
+		String mMediaQueryJSONString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_QUERY, null );
+		int mPlaylistPosition = mSharedPrefs.getInt( PREF_KEY_NOWPLAYING_POSITION, 0 );
+		
+		if ( mMediaQueryJSONString != null ) {
+			
+			MediaQuery mMediaQuery = new MediaQuery( mMediaQueryJSONString );
+			
+			if ( mMediaQuery != null ) {
+				
+				MediaPlayer.setPlaylistQuery( mMediaQuery );
+				
+				MediaPlayer.setPlaylistPosition( mPlaylistPosition );
+				
+			}
+			
+		}
+		/* 	public Class < ? extends Fragment > mPlaylistFragmentClass;
+		public String mPlaylistMediaID;
+		public String mPlaylistName; */
+		//PREF_KEY_NOWPLAYING_CLASS
+		mPlaylistMediaID = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_ID, null );
+		mPlaylistName = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_NAME, "" );
+		String classNameString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_CLASS, "" );
+		try {
+			mPlaylistFragmentClass = (Class<? extends Fragment>) Class.forName( classNameString );
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -196,8 +253,26 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		destroyRemoteControlClient();
 		
+		// Save state
+		
+		SharedPreferences.Editor edit = mSharedPrefs.edit();
+		
+		edit.putString( PREF_KEY_NOWPLAYING_QUERY, MediaPlayer.getPlaylistQuery().toJSONString() );
+		
+		edit.putInt( PREF_KEY_NOWPLAYING_POSITION, MediaPlayer.getPlaylistPosition() );
+		
+		edit.putString( PREF_KEY_NOWPLAYING_CLASS, mPlaylistFragmentClass.getName() );
+		edit.putString( PREF_KEY_NOWPLAYING_NAME, mPlaylistName );
+		edit.putString( PREF_KEY_NOWPLAYING_ID, mPlaylistMediaID );
+		
+		edit.commit();
+		
+		// Clean up Media Player
+		
 		MediaPlayer.pause();
 		MediaPlayer.destroy();
+		
+		// Remove Notification (if showing)
 		
 		Notification.remove();
 		
@@ -234,6 +309,47 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			this.mPlaylistFragmentClass = fragmentClass;
 			this.mPlaylistMediaID = playlistMediaID;
 			this.mPlaylistName = playlistName;
+			
+			SharedPreferences.Editor edit = mSharedPrefs.edit();
+			edit.putString( PREF_KEY_NOWPLAYING_ID, playlistMediaID );
+			edit.putString( PREF_KEY_NOWPLAYING_NAME, playlistName );
+			edit.putString( PREF_KEY_NOWPLAYING_CLASS, fragmentClass.getName() );
+			
+			//edit.
+			android.util.Log.i( TAG, "" + playlistMediaID + " " + fragmentClass.getName() );
+			edit.commit();
+			
+		}
+		
+	}
+	
+	// 
+	// rectifyPlaylist is called when the content of the query changes
+	// for instance, when a song is removed from a playlist or deleted from the device.
+	// 
+	// - The goal is to switch to the new query cursor, but to retain play position 
+	// - It is possible that the currently playing song is not in the new query
+	// - It is possible that the currently playing song is in a new position in the query
+	// 
+	// 
+	
+	public void rectifyPlaylist( MediaQuery query, String playlistName, Class < ? extends Fragment > fragmentClass, String playlistMediaID ) {
+		
+		if ( null != MediaPlayer ) {
+			
+			MediaPlayer.setPlaylistQuery( query );
+			this.mPlaylistFragmentClass = fragmentClass;
+			this.mPlaylistMediaID = playlistMediaID;
+			this.mPlaylistName = playlistName;
+			
+			SharedPreferences.Editor edit = mSharedPrefs.edit();
+			edit.putString( PREF_KEY_NOWPLAYING_ID, playlistMediaID );
+			edit.putString( PREF_KEY_NOWPLAYING_NAME, playlistName );
+			edit.putString( PREF_KEY_NOWPLAYING_CLASS, fragmentClass.getName() );
+			
+			//edit.
+			android.util.Log.i( TAG, "" + playlistMediaID + " " + fragmentClass.getName() );
+			edit.commit();
 			
 		}
 		
