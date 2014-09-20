@@ -230,6 +230,12 @@ public class PlaylistMediaPlayer {
 		
 	}
 	
+	public MediaQuery getPlaylistQuery() {
+		
+		return mMediaQuery;
+		
+	}
+	
 	public boolean isPlaying() {
 		
 		return isPlaying;
@@ -467,6 +473,12 @@ public class PlaylistMediaPlayer {
 		
 		}
 	
+	}
+	
+	public int getPlaylistPosition() {
+		
+		return mPlaylistPosition;
+		
 	}
 	
 	public void setSeekPosition( int msecs ) {
