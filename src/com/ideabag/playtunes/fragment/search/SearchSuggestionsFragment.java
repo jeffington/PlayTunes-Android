@@ -1,21 +1,19 @@
 package com.ideabag.playtunes.fragment.search;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import com.google.gson.Gson;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SearchSuggestionsFragment extends ListFragment {
+public class SearchSuggestionsFragment extends SaveScrollListFragment {
 	
 	public static final String TAG = "SearchSuggestionsFragment";
 	
@@ -25,6 +23,7 @@ public class SearchSuggestionsFragment extends ListFragment {
 	SharedPreferences mSharedPrefs;
 	
 	ArrayAdapter < String > adapter;
+	String[] mSearchQueries = null;
 	
 	public SearchSuggestionsFragment() {
 		
@@ -40,32 +39,14 @@ public class SearchSuggestionsFragment extends ListFragment {
 	
 	private void loadSearchHistory() {
 		
-		
+		Gson gson = new Gson();
 		String searchHistoryString = mSharedPrefs.getString( getString( R.string.pref_key_search_history ), "[]" );
 		
-		JSONArray searchHistoryArray = null;
-		String[] searchHistory = null;
+		String[] mSearchQueries = gson.fromJson( searchHistoryString, String[].class);
 		
-		try {
+		if ( null != mSearchQueries ) {
 			
-			searchHistoryArray = new JSONArray( searchHistoryString );
-			
-			searchHistory = new String[ searchHistoryArray.length() ];
-			
-			for ( int i = 0, count = searchHistoryArray.length(); i < count; i++ ) {
-				
-				searchHistory[ i ] = searchHistoryArray.getString( i );
-				
-			}
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if ( null != searchHistory ) {
-			
-			adapter = new ArrayAdapter < String >( getActivity(), R.layout.list_item_title, R.id.Title, searchHistory );
+			adapter = new ArrayAdapter < String >( getActivity(), R.layout.list_item_title, R.id.Title, mSearchQueries );
 			setListAdapter( adapter );
 			
 		}
