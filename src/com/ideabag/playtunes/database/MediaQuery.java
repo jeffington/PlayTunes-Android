@@ -1,17 +1,41 @@
 package com.ideabag.playtunes.database;
 
+import com.google.gson.Gson;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
 public class MediaQuery {
-	
+	/*
 	protected Uri mContentUri;
 	
 	protected String[] mProjection;
 	protected String mSelection;
 	protected String[] mSelectionArgs;
 	protected String mOrderBy;
+	*/
+	protected class MediaQueryJSONObject {
+		
+		public String mContentUriString;
+		public String[] mProjection;
+		public String mSelection;
+		public String[] mSelectionArgs;
+		public String mOrderBy;
+		
+	}
+	
+	protected MediaQueryJSONObject mQueryObject;
+	
+	public MediaQuery( String jsonString ) {
+		
+		Gson gson = new Gson();
+		
+		this.mQueryObject = gson.fromJson( jsonString, MediaQueryJSONObject.class );
+		
+		
+		
+	}
 	
 	public MediaQuery( Uri mUri, String[] projection ) {
 		this( mUri, projection, null, null, null );
@@ -23,11 +47,13 @@ public class MediaQuery {
 	
 	public MediaQuery( Uri mUri, String[] projection, String selection, String[] args, String orderBy ) {
 		
-		this.mContentUri = mUri;
-		this.mProjection = projection;
-		this.mSelection = selection;
-		this.mSelectionArgs = args;
-		this.mOrderBy = orderBy;
+		mQueryObject = new MediaQueryJSONObject();
+		
+		mQueryObject.mContentUriString = mUri.toString();
+		mQueryObject.mProjection = projection;
+		mQueryObject.mSelection = selection;
+		mQueryObject.mSelectionArgs = args;
+		mQueryObject.mOrderBy = orderBy;
 		
 	}
 	/*
@@ -40,11 +66,11 @@ public class MediaQuery {
 	public static Cursor execute( Context mContext, MediaQuery query ) {
 		
 		return mContext.getContentResolver().query(
-				query.mContentUri,
-				query.mProjection,
-				query.mSelection,
-				query.mSelectionArgs,
-				query.mOrderBy );
+				Uri.parse( query.mQueryObject.mContentUriString ),
+				query.mQueryObject.mProjection,
+				query.mQueryObject.mSelection,
+				query.mQueryObject.mSelectionArgs,
+				query.mQueryObject.mOrderBy );
 		
 	}
 	
@@ -58,22 +84,22 @@ public class MediaQuery {
 				
 				MediaQuery other = ( MediaQuery ) ob;
 				
-				if ( other.mContentUri.equals( mContentUri )
-						&& other.mProjection.equals( mProjection ) ) {
+				if ( other.mQueryObject.mContentUriString.equals( mQueryObject.mContentUriString )
+						&& other.mQueryObject.mProjection.equals( mQueryObject.mProjection ) ) {
 					
-					if ( ( other.mSelection == null && mSelection == null )
-							|| ( other.mSelection != null && mSelection != null && other.mSelection.equals( mSelection ) ) ) {
+					if ( ( other.mQueryObject.mSelection == null && mQueryObject.mSelection == null )
+							|| ( other.mQueryObject.mSelection != null && mQueryObject.mSelection != null && other.mQueryObject.mSelection.equals( mQueryObject.mSelection ) ) ) {
 						
-						if ( ( other.mSelectionArgs == null && mSelectionArgs == null)
-								|| ( other.mSelectionArgs != null
-										&& mSelectionArgs != null
-										&& other.mSelectionArgs.equals( mSelectionArgs )
+						if ( ( other.mQueryObject.mSelectionArgs == null && mQueryObject.mSelectionArgs == null)
+								|| ( other.mQueryObject.mSelectionArgs != null
+										&& mQueryObject.mSelectionArgs != null
+										&& other.mQueryObject.mSelectionArgs.equals( mQueryObject.mSelectionArgs )
 									) ) {
 							
-							if ( ( other.mSelectionArgs == null && mSelectionArgs == null)
-								|| ( other.mSelectionArgs != null
-										&& mSelectionArgs != null
-										&& other.mSelectionArgs.equals( mSelectionArgs )
+							if ( ( other.mQueryObject.mSelectionArgs == null && mQueryObject.mSelectionArgs == null)
+								|| ( other.mQueryObject.mSelectionArgs != null
+										&& mQueryObject.mSelectionArgs != null
+										&& other.mQueryObject.mSelectionArgs.equals( mQueryObject.mSelectionArgs )
 									) ) {
 								
 								isEqual = true;
@@ -98,6 +124,23 @@ public class MediaQuery {
 		
 		
 		return isEqual;
+		
+	}
+	
+	public String toJSONString() {
+		
+		Gson gson = new Gson();
+		
+		String mJSONString = gson.toJson( mQueryObject, MediaQueryJSONObject.class );
+		
+		
+		return mJSONString;
+		
+	}
+	
+	@Override public String toString() {
+		
+		return toJSONString();
 		
 	}
 	
