@@ -7,10 +7,8 @@ import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.NavigationFragment;
-import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.fragment.search.SearchFragment;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
-import com.ideabag.playtunes.util.IMusicBrowser;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -61,28 +59,12 @@ public class MainActivity extends ActionBarActivity {
         
 	    mFooterControlsFragment = ( FooterControlsFragment ) getSupportFragmentManager().findFragmentById( R.id.FooterControlsFragment );
         NavigationFragment = ( NavigationFragment ) getSupportFragmentManager().findFragmentById( R.id.left_drawer );
-	    // Load the initial music browser fragment
-	    // If the activity is being called upon to do a search, the initial fragment should be the SongSearchFragment
 	    
 	    if ( null != savedInstanceState ) {
 	    	
 	    	
 	    	
 	    }
-	    /*
-	    if ( null == getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer ) ) {
-		    
-		    SongsFragment initialFragment = new SongsFragment();
-		    
-		    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-	    	transaction.replace( R.id.MusicBrowserContainer, initialFragment );
-	    	// Don't add to back stack
-	    	
-	    	// Commit the transaction
-	    	transaction.commit();
-	    	
-	    }
-	    */
 	    
 	    SharedPreferences prefs = getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
 	    //SharedPreferences.Editor edit = prefs.edit();
@@ -148,24 +130,6 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    }
 		
-		/*
-		if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) ) {
-	    	
-	    	String query = intent.getStringExtra( SearchManager.QUERY );
-	    	
-	    	SearchFragment initialFragment = new SearchFragment( query );
-		    
-		    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-	    	transaction.replace( R.id.MusicBrowserContainer, initialFragment );
-	    	transaction.addToBackStack( null );
-	    	// Don't add to back stack
-	    	
-	    	// Commit the transaction
-	    	transaction.commit();
-	    	
-	    }
-	    */
-		
 	}
 	
 	public void setActionbarTitle( String titleString ) {
@@ -203,32 +167,15 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
-	@Override public void onDestroy() {
-		super.onDestroy();
-		
-		//AdView.destroy();
-		
-		
-		
-	}
-	
     // 
     // Now the hardware menu button will toggle the drawer layout
     // 
     @Override public boolean onKeyDown( int keycode, KeyEvent e ) {
     	
-        switch ( keycode ) {
-        
-            case KeyEvent.KEYCODE_MENU:
-            	
-            	NavigationFragment.toggleNavigation();
-                return true;
-                
-            case KeyEvent.KEYCODE_SEARCH:
-            	
-            	NavigationFragment.showSearch();
-            	return true;
-                
+        if ( NavigationFragment.onKeyDown( keycode, e ) ) {
+        	
+        	return true;
+        	
         }
         
         return super.onKeyDown( keycode, e );
@@ -299,6 +246,9 @@ public class MainActivity extends ActionBarActivity {
 	    
 	}
     
+	//
+	// Used by FooterControlFragment
+	//
 	public void showNowPlayingActivity() {
 		
 		Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
@@ -315,8 +265,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		if ( resultCode == RESULT_OK ) {
 			
-			//loadNowPlayingFragment();
-			//NavigationFragment.showNowPlaying();
+			NavigationFragment.showNowPlaying();
 			
 		}
 		
@@ -340,26 +289,11 @@ public class MainActivity extends ActionBarActivity {
 	
     @Override public boolean onOptionsItemSelected( MenuItem item ) {
     	
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
         if ( NavigationFragment.onOptionsItemSelected( item ) ) {
         	
         	return true;
         	
         }
-        
-        
-        
-        if ( item.getItemId() == R.id.MenuSearch ) {
-        	
-        	SearchFragment mSearchFragment = new SearchFragment();
-        	
-        	transactFragment( mSearchFragment );
-        	
-	    	NavigationFragment.hideNavigation();
-        	
-        }
-        // Handle your other action bar items...
         
         return super.onOptionsItemSelected( item );
         
