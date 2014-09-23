@@ -6,7 +6,6 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.dialog.AddToPlaylistDialogFragment;
 import com.ideabag.playtunes.fragment.TrackProgressFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
-import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -306,7 +305,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 				
 				if ( null == repeatState || repeatState.equals( "0" ) ) {
 					
-					mBoundService.setLooping( PlaylistMediaPlayer.LoopState.LOOP_ALL );
+					mBoundService.setLooping( PlaylistMediaPlayer.LOOP_ALL );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -317,7 +316,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 					
 				} else if ( repeatState.equals( "1" ) ) {
 					
-					mBoundService.setLooping( PlaylistMediaPlayer.LoopState.LOOP_ONE );
+					mBoundService.setLooping( PlaylistMediaPlayer.LOOP_ONE );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -328,7 +327,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 					
 				} else {
 					
-					mBoundService.setLooping( PlaylistMediaPlayer.LoopState.LOOP_NO );
+					mBoundService.setLooping( PlaylistMediaPlayer.LOOP_NO );
 					
 					tracker.send( new HitBuilders.EventBuilder()
 		        	.setCategory( "now playing button" )
@@ -537,7 +536,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 	   BitmapDrawable mBackgroundDrawable = ( BitmapDrawable ) mAlbumArtBackground.getDrawable();
 	   
 	   if ( null != mAlbumDrawable && null != mAlbumDrawable.getBitmap() ) {
-			
+		   
 		   mAlbumDrawable.getBitmap().recycle();
 		   mAlbumCover.setImageBitmap( null );
 		   
@@ -589,16 +588,16 @@ public class NowPlayingActivity extends ActionBarActivity {
 			
 		}
 
-		@Override public void onLoopingChanged( LoopState loopState ) {
+		@Override public void onLoopingChanged( int loopState ) {
 			
 			ImageButton mRepeatButton = ( (ImageButton) findViewById( R.id.NowPlayingRepeatButton ) );
 			
-			if ( loopState == LoopState.LOOP_ALL ) {
+			if ( loopState == PlaylistMediaPlayer.LOOP_ALL ) {
 				
 				mRepeatButton.setTag( R.id.tag_repeat_state, "1" );
 				mRepeatButton.setImageResource( R.drawable.ic_action_playback_repeat_orange_dark );
 				
-			} else if ( loopState == LoopState.LOOP_ONE ) {
+			} else if ( loopState == PlaylistMediaPlayer.LOOP_ONE ) {
 				
 				mRepeatButton.setTag( R.id.tag_repeat_state, "2" );
 				mRepeatButton.setImageResource( R.drawable.ic_action_playback_repeat_1_orange_dark );

@@ -34,7 +34,6 @@ import com.ideabag.playtunes.media.MusicIntentReceiver;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.media.RemoteControlClientCompat;
 import com.ideabag.playtunes.media.RemoteControlHelper;
-import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -53,6 +52,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	private static final String PREF_KEY_NOWPLAYING_ID = "now_playing_media_id";
 	private static final String PREF_KEY_NOWPLAYING_QUERY = "now_playing_media_query";
 	private static final String PREF_KEY_NOWPLAYING_POSITION = "now_playing_position";
+	private static final String PREF_KEY_NOWPLAYING_SHUFFLE = "now_playing_shuffle";
+	private static final String PREF_KEY_NOWPLAYING_LOOP = "now_playing_loop";
 	
 	@SuppressWarnings("unused")
 	private static final String TAG = "MusicPlayerService";
@@ -211,6 +212,9 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		String mMediaQueryJSONString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_QUERY, null );
 		int mPlaylistPosition = mSharedPrefs.getInt( PREF_KEY_NOWPLAYING_POSITION, 0 );
 		
+		boolean mIsShuffling = mSharedPrefs.getBoolean( PREF_KEY_NOWPLAYING_SHUFFLE, false );
+		int looping = mSharedPrefs.getInt( PREF_KEY_NOWPLAYING_LOOP, PlaylistMediaPlayer.LOOP_NO );
+		
 		if ( mMediaQueryJSONString != null ) {
 			
 			MediaQuery mMediaQuery = new MediaQuery( mMediaQueryJSONString );
@@ -220,6 +224,10 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				MediaPlayer.setPlaylistQuery( mMediaQuery );
 				
 				MediaPlayer.setPlaylistPosition( mPlaylistPosition );
+				
+				MediaPlayer.setLooping( looping );
+				
+				MediaPlayer.setShuffle( mIsShuffling );
 				
 			}
 			
@@ -264,6 +272,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		edit.putString( PREF_KEY_NOWPLAYING_CLASS, mPlaylistFragmentClass.getName() );
 		edit.putString( PREF_KEY_NOWPLAYING_NAME, mPlaylistName );
 		edit.putString( PREF_KEY_NOWPLAYING_ID, mPlaylistMediaID );
+		edit.putInt( PREF_KEY_NOWPLAYING_LOOP, MediaPlayer.getLoopState() );
+		edit.putBoolean( PREF_KEY_NOWPLAYING_SHUFFLE, MediaPlayer.isShuffling() );
 		
 		edit.commit();
 		
@@ -425,7 +435,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 	}
 	
-	public void setLooping( PlaylistMediaPlayer.LoopState repeat ) {
+	public void setLooping( int repeat ) {
 		
 		MediaPlayer.setLooping( repeat );
 		
@@ -787,7 +797,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 		}
 
-		@Override public void onLoopingChanged( LoopState loop ) {
+		@Override public void onLoopingChanged( int loop ) {
 			
 			int count = ChangedListeners.size();
 			

@@ -3,7 +3,6 @@ package com.ideabag.playtunes.fragment;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.NowPlayingActivity;
-import com.ideabag.playtunes.media.PlaylistMediaPlayer.LoopState;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 
 import android.annotation.SuppressLint;
@@ -87,6 +86,12 @@ public class FooterControlsFragment extends Fragment {
 		
 	}
 	
+	@Override public void onDestroyView() {
+		super.onDestroyView();
+		
+		recycleAlbumArt();
+		
+	}
 	
 	View.OnClickListener controlsClickListener = new View.OnClickListener() {
 		
@@ -124,18 +129,18 @@ public class FooterControlsFragment extends Fragment {
 	
 	   
 	   
-	   private void recycleAlbumArt() {
-		   
-		   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+   private void recycleAlbumArt() {
+	   
+	   BitmapDrawable bd = ( BitmapDrawable ) mAlbumCover.getDrawable();
+		
+		if ( null != bd && null != bd.getBitmap() ) {
 			
-			if ( null != bd && null != bd.getBitmap() ) {
-				
-				bd.getBitmap().recycle();
-				mAlbumCover.setImageBitmap( null );
-				
-			}
-		   
-	   }
+			bd.getBitmap().recycle();
+			mAlbumCover.setImageBitmap( null );
+			
+		}
+	   
+   }
 	
 	   public PlaybackListener PlaybackListener = new PlaybackListener() {
 
@@ -317,7 +322,7 @@ public class FooterControlsFragment extends Fragment {
 			
 		}
 
-		@Override public void onLoopingChanged(LoopState loop) {
+		@Override public void onLoopingChanged(int loop) {
 			// TODO Auto-generated method stub
 			
 		}
