@@ -36,8 +36,6 @@ public class SongMenuDialogFragment extends DialogFragment {
     	
     	this.mMediaID = media_id;
     	
-    	android.util.Log.i( "SongMenuDialogFragment", "Media ID set" );
-    	
     	
     }
     
