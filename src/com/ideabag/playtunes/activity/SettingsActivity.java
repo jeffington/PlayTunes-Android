@@ -2,6 +2,7 @@ package com.ideabag.playtunes.activity;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.plus.PlusOneButton;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.dialog.FeedbackDialogFragment;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
@@ -17,6 +18,8 @@ import android.view.View;
 public class SettingsActivity extends ActionBarActivity {
 	
 	public static final String TAG = "Settings Activity";
+	public static final String MARKET_URL = "https://play.google.com/store/apps/details?id=com.ideabag.playtunes";
+	PlusOneButton mPlusOneButton;
 	
 	@Override public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
@@ -34,11 +37,15 @@ public class SettingsActivity extends ActionBarActivity {
         findViewById(R.id.SettingsButtonSupport).setOnClickListener(mSettingsClickListener);
         findViewById(R.id.SettingsButtonFeedback).setOnClickListener(mSettingsClickListener);
         //findViewById(R.id.SettingsButtonHelp).setOnClickListener(mSettingsClickListener);
+        mPlusOneButton = (PlusOneButton) findViewById(R.id.plus_one_button);
         
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
+		
+		mPlusOneButton.initialize( MARKET_URL, 0 );
+		//mPlusOneButton.
 		
 		Tracker t = TrackerSingleton.getDefaultTracker( this );
 
