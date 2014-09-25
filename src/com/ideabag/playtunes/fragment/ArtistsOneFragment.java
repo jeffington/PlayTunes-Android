@@ -6,6 +6,9 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistAlbumsAdapter;
 import com.ideabag.playtunes.adapter.ArtistAllSongsAdapter;
+import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.MergeAdapter;
 import com.ideabag.playtunes.util.TrackerSingleton;
@@ -15,6 +18,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -23,9 +27,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class ArtistsOneFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
@@ -37,10 +43,13 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	//private TextView albumDivider;
 	
 	//ArtistAlbumsAdapter adapter;
+	ArtistAlbumsAdapter mAlbumsAdapter;
+	ArtistAllSongsAdapter mSongsAdapter;
 	
 	MergeAdapter adapter;
 	
 	private MainActivity mActivity;
+	private Tracker mTracker;
     
 	private String ARTIST_ID = "";
 	
@@ -57,6 +66,7 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
 	}
 	
@@ -79,7 +89,9 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		
 		LayoutInflater inflater = mActivity.getLayoutInflater();
 		
-    	adapter.addAdapter( new ArtistAlbumsAdapter( getActivity(), ARTIST_ID ) );
+		mAlbumsAdapter = new ArtistAlbumsAdapter( getActivity(), ARTIST_ID );
+		
+    	adapter.addAdapter( mAlbumsAdapter );
     	
     	
     	Cursor songCountCursor = getActivity().getContentResolver().query(
@@ -148,11 +160,12 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
     	
     	getListView().addHeaderView( albumDivider, null, false );
     	*/
-    	
-    	adapter.addAdapter( new ArtistAllSongsAdapter( getActivity(), ARTIST_ID, null ) );
+    	mSongsAdapter = new ArtistAllSongsAdapter( getActivity(), ARTIST_ID, songMenuClickListener );
+    	adapter.addAdapter( mSongsAdapter );
     	//getListView().setHeaderDividersEnabled( true );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
+		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
     	
     	setListAdapter( adapter );
     	
@@ -166,25 +179,23 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
     	// TODO:
     	//mActivity.setActionbarTitle( adapter.ArtistName );
     	mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
-		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+    	mTracker.setScreenName( TAG );
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+    	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
+    	
 	}
-		
+	
 	@Override public void onPause() {
 		super.onPause();
 		
@@ -200,22 +211,21 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
+		int hasSingles = 0;
+		/*
+		int hasSingles = ( null == Singles ? 1 : 0 );
 		
-		if ( v.equals( AllSongs ) ) { // All Songs
-			
-			ArtistAllSongsFragment allSongsFragment = new ArtistAllSongsFragment( );
-			allSongsFragment.setMediaID( ARTIST_ID );
-			
-			mActivity.transactFragment( allSongsFragment );
-			
-		} else if ( null != Singles && v.equals( Singles ) ) { // Load Singles
+		if ( hasSingles > 0 && v.equals( Singles ) ) { // Load Singles
 			
 			ArtistSinglesFragment allSinglesFragment = new ArtistSinglesFragment( );
 			allSinglesFragment.setMediaID( ARTIST_ID );
 			
 			mActivity.transactFragment( allSinglesFragment );
 			
-		} else {
+		}
+		*/
+		if ( position < mAlbumsAdapter.getCount() + hasSingles ) {
+		
 			
 			String albumID = ( String ) v.getTag( R.id.tag_album_id );
 			
@@ -224,7 +234,104 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 			
 			mActivity.transactFragment( albumFragment );
 			
+	    	mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_CLICK )
+	    	.setValue( position )
+	    	.setLabel( "album" )
+	    	.build());
+			
+		} else if ( position >= mAlbumsAdapter.getCount() + hasSingles ) {
+			
+			String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+			
+			mActivity.mBoundService.setPlaylist( mSongsAdapter.getQuery(), playlistName, ArtistsOneFragment.class, ARTIST_ID );
+			//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+			
+			mActivity.mBoundService.setPlaylistPosition( position - ( mAlbumsAdapter.getCount() + hasSingles ) );
+			
+			mActivity.mBoundService.play();
+			
+	    	mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_CLICK )
+	    	.setValue( position - mAlbumsAdapter.getCount() )
+	    	.setLabel( "song" )
+	    	.build());
+			
 		}
+		
+
+		
+	}
+	
+	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
+		
+		@Override public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long id) {
+			
+			if ( position >= mAlbumsAdapter.getCount() ) {
+				
+				int absPosition = position - mAlbumsAdapter.getCount();
+				
+				showSongMenuDialog( "" + mSongsAdapter.getItemId( absPosition ) );
+				
+		    	mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( Categories.PLAYLIST )
+		    	.setAction( Playlist.ACTION_LONGCLICK )
+		    	.setValue( position - mAlbumsAdapter.getCount() )
+		    	.build());
+				
+			}
+			
+			return true;
+			
+		}
+		
+	};
+	
+	protected View.OnClickListener songMenuClickListener = new View.OnClickListener() {
+		
+		@Override public void onClick( View v ) {
+			
+			int viewID = v.getId();
+			String songID = "" + v.getTag( R.id.tag_song_id );
+			
+			if ( viewID == R.id.StarButton ) {
+				
+				ToggleButton starButton = ( ToggleButton ) v;
+				
+				if ( starButton.isChecked() ) {
+					
+					mActivity.PlaylistManager.addFavorite( songID );
+					//android.util.Log.i( "starred", songID );
+					
+				} else {
+					
+					mActivity.PlaylistManager.removeFavorite( songID );
+					//android.util.Log.i( "unstarred", songID );
+					
+				}
+				
+			} else if ( viewID == R.id.MenuButton ) {
+				
+				showSongMenuDialog( songID );
+				
+			}
+			
+			
+			
+		}
+		
+	};
+	
+	protected void showSongMenuDialog( String songID ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+		newFragment.setMediaID( songID );
+    	
+        newFragment.show( ft, "dialog" );
 		
 	}
 	
