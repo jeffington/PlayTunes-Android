@@ -186,7 +186,8 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		
 		@Override public boolean onItemLongClick( AdapterView<?> arg0, View v, int position, long id ) {
 			
-			showPlaylistMenuDialog( "" + adapter.getItemId( position ) );
+			// Subtract one from position because the starred playlist is seperate
+			showPlaylistMenuDialog( "" + adapter.getItemId( position - 1 ) );
 			
 			mTracker.send( new HitBuilders.EventBuilder()
 	    	.setCategory( Categories.PLAYLIST )
