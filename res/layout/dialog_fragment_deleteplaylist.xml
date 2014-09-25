@@ -6,11 +6,23 @@
     android:orientation="vertical"
     android:background="@android:color/white">
     
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/touch_target_minimum"
         android:orientation="horizontal"
         android:background="@color/primaryAccentColor">
+        
+
+        
+	    <TextView android:id="@+id/DialogHeaderTitle"
+	        
+	        android:layout_width="match_parent"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:textColor="@color/textColorPrimaryDark"
+	        android:textSize="@dimen/text_xlarge"
+	        android:gravity="center"
+	        android:text="@string/playlist_delete"
+		/>
         
 		<ImageButton android:id="@+id/DialogCloseButton"
 	        
@@ -18,44 +30,22 @@
 	        android:layout_height="@dimen/touch_target_minimum"
 	        android:src="@drawable/ic_action_cancel"
 	        android:background="@drawable/button_background_dark"
-			
-		/>
-        
-	    <TextView android:id="@+id/DialogHeaderTitle"
-	        
-	        android:layout_width="0dp"
-	        android:layout_height="@dimen/touch_target_minimum"
-	        android:layout_weight="1"
-	        android:textColor="#FFFFFF"
-	        android:textSize="@dimen/text_xlarge"
-	        android:gravity="center"
-	        android:text="@string/playlist_delete"
+			android:layout_alignParentLeft="true"
 		/>
 	    
-		<ImageButton android:id="@+id/DialogConfirmButton"
-	        
-	        android:layout_width="@dimen/touch_target_minimum"
-	        android:layout_height="@dimen/touch_target_minimum"
-	        android:src="@drawable/ic_action_tick"
-	        android:background="@drawable/button_background_dark"
-			
-		/>
-        
-    </LinearLayout>
+    </RelativeLayout>
 	
     <TextView android:id="@+id/DeletePlaylistMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:padding="16dp"
         android:textSize="@dimen/text_xlarge"
         />
     <LinearLayout
         
         android:layout_width="match_parent"
         android:layout_height="@dimen/touch_target_minimum"
-        android:background="@color/primaryAccentColor">
+        android:background="@color/list_item_pressed">
         
 		<Button android:id="@+id/DialogDeleteCancel"
 			android:layout_width="0dp"
@@ -63,9 +53,9 @@
 			android:layout_weight="1"
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
-			android:textColor="@color/textColorPrimaryDark"
+			android:textColor="@color/textColorPrimary"
 			android:text="@string/cancel"
-			android:background="@drawable/button_background_dark"
+			android:background="@drawable/button_background_light"
 		/>
 		    <View
         android:layout_width="1dp"
@@ -78,9 +68,9 @@
 			android:layout_weight="1"
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
-			android:textColor="@color/textColorPrimaryDark"
+			android:textColor="@color/textColorPrimary"
 			android:text="@string/delete"
-			android:background="@drawable/button_background_dark"
+			android:background="@drawable/button_background_light"
 		/>
         
     </LinearLayout>

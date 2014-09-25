@@ -103,10 +103,10 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
         		+ " "
         		+ ( mSongCount == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) )
         		+ "\n\n"
-        		+ "Are you sure you want to delete it?"
+        		+ "Are you sure you want to delete this playlist?"
         );
         
-        view.findViewById( R.id.DialogConfirmButton ).setOnClickListener( buttonClickListener );
+        //view.findViewById( R.id.DialogConfirmButton ).setOnClickListener( buttonClickListener );
         view.findViewById( R.id.DialogCloseButton ).setOnClickListener( buttonClickListener ); 
         view.findViewById( R.id.DialogDeleteCancel ).setOnClickListener( buttonClickListener );
         view.findViewById( R.id.DialogDeleteConfirm ).setOnClickListener( buttonClickListener );
