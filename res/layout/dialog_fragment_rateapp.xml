@@ -35,7 +35,7 @@
     <TextView android:id="@+id/DeletePlaylistMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:padding="16dp"
         android:textSize="@dimen/text_xlarge"
         android:textColor="@color/textColorPrimary"
         android:text="@string/rate_beg"
@@ -45,7 +45,7 @@
         
         android:layout_width="match_parent"
         android:layout_height="@dimen/touch_target_minimum"
-        android:background="@color/primaryAccentColor">
+        android:background="@color/list_item_pressed">
         
 		<Button android:id="@+id/DialogCancel"
 			android:layout_width="0dp"
@@ -53,9 +53,9 @@
 			android:layout_weight="1"
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
-			android:textColor="@color/textColorPrimaryDark"
+			android:textColor="@color/textColorPrimary"
 			android:text="@string/no_thanks"
-			android:background="@drawable/button_background_dark"
+			android:background="@drawable/button_background_light"
 		/>
 		
 		<View
@@ -70,9 +70,9 @@
 			android:layout_weight="1"
 			android:gravity="center"
 			android:textSize="@dimen/text_large"
-			android:textColor="@color/textColorPrimaryDark"
+			android:textColor="@color/textColorPrimary"
 			android:text="@string/rate_app"
-			android:background="@drawable/button_background_dark"
+			android:background="@drawable/button_background_light"
 		/>
         
     </LinearLayout>
