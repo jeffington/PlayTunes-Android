@@ -58,7 +58,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		
 		//android.util.Log.i( "starred adapter", "" + playlist_id );
 		
-		Cursor cursor = mContext.getContentResolver().query(
+		Cursor mPlaylistNameCursor = mContext.getContentResolver().query(
 				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
 				new String[] {
 				    	
@@ -75,10 +75,19 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 				null
 			);
 		
-		cursor.moveToFirst();
+		mPlaylistNameCursor.moveToFirst();
 		
-		PLAYLIST_NAME = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
-		cursor.close();
+		try {
+			
+			PLAYLIST_NAME = mPlaylistNameCursor.getString( mPlaylistNameCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
+		
+		} catch( Exception e ) {
+			
+			PLAYLIST_NAME = "";
+			
+		}
+		
+		mPlaylistNameCursor.close();
 		
 		mQuery = new MediaQuery(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ),
@@ -104,7 +113,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 	
 	public void requery() {
 		
-		if ( null != cursor ) {
+		if ( null != cursor && !cursor.isClosed() ) {
 			
 			cursor.close();
 			
@@ -117,7 +126,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		
-		return cursor.getCount();
+		return ( null == cursor ? 0 : cursor.getCount() );
 	}
 
 	@Override
@@ -134,7 +143,7 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			
 			cursor.moveToPosition( position );
 			
-			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
 			
 		}
 		

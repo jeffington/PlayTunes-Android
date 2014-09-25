@@ -230,8 +230,8 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	// if ( adapter.isEditing ) {
 	
 	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
-
-		@Override public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long id) {
+		
+		@Override public boolean onItemLongClick( AdapterView<?> arg0, View v, int position, long id ) {
 			
 			if ( adapter.isEditing ) {
 				
@@ -239,7 +239,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 				
 			} else {
 				
-				showSongMenuDialog( "" + id );
+				showSongMenuDialog( "" + adapter.getItemId( position ) );
 				
 			}
 			
