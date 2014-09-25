@@ -51,7 +51,8 @@
         android:imeOptions="actionDone"
         android:gravity="top|left"
         android:hint="@string/playlist_name"
-        android:layout_marginTop="16dp"/>
+        android:layout_margin="16dp"/>
+    
     <LinearLayout
         
         android:layout_width="match_parent"
