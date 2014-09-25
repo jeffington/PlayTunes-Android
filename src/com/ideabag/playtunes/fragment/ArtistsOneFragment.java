@@ -177,7 +177,7 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		super.onResume();
 		
     	// TODO:
-    	//mActivity.setActionbarTitle( adapter.ArtistName );
+    	mActivity.setActionbarTitle( mSongsAdapter.ARTIST_NAME );
     	mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
 
 	        // Set screen name.
