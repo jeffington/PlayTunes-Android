@@ -104,7 +104,7 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		
-		return cursor.getCount();
+		return ( null == cursor? 0 : cursor.getCount() );
 	}
 
 	@Override
@@ -113,10 +113,20 @@ public class ArtistAllSongsAdapter extends BaseAdapter {
 		return null;
 	}
 
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Override public long getItemId( int position ) {
+		
+		int mID = 0;
+		
+		if ( cursor != null ) {
+			
+			cursor.moveToPosition( position );
+			
+			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+			
+		}
+		
+		return mID;
+		
 	}
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
