@@ -26,7 +26,7 @@
 	        android:layout_width="0dp"
 	        android:layout_height="@dimen/touch_target_minimum"
 	        android:layout_weight="1"
-	        android:textColor="#FFFFFF"
+	        android:textColor="@color/textColorPrimaryDark"
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
 	        android:text="@string/playlist_new"
@@ -51,9 +51,40 @@
         android:imeOptions="actionDone"
         android:gravity="top|left"
         android:hint="@string/playlist_name"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"/>
-    
+        android:layout_marginTop="16dp"/>
+    <LinearLayout
+        
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:background="@color/list_item_pressed">
+        
+		<Button android:id="@+id/DialogCancel"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:textSize="@dimen/text_large"
+			android:textColor="@color/textColorPrimary"
+			android:text="@string/cancel"
+			android:background="@drawable/button_background_light"
+		/>
+		
+		<View
+        	android:layout_width="1dp"
+        	android:layout_height="match_parent"
+        	android:background="@drawable/list_divider"
+        />
+		
+		<Button android:id="@+id/DialogConfirm"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:textSize="@dimen/text_large"
+			android:textColor="@color/textColorPrimary"
+			android:text="@string/ok"
+			android:background="@drawable/button_background_light"
+		/>
+        
+    </LinearLayout>
 </LinearLayout>
