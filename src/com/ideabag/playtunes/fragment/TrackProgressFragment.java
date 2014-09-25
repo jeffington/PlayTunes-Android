@@ -20,12 +20,13 @@ public class TrackProgressFragment extends Fragment {
 	
 	private NowPlayingActivity mActivity;
 	
-	private SeekBar Bar;
+	private SeekBar mBar;
 	
 	private Handler handle;
 	
 	private boolean isPlaying = false;
 	
+	TextView mPlayLength, mPlayPosition;
 	
 	@Override public void onAttach( Activity activity ) {
 		
@@ -40,11 +41,12 @@ public class TrackProgressFragment extends Fragment {
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		this.Bar = ( SeekBar ) getView().findViewById( R.id.TrackProgressBar );
+		mBar = ( SeekBar ) getView().findViewById( R.id.TrackProgressBar );
 		
-		//this.Bar.setProgressDrawable( mActivity.getResources().getDrawable( R.drawable.progress_indicator ) );
+		mPlayLength = ( TextView ) getView().findViewById( R.id.TrackProgressPlayLength );
+		mPlayPosition = ( TextView ) getView().findViewById( R.id.TrackProgressPlayPosition );
 		
-		this.Bar.setOnSeekBarChangeListener( mSeekBarChangedListener );
+		mBar.setOnSeekBarChangeListener( mSeekBarChangedListener );
 		
 	}
 	
@@ -71,7 +73,7 @@ public class TrackProgressFragment extends Fragment {
 	private OnSeekBarChangeListener mSeekBarChangedListener = new OnSeekBarChangeListener() {
 
 		@Override
-		public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser) {
+		public void onProgressChanged( SeekBar seekmBar, int progress, boolean fromUser) {
 			
 			if ( fromUser ) {
 				
@@ -88,14 +90,14 @@ public class TrackProgressFragment extends Fragment {
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {
+		public void onStartTrackingTouch(SeekBar seekmBar) {
 			
 			stopProgress();
 			
 		}
 
 		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) {
+		public void onStopTrackingTouch(SeekBar seekmBar) {
 			
 			if ( isPlaying ) {
 				
@@ -111,8 +113,9 @@ public class TrackProgressFragment extends Fragment {
 
 		@Override public void run() {
 			
-			//android.util.Log.i("Bar Progress",  "" + Bar.getProgress() );
-			setProgress( Bar.getProgress() + ONE_SECOND_IN_MILLI );
+			
+			//android.util.Log.i("mBar Progress",  "" + mBar.getProgress() );
+			setProgress( mBar.getProgress() + ONE_SECOND_IN_MILLI );
 			
 			handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 			
@@ -142,13 +145,13 @@ public class TrackProgressFragment extends Fragment {
 		
 		stopProgress();
 		
-		this.Bar.setProgress( progress );
+		mBar.setProgress( progress );
 		
 		int seconds = progress / ONE_SECOND_IN_MILLI;
 		int minutes = seconds / 60;
 		seconds = seconds % 60;
 		
-		( ( TextView ) getView().findViewById( R.id.TrackProgressPlayPosition ) ).setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
+		mPlayPosition.setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
 		
 		startProgress();
 		
@@ -156,13 +159,13 @@ public class TrackProgressFragment extends Fragment {
 	
 	public void setDuration( int duration ) {
 		
-		this.Bar.setMax( duration );
+		mBar.setMax( duration );
 		
 		int seconds = duration / ONE_SECOND_IN_MILLI;
 		int minutes = seconds / 60;
 		seconds = seconds % 60;
 		
-		( ( TextView ) getView().findViewById( R.id.TrackProgressPlayLength ) ).setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
+		mPlayLength.setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
 		
 	}
 	
