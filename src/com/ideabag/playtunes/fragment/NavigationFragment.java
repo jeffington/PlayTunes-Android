@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -183,6 +184,10 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		        
 		        mDrawerLayout.setDrawerListener( mDrawerToggle );
 		        
+	        } else { // No Navigation drawer
+	        	
+	        	//mActivity.getSupportActionBar().setDisplayUseLogoEnabled( false );
+	        	
 	        }
 		 
 		 MusicBrowserFragment = ( MusicBrowserFragment ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserFragment );
@@ -387,11 +392,26 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	
     @Override public boolean onOptionsItemSelected( MenuItem item ) {
 		
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
     	if ( null != mDrawerToggle && mDrawerToggle.onOptionsItemSelected( item ) ) {
     		
     		return true;
     		
     	}
+    	
+    	// Search button!
+        if ( item.getItemId() == R.id.MenuSearch ) {
+        	
+        	SearchFragment mSearchFragment = new SearchFragment();
+        	
+        	transactFragment( mSearchFragment );
+        	
+	    	hideNavigation();
+	    	
+	    	return true;
+        	
+        }
     	
     	return false;
     	
@@ -415,6 +435,26 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     public void transactFragment( Fragment mFragment ) {
     	
     	MusicBrowserFragment.transactFragment( mFragment );
+    	
+    }
+    
+    public boolean onKeyDown( int keycode, KeyEvent e ) {
+    	
+    	switch ( keycode ) {
+	        
+	        case KeyEvent.KEYCODE_MENU:
+	        	
+	        	toggleNavigation();
+	            return true;
+	            
+	        case KeyEvent.KEYCODE_SEARCH:
+	        	
+	        	showSearch();
+	        	return true;
+	            
+    	}
+    	
+    	return false;
     	
     }
     
