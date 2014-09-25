@@ -10,12 +10,12 @@
 	    android:id="@+id/MusicBrowserFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        
+        android:clickable="true"
         />
    	
 	<fragment android:name="com.ideabag.playtunes.fragment.NavigationFragment"
         android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#F5F5F5"
