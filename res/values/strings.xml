@@ -59,9 +59,10 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="feedback_form_hint">Tell us how we can improve PlayTunes</string>
     
-    <string name="support_us">Support Us</string>
-    <string name="rate_beg">Rate in Google Play</string>
-    <string name="rate_app">Rate App</string>
+    <string name="support_plus_one">Support us with a +1</string>
+    <string name="support_rate">Support us by rating</string>
+    <string name="rate_beg">Please rate us in Google Play</string>
+    <string name="rate_app">Rate PlayTunes</string>
     <string name="no_thanks">No Thanks</string>
     
     <string name="update_app">Update App</string>

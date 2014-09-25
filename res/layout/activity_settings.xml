@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@android:color/white">
+    
+
+    <Button android:id="@+id/SettingsButtonFeedback"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:text="@string/send_feedback"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:paddingRight="@dimen/list_item_horizontal_spacing"
+        android:background="@drawable/list_item_background"
+        />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/list_divider_color"
+        />
     
 <LinearLayout android:id="@+id/SettingsButtonSupport"
     	android:baselineAligned="false"
@@ -32,7 +52,7 @@
            	android:lines="1"
            	android:ellipsize="end"
            	android:singleLine="true"
-           	android:text="Support Us"
+           	android:text="@string/support_rate"
            	
         />
         
@@ -44,7 +64,7 @@
            	android:ellipsize="marquee"
 			android:textColor="@color/textColorSecondary"
 			android:textSize="@dimen/text_medium"
-			android:text="Please rate this app in the Play Store"
+			android:text="@string/rate_beg"
            	
         />
         
@@ -58,24 +78,46 @@
         android:layout_height="1dp"
         android:background="@color/list_divider_color"
         />
-    <Button android:id="@+id/SettingsButtonFeedback"
-        android:layout_width="match_parent"
+    
+	<LinearLayout android:id="@+id/SettingsPlusOneRow"
+    	android:baselineAligned="false"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
         android:layout_height="@dimen/list_item_height"
-        android:text="Give Feedback"
-        android:textSize="@dimen/text_xlarge"
-        android:textColor="@color/textColorPrimary"
-        android:gravity="center_vertical"
+        android:minHeight="@dimen/list_item_height"
+        android:background="@drawable/list_item_background"
         android:paddingLeft="@dimen/list_item_horizontal_spacing"
         android:paddingRight="@dimen/list_item_horizontal_spacing"
-        android:background="@drawable/list_item_background"
+        android:gravity="center_vertical">
+    	
+        <TextView android:id="@+id/PlusOneTitle"
+            
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+           	android:text="@string/support_plus_one"
+           	android:gravity="center_vertical"
+           	android:layout_marginBottom="4dp"
+           	
         />
+    <com.google.android.gms.plus.PlusOneButton
+		  
+		  android:id="@+id/plus_one_button"
+		  android:layout_width="wrap_content"
+		  android:layout_height="wrap_content"
+		  plus:size="standard"
+		  plus:annotation="inline" />
+		    
+    </LinearLayout>
     
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/list_divider_color"
         />
-    
-    
 
 </LinearLayout>

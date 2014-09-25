@@ -18,7 +18,7 @@
 	        android:textColor="@color/textColorPrimaryDark"
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
-	        android:text="@string/support_us"
+	        android:text="@string/rate_app"
 		/>
 	    
 		<ImageButton android:id="@+id/DialogCloseButton"
