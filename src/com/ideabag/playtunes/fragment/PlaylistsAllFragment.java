@@ -9,6 +9,8 @@ import com.ideabag.playtunes.dialog.CreatePlaylistDialogFragment;
 import com.ideabag.playtunes.dialog.PlaylistMenuDialogFragment;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 
 import android.app.Activity;
 import android.database.ContentObserver;
@@ -37,14 +39,15 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 	PlaylistsAllAdapter adapter;
 	//MergeAdapter adapter;
 	
-	MainActivity mActivity;
-	
+	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
 	}
     
@@ -93,19 +96,16 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		
 
 		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
-
-	    // Set screen name.
+		// Set screen name.
 	    // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+		mTracker.setScreenName( TAG );
 		
 	    // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -115,12 +115,6 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		
 	@Override public void onPause() {
 		super.onPause();
-		
-		//dialogBuilder = null;
-		
-		
-		
-		//mActivity.AdView.pause();
 		
 	}
 	
@@ -177,6 +171,12 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		
 		mActivity.transactFragment( playlistFragment );
 		
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
+    	
 	}
 	
 	public View.OnClickListener playlistMenuClickListener = new View.OnClickListener() {
