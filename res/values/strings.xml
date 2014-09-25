@@ -11,12 +11,14 @@
 	
 	<string name="playlists_plural">Playlists</string>
 	<string name="playlists_options">Playlist Options</string>
-	<string name="playlist_new">New Playlist</string>
+	<string name="playlist_new">Create new playlist</string>
 	<string name="playlist_rename">Rename Playlist</string>
 	<string name="playlist_delete">Delete Playlist?</string>
 	<string name="playlist_editing">Editing</string>
 	<string name="playlist_name_starred">Starred</string>
 	<string name="playlist_add">Add to Playlist</string>
+	<string name="playlist_removed">Removed song from playlist</string>
+	<string name="playlist_cant_play_when_editing">Press Done to finish editing</string>
 	
 	<string name="settings">Settings</string>
 	
