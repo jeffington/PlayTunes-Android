@@ -82,14 +82,12 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
     	mTracker.setScreenName( TAG );
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		//t.set( "_count", ""+adapter.getCount() );
+    	
     	mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
     	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
-	        // Send a screen view.
-		
 		
 	}
 		
