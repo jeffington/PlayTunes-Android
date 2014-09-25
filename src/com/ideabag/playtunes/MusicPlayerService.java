@@ -87,6 +87,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	public String mPlaylistName;
 	private Bitmap mAlbumArtBitmap = null;
 	
+	boolean isServiceStarted = false;
+	
 	private MusicPlayerService self;
 	
 	private ArrayList< PlaybackListener > ChangedListeners = new ArrayList< PlaybackListener >();
@@ -143,8 +145,14 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	        	.setAction( GAEvent.Notification.ACTION_CLOSE )
 	        	.build());
 				
-				 
-				self.stopSelf();
+				if ( isServiceStarted ) {
+					
+					isServiceStarted = false;
+					 
+					self.stopSelf();
+					 
+				}
+				
 				
 			} else if ( action.equals( ACTION_BACK ) ) {
 				
@@ -242,6 +250,13 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		}
 		
 		MediaPlayer.setPlaybackListener( MediaPlayerListener );
+		
+		if ( !isServiceStarted ) {
+			
+			startService( new Intent( this, MusicPlayerService.class ) );
+			isServiceStarted = true;
+			
+		}
 		
 	}
 	
@@ -724,20 +739,23 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		this.ChangedListeners.remove( listener );
 		
 		//
-		// Listeners are removed when an interested Activity UI is hidden, so we either
+		// Listeners are removed when an interested Activity or Fragment UI is hidden, so we either
 		// show the notification in this case and update it with the currently playing song
 		// or destroy the service if no music is playing.
 		// 
 		
 		if ( this.ChangedListeners.size() == 0 ) {
 			
+			android.util.Log.i( TAG, "" + MediaPlayer.isPlaying() );
+			
 			if ( MediaPlayer.isPlaying()  ) {
 				
 				Notification.showSong( MediaPlayer.getCurrentMediaID() );
 				Notification.showPlaying();
 				
-			} else {
+			} else if ( isServiceStarted ) {
 				
+				isServiceStarted = false;
 				this.stopSelf();
 				
 			}
