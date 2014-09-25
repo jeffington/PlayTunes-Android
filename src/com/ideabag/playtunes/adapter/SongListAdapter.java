@@ -20,10 +20,11 @@ public class SongListAdapter extends BaseAdapter {
 	protected Context mContext;
 	protected LayoutInflater inflater;
 	
-	Cursor cursor = null;
+	protected Cursor cursor = null;
 	protected MediaQuery mQuery = null;
+	String mNowPlayingMediaID = null;
 	
-	private PlaylistManager PlaylistManager;
+	protected PlaylistManager PlaylistManager;
 	
 	View.OnClickListener songMenuClickListener;
     
@@ -54,6 +55,13 @@ public class SongListAdapter extends BaseAdapter {
 		}
 		
     	cursor = MediaQuery.execute( mContext, mQuery );
+		notifyDataSetChanged();
+    	
+	}
+	
+	public void setNowPlayingMedia( String media_id ) {
+		
+		mNowPlayingMediaID = media_id;
 		
 	}
 	
@@ -69,10 +77,20 @@ public class SongListAdapter extends BaseAdapter {
 		return null;
 	}
 
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
+	@Override public long getItemId( int position ) {
+		
+		int mID = 0;
+		
+		if ( cursor != null ) {
+			
+			cursor.moveToPosition( position );
+			
+			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+			
+		}
+		
+		return mID;
+		
 	}
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
@@ -118,6 +136,19 @@ public class SongListAdapter extends BaseAdapter {
 		
 		holder.starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
 		
+		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
+			
+			//convertView.setBackgroundResource(resid)
+			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.primaryAccentColor ) );
+			
+			
+		} else {
+			
+			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.textColorPrimary ) );
+			
+			//convertView.setBackgroundResource(resid)
+			
+		}
 		
 		return convertView;
 		
