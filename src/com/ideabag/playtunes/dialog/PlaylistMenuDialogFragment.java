@@ -1,6 +1,5 @@
 package com.ideabag.playtunes.dialog;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -9,13 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter; 
-import android.widget.ListView;
 
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.activity.MainActivity;
 
 public class PlaylistMenuDialogFragment extends DialogFragment {
 	
@@ -32,8 +26,6 @@ public class PlaylistMenuDialogFragment extends DialogFragment {
     	
     	this.mMediaID = media_id;
     	
-    	android.util.Log.i( "SongMenuDialogFragment", "Media ID set" );
-    	
     }
 
     @Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +41,7 @@ public class PlaylistMenuDialogFragment extends DialogFragment {
         return view;
         
     }
-
+    
 	View.OnClickListener mMenuClickListener = new View.OnClickListener() {
 		
 		@Override public void onClick( View v ) {

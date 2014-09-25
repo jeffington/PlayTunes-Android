@@ -6,36 +6,31 @@
     android:orientation="vertical"
     android:background="@android:color/white">
     
-    <LinearLayout android:id="@+id/DialogHeader"
+    <RelativeLayout android:id="@+id/DialogHeader"
         android:layout_width="match_parent"
         android:layout_height="@dimen/touch_target_minimum"
-        android:orientation="horizontal"
-        android:background="@color/primaryAccentColor"
-        android:layout_alignParentTop="true">
+        android:background="@color/primaryAccentColor" >
         
-		<ImageButton android:id="@+id/DialogCloseButton"
+	    <TextView android:id="@+id/DialogHeaderTitle"
+	        
+	        android:layout_width="match_parent"
+	        android:layout_height="@dimen/touch_target_minimum"
+	        android:textColor="@color/textColorPrimaryDark"
+	        android:textSize="@dimen/text_xlarge"
+	        android:gravity="center"
+	        android:text="@string/playlists_options"
+	        
+		/>
+        		
+        <ImageButton android:id="@+id/DialogCloseButton"
 	        
 	        android:layout_width="@dimen/touch_target_minimum"
 	        android:layout_height="@dimen/touch_target_minimum"
 	        android:src="@drawable/ic_action_cancel"
 	        android:background="@drawable/button_background_dark"
-			
+			android:layout_alignParentLeft="true"
 		/>
-        
-	    <TextView android:id="@+id/DialogHeaderTitle"
-	        
-	        android:layout_width="0dp"
-	        android:layout_height="@dimen/touch_target_minimum"
-	        android:layout_weight="1"
-	        android:textColor="#FFFFFF"
-	        android:textSize="@dimen/text_xlarge"
-	        android:gravity="center"
-	        android:text="@string/playlists_options"
-	        android:paddingRight="@dimen/touch_target_minimum"
-	        
-		/>
-        
-    </LinearLayout>
+    </RelativeLayout>
 	<Button
     	android:id="@+id/PlaylistOptionsRename"
 		android:layout_width="match_parent"
@@ -50,7 +45,7 @@
 	
    	<View
    	    android:layout_width="match_parent"
-   	    android:layout_height="1px"
+   	    android:layout_height="1dp"
    	    android:background="@color/list_divider_color"
    	    />
 	
