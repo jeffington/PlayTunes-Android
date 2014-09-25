@@ -16,6 +16,8 @@ public class GenresAllAdapter extends BaseAdapter {
 	private Context mContext;
 	private LayoutInflater inflater;
 	private Cursor cursor = null;
+
+	private final String SONG_SINGULAR, SONGS_PLURAL, ALBUM_SINGULAR, ALBUMS_PLURAL;
 	
     private static final String[] allGenresSelection = new String[] {
     	
@@ -30,6 +32,11 @@ public class GenresAllAdapter extends BaseAdapter {
 		mContext = context;
 		
 		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		
+		SONG_SINGULAR = mContext.getString( R.string.song_singular );
+		SONGS_PLURAL = mContext.getString( R.string.songs_plural );
+		ALBUM_SINGULAR = mContext.getString( R.string.album_singular );
+		ALBUMS_PLURAL = mContext.getString( R.string.albums_plural );
 		
 		requery();
 		
@@ -81,8 +88,7 @@ public class GenresAllAdapter extends BaseAdapter {
 			convertView = inflater.inflate( R.layout.list_item_genre, null );
 			
 			holder.genreName = ( TextView ) convertView.findViewById( R.id.Title );
-			holder.songCount =  ( TextView ) convertView.findViewById( R.id.SongCount );
-			holder.albumCount =  ( TextView ) convertView.findViewById( R.id.AlbumCount );
+			holder.subtitle = ( TextView ) convertView.findViewById( R.id.Subtitle );
 			
 			convertView.setTag( holder );
 			
@@ -137,8 +143,8 @@ public class GenresAllAdapter extends BaseAdapter {
 		
 		
 		
-		holder.albumCount.setText( "" + albumCount );
-		holder.songCount.setText( "" + songCount );
+		holder.subtitle.setText( "" + albumCount + " " + ( albumCount == 1 ? ALBUM_SINGULAR : ALBUMS_PLURAL ) + " " + songCount + " " + ( songCount == 1 ? SONG_SINGULAR : SONGS_PLURAL ) );
+		
 		
 		return convertView;
 		
@@ -146,9 +152,8 @@ public class GenresAllAdapter extends BaseAdapter {
 	
 	static class ViewHolder {
 		
-		TextView albumCount;
-		TextView songCount;
 		TextView genreName;
+		TextView subtitle;
 		
 	}
 
