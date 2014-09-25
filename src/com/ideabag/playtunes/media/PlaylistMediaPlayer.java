@@ -34,7 +34,7 @@ public class PlaylistMediaPlayer {
 	
 	private int[] mShuffledPlaylist;
 	
-	protected LoopState mLoopState;
+	protected int mLoopState;
 	
 	protected MediaPlayer mMediaPlayer;
 	
@@ -64,17 +64,16 @@ public class PlaylistMediaPlayer {
 		
 		void onPlaylistDone();
 		
-		void onLoopingChanged( LoopState loop );
+		void onLoopingChanged( int loop );
 		
 		void onShuffleChanged( boolean isShuffling );
 		
 	}
 	
-	public enum LoopState {
-		LOOP_NO,
-		LOOP_ALL,
-		LOOP_ONE
-	};
+	// Loop states
+	public static final int LOOP_NO = 0;
+	public static final int LOOP_ALL = 1;
+	public static final int LOOP_ONE = 2;
 	
 	public PlaylistMediaPlayer( Context context ) {
 		super();
@@ -89,7 +88,7 @@ public class PlaylistMediaPlayer {
 		mMediaPlayer.setOnCompletionListener( loopOnCompletionListener );
 		mMediaPlayer.setOnPreparedListener( onPreparedListener );
 		
-		mLoopState = LoopState.LOOP_NO;
+		mLoopState = LOOP_NO;
 		
 		// 
 		// Intents for loss of connection to media
@@ -122,19 +121,19 @@ public class PlaylistMediaPlayer {
 				
 				
 				
-				if ( mLoopState == LoopState.LOOP_ALL ) {
+				if ( mLoopState == LOOP_ALL ) {
 					
 					//android.util.Log.i( TAG, "LOOP_ALL");
 					
 					setPlaylistPosition( ( mPlaylistPosition + 1 ) % mPlaylistSize ); // Will always loop the whole thing
 					
-				} else if ( mLoopState == LoopState.LOOP_NO ) {
+				} else if ( mLoopState == LOOP_NO ) {
 					
 					//android.util.Log.i( TAG, "LOOP_NO");
 					
 					setPlaylistPosition( mPlaylistPosition + 1 );
 					
-				} else if ( mLoopState == LoopState.LOOP_ONE ) { // We don't need to change the media on LOOP_ONE, but we need to alert the client
+				} else if ( mLoopState == LOOP_ONE ) { // We don't need to change the media on LOOP_ONE, but we need to alert the client
 					
 					//android.util.Log.i( TAG, "LOOP_ONE");
 					
@@ -334,13 +333,13 @@ public class PlaylistMediaPlayer {
 	
 	public boolean hasNextTrack() {
 		
-		return ( mLoopState != LoopState.LOOP_NO || mPlaylistPosition < mPlaylistCursor.getCount() - 1 );
+		return ( mLoopState != LOOP_NO || mPlaylistPosition < mPlaylistCursor.getCount() - 1 );
 		
 	}
 	
 	public boolean hasPreviousTrack() {
 		
-		return ( mLoopState != LoopState.LOOP_NO || mPlaylistPosition > 0 );
+		return ( mLoopState != LOOP_NO || mPlaylistPosition > 0 );
 		
 	}
 	
@@ -405,7 +404,7 @@ public class PlaylistMediaPlayer {
 			if ( mPlaylistPosition < 0 || mPlaylistPosition >= mPlaylistSize) {
 				
 				// Out of bounds, but looping, so we bring the position back
-				if ( mLoopState == LoopState.LOOP_ALL ) {
+				if ( mLoopState == LOOP_ALL ) {
 					
 					mPlaylistPosition = mPlaylistPosition % mPlaylistSize;
 					
@@ -510,20 +509,10 @@ public class PlaylistMediaPlayer {
 	// version that accepts a LoopState enum and through this you can set any of the three loop states.
 	// 
 	
-	public void setLooping( LoopState state ) {
+	public void setLooping( int state ) {
 		
 		mLoopState = state;
-		/*
-		if ( state != LoopState.LOOP_ONE ) {
-			
-			mMediaPlayer.setLooping( false );
-			
-		} else {
-			
-			mMediaPlayer.setLooping( true );
-			
-		}
-		*/
+		
 		if ( null != PlaybackChanged ) {
 			
 			PlaybackChanged.onLoopingChanged( mLoopState );
@@ -533,7 +522,7 @@ public class PlaylistMediaPlayer {
 	}
 	
 	
-	public LoopState getLoopState() {
+	public int getLoopState() {
 		
 		return mLoopState;
 		
