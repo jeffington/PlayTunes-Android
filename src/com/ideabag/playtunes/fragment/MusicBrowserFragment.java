@@ -29,8 +29,6 @@ public class MusicBrowserFragment extends Fragment {
 	
 	private AdView mAdView;
 	
-	private IMusicBrowser TopFragment;
-	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
 		return inflater.inflate( R.layout.fragment_music_browser, null, false );
@@ -59,43 +57,46 @@ public class MusicBrowserFragment extends Fragment {
 	    //getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
 		// Start loading the ad in the background.
 	    mAdView.loadAd( adRequest );
-	    android.util.Log.i( TAG, "HERE");
-	    //TopFragment
+	    
 	    SharedPreferences prefs = getActivity().getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
+	    //IMusicBrowser TopFragment = null;
 	    
 	    if ( prefs.contains( "class_name" ) ) {// else check if we saved it in prefs
 	    	
-	    	android.util.Log.i( TAG, "Contains class name");
-	    	
-	    	String className = prefs.getString( "class_name", "" );
-	    	String mediaID = prefs.getString( "media_id", null );
+	    	String className = prefs.getString( PREF_KEY_CLASSNAME, "" );
+	    	String mediaID = prefs.getString( PREF_KEY_MEDIAID, null );
 	    	
 	    	Fragment initialFragment = null;
 	    	
 	    	Class < ? extends Fragment > nowPlayingFragmentClass;
 	    	
 	    	try {
-				nowPlayingFragmentClass = (Class<? extends Fragment>) Class.forName( className );
+	    		
+				nowPlayingFragmentClass = ( Class< ? extends Fragment > ) Class.forName( className );
 				
 				initialFragment = nowPlayingFragmentClass.newInstance();
-				TopFragment = ( IMusicBrowser ) initialFragment;
 				
-				TopFragment.setMediaID( mediaID );
+				if ( null != initialFragment ) {
+					
+					IMusicBrowser mBrowserFragment = ( IMusicBrowser ) initialFragment;
+					
+					mBrowserFragment.setMediaID( mediaID );
+					
+				}
 				
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
+			} catch ( ClassNotFoundException e ) {
 				e.printStackTrace();
-			} catch (java.lang.InstantiationException e) {
-				// TODO Auto-generated catch block
+			} catch ( java.lang.InstantiationException e ) {
 				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
+			} catch ( IllegalAccessException e ) {
 				e.printStackTrace();
 			}
 		    
-	    	if ( null == initialFragment ) { 
-	    		android.util.Log.i( TAG, "Failed to instantiate... falling back to SongsFragment.");
+	    	if ( null == initialFragment ) {
+	    		
 	    		// Fall back to "All Songs"
+	    		//android.util.Log.i( TAG, "Failed to instantiate... falling back to SongsFragment.");
+	    		
 	    		initialFragment = new SongsFragment();
 	    		
 	    	}
@@ -106,6 +107,8 @@ public class MusicBrowserFragment extends Fragment {
 	    	
 	    	// Commit the transaction
 	    	transaction.commit();
+	    	
+	    	
 	    	
 	    } else {
 		    
@@ -128,8 +131,6 @@ public class MusicBrowserFragment extends Fragment {
 		
 		mAdView.resume();
 		
-		//
-		
 	}
 	
 	@Override public void onPause() {
@@ -148,8 +149,11 @@ public class MusicBrowserFragment extends Fragment {
 		SharedPreferences prefs = getActivity().getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
 		SharedPreferences.Editor edit = prefs.edit();
 		//android.util.Log.i( TAG, "Class name: " + TopFragment.getClass().getName() );
+		
+		IMusicBrowser TopFragment = ( IMusicBrowser ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
+		
 		edit.putString( PREF_KEY_CLASSNAME, TopFragment.getClass().getName() );
-		edit.putString( "media_id", TopFragment.getMediaID() );
+		edit.putString( PREF_KEY_MEDIAID, TopFragment.getMediaID() );
 		
 		edit.commit();
 		
@@ -176,6 +180,7 @@ public class MusicBrowserFragment extends Fragment {
 			// Check to see if the currently playing Fragment is already showing
 			// only create the new fragment if it isn't already showing.
 			//
+			IMusicBrowser TopFragment = ( IMusicBrowser ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
 			
 			if ( TopFragment != null ) {
 				
@@ -225,6 +230,7 @@ public class MusicBrowserFragment extends Fragment {
 		// Check to see if the currently playing Fragment is already showing
 		// only create the new fragment if it isn't already showing.
 		//
+    	IMusicBrowser TopFragment = ( IMusicBrowser ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
 		
 		if ( TopFragment != null ) {
 			
@@ -232,7 +238,7 @@ public class MusicBrowserFragment extends Fragment {
 			
 			boolean isSameClass = TopFragment.getClass().equals( newFragment.getClass() );
 			
-			boolean isSameMediaID = showingMediaID.equals( ((IMusicBrowser)newFragment).getMediaID() );
+			boolean isSameMediaID = showingMediaID != null && showingMediaID.equals( ((IMusicBrowser)newFragment).getMediaID() );
 			
 			if ( !( isSameClass && isSameMediaID ) ) {
 				
