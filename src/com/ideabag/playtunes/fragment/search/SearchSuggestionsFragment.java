@@ -1,8 +1,14 @@
 package com.ideabag.playtunes.fragment.search;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
+import com.ideabag.playtunes.util.SearchHistory;
+import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,7 +21,7 @@ import android.widget.TextView;
 
 public class SearchSuggestionsFragment extends SaveScrollListFragment {
 	
-	public static final String TAG = "SearchSuggestionsFragment";
+	public static final String TAG = "Search Suggestions Fragment";
 	
 	TextView mClearHistory;
 	SearchFragment mSearchFragment;
@@ -24,6 +30,8 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 	
 	ArrayAdapter < String > adapter;
 	String[] mSearchQueries = null;
+	
+	private Tracker mTracker;
 	
 	public SearchSuggestionsFragment() {
 		
@@ -50,7 +58,7 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 			setListAdapter( adapter );
 			
 		}
-		/*
+		
     	if ( adapter.getCount() < 1 ) {
     		
         	mClearHistory.setVisibility( View.VISIBLE );
@@ -60,7 +68,7 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
     		mClearHistory.setVisibility( View.GONE );
     		
     	}
-		*/
+		
 	}
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -77,14 +85,31 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
     	mClearHistory.setText( getString( R.string.clear_search_history ) );
     	getListView().addFooterView( mClearHistory, null, true );
     
-
+    	
     	
     	getListView().setHeaderDividersEnabled( true );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
     	
+		mTracker = TrackerSingleton.getDefaultTracker( getActivity() );
+		
 		loadSearchHistory();
     	
+		
+	}
+	
+	@Override public void onResume() {
+		super.onResume();
+		
+		mTracker.setScreenName( TAG );
+		
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
+		
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 	
@@ -104,7 +129,7 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		if ( position > adapter.getCount() ) {
+		if ( position >= adapter.getCount() ) {
 			
 			clearSearchHistory();
 			
@@ -115,6 +140,11 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 			mSearchFragment.mQueryTextView.setText( mSearchTerm );
 			mSearchFragment.setMediaID( mSearchTerm );
 			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_CLICK )
+	    	.setValue( position )
+	    	.build());
 			
 		}
 		
@@ -122,8 +152,7 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 	
 	private void clearSearchHistory() {
 		
-		//suggestions.clearHistory();
-		//adapter.requery();
+		SearchHistory.clearHistory( getActivity() );
 		adapter.notifyDataSetChanged();
 		
 		if ( adapter.getCount() > 0 ) {
@@ -136,6 +165,11 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 			
 		}
 		
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
+    	.setValue( adapter.getCount() )
+    	.build());
 		
 	}
 	
