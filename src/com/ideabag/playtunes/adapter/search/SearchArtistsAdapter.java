@@ -89,7 +89,7 @@ public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchab
 	
 	public int hasMore() {
 		
-		return ( cursor != null && mTruncateAmount > 0 ? cursor.getCount() - mTruncateAmount : 0 );
+		return ( cursor != null && mTruncateAmount > 0 && cursor.getCount() > mTruncateAmount ? cursor.getCount() - mTruncateAmount : 0 );
 		
 	}
 
