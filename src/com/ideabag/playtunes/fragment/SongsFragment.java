@@ -2,14 +2,19 @@ package com.ideabag.playtunes.fragment;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.SongsAllAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
+import com.ideabag.playtunes.util.IMusicBrowser;
+import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,22 +22,26 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-public class SongsFragment extends ListFragment implements PlaylistBrowser {
+public class SongsFragment extends SaveScrollListFragment implements IMusicBrowser, IPlayableList {
 	
 	public static final String TAG = "All Songs Fragment";
 	
     private MainActivity mActivity;
+    private Tracker mTracker;
     
 	SongsAllAdapter adapter;
+	
+	private PlaylistManager mPlaylistManager;
 	
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
-		
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -40,38 +49,43 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 		adapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
     	
-    	
+		//adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
+		
+    	mPlaylistManager = new PlaylistManager( getActivity() );
+		
     	getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
     	getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
+		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
     	
 		
     	setListAdapter( adapter );
     	
-		getActivity().getContentResolver().registerContentObserver(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	ContentResolver mResolver = getActivity().getContentResolver();
     	
+    	mResolver.registerContentObserver(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	mResolver.registerContentObserver(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
+		
+		
 	}
 	
-
 	@Override public void onResume() {
 		super.onResume();
 		
 		mActivity.setActionbarTitle( getString( R.string.all_songs ) );
     	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 		
-		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
-		
-		tracker.setScreenName( TAG );
-		tracker.send( new HitBuilders.AppViewBuilder().build() );
+    	mTracker.setScreenName( TAG );
+    	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
 		//t.set( "_count", ""+adapter.getCount() );
-		tracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 	        // Send a screen view.
@@ -110,9 +124,33 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		
 		mActivity.mBoundService.play();
 		
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
+		
 	}
 	
-	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
+	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+		@Override public boolean onItemLongClick( AdapterView<?> arg0, View v, int position, long id ) {
+			
+			showSongMenuDialog( "" + id );
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_LONGCLICK )
+	    	.setValue( position )
+	    	.build());
+			
+			return true;
+			
+		}
+		
+	};
+	
+	protected View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
 		@Override public void onClick( View v ) {
 			
@@ -137,12 +175,7 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 				
 			} else if ( viewID == R.id.MenuButton ) {
 				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-	        	
-				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
-				newFragment.setMediaID( songID );
-	        	
-	            newFragment.show( ft, "dialog" );
+				showSongMenuDialog( songID );
 				
 			}
 			
@@ -151,7 +184,18 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
 		}
 		
 	};
-
+	
+	
+	protected void showSongMenuDialog( String songID ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+		newFragment.setMediaID( songID );
+    	
+        newFragment.show( ft, "dialog" );
+		
+	}
 
 	// PlaylistBrowser interface methods
 	
@@ -179,5 +223,11 @@ public class SongsFragment extends ListFragment implements PlaylistBrowser {
         }
 
 	};
+
+	@Override public void onNowPlayingMediaChanged(String media_id) {
+		// TODO Auto-generated method stub
+		adapter.setNowPlayingMedia( media_id );
+		
+	}
 	
 }
