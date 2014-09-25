@@ -69,7 +69,7 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 	
 	@Override public int getCount() {
 		
-		return cursor.getCount();
+		return ( cursor != null ? cursor.getCount() : 0 );
 		
 	}
 
@@ -81,7 +81,17 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 
 	@Override public long getItemId( int position ) {
 		
-		return 0;
+		int mID = 0;
+		
+		if ( cursor != null ) {
+			
+			cursor.moveToPosition( position );
+			
+			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Playlists._ID ) );
+			
+		}
+		
+		return mID;
 		
 	}
 
