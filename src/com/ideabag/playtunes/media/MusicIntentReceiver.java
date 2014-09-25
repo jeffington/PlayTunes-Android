@@ -17,6 +17,7 @@
 package com.ideabag.playtunes.media;
 
 import com.ideabag.playtunes.MusicPlayerService;
+import com.ideabag.playtunes.util.GAEvent;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,6 +38,9 @@ public class MusicIntentReceiver extends BroadcastReceiver {
     	
     	String action = intent.getAction();
     	
+    	Intent mIntent = new Intent();
+        
+    	
         if ( action.equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY ) ) {
         	
         	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PAUSE ) );
@@ -49,25 +53,34 @@ public class MusicIntentReceiver extends BroadcastReceiver {
 	            
 	            if ( keyEvent.getAction() != KeyEvent.ACTION_DOWN )
 	                return;
-	
+	            
+	            
+	            mIntent.addCategory( GAEvent.Categories.LOCKSCREEN );
+	            
 	            switch ( keyEvent.getKeyCode() ) {
 	            	
 	                case KeyEvent.KEYCODE_HEADSETHOOK:
 	                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
 	                    
-	                	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PLAY_OR_PAUSE ) );
+	                	mIntent.setAction( MusicPlayerService.ACTION_PLAY_OR_PAUSE );
+	                	
+	                	context.sendBroadcast( mIntent );
 	                    
 	                    break;
 	                    
 	                case KeyEvent.KEYCODE_MEDIA_PLAY:
 	                	
-	                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PLAY ) );
+	                	mIntent.setAction( MusicPlayerService.ACTION_PLAY );
+	                	
+	                    context.sendBroadcast( mIntent );
 	                    
 	                    break;
 	                    
 	                case KeyEvent.KEYCODE_MEDIA_PAUSE:
 	                    
-	                	context.sendBroadcast( new Intent( MusicPlayerService.ACTION_PAUSE ) );
+	                	mIntent.setAction( MusicPlayerService.ACTION_PAUSE );
+	                	
+	                	context.sendBroadcast( mIntent );
 	                    
 	                    break;
 	                /*
@@ -79,14 +92,17 @@ public class MusicIntentReceiver extends BroadcastReceiver {
 	                 */
 	                case KeyEvent.KEYCODE_MEDIA_NEXT:
 	                	
-	                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_NEXT ) );
+	                	mIntent.setAction( MusicPlayerService.ACTION_NEXT );
+	                	
+	                    context.sendBroadcast( mIntent );
 	                    
 	                    break;
 	                    
 	                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-	                    // TODO: ensure that doing this in rapid succession actually plays the
-	                    // previous song
-	                    context.sendBroadcast( new Intent( MusicPlayerService.ACTION_BACK ) );
+	                    
+	                	mIntent.setAction( MusicPlayerService.ACTION_BACK );
+	                	
+	                    context.sendBroadcast( mIntent );
 	                    
 	                    break;
 	                    
