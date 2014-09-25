@@ -5,33 +5,34 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistsAllAdapter;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
+import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
 
 import android.app.Activity;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser {
+public class ArtistsAllFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "All Artists Fragment";
 
 	ArtistsAllAdapter adapter;
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	@Override public void onAttach( Activity activity ) {
 			
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
-		
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -52,40 +53,31 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
 		
 	}
-	
+	/*
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 	}
-		
+	*/
 	@Override public void onResume() {
 		super.onResume();
 		
 		mActivity.setActionbarTitle( getString( R.string.artists_plural ) );
 		mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.artist_singular ) : getString( R.string.artists_plural ) ) );
-		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+		mTracker.setScreenName( TAG );
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -116,11 +108,11 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 		
 		String artistID = ( String ) v.getTag( R.id.tag_artist_id );
 		
-		boolean artistUnknown = v.getTag( R.id.tag_artist_unknown ).equals( "1" );
+		//boolean artistUnknown = v.getTag( R.id.tag_artist_unknown ).equals( "1" );
 		
-		int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.AlbumCount ) ).getText().toString() );
-		
-		if ( artistUnknown || 0 == albumCount ) {
+		//int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.AlbumCount ) ).getText().toString() );
+		/*
+		if ( artistUnknown ) {
 			
 			ArtistAllSongsFragment artistAllFragment = new ArtistAllSongsFragment();
 			artistAllFragment.setMediaID( artistID );
@@ -128,13 +120,19 @@ public class ArtistsAllFragment extends ListFragment implements PlaylistBrowser 
 			mActivity.transactFragment( artistAllFragment );
 			
 		} else {
-			
+			*/
 			ArtistsOneFragment artistFragment = new ArtistsOneFragment();
 			artistFragment.setMediaID( artistID );
 			
 			mActivity.transactFragment( artistFragment );
 			
-		}
+		//}
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_SHOWLIST )
+	    	.setValue( position )
+	    	.build());
 		
 	}
 	
