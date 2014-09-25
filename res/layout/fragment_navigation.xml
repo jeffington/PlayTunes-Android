@@ -10,27 +10,22 @@
 	    android:orientation="horizontal"
 	    android:minHeight="@dimen/touch_target_minimum"
 	    android:gravity="center_vertical"
-	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
-	    android:paddingRight="@dimen/list_item_horizontal_spacing"
 	    android:layout_alignParentBottom="true"
 	    android:background="@color/list_item_pressed"
 	    android:clickable="true">
 	   	
-	   	<ImageView android:id="@+id/BadgeIcon"
-	            android:layout_width="24dp"
-	            android:layout_height="24dp"
-	            android:src="@drawable/ic_action_settings"
-	            />
-	        
-	    <TextView android:id="@+id/Title"
-	        android:layout_width="0dp"
+	    <Button android:id="@+id/SettingsButton"
+	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:layout_weight="1"
 	        android:gravity="center_vertical|left"
 	        android:textSize="@dimen/text_large"
 	        android:textColor="@color/textColorPrimary"
-	        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
-	        android:text="Settings"
+	        android:text="@string/settings"
+	        android:drawableLeft="@drawable/ic_action_settings"
+	        android:drawablePadding="@dimen/list_item_horizontal_spacing"
+	       	android:paddingLeft="@dimen/list_item_horizontal_spacing"
+	    	android:paddingRight="@dimen/list_item_horizontal_spacing"
+	        android:background="@drawable/button_background_light"
 	        />
 		
 	</LinearLayout>

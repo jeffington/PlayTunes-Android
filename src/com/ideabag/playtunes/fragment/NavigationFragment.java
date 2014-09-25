@@ -193,7 +193,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		 
 		 MusicBrowserFragment = ( MusicBrowserFragment ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserFragment );
 		
-		 getView().findViewById( R.id.Toolbar ).setOnClickListener( new OnClickListener() {
+		 getView().findViewById( R.id.SettingsButton ).setOnClickListener( new OnClickListener() {
 
 			@Override public void onClick( View v ) {
 				
