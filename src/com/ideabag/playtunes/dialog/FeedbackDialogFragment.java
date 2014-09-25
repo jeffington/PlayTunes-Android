@@ -47,7 +47,8 @@ public class FeedbackDialogFragment extends DialogFragment {
         //mEditText.setOnEditorActionListener( this );
         mEditText.setSelected( false );
         
-        view.findViewById( R.id.DialogConfirmButton ).setOnClickListener( headerButtonClickListener );
+        view.findViewById( R.id.DialogConfirm ).setOnClickListener( headerButtonClickListener );
+        view.findViewById( R.id.DialogCancel ).setOnClickListener( headerButtonClickListener );
         view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener );
         
         return view;
@@ -68,11 +69,11 @@ public class FeedbackDialogFragment extends DialogFragment {
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton ) {
+			if ( id == R.id.DialogCloseButton || id == R.id.DialogCancel ) {
 				
 				dismiss();
 				
-			} else if ( id == R.id.DialogConfirmButton ) {
+			} else if ( id == R.id.DialogConfirm ) {
 				
 				tracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( "button" )
@@ -102,7 +103,7 @@ public class FeedbackDialogFragment extends DialogFragment {
 	    	.setLabel( mFeedbackString )
 	    	.build());
 	    	
-	    	Toast.makeText( getActivity(), "Thank you for your input!", Toast.LENGTH_SHORT ).show();
+	    	Toast.makeText( getActivity(), getString( R.string.feedback_thanks ), Toast.LENGTH_LONG ).show();
 	    	GoogleAnalytics.getInstance( getActivity().getBaseContext() ).dispatchLocalHits();
     		
     	}
