@@ -9,6 +9,8 @@ import com.ideabag.playtunes.adapter.GenresOneAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 
 import android.app.Activity;
 import android.database.ContentObserver;
@@ -21,6 +23,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
@@ -30,6 +33,7 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 	
 	GenresOneAdapter adapter;
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	private String GENRE_ID = "";
 	
@@ -46,7 +50,8 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
-		
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+				
 	}
     
 	@Override public void onSaveInstanceState( Bundle outState ) {
@@ -71,6 +76,7 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
+		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
 		//getListView().addHeaderView( mActivity.AdContainer, null, true );
 		
 		setListAdapter( adapter );
@@ -86,19 +92,16 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 		
 		mActivity.setActionbarTitle( adapter.GenreName );
 		mActivity.setActionbarSubtitle( getString( R.string.genre_singular ) );
-		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
 	    // Set screen name.
 	    // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+		mTracker.setScreenName( TAG );
 	    // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -136,11 +139,31 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 		
 		mActivity.mBoundService.play();
 		
-		// Set the title of the playlist
-		
-		// 
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
 			
 	}
+	
+	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+		@Override public boolean onItemLongClick( AdapterView<?> arg0, View v, int position, long id ) {
+			
+			showSongMenuDialog( "" + id );
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_LONGCLICK )
+	    	.setValue( position )
+	    	.build());
+			
+			return true;
+			
+		}
+		
+	};
 	
 	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
@@ -167,12 +190,7 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 				
 			} else if ( viewID == R.id.MenuButton ) {
 				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-	        	
-				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
-				newFragment.setMediaID( songID );
-	        	
-	            newFragment.show( ft, "dialog" );
+				showSongMenuDialog( songID );
 				
 			}
 			
@@ -181,6 +199,17 @@ public class GenresOneFragment extends SaveScrollListFragment implements IMusicB
 		}
 		
 	};
+	
+	protected void showSongMenuDialog( String songID ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+		newFragment.setMediaID( songID );
+    	
+        newFragment.show( ft, "dialog" );
+		
+	}
 	
 	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
 
