@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/dialog_width"
     android:minWidth="@dimen/dialog_width"
     android:layout_height="wrap_content"
@@ -40,7 +40,6 @@
     	android:id="@+id/PlaylistOptionsRename"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/list_item_height"
-		android:layout_below="@id/DialogHeader"
 		android:gravity="left|center_vertical"
 		android:textSize="@dimen/text_xlarge"
 		android:paddingLeft="@dimen/list_item_horizontal_spacing"
@@ -48,11 +47,17 @@
 		android:text="@string/rename"
 		android:background="@drawable/list_item_background"
 	/>
+	
+   	<View
+   	    android:layout_width="match_parent"
+   	    android:layout_height="1px"
+   	    android:background="@color/list_divider_color"
+   	    />
+	
 	<Button
     	android:id="@+id/PlaylistOptionsDelete"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/list_item_height"
-		android:layout_below="@id/PlaylistOptionsRename"
 		android:gravity="left|center_vertical"
 		android:textSize="@dimen/text_xlarge"
 		android:paddingLeft="@dimen/list_item_horizontal_spacing"
@@ -61,5 +66,5 @@
 		android:background="@drawable/list_item_background"
 	/>
     
-</RelativeLayout>
+</LinearLayout>
 

@@ -28,9 +28,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PlaylistsAllFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
@@ -75,6 +77,7 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
+		getListView().setOnItemLongClickListener( mPlaylistLongClickListener );
 		
 		//adapter.addView( mActivity.AdContainer, false );
 		getListView().addHeaderView( starredPlaylist, null, true );
@@ -179,6 +182,24 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
     	
 	}
 	
+	protected AdapterView.OnItemLongClickListener mPlaylistLongClickListener = new AdapterView.OnItemLongClickListener() {
+		
+		@Override public boolean onItemLongClick( AdapterView<?> arg0, View v, int position, long id ) {
+			
+			showPlaylistMenuDialog( "" + adapter.getItemId( position ) );
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_LONGCLICK )
+	    	.setValue( position )
+	    	.build());
+			
+			return true;
+			
+		}
+		
+	};
+	
 	public View.OnClickListener playlistMenuClickListener = new View.OnClickListener() {
 		
 		@Override public void onClick(View v) {
@@ -188,16 +209,22 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 			ViewGroup list_item = ( ViewGroup ) v.getParent();
 			String playlist_id = ( String ) list_item.getTag( R.id.tag_playlist_id);
 			
-			FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        	
-			PlaylistMenuDialogFragment newFragment = new PlaylistMenuDialogFragment();
-			newFragment.setMediaID( playlist_id );
-        	
-            newFragment.show( ft, "dialog" );
+			showPlaylistMenuDialog( playlist_id );
 			
 		}
 		
 	};
+	
+	private void showPlaylistMenuDialog( String playlist_id ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		PlaylistMenuDialogFragment newFragment = new PlaylistMenuDialogFragment();
+		newFragment.setMediaID( playlist_id );
+    	
+        newFragment.show( ft, "dialog" );
+		
+	}
 
 
 	// PlaylistBrowser interface methods
