@@ -1,9 +1,16 @@
 package com.ideabag.playtunes.fragment;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.NowPlayingActivity;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
+import com.ideabag.playtunes.util.GAEvent.AudioControls;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.FooterControls;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
+import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,6 +35,7 @@ import android.widget.TextView;
 public class FooterControlsFragment extends Fragment {
 	
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	private String lastAlbumUri = null;
 	private String current_media_id;
@@ -48,7 +56,7 @@ public class FooterControlsFragment extends Fragment {
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
-		
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		mFragmentSelf = this;
 		
 	}
@@ -104,21 +112,41 @@ public class FooterControlsFragment extends Fragment {
 				
 				mActivity.showNowPlayingActivity();
 				
+				mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( Categories.FOOTER_CONTROLS )
+		    	.setAction( Playlist.ACTION_CLICK )
+		    	.build());
+				
 			} else if ( id == R.id.FooterControlsPlayPauseButton ) {
 				
 				if ( isPlaying ) {
 					
 					mActivity.mBoundService.pause();
 					
+					mTracker.send( new HitBuilders.EventBuilder()
+			    	.setCategory( Categories.FOOTER_CONTROLS )
+			    	.setAction( AudioControls.ACTION_PAUSE )
+			    	.build());
+					
 				} else {
 					
 					mActivity.mBoundService.play();
+					
+					mTracker.send( new HitBuilders.EventBuilder()
+					.setCategory( Categories.FOOTER_CONTROLS )
+			    	.setAction( AudioControls.ACTION_PLAY )
+			    	.build());
 					
 				}
 				
 			} else if ( id == R.id.FooterControlsNextButton ) {
 				
 				mActivity.mBoundService.next();
+				
+				mTracker.send( new HitBuilders.EventBuilder()
+				.setCategory( Categories.FOOTER_CONTROLS )
+		    	.setAction( AudioControls.ACTION_NEXT )
+		    	.build());
 				
 			}
 			

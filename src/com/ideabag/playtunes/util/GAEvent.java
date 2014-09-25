@@ -16,6 +16,9 @@ public interface GAEvent {
 		// Lock screen controls
 		String LOCKSCREEN = "lockscreen";
 		
+		// 
+		String FOOTER_CONTROLS = "footer_controls";
+		
 		// Notification
 		String NOTIFICATION = "notification button";
 		
@@ -33,6 +36,8 @@ public interface GAEvent {
 		String ACTION_CLICK = "click";
 		String ACTION_LONGCLICK = "longclick";
 		String ACTION_SHOWLIST = "show";
+		
+		
 		
 	}
 	
@@ -67,6 +72,12 @@ public interface GAEvent {
 		String ACTION_REMOVESTAR = "star_remove";
 		String ACTION_MOVESTAR = "star_move";
 		
+		
+	}
+	
+	public interface FooterControls {
+		
+		String ACTION_NOW_PLAYING = "now_playing";
 		
 	}
 	
