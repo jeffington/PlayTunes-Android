@@ -1,5 +1,11 @@
 package com.ideabag.playtunes;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.UserPlaylist;
+import com.ideabag.playtunes.util.TrackerSingleton;
+
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -23,6 +29,8 @@ public class PlaylistManager {
 	
 	private SharedPreferences prefs;
 	
+	private Tracker mTracker;
+	
 	public PlaylistManager( Context context ) {
 		
 		mContext = context;
@@ -31,6 +39,8 @@ public class PlaylistManager {
 		STARRED_PLAYLIST_NAME = mContext.getString( R.string.playlist_name_starred );
 		
 		prefs = context.getSharedPreferences( STARRED_PLAYLIST_NAME, Context.MODE_PRIVATE );
+		
+		mTracker = TrackerSingleton.getDefaultTracker( context );
 		
 		//mResolver.update(uri, values, where, selectionArgs)
 		
@@ -52,7 +62,17 @@ public class PlaylistManager {
 		
 		addSongsInCursorToPlaylist( songCursor, playlist_id);
 		
+		// Maybe do a null check here?
+		
 		songCursor.close();
+		
+		//
+        // Analytics Event
+        //
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.USER_PLAYLIST )
+    	.setAction( playlist_id == this.createStarredIfNotExist() ? UserPlaylist.ACTION_ADDSTAR : UserPlaylist.ACTION_ADD )
+    	.build());
 		
 		return true;
 		
@@ -143,7 +163,19 @@ public class PlaylistManager {
 				}
 				);
 		
-		return ( rows == 1 );
+		if ( rows > 0 ) {
+			
+			//
+	        // Analytics Event
+	        //
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.USER_PLAYLIST )
+	    	.setAction( playlist_id == this.createStarredIfNotExist() ? UserPlaylist.ACTION_REMOVESTAR : UserPlaylist.ACTION_REMOVE )
+	    	.build());
+			
+		}
+		
+		return ( rows > 0 );
 		
 	}
 	
@@ -183,8 +215,17 @@ public class PlaylistManager {
                 
             }
             
-            
+            //
+            // Analytics Event
+            //
+    		mTracker.send( new HitBuilders.EventBuilder()
+        	.setCategory( Categories.USER_PLAYLIST )
+        	.setAction( UserPlaylist.ACTION_CREATE )
+        	.build());
+    		
         }
+        
+        
 		
 		return playlist_id;
 		
@@ -197,7 +238,7 @@ public class PlaylistManager {
 	// 
 	public boolean deletePlaylist( String playlist_id ) {
 		
-		mResolver.delete( playlistsUri,
+		int mCountDeleted = mResolver.delete( playlistsUri,
 				MediaStore.Audio.Playlists._ID + "=?",
 				new String[] {
 					
@@ -206,7 +247,19 @@ public class PlaylistManager {
 				}
 			);
 		
-		return true;
+		if ( mCountDeleted > 0 ) {
+	        
+			//
+	        // Analytics Event
+	        //
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.USER_PLAYLIST )
+	    	.setAction( UserPlaylist.ACTION_CREATE )
+	    	.build());
+			
+		}
+		
+		return ( mCountDeleted > 0 );
 		
 	}
 	
@@ -217,7 +270,7 @@ public class PlaylistManager {
 		
 		updateValues.put( MediaStore.Audio.Playlists.NAME, new_name );
 		
-		mResolver.update( playlistsUri,
+		int mCountUpdated = mResolver.update( playlistsUri,
 				updateValues,
 				MediaStore.Audio.Playlists._ID + "=?",
 				new String[] {
@@ -226,7 +279,19 @@ public class PlaylistManager {
 					
 				});
 		
-		return true;
+		if ( mCountUpdated > 0 ) {
+			
+			//
+	        // Analytics Event
+	        //
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.USER_PLAYLIST )
+	    	.setAction( UserPlaylist.ACTION_RENAME )
+	    	.build());
+			
+		}
+		
+		return ( mCountUpdated > 0 );
 		
 	}
 	
@@ -240,6 +305,8 @@ public class PlaylistManager {
 		String playlist_id = createStarredIfNotExist();
 		
 		addSong( playlist_id, song_id );
+		
+		
 		
 		return true;
 		
@@ -395,18 +462,17 @@ public class PlaylistManager {
 		
 		success = MediaStore.Audio.Playlists.Members.moveItem( mResolver, Long.parseLong( playlist_id ), from, to );
 		
-		/*
-		Uri uri = MediaStore.Audio.Playlists.Members.getContentUri("external", Long.parseLong( playlist_id ) )
-	            .buildUpon()
-	            .appendEncodedPath( String.valueOf( from ) )
-	            .appendQueryParameter("move", "true")
-	            .build();
-	    	
-	    ContentValues values = new ContentValues();
-	    values.put( MediaStore.Audio.Playlists.Members.PLAY_ORDER, to );
-	    
-	    return mResolver.update(uri, values, null, null) != 0;
-		*/
+		if ( success ) { 
+			
+			//
+	        // Analytics Event
+	        //
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.USER_PLAYLIST )
+	    	.setAction( playlist_id == this.createStarredIfNotExist() ? UserPlaylist.ACTION_MOVESTAR : UserPlaylist.ACTION_MOVE )
+	    	.build());
+			
+		}
 		
 		return success;
 		
