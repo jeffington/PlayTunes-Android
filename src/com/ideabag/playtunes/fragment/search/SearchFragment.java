@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -33,9 +34,6 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
     private MainActivity mActivity;
 	public AutoCompleteTextView mQueryTextView;
     
-	//SearchRecentSuggestions mSuggestions;
-	
-	private ISearchable mCurrentFragment = null;
 	//SongSearchAdapter adapter;
 	
 	protected String mSearchQuery = null;
@@ -83,20 +81,16 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		
 		setHasOptionsMenu( true );
     	
-		/*
-		mSuggestions = new SearchRecentSuggestions( getActivity(),
-                RecentQuerySuggestionProvider.AUTHORITY, RecentQuerySuggestionProvider.MODE );
-		*/
 		
 		ActionBar mBar = mActivity.getSupportActionBar();
-			
+		
 		mBar.setCustomView( R.layout.view_search_compat );
 		mBar.setDisplayShowCustomEnabled( true );
 		
 		mQueryTextView = ( AutoCompleteTextView ) mBar.getCustomView().findViewById( R.id.SearchQuery );
 		
 		mBar.getCustomView().findViewById( R.id.SearchButton ).setOnClickListener( new OnClickListener() {
-
+			
 			@Override public void onClick( View v ) {
 				
 				String mQueryString = mQueryTextView.getEditableText().toString();
@@ -117,36 +111,41 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 			
 		});
 		
-		
-		
 		mQueryTextView.setOnEditorActionListener( new OnEditorActionListener() {
 
 			@Override public boolean onEditorAction( TextView view, int actionId, KeyEvent event ) {
 				
 				if ( actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == KeyEvent.KEYCODE_ENTER ) {
 					
-					// Do search
-					setMediaID( ( String ) view.getText() );
+					setMediaID( mQueryTextView.getEditableText().toString() );
 					
 					return true;
 					
-				} else {
+				} else if ( event.getAction() == KeyEvent.ACTION_DOWN ) {
 					
-					if ( event.getAction() == KeyEvent.ACTION_DOWN ) {
-						
-						setMediaID( ( String ) view.getText() );
-						
-					}
+					android.util.Log.i( TAG, "key down");
 					
+					setMediaID( mQueryTextView.getEditableText().toString() );
 					
 				}
 				
-				// TODO Auto-generated method stub
 				return false;
 				
 			}
 			
 		});
+		/*
+		mQueryTextView.setOnKeyListener( new OnKeyListener() {
+
+			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
+				
+				
+				return false;
+				
+			}
+			
+		});
+		*/
 		
 		
 		SearchSuggestionsFragment mSuggestionsFragment = new SearchSuggestionsFragment( this );
@@ -162,20 +161,16 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		
 		if ( null != mSearchQuery ) {
 			
-			android.util.Log.i( TAG, "Search query restore from saved instance state '" + mSearchQuery + "'" );
+			//android.util.Log.i( TAG, "Search query restore from saved instance state '" + mSearchQuery + "'" );
 			mQueryTextView.setText( mSearchQuery );
-			
+			/*
 			SearchAllFragment mSearchAllFragment = new SearchAllFragment();
 			
 			mSearchAllFragment.setQuery( mSearchQuery );
 			//mSearchAllFragment.setP
 			
-			FragmentTransaction ft2 = getActivity().getSupportFragmentManager().beginTransaction();
-			
-			ft2.replace( R.id.SearchFragment, mSearchAllFragment );
-	    	ft2.addToBackStack( null );
-	    	ft2.commit();
-			
+			transactFragment( mSearchAllFragment );
+			*/
 		}
 		
 		
@@ -189,12 +184,12 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
     	mActivity.setActionbarSubtitle( null );
     	mActivity.mShowSearch = false;
     	mActivity.supportInvalidateOptionsMenu();
-		/*
+		
 		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 		
 		tracker.setScreenName( TAG );
 		tracker.send( new HitBuilders.AppViewBuilder().build() );
-		
+		/*
 		//t.set( "_count", ""+adapter.getCount() );
 		tracker.send( new HitBuilders.EventBuilder()
     	.setCategory( "playlist" )
@@ -202,15 +197,7 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
     	.setLabel( TAG )
     	.setValue( adapter.getCount() )
     	.build());
-	        // Send a screen view.
-		
 		*/
-	}
-		
-	@Override public void onPause() {
-		super.onPause();
-		//mActivity.AdView.pause();
-		
 	}
 	
 	@Override public void onDestroyView() {
@@ -236,54 +223,62 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		//getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
 		
 	}
-
+	
 	// PlaylistBrowser interface methods
 	
-	@Override public void setMediaID(String media_id) {
+	@Override public void setMediaID( String media_id ) {
 		
 		if ( null != media_id && media_id.length() > 1 ) {
 			
 			mSearchQuery = media_id;
-			//mSuggestions.saveRecentQuery( mSearchQuery, null);
-			SearchHistory.addSearchQuery( getActivity(), mSearchQuery );
-			
-			// Determine if a SearchableFragment is in place, if there call setQuery on that Fragment
-			// If there isn't, add a SearchAllFragment
-			
-			Fragment mCurrentFragment = getActivity().getSupportFragmentManager().findFragmentById( R.id.SearchFragment );
-			
-			if ( null == mCurrentFragment
-					|| mCurrentFragment instanceof SearchSuggestionsFragment ) {
-				
-				android.util.Log.i( TAG, "Loading search all fragment");
-				
-				SearchAllFragment mSearchAllFragment = new SearchAllFragment();
-				
-				mSearchAllFragment.setQuery( mSearchQuery );
-				mSearchAllFragment.setSearchFragment( this );
-				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-				
-				ft.replace( R.id.SearchFragment, mSearchAllFragment );
-		    	ft.addToBackStack( null );
-		    	ft.commit();
-		    	
-			} else {
-				
-				android.util.Log.i( TAG, "Updating the existing searchable fragment.");
+			/*
+			if ( null != mCurrentFragment ) {
 				
 				ISearchable mSearchable = ( ISearchable ) mCurrentFragment;
 				
 				mSearchable.setQuery( mSearchQuery );
 				
 			}
-	    	
+			*/
+			
+			// Check if there is a Searchable fragment 
+			// Load SearchAllFragment if there isn't
+			// Otherwise set the Searchable's query to mSearchQuery
+			
+			if ( this.isResumed() ) {
+				
+				SearchHistory.addSearchQuery( getActivity(), media_id );
+				
+				Fragment mFragment = getActivity().getSupportFragmentManager().findFragmentById( R.id.SearchFragment );
+				
+				if ( mFragment instanceof SearchSuggestionsFragment ) {
+					
+					SearchAllFragment mSearchAllFragment = new SearchAllFragment();
+					
+					mSearchAllFragment.setQuery( mSearchQuery );
+					//mSearchAllFragment.setP
+					
+					
+					transactFragment( mSearchAllFragment );
+					
+				} else {
+					
+					ISearchable mSearchable = ( ISearchable ) mFragment;
+					
+					mSearchable.setQuery( mSearchQuery );
+					
+				}
+				
+				
+			}
+			
 		}
 		
 	}
 	
 	public void transactFragment( Fragment mFrag ) {
 		
+		//mCurrentFragment = (ISearchable) mFrag;
 		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 		
 		ft.replace( R.id.SearchFragment, mFrag );
