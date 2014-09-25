@@ -127,9 +127,18 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 	}
 
 	@Override public long getItemId( int position ) {
-		//cursor.moveToPosition( position );
 		
-		return 0;//cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
+		int mID = 0;
+		
+		if ( null != cursor ) {
+			
+			cursor.moveToPosition( position );
+			
+			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+			
+		}
+		
+		return mID;
 		
 	}
 
