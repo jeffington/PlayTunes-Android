@@ -14,6 +14,8 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsAllAdapter;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
@@ -24,11 +26,14 @@ public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicB
 	AlbumsAllAdapter adapter;
 	private MainActivity mActivity;
 	
+	private Tracker mTracker;
+	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker =  TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
 		
 	}
     
@@ -55,20 +60,19 @@ public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicB
     	mActivity.setActionbarTitle( getString( R.string.albums_plural) );
     	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.album_singular ) : getString( R.string.albums_plural ) ) );
 		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
+
 
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+    	mTracker.setScreenName( TAG );
 		//t.set( "_count", ""+adapter.getCount() );
 		
 		// Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+    	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -103,6 +107,12 @@ public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicB
 		albumFragment.setMediaID( albumID );
 		
 		mActivity.transactFragment( albumFragment );
+		
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
 		
 	}
 	
