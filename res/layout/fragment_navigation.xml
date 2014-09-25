@@ -3,15 +3,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
-
-    <LinearLayout android:id="@+id/Toolbar"
+    
+	<LinearLayout android:id="@+id/Toolbar"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/touch_target_minimum"
+	    android:orientation="horizontal"
+	    android:minHeight="@dimen/touch_target_minimum"
+	    android:gravity="center_vertical"
+	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+	    android:paddingRight="@dimen/list_item_horizontal_spacing"
+	    android:layout_alignParentBottom="true"
+	    android:background="@color/list_item_pressed"
+	    android:clickable="true">
+	   	
+	   	<ImageView android:id="@+id/BadgeIcon"
+	            android:layout_width="24dp"
+	            android:layout_height="24dp"
+	            android:src="@drawable/ic_action_settings"
+	            />
+	        
+	    <TextView android:id="@+id/Title"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:gravity="center_vertical|left"
+	        android:textSize="@dimen/text_large"
+	        android:textColor="@color/textColorPrimary"
+	        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+	        android:text="Settings"
+	        />
+		
+	</LinearLayout>
+    <LinearLayout
         android:layout_height="@dimen/footer_height"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:textColor="@android:color/white"
         android:background="@color/primaryAccentColor"
         android:orientation="horizontal"
-        android:gravity="fill_horizontal">
+        android:gravity="fill_horizontal"
+        android:visibility="gone">
         
         <ImageButton android:id="@+id/NavigationToolbarSettings"
             
@@ -57,10 +88,9 @@
 	<View
 		
 		android:layout_width="match_parent"
-    	android:layout_height="2dp"
-    	android:background="@drawable/footer_shadow"
+    	android:layout_height="1px"
+    	android:background="@color/list_divider_color"
     	android:layout_above="@id/Toolbar"
-	
 	/>
 
 </RelativeLayout>
