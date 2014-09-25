@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.util.GAEvent;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
@@ -33,6 +35,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	
 	AlbumsOneAdapter adapter;
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	private String ALBUM_ID = "";
 	
@@ -52,7 +55,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
-		
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 	}
 
 	@Override public void onSaveInstanceState( Bundle outState ) {
@@ -70,7 +73,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 		}
 		
-		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+		//getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
@@ -110,6 +113,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 			
 			getListView().addHeaderView( albumArtHeader, null, false );
+			getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
 			
 			mAlbumArtBackground.setImageBitmap( newAlbumArt );
 			//albumArtHeader.setBackground( new BitmapDrawable( getResources(), newAlbumArt ) );
@@ -136,13 +140,15 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		
 		mActivity.mBoundService.play();
 		
-		// Set the title of the playlist
-		
-		// mPlaylistMediaID = ALBUM_ID
-		// mPlaylistName mActivity.getSupportActionBar().getTitle().toString()
-		// mPlaylistFragmentClass = AlbumsOneFragment.class
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( GAEvent.Categories.PLAYLIST )
+    	.setAction( GAEvent.Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
 		
 	}
+	
+	
 	
 	@Override public void onResume() {
 		super.onResume();
@@ -154,20 +160,19 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 		}
 		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
+		
 		
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+		mTracker.setScreenName( TAG );
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( GAEvent.Categories.PLAYLIST )
+    	.setAction( GAEvent.Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -211,7 +216,26 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	    
 	}
 	
-	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
+	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+		@Override public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long id) {
+			
+			
+			showSongMenuDialog( "" + id );
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( GAEvent.Categories.PLAYLIST )
+	    	.setAction( GAEvent.Playlist.ACTION_LONGCLICK )
+	    	.setValue( position )
+	    	.build());
+			
+			return true;
+			
+		}
+		
+	};
+	
+	protected View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
 		@Override public void onClick( View v ) {
 			
@@ -236,12 +260,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 				
 			} else if ( viewID == R.id.MenuButton ) {
 				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-	        	
-				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
-				newFragment.setMediaID( songID );
-	        	
-	            newFragment.show( ft, "dialog" );
+				showSongMenuDialog( songID );
 				
 			}
 			
@@ -250,6 +269,18 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		}
 		
 	};
+	
+	
+	protected void showSongMenuDialog( String songID ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+		newFragment.setMediaID( songID );
+    	
+        newFragment.show( ft, "dialog" );
+		
+	}
 
 	@Override public void onNowPlayingMediaChanged( String media_id ) {
 		
