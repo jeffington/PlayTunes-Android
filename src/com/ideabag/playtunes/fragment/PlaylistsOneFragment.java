@@ -12,6 +12,8 @@ import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -43,6 +45,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	private static final int DRAG_DELAY_MS = 250;
 	
 	MainActivity mActivity;
+	private Tracker mTracker;
 	PlaylistsOneAdapter adapter;
 	
 	private String PLAYLIST_ID = "";
@@ -84,6 +87,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
 	}
     
@@ -128,6 +132,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
     	mListView.setDivider( mActivity.getResources().getDrawable( R.drawable.list_divider ) );
     	mListView.setDividerHeight( 1 );
     	mListView.setSelector( R.drawable.list_item_background );
+    	
 		
 		// Dumb thing to have a bottom divider shown
     	mListView.setFooterDividersEnabled( true );
@@ -136,6 +141,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
     	mListView.setAdapter( adapter );
 		
     	mListView.setOnItemClickListener( this );
+    	mListView.setOnItemLongClickListener( mSongMenuLongClickListener );
     	
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, mediaStoreChanged );
@@ -178,10 +184,9 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		tracker.send( new HitBuilders.AppViewBuilder().build() );
 		
 		//t.set( "_count", ""+adapter.getCount() );
-		tracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( isStarred ? STARRED_TAG : TAG )
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( isStarred ? Categories.STARRED_PLAYLIST : Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -200,7 +205,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		
 		if ( adapter.isEditing ) {
 			
-			Toast.makeText( getActivity(), "Can't play songs while editing playlist.", Toast.LENGTH_SHORT ).show();
+			Toast.makeText( getActivity(), getString( R.string.playlist_cant_play_when_editing ), Toast.LENGTH_SHORT ).show();
 			
 		} else {
 			
@@ -214,7 +219,41 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 			
 		}
 		
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( isStarred ? Categories.STARRED_PLAYLIST : Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
+		
 	}
+	
+	// if ( adapter.isEditing ) {
+	
+	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+		@Override public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long id) {
+			
+			if ( adapter.isEditing ) {
+				
+				Toast.makeText( getActivity(), getString( R.string.playlist_cant_play_when_editing ), Toast.LENGTH_SHORT ).show();
+				
+			} else {
+				
+				showSongMenuDialog( "" + id );
+				
+			}
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( isStarred ? Categories.STARRED_PLAYLIST : Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_LONGCLICK )
+	    	.setValue( position )
+	    	.build());
+			
+			return true;
+			
+		}
+		
+	};
 	
 	private DropListener mSongDropListener = new DropListener() {
 
@@ -391,24 +430,30 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 				
 			} else if ( viewID == R.id.MenuButton ) {
 				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-	        	
-				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
-				newFragment.setMediaID( songID );
-	        	
-	            newFragment.show( ft, "dialog" );
+				showSongMenuDialog( songID );
 				
 			} else if ( viewID == R.id.RemoveButton ) {
 				
 				mActivity.PlaylistManager.removeSong( PLAYLIST_ID, songID );
 				
-				Toast.makeText(getActivity(), "Removed song from playlist.", Toast.LENGTH_SHORT ).show();
+				Toast.makeText(getActivity(), getString( R.string.playlist_removed ), Toast.LENGTH_SHORT ).show();
 				
 			}
 			
 		}
 		
 	};
+	
+	protected void showSongMenuDialog( String songID ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+		newFragment.setMediaID( songID );
+    	
+        newFragment.show( ft, "dialog" );
+		
+	}
 	
 	ContentObserver mediaStoreChanged = new ContentObserver( new Handler() ) {
 		
