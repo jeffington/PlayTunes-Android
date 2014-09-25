@@ -17,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -25,7 +24,6 @@ import android.support.v4.app.Fragment;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.gson.Gson;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.AudioFocusHelper;
 import com.ideabag.playtunes.media.MediaButtonHelper;
@@ -35,7 +33,10 @@ import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.media.RemoteControlClientCompat;
 import com.ideabag.playtunes.media.RemoteControlHelper;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
+import com.ideabag.playtunes.util.GAEvent;
+import com.ideabag.playtunes.util.GAEvent.AudioControls;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
 
 
 public class MusicPlayerService extends Service implements MusicFocusable {
@@ -54,6 +55,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	private static final String PREF_KEY_NOWPLAYING_POSITION = "now_playing_position";
 	private static final String PREF_KEY_NOWPLAYING_SHUFFLE = "now_playing_shuffle";
 	private static final String PREF_KEY_NOWPLAYING_LOOP = "now_playing_loop";
+	
+	private Tracker mTracker;
 	
 	@SuppressWarnings("unused")
 	private static final String TAG = "MusicPlayerService";
@@ -92,10 +95,9 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 
 		@Override public void onReceive( Context context, Intent intent ) {
 			
-			Tracker tracker = TrackerSingleton.getDefaultTracker( context );
+			
 			
 			String action = intent.getAction();
-			android.util.Log.i( "MusicPlayerService", "Intent received with action " + action );
 			
 			if ( action.equals( ACTION_PLAY_OR_PAUSE ) ) {
 				
@@ -103,21 +105,20 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 					
 					if ( MediaPlayer.isPlaying() ) {
 						
-						tracker.send( new HitBuilders.EventBuilder()
-			        	.setCategory( "notification button" )
-			        	.setAction( "click" )
-			        	.setLabel( "pause" )
+						mTracker.send( new HitBuilders.EventBuilder()
+			        	.setCategory( intent.hasCategory( Categories.LOCKSCREEN ) ? Categories.LOCKSCREEN : Categories.NOTIFICATION )
+			        	.setAction( AudioControls.ACTION_PAUSE )
 			        	.build());
 						
 						pause();
 						
 					} else {
 						
-						tracker.send( new HitBuilders.EventBuilder()
-			        	.setCategory( "notification button" )
-			        	.setAction( "click" )
-			        	.setLabel( "play" )
-			        	.build());
+						mTracker.send( new HitBuilders.EventBuilder()
+				    	.setCategory( intent.hasCategory( Categories.LOCKSCREEN ) ? Categories.LOCKSCREEN : Categories.NOTIFICATION )
+				    	.setAction( AudioControls.ACTION_PLAY )
+				    	.build());
+						
 						
 						play();
 						
@@ -128,20 +129,18 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			} else if ( action.equals( ACTION_NEXT ) ) {
 			
-				tracker.send( new HitBuilders.EventBuilder()
-	        	.setCategory( "notification button" )
-	        	.setAction( "click" )
-	        	.setLabel( "next" )
+				mTracker.send( new HitBuilders.EventBuilder()
+	        	.setCategory( intent.hasCategory( Categories.LOCKSCREEN ) ? Categories.LOCKSCREEN : Categories.NOTIFICATION )
+	        	.setAction( AudioControls.ACTION_NEXT )
 	        	.build());
 				
 				next();
 				
 			} else if ( action.equals( ACTION_CLOSE ) ) {
 				
-				tracker.send( new HitBuilders.EventBuilder()
-	        	.setCategory( "notification button" )
-	        	.setAction( "click" )
-	        	.setLabel( "close" )
+				mTracker.send( new HitBuilders.EventBuilder()
+	        	.setCategory( intent.hasCategory( Categories.LOCKSCREEN ) ? Categories.LOCKSCREEN : Categories.NOTIFICATION )
+	        	.setAction( GAEvent.Notification.ACTION_CLOSE )
 	        	.build());
 				
 				 
@@ -149,10 +148,9 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			} else if ( action.equals( ACTION_BACK ) ) {
 				
-				tracker.send( new HitBuilders.EventBuilder()
-	        	.setCategory( "notification button" )
-	        	.setAction( "click" )
-	        	.setLabel( "back" )
+				mTracker.send( new HitBuilders.EventBuilder()
+	        	.setCategory( intent.hasCategory( Categories.LOCKSCREEN ) ? Categories.LOCKSCREEN : Categories.NOTIFICATION )
+	        	.setAction( AudioControls.ACTION_PREV )
 	        	.build());
 				
 				MediaPlayer.back();
@@ -174,7 +172,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		Notification = new PlaybackNotification( getBaseContext() );
 		
 		mSharedPrefs = this.getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
-		
+		mTracker = TrackerSingleton.getDefaultTracker( this );
 		mAudioManager = ( AudioManager ) getSystemService( AUDIO_SERVICE );
 		
 		IntentFilter mNotificationIntentFilter = new IntentFilter();
@@ -182,9 +180,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		mNotificationIntentFilter.addAction( ACTION_NEXT );
 		mNotificationIntentFilter.addAction( ACTION_CLOSE );
 		mNotificationIntentFilter.addAction( ACTION_BACK );
-		
-		
-		MediaPlayer.setPlaybackListener( MediaPlayerListener );
 		
 		
 		registerReceiver( NotificationActionReceiver, mNotificationIntentFilter );
@@ -246,6 +241,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			e.printStackTrace();
 		}
 		
+		MediaPlayer.setPlaybackListener( MediaPlayerListener );
+		
 	}
 	
 	
@@ -263,20 +260,23 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		// Save state
 		
-		SharedPreferences.Editor edit = mSharedPrefs.edit();
 		
-		edit.putString( PREF_KEY_NOWPLAYING_QUERY, MediaPlayer.getPlaylistQuery().toJSONString() );
-		
-		edit.putInt( PREF_KEY_NOWPLAYING_POSITION, MediaPlayer.getPlaylistPosition() );
-		
-		edit.putString( PREF_KEY_NOWPLAYING_CLASS, mPlaylistFragmentClass.getName() );
-		edit.putString( PREF_KEY_NOWPLAYING_NAME, mPlaylistName );
-		edit.putString( PREF_KEY_NOWPLAYING_ID, mPlaylistMediaID );
-		edit.putInt( PREF_KEY_NOWPLAYING_LOOP, MediaPlayer.getLoopState() );
-		edit.putBoolean( PREF_KEY_NOWPLAYING_SHUFFLE, MediaPlayer.isShuffling() );
-		
-		edit.commit();
-		
+		if ( MediaPlayer.getPlaylistQuery() != null ) { 
+			
+			SharedPreferences.Editor edit = mSharedPrefs.edit();
+			edit.putString( PREF_KEY_NOWPLAYING_QUERY, MediaPlayer.getPlaylistQuery().toJSONString() );
+			
+			edit.putInt( PREF_KEY_NOWPLAYING_POSITION, MediaPlayer.getPlaylistPosition() );
+			
+			edit.putString( PREF_KEY_NOWPLAYING_CLASS, mPlaylistFragmentClass.getName() );
+			edit.putString( PREF_KEY_NOWPLAYING_NAME, mPlaylistName );
+			edit.putString( PREF_KEY_NOWPLAYING_ID, mPlaylistMediaID );
+			edit.putInt( PREF_KEY_NOWPLAYING_LOOP, MediaPlayer.getLoopState() );
+			edit.putBoolean( PREF_KEY_NOWPLAYING_SHUFFLE, MediaPlayer.isShuffling() );
+			
+			edit.commit();
+			
+		}
 		// Clean up Media Player
 		
 		MediaPlayer.pause();
@@ -872,7 +872,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	@Override public void onGainedAudioFocus() {
 		
 		// TODO:
-		android.util.Log.i( TAG, "Audio Focus Gained");
+		//android.util.Log.i( TAG, "Audio Focus Gained");
 		MediaPlayer.stopVolumeDucking();
 		
 	}
