@@ -130,7 +130,7 @@ public class ArtistsAllFragment extends SaveScrollListFragment implements IMusic
 			
 			mTracker.send( new HitBuilders.EventBuilder()
 	    	.setCategory( Categories.PLAYLIST )
-	    	.setAction( Playlist.ACTION_SHOWLIST )
+	    	.setAction( Playlist.ACTION_CLICK )
 	    	.setValue( position )
 	    	.build());
 		
