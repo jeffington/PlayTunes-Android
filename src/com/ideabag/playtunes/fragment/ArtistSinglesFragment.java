@@ -148,7 +148,7 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 		mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
     	.setAction( Playlist.ACTION_CLICK )
-    	.setValue( adapter.getCount() )
+    	.setValue( position )
     	.build());
 		
 	}
