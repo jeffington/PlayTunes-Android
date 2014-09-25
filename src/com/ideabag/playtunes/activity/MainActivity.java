@@ -7,7 +7,6 @@ import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.NavigationFragment;
-import com.ideabag.playtunes.fragment.search.SearchFragment;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
 
 import android.support.v4.app.Fragment;
