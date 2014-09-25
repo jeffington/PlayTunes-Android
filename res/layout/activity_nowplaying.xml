@@ -1,45 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:background="#222222">
+    android:gravity="fill_horizontal"
+    android:background="@color/now_playing_background">
 	
-    <ImageView android:id="@+id/NowPlayingAlbumCover"
-        
-        android:layout_width="240dp"
-        android:layout_height="0dp"
-        android:src="@drawable/carbon"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="1"
-        
+	<ImageView android:id="@+id/NowPlayingBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
         />
     
-    <include layout="@layout/view_nowplaying_info" android:id="@+id/NowPlayingInfo"
-        
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        
-        />
-    
-	<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
-	    	android:id="@+id/TrackProgressFragment"
-    	    android:layout_width="match_parent"
-    	    android:layout_height="@dimen/list_item_height"
-    	    />
-
-    <include android:id="@+id/NowPlayingControls"
-        layout="@layout/view_nowplaying_controls"
-        
-        android:layout_height="@dimen/list_item_height"
-        android:layout_width="match_parent"
-        
-    	
-    />
-	
     <com.google.android.gms.ads.AdView android:id="@+id/adView"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -48,4 +22,49 @@
 	
 	/>
     
-</LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/adView">
+		<RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+			android:layout_weight="1"
+			android:padding="8dp">
+	    
+		    <ImageView android:id="@+id/NowPlayingAlbumCover"
+		        
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/no_album_art_full"
+		        
+			/>
+	    
+	    </RelativeLayout>
+	    
+	    <include layout="@layout/view_nowplaying_info" android:id="@+id/NowPlayingInfo"
+	        
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        
+	        />
+	    
+		<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
+		    	android:id="@+id/TrackProgressFragment"
+	    	    android:layout_width="match_parent"
+	    	    android:layout_height="wrap_content"
+	    	    />
+		
+	    <include android:id="@+id/NowPlayingControls"
+	        layout="@layout/view_nowplaying_controls"
+	        
+	        android:layout_height="@dimen/list_item_height"
+	        android:layout_width="match_parent"
+	        
+	    	
+	    />
+    </LinearLayout>
+</RelativeLayout>
