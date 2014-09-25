@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,7 +19,6 @@ import com.ideabag.playtunes.adapter.search.SearchArtistsAdapter;
 import com.ideabag.playtunes.adapter.search.SearchSongsAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.fragment.AlbumsOneFragment;
-import com.ideabag.playtunes.fragment.ArtistAllSongsFragment;
 import com.ideabag.playtunes.fragment.ArtistsOneFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.util.MergeAdapter;
@@ -29,7 +28,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 	
 	public static final String TAG = "SearchAllFragment";
 	
-	private static final int SEARCH_RESULT_LIMIT = 5;
+	private static int SEARCH_RESULT_LIMIT = 3;
 	
 	// The adapters
 	MergeAdapter adapter;
@@ -44,9 +43,11 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 	LinearLayout mAlbumsHeader;
 	LinearLayout mArtistsHeader;
 	
-	TextView mSongsSeeAll;
-	TextView mAlbumsSeeAll;
-	TextView mArtistsSeeAll;
+	TextView mSongsCount;
+	TextView mAlbumsCount;
+	TextView mArtistsCount;
+	
+	
 	
 	MainActivity mActivity;
 	private String mQueryString;
@@ -105,28 +106,38 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		mAlbumsHeader = ( LinearLayout ) inflater.inflate( R.layout.list_item_group_header, null );
 		mArtistsHeader = ( LinearLayout ) inflater.inflate( R.layout.list_item_group_header, null );
 		
-		( ( TextView ) mSongsHeader.findViewById( R.id.TextHeaderLabel ) ).setText( getString( R.string.songs_plural ) );
-		( ( TextView ) mAlbumsHeader.findViewById( R.id.TextHeaderLabel ) ).setText( getString( R.string.albums_plural ) );
-		( ( TextView ) mArtistsHeader.findViewById( R.id.TextHeaderLabel ) ).setText( getString( R.string.artists_plural ) );
+		( ( TextView ) mSongsHeader.findViewById( R.id.Title ) ).setText( getString( R.string.songs_plural ) );
+		( ( TextView ) mAlbumsHeader.findViewById( R.id.Title ) ).setText( getString( R.string.albums_plural ) );
+		( ( TextView ) mArtistsHeader.findViewById( R.id.Title ) ).setText( getString( R.string.artists_plural ) );
 		
-		mSongsHeader.findViewById( R.id.SeeAllButton ).setOnClickListener( mSeeAllClickListener );
-		mAlbumsHeader.findViewById( R.id.SeeAllButton ).setOnClickListener( mSeeAllClickListener );
-		mArtistsHeader.findViewById( R.id.SeeAllButton ).setOnClickListener( mSeeAllClickListener );
+		//ImageView iv;
+		( ( ImageView ) mArtistsHeader.findViewById( R.id.BadgeIcon ) ).setImageResource( R.drawable.ic_action_mic );
+		( ( ImageView ) mAlbumsHeader.findViewById( R.id.BadgeIcon ) ).setImageResource( R.drawable.ic_action_record );
+		mSongsCount = ( TextView ) mSongsHeader.findViewById( R.id.Count );
+		mAlbumsCount = ( TextView ) mAlbumsHeader.findViewById( R.id.Count );
+		mArtistsCount = ( TextView ) mArtistsHeader.findViewById( R.id.Count );
 		
 		// Songs
-		adapter.addView( mSongsHeader, false );
+		adapter.addView( mSongsHeader, true );
 		adapter.addAdapter( mSearchSongs );
-		//adapter.addView( mSongsSeeAll, true );
 		
 		// Albums
-		adapter.addView( mAlbumsHeader, false );
+		adapter.addView( mAlbumsHeader, true );
 		adapter.addAdapter( mSearchAlbums );
-		//adapter.addView( mAlbumsSeeAll, true );
 		
 		// Artists
-		adapter.addView( mArtistsHeader, false );
+		adapter.addView( mArtistsHeader, true );
 		adapter.addAdapter( mSearchArtists );
-		//adapter.addView( mArtistsSeeAll, true );
+		
+		int mSongCount = mSearchSongs.getCount();
+		int mArtistCount = mSearchArtists.getCount();
+		int mAlbumCount = mSearchAlbums.getCount();
+		
+		mSongsCount.setText( "" + ( mSongCount + mSearchSongs.hasMore() ) );
+		
+		mArtistsCount.setText( "" + ( mArtistCount + mSearchArtists.hasMore() ) );
+		
+		mAlbumsCount.setText( "" + ( mAlbumCount + mSearchAlbums.hasMore() ) );
 		
 		getListView().setHeaderDividersEnabled( true );
 		
@@ -194,35 +205,11 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			int mArtistCount = mSearchArtists.getCount();
 			int mAlbumCount = mSearchAlbums.getCount();
 			
-			if ( mArtistCount == 0 ) {
-				
-				mArtistsHeader.setVisibility( View.GONE );
-				
-			} else {
-				
-				mArtistsHeader.setVisibility( View.VISIBLE );
-				
-			}
+			mSongsCount.setText( "" + ( mSongCount + mSearchSongs.hasMore() ) );
 			
-			if ( mAlbumCount == 0 ) {
-				
-				mAlbumsHeader.setVisibility( View.GONE );
-				
-			} else {
-				
-				mAlbumsHeader.setVisibility( View.VISIBLE );
-				
-			}
+			mArtistsCount.setText( "" + ( mArtistCount + mSearchArtists.hasMore() ) );
 			
-			if ( mSongCount == 0 ) {
-				
-				mSongsHeader.setVisibility( View.GONE );
-				
-			} else {
-				
-				mSongsHeader.setVisibility( View.VISIBLE );
-				
-			}
+			mAlbumsCount.setText( "" + ( mAlbumCount + mSearchAlbums.hasMore() ) );
 			
 		}
 		
@@ -297,13 +284,17 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		
 		//convertView.setTag( R.id.tag_album_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) ) );
 		
-		int mSongSection = mSearchSongs.getCount() + 1;
+		int mSongSection = 1 + mSearchSongs.getCount();
 		
 		int mAlbumsSection = mSongSection + mSearchAlbums.getCount() + 1;
 		
 		int mArtistsSection = mAlbumsSection + mSearchArtists.getCount() + 1;
 		
-		if ( position > 0 && position <= mSongSection ) {
+		if ( position == 0 ) {
+			
+			
+			
+		} else if ( position <= mSongSection ) {
 			
 			// Play song
 			String playlistName = getString( R.string.search ) + " \"" + mQueryString + "\"";
@@ -335,25 +326,10 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			// Show Artist
 			String artistID = ( String ) v.getTag( R.id.tag_artist_id );
 			
-			//boolean artistUnknown = v.getTag( R.id.tag_artist_unknown ).equals( "1" );
+			ArtistsOneFragment artistFragment = new ArtistsOneFragment();
+			artistFragment.setMediaID( artistID );
 			
-			//int albumCount = Integer.parseInt( ( ( TextView ) v.findViewById( R.id.AlbumCount ) ).getText().toString() );
-			/*
-			if ( artistUnknown || 0 == albumCount ) {
-				
-				ArtistAllSongsFragment artistAllFragment = new ArtistAllSongsFragment();
-				artistAllFragment.setMediaID( artistID );
-				
-				mActivity.transactFragment( artistAllFragment );
-				
-			} else {
-			*/
-				ArtistsOneFragment artistFragment = new ArtistsOneFragment();
-				artistFragment.setMediaID( artistID );
-				
-				mActivity.transactFragment( artistFragment );
-				
-			//}
+			mActivity.transactFragment( artistFragment );
 			
 		}
 
