@@ -52,12 +52,14 @@
     
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
-    
     <string name="done">Done</string>
     <string name="edit">Edit</string>
+    <string name="ok">OK</string>
     
     <string name="send_feedback">Send Feedback</string>
+    <string name="send">Send</string>
     <string name="feedback_form_hint">Tell us how we can improve PlayTunes</string>
+    <string name="feedback_thanks">Thank you for your input!</string>
     
     <string name="support_plus_one">Support us with a +1</string>
     <string name="support_rate">Support us by rating</string>
