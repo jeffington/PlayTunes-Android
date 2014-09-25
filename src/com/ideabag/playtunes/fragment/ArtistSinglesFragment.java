@@ -6,8 +6,11 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistSinglesAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.IMusicBrowser;
+import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
 
 import android.app.Activity;
 import android.database.ContentObserver;
@@ -17,10 +20,11 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-public class ArtistSinglesFragment extends ListFragment implements PlaylistBrowser {
+public class ArtistSinglesFragment extends SaveScrollListFragment implements IMusicBrowser, IPlayableList {
 	
 	public static final String TAG = "Artist Singles Fragment";
 	
@@ -29,6 +33,7 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 	ArtistSinglesAdapter adapter;
 	
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	private String ARTIST_ID = "";
 	
@@ -45,13 +50,13 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
 	}
 	
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), ARTIST_ID );
-		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
 		
 	}
     
@@ -65,22 +70,18 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 		}
 		
     	adapter = new ArtistSinglesAdapter( getActivity(), ARTIST_ID, songMenuClickListener );
-		
+    	adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
+    	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
+		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
 		
     	setListAdapter( adapter );
 		
     	getActivity().getContentResolver().registerContentObserver(
     			MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
     	
 	}
 	
@@ -96,20 +97,18 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
     			+ " "
     			+ (adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
-	        // Set screen name.
-	        // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+        // Set screen name.
+        // Where path is a String representing the screen name.
+		mTracker.setScreenName( TAG );
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -140,13 +139,37 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 		
 		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, ArtistAllSongsFragment.class, ARTIST_ID );
+		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, ArtistSinglesFragment.class, ARTIST_ID );
 		
 		mActivity.mBoundService.setPlaylistPosition( position - l.getHeaderViewsCount() );
 		
 		mActivity.mBoundService.play();
 		
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( adapter.getCount() )
+    	.build());
+		
 	}
+	
+	protected AdapterView.OnItemLongClickListener mSongMenuLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+		@Override public boolean onItemLongClick( AdapterView<?> arg0, View v, int position, long id ) {
+			
+			showSongMenuDialog( "" + id );
+			
+			mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_LONGCLICK )
+	    	.setValue( position )
+	    	.build());
+			
+			return true;
+			
+		}
+		
+	};
 	
 	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
@@ -173,12 +196,7 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 				
 			} else if ( viewID == R.id.MenuButton ) {
 				
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-	        	
-				SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
-				newFragment.setMediaID( songID );
-	        	
-	            newFragment.show( ft, "dialog" );
+				showSongMenuDialog( songID );
 				
 			}
 			
@@ -187,6 +205,17 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
 		}
 		
 	};
+	
+	protected void showSongMenuDialog( String songID ) {
+		
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    	
+		SongMenuDialogFragment newFragment = new SongMenuDialogFragment();
+		newFragment.setMediaID( songID );
+    	
+        newFragment.show( ft, "dialog" );
+		
+	}
 	
 	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
 
@@ -208,6 +237,12 @@ public class ArtistSinglesFragment extends ListFragment implements PlaylistBrows
         }
 
 	};
+
+	@Override public void onNowPlayingMediaChanged(String media_id) {
+		
+		adapter.setNowPlayingMedia( media_id );
+		
+	}
 	
 	
 }
