@@ -5,8 +5,10 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.GenresAllAdapter;
-import com.ideabag.playtunes.util.PlaylistBrowser;
+import com.ideabag.playtunes.util.GAEvent.Playlist;
+import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
+import com.ideabag.playtunes.util.GAEvent.Categories;
 
 import android.app.Activity;
 import android.database.ContentObserver;
@@ -19,19 +21,21 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ListView;
 
-public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
+public class GenresAllFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "All Genres Fragment";
 	
 	GenresAllAdapter adapter;
 	
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	
 	@Override public void onAttach( Activity activity ) {
 			
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
 	}
     
@@ -51,19 +55,7 @@ public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	
-    	// Restore scroll position of ListView
-    	if ( null != savedInstanceState ) {
-    		
-    		getListView().scrollTo( 0, savedInstanceState.getInt( getString( R.string.key_state_scroll ) ) );
-    		
-    	}
     	
-	}
-	
-	@Override public void onSaveInstanceState( Bundle outState ) {
-		super.onSaveInstanceState( outState );
-		outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
-		
 	}
 		
 	@Override public void onResume() {
@@ -71,21 +63,18 @@ public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 		
     	mActivity.setActionbarTitle( getString( R.string.genres_plural) );
     	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.genre_singular ) : getString( R.string.genres_plural ) ) );
-		
-		Tracker t = TrackerSingleton.getDefaultTracker( mActivity );
 
 	    // Set screen name.
 	    // Where path is a String representing the screen name.
-		t.setScreenName( TAG );
+    	mTracker.setScreenName( TAG );
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	    // Send a screen view.
-		t.send( new HitBuilders.AppViewBuilder().build() );
+    	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		t.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
     	.build());
 		
@@ -121,6 +110,12 @@ public class GenresAllFragment extends ListFragment implements PlaylistBrowser {
 		genreFragment.setMediaID( genre_id );
 		
 		mActivity.transactFragment( genreFragment );
+		
+    	mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
 		
 	}
 
