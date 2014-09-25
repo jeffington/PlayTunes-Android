@@ -57,11 +57,13 @@
 			android:text="@string/cancel"
 			android:background="@drawable/button_background_light"
 		/>
-		    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="@drawable/list_divider"
+		
+		<View
+        	android:layout_width="1dp"
+        	android:layout_height="match_parent"
+        	android:background="@drawable/list_divider"
         />
+		
 		<Button android:id="@+id/DialogDeleteConfirm"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
