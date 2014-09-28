@@ -2,41 +2,29 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
-import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class SongListAdapter extends BaseAdapter {
+public class SongListAdapter extends AsyncQueryAdapter {
 	
-	protected Context mContext;
 	protected LayoutInflater inflater;
 	
-	protected Cursor cursor = null;
-	protected MediaQuery mQuery = null;
 	String mNowPlayingMediaID = null;
 	
 	protected PlaylistManager PlaylistManager;
 	
 	View.OnClickListener songMenuClickListener;
     
-    public MediaQuery getQuery() {
-    	
-    	return mQuery;
-    	
-    }
     
 	public SongListAdapter( Context context, View.OnClickListener menuClickListener) {
-		
-		mContext = context;
+		super( context );
 		
 		PlaylistManager = new PlaylistManager( mContext );
     	
@@ -46,46 +34,22 @@ public class SongListAdapter extends BaseAdapter {
 		
 	}
 	
-	public void requery() {
-		
-		if ( null != cursor && !cursor.isClosed() ) {
-			
-			cursor.close();
-			
-		}
-		
-    	cursor = MediaQuery.execute( mContext, mQuery );
-		notifyDataSetChanged();
-    	
-	}
-	
 	public void setNowPlayingMedia( String media_id ) {
 		
 		mNowPlayingMediaID = media_id;
 		
 	}
 	
-	@Override
-	public int getCount() {
-		
-		return ( null == cursor ? 0 : cursor.getCount() );
-	}
-
-	@Override
-	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override public long getItemId( int position ) {
 		
 		int mID = 0;
 		
-		if ( cursor != null ) {
+		if ( mCursor != null ) {
 			
-			cursor.moveToPosition( position );
+			mCursor.moveToPosition( position );
 			
-			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+			mID = mCursor.getInt( mCursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
 			
 		}
 		
@@ -109,6 +73,8 @@ public class SongListAdapter extends BaseAdapter {
 			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
 			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
 			
+			holder.indicator = convertView.findViewById( R.id.NowPlayingIndicator );
+			
 			holder.starButton.setOnClickListener( songMenuClickListener );
 			holder.menuButton.setOnClickListener( songMenuClickListener );
 			
@@ -120,12 +86,12 @@ public class SongListAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor.moveToPosition( position );
+		mCursor.moveToPosition( position );
 		
-		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
-		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
+		String songTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+		String songArtist = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+		String songAlbum = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
+		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
 		holder.songTitle.setText( songTitle );
 		holder.songArtist.setText( songArtist );
@@ -140,14 +106,14 @@ public class SongListAdapter extends BaseAdapter {
 			
 			//convertView.setBackgroundResource(resid)
 			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.primaryAccentColor ) );
-			
+			holder.indicator.setVisibility( View.VISIBLE );
 			
 		} else {
 			
 			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.textColorPrimary ) );
 			
 			//convertView.setBackgroundResource(resid)
-			
+			holder.indicator.setVisibility( View.INVISIBLE );
 		}
 		
 		return convertView;
@@ -162,6 +128,7 @@ public class SongListAdapter extends BaseAdapter {
 		TextView songArtist;
 		TextView songAlbum;
 		
+		View indicator;
 		
 	}
 
