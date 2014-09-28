@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.fragment.search;
 
+import android.app.Activity;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +15,9 @@ import com.ideabag.playtunes.adapter.search.SearchSongsAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 
-public class SearchSongsFragment extends SaveScrollListFragment implements ISearchable {
+public class SearchSongsFragment extends SaveScrollListFragment implements ISearchableAdapter {
 	
 	public static final String TAG = "SearchSongsFragment";
 	
@@ -25,6 +26,21 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
 	private MainActivity mActivity;
 	private SearchSongsAdapter adapter;
 	String mQuery;
+	
+	public SearchSongsFragment() { }
+	
+	public SearchSongsFragment( SearchSongsAdapter mAdapter ) {
+		
+		adapter = mAdapter;
+		
+	}
+	
+	@Override public void onAttach( Activity activity ) {
+		super.onAttach( activity );
+		
+		mActivity = ( MainActivity ) activity;
+		
+	}
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
@@ -35,22 +51,28 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
 			
 		}
 		
-		adapter = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQuery, SEARCH_RESULT_NO_LIMIT );
-		
-		android.util.Log.i( TAG, "" + mQuery );
+		if ( adapter == null ) {
+			
+			adapter = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQuery, SEARCH_RESULT_NO_LIMIT );
+			
+		} else {
+			
+			adapter.setTruncateAmount( SEARCH_RESULT_NO_LIMIT );
+			
+		}
 		
 		setListAdapter( adapter );
 		
 	}
 	
 	@Override
-	public void setQuery( String queryString ) {
+	public void setSearchTerms( String queryString ) {
 		// TODO Auto-generated method stub
 		mQuery = queryString;
 		
 		if ( null != adapter ) {
 			
-			adapter.setQuery( mQuery );
+			adapter.setSearchTerms( mQuery );
 			
 		}
 		
@@ -58,10 +80,9 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+		String playlistName = ( String ) mActivity.getSupportActionBar().getTitle();
 		
-		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, SongsFragment.class, null );
-		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, SearchFragment.class, mQuery );
 		
 		mActivity.mBoundService.setPlaylistPosition( position );
 		
