@@ -22,9 +22,9 @@ import com.ideabag.playtunes.fragment.AlbumsOneFragment;
 import com.ideabag.playtunes.fragment.ArtistsOneFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.util.MergeAdapter;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 
-public class SearchAllFragment extends SaveScrollListFragment implements ISearchable {
+public class SearchAllFragment extends SaveScrollListFragment implements ISearchableAdapter {
 	
 	public static final String TAG = "SearchAllFragment";
 	
@@ -133,11 +133,34 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		int mArtistCount = mSearchArtists.getCount();
 		int mAlbumCount = mSearchAlbums.getCount();
 		
-		mSongsCount.setText( "" + ( mSongCount + mSearchSongs.hasMore() ) );
+		if ( mSongCount == 0 ) {
+			
+			mSongsCount.setText( "None found" );
+			
+		} else {
+			
+			mSongsCount.setText( "" + ( mSongCount + mSearchSongs.hasMore() ) );
+			
+		}
 		
-		mArtistsCount.setText( "" + ( mArtistCount + mSearchArtists.hasMore() ) );
-		
-		mAlbumsCount.setText( "" + ( mAlbumCount + mSearchAlbums.hasMore() ) );
+		if ( mArtistCount == 0 ) {
+			
+			mArtistsCount.setText( "None found" );
+			
+		} else {
+			
+			mArtistsCount.setText( "" + ( mArtistCount + mSearchArtists.hasMore() ) );
+			
+		}
+		if ( mAlbumCount == 0 ) {
+			
+			mAlbumsCount.setText( "None found" );
+			
+		} else {
+			
+			mAlbumsCount.setText( "" + ( mAlbumCount + mSearchAlbums.hasMore() ) );
+			
+		}
 		
 		getListView().setHeaderDividersEnabled( true );
 		
@@ -163,7 +186,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		
 	}
 	
-	@Override public void setQuery( String queryString ) {
+	@Override public void setSearchTerms( String queryString ) {
 		
 		if ( null != queryString ) {
 			
@@ -173,19 +196,19 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 				
 				if ( null != mSearchSongs ) {
 					
-					mSearchSongs.setQuery( queryString );
+					mSearchSongs.setSearchTerms( queryString );
 					
 				}
 				
 				if ( null != mSearchArtists ) {
 					
-					mSearchArtists.setQuery( queryString );
+					mSearchArtists.setSearchTerms( queryString );
 					
 				}
 				
 				if ( null != mSearchAlbums ) {
 					
-					mSearchAlbums.setQuery( queryString );
+					mSearchAlbums.setSearchTerms( queryString );
 					
 				}
 				
@@ -284,6 +307,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		
 		//convertView.setTag( R.id.tag_album_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) ) );
 		
+		
 		int mSongSection = 1 + mSearchSongs.getCount();
 		
 		int mAlbumsSection = mSongSection + mSearchAlbums.getCount() + 1;
@@ -291,8 +315,11 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		int mArtistsSection = mAlbumsSection + mSearchArtists.getCount() + 1;
 		
 		if ( position == 0 ) {
+			// Songs header
+			SearchSongsFragment songFragment = new SearchSongsFragment( mSearchSongs );
+			//SearchSongsAdapter.
 			
-			
+			mSearchFragment.transactFragment( songFragment );
 			
 		} else if ( position <= mSongSection ) {
 			
@@ -312,6 +339,12 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			mActivity.mBoundService.play();
 			
 			
+		} else if ( position == mAlbumsSection - 1 ) {
+			
+			SearchAlbumsFragment mAlbumsFragment = new SearchAlbumsFragment( mSearchAlbums );
+			
+			mSearchFragment.transactFragment( mAlbumsFragment );
+			
 		} else if ( position > mSongSection && position <= mAlbumsSection ) {
 			
 			// Show Album
@@ -319,7 +352,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			AlbumsOneFragment albumFragment = new AlbumsOneFragment( );
 			albumFragment.setMediaID( albumID );
 			
-			mActivity.transactFragment( albumFragment );
+			mSearchFragment.transactFragment( albumFragment );
 			
 		} else if ( position > mAlbumsSection && position <= mArtistsSection ) {
 			
@@ -329,57 +362,13 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			ArtistsOneFragment artistFragment = new ArtistsOneFragment();
 			artistFragment.setMediaID( artistID );
 			
-			mActivity.transactFragment( artistFragment );
+			mSearchFragment.transactFragment( artistFragment );
 			
 		}
+		
+		
 
 		
 	}
-	
-	View.OnClickListener mSeeAllClickListener = new View.OnClickListener() {
-
-		@Override public void onClick( View v ) {
-			
-			View parent = ( View ) v.getParent();
-			
-			if ( mSongsHeader == parent ) {
-				
-				SearchSongsFragment mSearchSongsFragment = new SearchSongsFragment();
-				mSearchSongsFragment.setQuery( mQueryString );
-				
-				if ( mSearchFragment != null ) {
-					
-					mSearchFragment.transactFragment( mSearchSongsFragment );
-					
-				}
-				
-			} else if ( mAlbumsHeader == parent ) {
-				
-				SearchAlbumsFragment mSearchAlbumsFragment = new SearchAlbumsFragment();
-				mSearchAlbumsFragment.setQuery( mQueryString );
-				
-				if ( mSearchFragment != null ) {
-					
-					mSearchFragment.transactFragment( mSearchAlbumsFragment );
-					
-				}
-				
-				
-			} else {
-				
-				SearchArtistsFragment mSearchArtistsFragment = new SearchArtistsFragment();
-				mSearchArtistsFragment.setQuery( mQueryString );
-				
-				if ( mSearchFragment != null ) {
-					
-					mSearchFragment.transactFragment( mSearchArtistsFragment );
-					
-				}
-				
-			}
-			
-		}
-		
-	};
 	
 }
