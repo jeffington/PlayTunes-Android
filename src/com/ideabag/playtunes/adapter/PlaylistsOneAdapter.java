@@ -3,6 +3,7 @@ package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.StarToggleTask;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -106,6 +107,8 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 		String songAlbum = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
 		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
 		
+		new StarToggleTask( holder.starButton ).execute( song_id );
+		
 		holder.songTitle.setText( songTitle );
 		holder.songArtist.setText( songArtist );
 		holder.songAlbum.setText( songAlbum );
@@ -114,7 +117,6 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 		holder.menuButton.setTag( R.id.tag_song_id, song_id );
 		holder.removeButton.setTag( R.id.tag_song_id, song_id );
 		
-		holder.starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
 		
 		if ( !this.isEditing ) {
 			
