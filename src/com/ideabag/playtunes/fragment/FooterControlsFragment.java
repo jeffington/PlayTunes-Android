@@ -5,11 +5,14 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.NowPlayingActivity;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.GAEvent.AudioControls;
 import com.ideabag.playtunes.util.GAEvent.Categories;
 import com.ideabag.playtunes.util.GAEvent.FooterControls;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
+import com.ideabag.playtunes.util.AsyncDrawable;
+import com.ideabag.playtunes.util.BitmapWorkerTask;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.annotation.SuppressLint;
@@ -238,28 +241,6 @@ public class FooterControlsFragment extends Fragment {
 				String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
 				
 				
-				
-				Cursor albumCursor = mActivity.getContentResolver().query(
-						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					    new String[] {
-					    	
-					    	MediaStore.Audio.Albums.ALBUM_ART,
-					    	MediaStore.Audio.Albums._ID
-					    	
-					    },
-					    MediaStore.Audio.Albums._ID + "=?",
-						new String[] {
-							
-							album_id
-							
-						},
-						null
-					);
-				
-				albumCursor.moveToFirst();
-				
-				String nextAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-				
 				// 
 				// This tests if we loaded previous album art and that it wasn't null
 				// If the nextAlbumUri is null, it means there's no album art and 
@@ -267,7 +248,7 @@ public class FooterControlsFragment extends Fragment {
 				// 
 				
 				
-				
+				/*
 				if ( null == nextAlbumUri && null != lastAlbumUri) {
 					
 					recycleAlbumArt();
@@ -300,6 +281,61 @@ public class FooterControlsFragment extends Fragment {
 				
 				albumCursor.close();
 				mSongCursor.close();
+				*/
+				
+				MediaQuery albumQuery = new MediaQuery(
+						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+					    new String[] {
+					    	
+					    	MediaStore.Audio.Albums.ALBUM_ART,
+					    	MediaStore.Audio.Albums._ID
+					    	
+					    },
+					    MediaStore.Audio.Albums._ID + "=?",
+						new String[] {
+							
+							album_id
+							
+						},
+						null
+					);
+				
+				MediaQuery.executeAsync(getActivity(), albumQuery, new MediaQuery.OnQueryCompletedListener() {
+					
+					@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+						
+						mResult.moveToFirst();
+						
+						String nextAlbumUri = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+						
+						if ( null != nextAlbumUri) {
+							
+							if ( !nextAlbumUri.equals( lastAlbumUri ) ) {
+								
+								lastAlbumUri = nextAlbumUri;
+								
+								final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumCover );
+								
+								final AsyncDrawable asyncThumbDrawable =
+						                new AsyncDrawable( getResources(),
+						                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+						                		albumThumbTask );
+						        
+								mAlbumCover.setImageDrawable( asyncThumbDrawable );
+						        albumThumbTask.execute( nextAlbumUri );
+						        
+							}
+					        
+						} else {
+							
+							mAlbumCover.setImageResource( R.drawable.no_album_art_thumb );
+							
+						}
+						
+					}
+					
+				});
+		        
 				
 				mTitle.setText( title );
 				mArtist.setText( artist );
