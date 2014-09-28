@@ -6,7 +6,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.SearchHistory;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.annotation.SuppressLint;
@@ -32,6 +32,8 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 	public static final String TAG = "Search Fragment";
 	
     private MainActivity mActivity;
+    private Tracker mTracker;
+    
 	public AutoCompleteTextView mQueryTextView;
     
 	//SongSearchAdapter adapter;
@@ -54,7 +56,13 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
+		mTracker.setScreenName( TAG );
 		
+		mActivity.setActionbarTitle( null );
+    	mActivity.setActionbarSubtitle( null );
+    	mActivity.mShowSearch = false;
+    	mActivity.supportInvalidateOptionsMenu();
 		
 	}
 	
@@ -148,29 +156,37 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		*/
 		
 		
-		SearchSuggestionsFragment mSuggestionsFragment = new SearchSuggestionsFragment( this );
-		
-		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-		
-		ft.replace( R.id.SearchFragment, mSuggestionsFragment );
-		// Don't add to back stack
-		
-		// Commit the transaction
-		ft.commit();
-		
-		
 		if ( null != mSearchQuery ) {
 			
 			//android.util.Log.i( TAG, "Search query restore from saved instance state '" + mSearchQuery + "'" );
 			mQueryTextView.setText( mSearchQuery );
-			/*
-			SearchAllFragment mSearchAllFragment = new SearchAllFragment();
 			
-			mSearchAllFragment.setQuery( mSearchQuery );
+			SearchAllFragment mSearchAllFragment = new SearchAllFragment();
+			mSearchAllFragment.setSearchFragment( this );
+			mSearchAllFragment.setSearchTerms( mSearchQuery );
 			//mSearchAllFragment.setP
 			
-			transactFragment( mSearchAllFragment );
-			*/
+			FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+			
+			ft.replace( R.id.SearchFragment, mSearchAllFragment );
+			// Don't add to back stack
+			
+			// Commit the transaction
+			ft.commit();
+			
+		} else {
+			
+			
+			SearchSuggestionsFragment mSuggestionsFragment = new SearchSuggestionsFragment( this );
+			
+			FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+			
+			ft.replace( R.id.SearchFragment, mSuggestionsFragment );
+			// Don't add to back stack
+			
+			// Commit the transaction
+			ft.commit();
+			
 		}
 		
 		
@@ -185,10 +201,8 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
     	mActivity.mShowSearch = false;
     	mActivity.supportInvalidateOptionsMenu();
 		
-		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity.getBaseContext() );
-		
-		tracker.setScreenName( TAG );
-		tracker.send( new HitBuilders.AppViewBuilder().build() );
+    	
+    	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		/*
 		//t.set( "_count", ""+adapter.getCount() );
 		tracker.send( new HitBuilders.EventBuilder()
@@ -255,7 +269,9 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 					
 					SearchAllFragment mSearchAllFragment = new SearchAllFragment();
 					
-					mSearchAllFragment.setQuery( mSearchQuery );
+					mSearchAllFragment.setSearchFragment( this );
+					
+					mSearchAllFragment.setSearchTerms( mSearchQuery );
 					//mSearchAllFragment.setP
 					
 					
@@ -263,9 +279,9 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 					
 				} else {
 					
-					ISearchable mSearchable = ( ISearchable ) mFragment;
+					ISearchableAdapter mSearchable = ( ISearchableAdapter ) mFragment;
 					
-					mSearchable.setQuery( mSearchQuery );
+					mSearchable.setSearchTerms( mSearchQuery );
 					
 				}
 				
