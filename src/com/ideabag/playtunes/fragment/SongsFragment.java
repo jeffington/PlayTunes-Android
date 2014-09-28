@@ -6,6 +6,7 @@ import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.SongsAllAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
@@ -16,6 +17,7 @@ import com.ideabag.playtunes.util.GAEvent.Categories;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -32,6 +34,7 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 	
     private MainActivity mActivity;
     private Tracker mTracker;
+    ContentResolver mResolver;
     
 	SongsAllAdapter adapter;
 	
@@ -42,14 +45,36 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mTracker.setScreenName( TAG );
+		
+		mResolver = activity.getContentResolver();
+		
+    	mActivity.setActionbarTitle( getString( R.string.all_songs ) );
+    	
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		adapter = new SongsAllAdapter( getActivity(), songMenuClickListener );
+		adapter = new SongsAllAdapter( getActivity(), songMenuClickListener, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
+				
+		    	mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( Categories.PLAYLIST )
+		    	.setAction( Playlist.ACTION_SHOWLIST )
+		    	.setValue( mResult.getCount() )
+		    	.build());
+				
+			}
+			
+		});
     	
 		//adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
+		
+		//adapter.set
 		
     	mPlaylistManager = new PlaylistManager( getActivity() );
 		
@@ -63,13 +88,12 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 		
     	setListAdapter( adapter );
     	
-    	ContentResolver mResolver = getActivity().getContentResolver();
-    	
     	mResolver.registerContentObserver(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
     	mResolver.registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
-		
+    	
+
 		
 	}
 	
@@ -77,17 +101,8 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 		super.onResume();
 		
 		mActivity.setActionbarTitle( getString( R.string.all_songs ) );
-    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-		
-    	mTracker.setScreenName( TAG );
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-    	
-    	mTracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( Categories.PLAYLIST )
-    	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
-    	.build());
 		
 	}
 		
@@ -100,14 +115,14 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 	@Override public void onDestroyView() {
 		super.onDestroyView();
 	    
-	    setListAdapter( null );
+	    //setListAdapter( null );
 	    
 	}
 	
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
-		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		mResolver.unregisterContentObserver( mediaStoreChanged );
 		
 	}
 	
@@ -210,7 +225,6 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 				@Override public void run() {
 					
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 				
 				}
             	
