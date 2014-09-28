@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.StarToggleTask;
 
 import android.content.Context;
 import android.provider.MediaStore;
@@ -89,12 +90,12 @@ public class AlbumsOneAdapter extends SongListAdapter {
 		String songTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
 		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
+		new StarToggleTask( holder.starButton ).execute( song_id );
+		
 		holder.songTitle.setText( songTitle );
 		
 		holder.starButton.setTag( R.id.tag_song_id, song_id );
 		holder.menuButton.setTag( R.id.tag_song_id, song_id );
-		
-		holder.starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
 		
 		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
 			

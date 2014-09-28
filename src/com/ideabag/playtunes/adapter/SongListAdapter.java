@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
+import com.ideabag.playtunes.util.StarToggleTask;
 
 import android.content.Context;
 import android.provider.MediaStore;
@@ -93,6 +94,8 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		String songAlbum = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
 		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
+		new StarToggleTask( holder.starButton ).execute( song_id );
+		
 		holder.songTitle.setText( songTitle );
 		holder.songArtist.setText( songArtist );
 		holder.songAlbum.setText( songAlbum );
@@ -100,7 +103,7 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		holder.starButton.setTag( R.id.tag_song_id, song_id );
 		holder.menuButton.setTag( R.id.tag_song_id, song_id );
 		
-		holder.starButton.setChecked( PlaylistManager.isStarred( song_id ) ); 
+		//holder.starButton.setChecked( f ); 
 		
 		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
 			
