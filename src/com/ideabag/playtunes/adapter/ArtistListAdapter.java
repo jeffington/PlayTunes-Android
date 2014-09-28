@@ -1,7 +1,8 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.AsyncDrawable;
+import com.ideabag.playtunes.util.BitmapWorkerTask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,60 +13,26 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ArtistListAdapter extends BaseAdapter {
+public class ArtistListAdapter extends AsyncQueryAdapter {
 	
-	protected Context mContext;
 	protected LayoutInflater inflater;
-	protected Cursor cursor = null;
-	protected MediaQuery mQuery;
 	
 	public String ARTIST_NAME;
 	
 	private final String SONG_SINGULAR, SONGS_PLURAL, ALBUM_SINGULAR, ALBUMS_PLURAL;
 	
 	public ArtistListAdapter( Context context ) {
-		super();
+		super( context );
 		
-		mContext = context;
 		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
 		SONG_SINGULAR = mContext.getString( R.string.song_singular );
 		SONGS_PLURAL = mContext.getString( R.string.songs_plural );
 		ALBUM_SINGULAR = mContext.getString( R.string.album_singular );
 		ALBUMS_PLURAL = mContext.getString( R.string.albums_plural );
-		
-	}
-	
-	public void requery() {
-		
-		if ( null != cursor && !cursor.isClosed() ) {
-			
-			cursor.close();
-			
-		}
-		
-		cursor = MediaQuery.execute( mContext, mQuery );
-		
-	}
-	
-	@Override public int getCount() {
-		
-		return ( cursor == null ? 0 : cursor.getCount() );
-	}
-
-	@Override public Object getItem( int position ) {
-		
-		return null;
-		
-	}
-
-	@Override public long getItemId( int position ) {
-		
-		return 0;
 		
 	}
 
@@ -88,6 +55,8 @@ public class ArtistListAdapter extends BaseAdapter {
 			holder.albumArtTwo = ( ImageView ) convertView.findViewById( R.id.ArtistAlbumTwo );
 			holder.albumArtThree = ( ImageView ) convertView.findViewById( R.id.ArtistAlbumThree );
 			
+			holder.albumArtTwo.setColorFilter( mContext.getResources().getColor( R.color.textColorTertiary ), PorterDuff.Mode.MULTIPLY );
+			holder.albumArtThree.setColorFilter( mContext.getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
 			
 			convertView.setTag( holder );
 			
@@ -97,13 +66,13 @@ public class ArtistListAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor.moveToPosition( position );
+		mCursor.moveToPosition( position );
 		
 		
-		String artistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ).trim();
-		int songCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_TRACKS ) );
-		int albumCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_ALBUMS ) );
-		String artistID = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Artists._ID ) );
+		String artistName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ).trim();
+		int songCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_TRACKS ) );
+		int albumCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_ALBUMS ) );
+		String artistID = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists._ID ) );
 		
 		convertView.setTag( R.id.tag_artist_id, artistID );
 		
@@ -146,12 +115,17 @@ public class ArtistListAdapter extends BaseAdapter {
 			if ( count > 0 ) {
 				
 				mAlbumArtQuery.moveToPosition( 0 );
-				//MediaStore.Audio.Artists.Albums.ALBUM_ART
+				
 				String albumUriString = mAlbumArtQuery.getString( mAlbumArtQuery.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART ) );
 				
-				Uri albumUri = Uri.parse( albumUriString );
-				holder.albumArtOne.setImageURI( albumUri );
-				
+				final BitmapWorkerTask albumTask = new BitmapWorkerTask( holder.albumArtOne );
+		        final AsyncDrawable asyncThumbDrawable =
+		                new AsyncDrawable( mContext.getResources(),
+		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+		                		albumTask );
+		        
+		        holder.albumArtOne.setImageDrawable( asyncThumbDrawable );
+		        albumTask.execute( albumUriString );
 				
 			} else {
 				
@@ -163,14 +137,17 @@ public class ArtistListAdapter extends BaseAdapter {
 			if ( count > 1 ) {
 				
 				mAlbumArtQuery.moveToPosition( 1 );
-				//MediaStore.Audio.Artists.Albums.ALBUM_ART
 				String albumUriString = mAlbumArtQuery.getString( mAlbumArtQuery.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART ) );
-				Uri albumUri = Uri.parse( albumUriString );
-				holder.albumArtTwo.setImageURI( albumUri );
-				holder.albumArtTwo.setColorFilter( mContext.getResources().getColor( R.color.textColorTertiary ), PorterDuff.Mode.MULTIPLY );
 				
-				
-				holder.albumArtTwo.setVisibility( View.VISIBLE );
+				final BitmapWorkerTask albumTask = new BitmapWorkerTask( holder.albumArtTwo );
+		        final AsyncDrawable asyncThumbDrawable =
+		                new AsyncDrawable( mContext.getResources(),
+		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+		                		albumTask );
+		        
+		        holder.albumArtTwo.setImageDrawable( asyncThumbDrawable );
+		        albumTask.execute( albumUriString );
+		        holder.albumArtTwo.setVisibility( View.VISIBLE );
 				
 				
 			} else {
@@ -183,14 +160,18 @@ public class ArtistListAdapter extends BaseAdapter {
 			if ( count > 2 ) {
 				
 				mAlbumArtQuery.moveToPosition( 2 );
-				//MediaStore.Audio.Artists.Albums.ALBUM_ART
 				String albumUriString = mAlbumArtQuery.getString( mAlbumArtQuery.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART ) );
-				Uri albumUri = Uri.parse( albumUriString );
-				holder.albumArtThree.setImageURI( albumUri );
-				holder.albumArtThree.setColorFilter( mContext.getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
 				
+				final BitmapWorkerTask albumTask = new BitmapWorkerTask( holder.albumArtThree );
+		        final AsyncDrawable asyncThumbDrawable =
+		                new AsyncDrawable( mContext.getResources(),
+		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+		                		albumTask );
+		        
+		        holder.albumArtThree.setImageDrawable( asyncThumbDrawable );
+		        albumTask.execute( albumUriString );
+		        holder.albumArtThree.setVisibility( View.VISIBLE );
 				
-				holder.albumArtThree.setVisibility( View.VISIBLE );
 				
 			} else {
 				
@@ -219,7 +200,5 @@ public class ArtistListAdapter extends BaseAdapter {
 		
 		
 	}
-	
-	public MediaQuery getQuery() { return mQuery; }
 
 }
