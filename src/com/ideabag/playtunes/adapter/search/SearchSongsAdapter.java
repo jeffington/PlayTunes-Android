@@ -2,13 +2,13 @@ package com.ideabag.playtunes.adapter.search;
 
 import com.ideabag.playtunes.adapter.SongListAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 
 import android.content.Context;
 import android.provider.MediaStore;
 import android.view.View.OnClickListener;
 
-public class SearchSongsAdapter extends SongListAdapter implements ISearchable {
+public class SearchSongsAdapter extends SongListAdapter implements ISearchableAdapter {
 	
 	private static final String SEPARATORS = ":|;|,|.|-|_|\"|'|\\s|";
 	
@@ -23,13 +23,13 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchable {
 		
 		if ( null != searchTerms && searchTerms.length() > 0 ) {
 			
-			setQuery( searchTerms );
+			setSearchTerms( searchTerms );
     		
 		}
 		
 	}
 	
-	@Override public void setQuery( String searchTerms ) {
+	@Override public void setSearchTerms( String searchTerms ) {
 		
 		String[] terms = searchTerms.split( " " );
 		
@@ -85,8 +85,8 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchable {
 				null,
 				"WEIGHT DESC"
 				);
-		
-    	super.requery();
+    	
+    	setMediaQuery( mQuery );
     	
 	}
 	
@@ -94,15 +94,15 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchable {
 		
 		int count = 0;
 		
-		if ( null != cursor ) {
+		if ( null != mCursor ) {
 			
 			if ( mTruncateAmount <= 0 ) {
 				
-				count = cursor.getCount();
+				count = mCursor.getCount();
 				
 			} else {
 				
-				count = ( cursor.getCount() > mTruncateAmount ? mTruncateAmount : cursor.getCount() );
+				count = ( mCursor.getCount() > mTruncateAmount ? mTruncateAmount : mCursor.getCount() );
 				
 			}
 			
@@ -114,9 +114,15 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchable {
 	
 	public int hasMore() {
 		
-		return ( cursor != null && mTruncateAmount > 0 && cursor.getCount() > mTruncateAmount ? cursor.getCount() - mTruncateAmount : 0 );
+		return ( mCursor != null && mTruncateAmount > 0 && mCursor.getCount() > mTruncateAmount ? mCursor.getCount() - mTruncateAmount : 0 );
 		
 	}
 	
+	public void setTruncateAmount( int mAmt ) {
+		
+		mTruncateAmount = mAmt;
+		notifyDataSetChanged();
+		
+	}
 	
 }
