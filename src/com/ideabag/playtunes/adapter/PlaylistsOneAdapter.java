@@ -15,15 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class PlaylistsOneAdapter extends BaseAdapter {
-	
-	protected Context mContext;
-	protected LayoutInflater inflater;
-	protected Cursor cursor = null;
-	private MediaQuery mQuery = null;
-	
-	private PlaylistManager PlaylistManager;
-	private View.OnClickListener songMenuClickListener;
+public class PlaylistsOneAdapter extends SongListAdapter {
 	
 	private String PLAYLIST_ID;
 	public String PLAYLIST_NAME;
@@ -45,49 +37,18 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 		
 	};
     
-	public PlaylistsOneAdapter( Context context, String playlist_id, View.OnClickListener menuClickListener ) {
+    public PlaylistsOneAdapter( Context context, String playlist_id, View.OnClickListener menuClickListener, MediaQuery.OnQueryCompletedListener listener ) {
+    	this( context, playlist_id, menuClickListener );
+    	
+    	setOnQueryCompletedListener( listener );
+    	
+    }
+    public PlaylistsOneAdapter( Context context, String playlist_id, View.OnClickListener menuClickListener ) {
 		
-		mContext = context;
+		super( context, menuClickListener );
 		PLAYLIST_ID = playlist_id;
 		
-		PlaylistManager = new PlaylistManager( mContext );
-		
-		songMenuClickListener = menuClickListener;
-		
-		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-		
 		//android.util.Log.i( "starred adapter", "" + playlist_id );
-		
-		Cursor mPlaylistNameCursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-				new String[] {
-				    	
-				    	MediaStore.Audio.Playlists.NAME,
-						MediaStore.Audio.Playlists._ID
-					
-				},
-				MediaStore.Audio.Playlists._ID + " =?",
-				new String[] {
-					
-						PLAYLIST_ID
-						
-				},
-				null
-			);
-		
-		mPlaylistNameCursor.moveToFirst();
-		
-		try {
-			
-			PLAYLIST_NAME = mPlaylistNameCursor.getString( mPlaylistNameCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
-		
-		} catch( Exception e ) {
-			
-			PLAYLIST_NAME = "";
-			
-		}
-		
-		mPlaylistNameCursor.close();
 		
 		mQuery = new MediaQuery(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ),
@@ -102,52 +63,6 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			);
 		
 		requery();
-		
-	}
-	
-	public MediaQuery getQuery() {
-		
-		return mQuery;
-		
-	}
-	
-	public void requery() {
-		
-		if ( null != cursor && !cursor.isClosed() ) {
-			
-			cursor.close();
-			
-		}
-		
-		cursor = MediaQuery.execute( mContext, mQuery );
-		
-	}
-	
-	@Override
-	public int getCount() {
-		
-		return ( null == cursor ? 0 : cursor.getCount() );
-	}
-
-	@Override
-	public Object getItem( int position ) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override public long getItemId( int position ) {
-		
-		int mID = 0;
-		
-		if ( null != cursor ) {
-			
-			cursor.moveToPosition( position );
-			
-			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
-			
-		}
-		
-		return mID;
 		
 	}
 
@@ -184,12 +99,12 @@ public class PlaylistsOneAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor.moveToPosition( position );
+		mCursor.moveToPosition( position );
 		
-		String songTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.TITLE ) );
-		String songArtist = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-		String songAlbum = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
-		String song_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
+		String songTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.TITLE ) );
+		String songArtist = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+		String songAlbum = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
+		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.Members.AUDIO_ID ) );
 		
 		holder.songTitle.setText( songTitle );
 		holder.songArtist.setText( songArtist );
