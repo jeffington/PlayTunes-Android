@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistsAllAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
@@ -12,6 +13,7 @@ import com.ideabag.playtunes.util.GAEvent.Categories;
 
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -22,23 +24,42 @@ import android.widget.TextView;
 public class ArtistsAllFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "All Artists Fragment";
-
+	
 	ArtistsAllAdapter adapter;
 	private MainActivity mActivity;
 	private Tracker mTracker;
 	
 	@Override public void onAttach( Activity activity ) {
-			
+		
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mTracker.setScreenName( TAG );
+		
+		mActivity.setActionbarTitle( getString( R.string.artists_plural ) );
+		
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-    	adapter = new ArtistsAllAdapter( getActivity() );
+    	adapter = new ArtistsAllAdapter( getActivity(), new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				
+				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.artist_singular ) : getString( R.string.artists_plural ) ) );
+				
+				mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( Categories.PLAYLIST )
+		    	.setAction( Playlist.ACTION_SHOWLIST )
+		    	.setValue( mResult.getCount() )
+		    	.build());
+				
+			}
+			
+		});
     	
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
@@ -64,22 +85,7 @@ public class ArtistsAllFragment extends SaveScrollListFragment implements IMusic
 	@Override public void onResume() {
 		super.onResume();
 		
-		mActivity.setActionbarTitle( getString( R.string.artists_plural ) );
-		mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.artist_singular ) : getString( R.string.artists_plural ) ) );
-
-	        // Set screen name.
-	        // Where path is a String representing the screen name.
-		mTracker.setScreenName( TAG );
-		//t.set( "_count", ""+adapter.getCount() );
-		
-	        // Send a screen view.
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
-		
-		mTracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( Categories.PLAYLIST )
-    	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
-    	.build());
 		
 	}
 		
@@ -93,7 +99,7 @@ public class ArtistsAllFragment extends SaveScrollListFragment implements IMusic
 	@Override public void onDestroyView() {
 	    super.onDestroyView();
 	    
-	    setListAdapter( null );
+	    //setListAdapter( null );
 	    
 	}
 	
