@@ -6,6 +6,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistAlbumsAdapter;
 import com.ideabag.playtunes.adapter.ArtistAllSongsAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.GAEvent.Categories;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
@@ -37,12 +38,8 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	
 	public static final String TAG = "One Artist Fragment";
 	
-	private ViewGroup AllSongs;
 	private ViewGroup Singles = null;
 	
-	//private TextView albumDivider;
-	
-	//ArtistAlbumsAdapter adapter;
 	ArtistAlbumsAdapter mAlbumsAdapter;
 	ArtistAllSongsAdapter mSongsAdapter;
 	
@@ -67,6 +64,58 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+    	mTracker.setScreenName( TAG );
+		
+		mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
+		
+		MediaQuery mGetArtistName = new MediaQuery(
+				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+				new String[] {
+				    	
+				    	MediaStore.Audio.Artists.ARTIST,
+						MediaStore.Audio.Artists._ID
+					
+				},
+				MediaStore.Audio.Artists._ID + " =?",
+				new String[] {
+					
+						ARTIST_ID
+						
+				},
+				null
+			);
+    	
+		MediaQuery.executeAsync( getActivity(), mGetArtistName, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted(MediaQuery mQuery, Cursor mResult) {
+				
+				if ( mResult != null && mResult.getCount() > 0 ) {
+					
+					mResult.moveToFirst();
+					
+					try {
+						
+						mActivity.setActionbarTitle( mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ) );
+						//mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular) : getString( R.string.songs_plural) ) );
+						
+					} catch( Exception e ) {
+						
+						mActivity.setActionbarTitle( null );
+						//mActivity.setActionbarSubtitle( null );
+						
+					}
+					
+				}
+				
+				if ( mResult != null && !mResult.isClosed() ) {
+					
+					mResult.close();
+					
+				}
+				
+			}
+			
+		});
 		
 	}
 	
@@ -89,27 +138,9 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		
 		LayoutInflater inflater = mActivity.getLayoutInflater();
 		
-		mAlbumsAdapter = new ArtistAlbumsAdapter( getActivity(), ARTIST_ID );
+		mAlbumsAdapter = new ArtistAlbumsAdapter( getActivity(), ARTIST_ID, null );
 		
     	adapter.addAdapter( mAlbumsAdapter );
-    	
-    	
-    	Cursor songCountCursor = getActivity().getContentResolver().query(
-    				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-    				new String[] {
-    					
-    					MediaStore.Audio.Media.ARTIST_ID,
-    					MediaStore.Audio.Media._ID
-    					
-    				},
-    				MediaStore.Audio.Media.ARTIST_ID + "=?",
-    				new String[] {
-    					
-    					ARTIST_ID
-    					
-    				},
-    				null
-    			);
     	
     	Cursor singlesCountCursor = getActivity().getContentResolver().query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -131,20 +162,10 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		
-    	//getListView().addHeaderView( mActivity.AdContainer, null, true );
-    	
-    	int songCount = songCountCursor.getCount();
-    	songCountCursor.close();
     	
     	int singlesCount = singlesCountCursor.getCount();
     	singlesCountCursor.close();
     	
-    	/*
-    	AllSongs = ( ViewGroup ) inflater.inflate( R.layout.list_item_title_one_badge, null );
-    	( ( TextView ) AllSongs.findViewById( R.id.SongCount ) ).setText( "" + songCount );
-    	( ( TextView ) AllSongs.findViewById( R.id.Title ) ).setText( getString( R.string.artist_all_songs ) );
-    	getListView().addHeaderView( AllSongs, null, true );
-    	*/
     	if ( singlesCount > 0) {
     		
     		Singles = ( ViewGroup ) inflater.inflate( R.layout.list_item_navigation_title, null );
@@ -153,42 +174,28 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
     		//getListView().addHeaderView( Singles, null, true );
     		adapter.addView( Singles );
     		
+    		
+    		
     	}
-    	/*
-    	albumDivider = ( TextView ) inflater.inflate( R.layout.list_header_albums, null );
     	
+    	mSongsAdapter = new ArtistAllSongsAdapter( getActivity(), ARTIST_ID, songMenuClickListener, null );
     	
-    	getListView().addHeaderView( albumDivider, null, false );
-    	*/
-    	mSongsAdapter = new ArtistAllSongsAdapter( getActivity(), ARTIST_ID, songMenuClickListener );
     	adapter.addAdapter( mSongsAdapter );
-    	//getListView().setHeaderDividersEnabled( true );
-		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+    	
+    	getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
     	
     	setListAdapter( adapter );
-    	
-    	
     	
 	}
 	
 	@Override public void onResume() {
 		super.onResume();
 		
-    	// TODO:
-    	mActivity.setActionbarTitle( mSongsAdapter.ARTIST_NAME );
-    	mActivity.setActionbarSubtitle( getString( R.string.artist_singular ) );
-
-	        // Set screen name.
-	        // Where path is a String representing the screen name.
-    	mTracker.setScreenName( TAG );
-		//t.set( "_count", ""+adapter.getCount() );
-		
-	        // Send a screen view.
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-    	mTracker.send( new HitBuilders.EventBuilder()
+		mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
     	.setAction( Playlist.ACTION_SHOWLIST )
     	.setValue( adapter.getCount() )
@@ -206,24 +213,13 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	@Override public void onDestroyView() {
 	    super.onDestroyView();
 	    
-	    setListAdapter( null );
+	    //setListAdapter( null );
 	    
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		int hasSingles = 0;
-		/*
-		int hasSingles = ( null == Singles ? 1 : 0 );
 		
-		if ( hasSingles > 0 && v.equals( Singles ) ) { // Load Singles
-			
-			ArtistSinglesFragment allSinglesFragment = new ArtistSinglesFragment( );
-			allSinglesFragment.setMediaID( ARTIST_ID );
-			
-			mActivity.transactFragment( allSinglesFragment );
-			
-		}
-		*/
 		if ( position < mAlbumsAdapter.getCount() + hasSingles ) {
 		
 			
