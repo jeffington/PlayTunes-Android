@@ -14,9 +14,9 @@ import com.ideabag.playtunes.adapter.search.SearchArtistsAdapter;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 
-public class SearchArtistsFragment extends SaveScrollListFragment implements ISearchable {
+public class SearchArtistsFragment extends SaveScrollListFragment implements ISearchableAdapter {
 
 	private static final int SEARCH_RESULT_NO_LIMIT = -1;
 	
@@ -40,13 +40,13 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 	}
 	
 	@Override
-	public void setQuery( String queryString ) {
-		// TODO Auto-generated method stub
+	public void setSearchTerms( String queryString ) {
+		
 		mQuery = queryString;
 		
 		if ( null != adapter ) {
 			
-			adapter.setQuery( mQuery );
+			adapter.setSearchTerms( mQuery );
 			
 		}
 		
