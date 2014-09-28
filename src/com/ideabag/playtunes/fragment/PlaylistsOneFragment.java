@@ -9,6 +9,7 @@ import com.ideabag.playtunes.DragNDrop.DragNDropListView;
 import com.ideabag.playtunes.DragNDrop.DropListener;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
@@ -18,6 +19,7 @@ import com.ideabag.playtunes.util.GAEvent.Playlist;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -42,8 +44,6 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	public static final String TAG = "One Playlist Fragment";
 	public static final String STARRED_TAG = "Starred Playlist Fragment";
 	
-	private static final int DRAG_DELAY_MS = 250;
-	
 	MainActivity mActivity;
 	private Tracker mTracker;
 	PlaylistsOneAdapter adapter;
@@ -62,9 +62,6 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	
 	private int scrollPosition = 0;
 	
-	//private int mListHeight, mListVisibleRows;
-	
-	Handler handle;
 	
 	@Override public void setMediaID( String media_id ) {
 		
@@ -89,6 +86,61 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
+		// Set screen name.
+		mTracker.setScreenName( TAG );
+				
+		mActivity.setActionbarTitle( null );
+    	mActivity.setActionbarSubtitle( null );
+    	
+    	
+    	
+		MediaQuery mGetPlaylistName = new MediaQuery(
+				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+				new String[] {
+				    	
+				    	MediaStore.Audio.Playlists.NAME,
+						MediaStore.Audio.Playlists._ID
+					
+				},
+				MediaStore.Audio.Playlists._ID + " =?",
+				new String[] {
+					
+						PLAYLIST_ID
+						
+				},
+				null
+			);
+    	
+		MediaQuery.executeAsync( getActivity(), mGetPlaylistName, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted(MediaQuery mQuery, Cursor mResult) {
+				
+				if ( mResult != null && mResult.getCount() > 0 ) {
+					
+					mResult.moveToFirst();
+					
+					try {
+						
+						mActivity.setActionbarTitle( mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) ) );
+								
+					} catch( Exception e ) {
+						
+						mActivity.setActionbarTitle( null );
+						
+					}
+					
+				}
+				
+				if ( mResult != null && !mResult.isClosed() ) {
+					
+					mResult.close();
+					
+				}
+				
+			}
+			
+		});
+    	
 	}
     
 	@SuppressLint("NewApi")
@@ -105,23 +157,30 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		
 		PlaylistManager pm = new PlaylistManager( getActivity() );
 		
-		if ( PLAYLIST_ID == pm.createStarredIfNotExist() ) {
-			
-			isStarred = true;
-			
-		}
-		
 		setHasOptionsMenu( true );
 		
-		handle = new Handler();
-		
-    	adapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener );
+		// Adapter is asyncronous
+    	adapter = new PlaylistsOneAdapter( mActivity, PLAYLIST_ID, songMenuClickListener, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular) : getString( R.string.songs_plural) ) );
+				mListView.scrollTo( 0, scrollPosition );
+				
+				mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( isStarred ? Categories.STARRED_PLAYLIST : Categories.PLAYLIST )
+		    	.setAction( Playlist.ACTION_SHOWLIST )
+		    	.setValue( adapter.getCount() )
+		    	.build());
+				
+			}
+			
+		} );
     	
     	// Configure for editing (or not)
     	adapter.setEditing( isEditing );
     	mListView.setDraggingEnabled( isEditing );
     	
-    	//getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
     	
     	if ( android.os.Build.VERSION.SDK_INT < 11 && android.os.Build.VERSION.SDK_INT > 8) {
     		
@@ -129,7 +188,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
     		
     	}
     	
-    	mListView.setDivider( mActivity.getResources().getDrawable( R.drawable.list_divider ) );
+    	mListView.setDivider( getResources().getDrawable( R.drawable.list_divider ) );
     	mListView.setDividerHeight( 1 );
     	mListView.setSelector( R.drawable.list_item_background );
     	
@@ -137,7 +196,9 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		// Dumb thing to have a bottom divider shown
     	mListView.setFooterDividersEnabled( true );
     	mListView.addFooterView( new View( getActivity() ), null, true);
-		
+		//
+    	
+    	
     	mListView.setAdapter( adapter );
 		
     	mListView.setOnItemClickListener( this );
@@ -171,25 +232,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	@Override public void onResume() {
 		super.onResume();
 		
-		mListView.scrollTo( 0, scrollPosition );
-		
-		mActivity.setActionbarTitle( adapter.PLAYLIST_NAME );
-    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-
-		Tracker tracker = TrackerSingleton.getDefaultTracker( mActivity );
-
-	    // Set screen name.
-	    // Where path is a String representing the screen name.
-		tracker.setScreenName( TAG );
-		tracker.send( new HitBuilders.AppViewBuilder().build() );
-		
-		//t.set( "_count", ""+adapter.getCount() );
-		mTracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( isStarred ? Categories.STARRED_PLAYLIST : Categories.PLAYLIST )
-    	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
-    	.build());
-		
+		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
 	}
 	
