@@ -182,6 +182,12 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 				
 				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 				
+				mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( GAEvent.Categories.PLAYLIST )
+		    	.setAction( GAEvent.Playlist.ACTION_SHOWLIST )
+		    	.setValue( mResult.getCount() )
+		    	.build());
+				
 			}
 			
 		});
@@ -234,11 +240,6 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	        // Send a screen view.
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
-		mTracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( GAEvent.Categories.PLAYLIST )
-    	.setAction( GAEvent.Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
-    	.build());
 		
 	}
 	
