@@ -4,26 +4,22 @@ import android.app.Activity;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.search.SearchAlbumsAdapter;
-import com.ideabag.playtunes.adapter.search.SearchSongsAdapter;
-import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.fragment.AlbumsOneFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
-import com.ideabag.playtunes.fragment.SongsFragment;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 import com.ideabag.playtunes.util.TrackerSingleton;
 import com.ideabag.playtunes.util.GAEvent.Categories;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 
-public class SearchAlbumsFragment extends SaveScrollListFragment implements ISearchable {
+public class SearchAlbumsFragment extends SaveScrollListFragment implements ISearchableAdapter {
 	public static final String TAG = "Album Search Fragment";
 	
 	private static final int SEARCH_RESULT_NO_LIMIT = -1;
@@ -33,11 +29,21 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 	private SearchAlbumsAdapter adapter;
 	String mQuery;
 	
+	public SearchAlbumsFragment() { /* ... */ }
+	
+	public SearchAlbumsFragment( SearchAlbumsAdapter mAdapter ) {
+		
+		adapter = mAdapter;
+		
+	}
+	
 	@Override public void onAttach( Activity activity ) {
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mTracker.setScreenName( TAG );
+		
 	}
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -49,7 +55,15 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 			
 		}
 		
-		adapter = new SearchAlbumsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT );
+		if ( null == adapter ) {
+			
+			adapter = new SearchAlbumsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT );
+			
+		} else {
+			
+			adapter.setTruncateAmount( SEARCH_RESULT_NO_LIMIT );
+			
+		}
 		
 		setListAdapter( adapter );
 		
@@ -58,7 +72,7 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 	@Override public void onResume() {
 		super.onResume();
 		
-    	mTracker.setScreenName( TAG );
+    	
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
     	
@@ -71,13 +85,13 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 	}
 	
 	@Override
-	public void setQuery( String queryString ) {
-		// TODO Auto-generated method stub
+	public void setSearchTerms( String queryString ) {
+		
 		mQuery = queryString;
 		
 		if ( null != adapter ) {
 			
-			adapter.setQuery( mQuery );
+			adapter.setSearchTerms( mQuery );
 			
 		}
 		
@@ -85,14 +99,12 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+		String albumID = ( String ) v.getTag( R.id.tag_album_id );
 		
-		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, SearchFragment.class, mQuery );
-		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+		AlbumsOneFragment albumFragment = new AlbumsOneFragment( );
+		albumFragment.setMediaID( albumID );
 		
-		mActivity.mBoundService.setPlaylistPosition( position );
-		
-		mActivity.mBoundService.play();
+		mActivity.transactFragment( albumFragment );
 		
 		mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
