@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistSinglesAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.IPlayableList;
@@ -14,6 +15,7 @@ import com.ideabag.playtunes.util.GAEvent.Playlist;
 
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -51,7 +53,57 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mTracker.setScreenName( TAG );
 		
+		//mActivity.setActionbarTitle( adapter.ARTIST_NAME );
+		MediaQuery mGetArtistName = new MediaQuery(
+				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+				new String[] {
+				    	
+				    	MediaStore.Audio.Artists.ARTIST,
+						MediaStore.Audio.Artists._ID
+					
+				},
+				MediaStore.Audio.Artists._ID + " =?",
+				new String[] {
+					
+						ARTIST_ID
+						
+				},
+				null
+			);
+    	
+		MediaQuery.executeAsync( getActivity(), mGetArtistName, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted(MediaQuery mQuery, Cursor mResult) {
+				
+				if ( mResult != null && mResult.getCount() > 0 ) {
+					
+					mResult.moveToFirst();
+					
+					try {
+						
+						mActivity.setActionbarTitle( mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ) );
+						//mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular) : getString( R.string.songs_plural) ) );
+								
+					} catch( Exception e ) {
+						
+						mActivity.setActionbarTitle( null );
+						//mActivity.setActionbarSubtitle( null );
+						
+					}
+					
+				}
+				
+				if ( mResult != null && !mResult.isClosed() ) {
+					
+					mResult.close();
+					
+				}
+				
+			}
+			
+		});
 	}
 	
 	@Override public void onSaveInstanceState( Bundle outState ) {
@@ -69,7 +121,27 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 			
 		}
 		
-    	adapter = new ArtistSinglesAdapter( getActivity(), ARTIST_ID, songMenuClickListener );
+    	adapter = new ArtistSinglesAdapter( getActivity(), ARTIST_ID, songMenuClickListener, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mActivity.setActionbarSubtitle( getString( R.string.artist_singles )
+		    			+ " "
+		    			+ Character.toString( DASH_SYMBOL )
+		    			+ " "
+		    			+ mResult.getCount()
+		    			+ " "
+		    			+ (mResult.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
+				
+				mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( Categories.PLAYLIST )
+		    	.setAction( Playlist.ACTION_SHOWLIST )
+		    	.setValue( mResult.getCount() )
+		    	.build());
+		    	
+			}
+			
+		});
     	adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
     	
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
@@ -88,29 +160,8 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 	@Override public void onResume() {
 		super.onResume();
 		
-    	mActivity.setActionbarTitle( adapter.ARTIST_NAME );
-    	mActivity.setActionbarSubtitle( getString( R.string.artist_singles )
-    			+ " "
-    			+ Character.toString( DASH_SYMBOL )
-    			+ " "
-    			+ adapter.getCount()
-    			+ " "
-    			+ (adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-		
-
-        // Set screen name.
-        // Where path is a String representing the screen name.
-		mTracker.setScreenName( TAG );
-		//t.set( "_count", ""+adapter.getCount() );
-		
-	        // Send a screen view.
+		// Send a screen view.
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
-		
-		mTracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( Categories.PLAYLIST )
-    	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
-    	.build());
 		
 	}
 		
@@ -226,7 +277,6 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 				@Override public void run() {
 					
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 				
 				}
             	
