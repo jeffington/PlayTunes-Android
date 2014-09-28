@@ -1,10 +1,13 @@
 package com.ideabag.playtunes.database;
 
+import java.util.Date;
+
 import com.google.gson.Gson;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 
 public class MediaQuery {
 	/*
@@ -56,6 +59,9 @@ public class MediaQuery {
 		mQueryObject.mOrderBy = orderBy;
 		
 	}
+	
+	
+	// Synchronous execution, execution of this method is wrapped in an AsyncTask
 	/*
 	public Uri getUri() { return this.mContentUri; }
 	public String[] getProjection() { return this.mProjection; }
@@ -71,6 +77,13 @@ public class MediaQuery {
 				query.mQueryObject.mSelection,
 				query.mQueryObject.mSelectionArgs,
 				query.mQueryObject.mOrderBy );
+		
+	}
+	
+	public static void executeAsync( Context mContext, MediaQuery query, OnQueryCompletedListener onComplete ) {
+		
+		new MediaQueryTask( mContext, onComplete ).execute( query );
+		
 		
 	}
 	
@@ -143,5 +156,67 @@ public class MediaQuery {
 		return toJSONString();
 		
 	}
+	
+	//
+	// Async execution of the query
+	//
+	
+	
+	public interface OnQueryCompletedListener {
+		
+		void onQueryCompleted( MediaQuery mQuery, Cursor mResult );
+		
+	}
+	
+	protected static class MediaQueryTask extends AsyncTask< MediaQuery, Void, Cursor > {
+		
+		private Context mContext;
+		private OnQueryCompletedListener mListener;
+		private MediaQuery mQuery;
+		
+		public MediaQueryTask( Context context, OnQueryCompletedListener listener ) {
+			
+			mContext = context;
+			mListener = listener;
+			
+		}
+		
+	     protected Cursor doInBackground( MediaQuery... queries ) {
+	         
+	    	 long endTime, startTime;
+	    	 mQuery = queries[ 0 ];
+	         
+	    	 Cursor mQueryCursor = null;
+	    	 
+	    	 if ( null != mQuery ) {
+	    		 startTime = new Date().getTime();
+	    		 
+	    		 // Run the query of unknown execution time
+	    		 // The search queries have been running a little long and so they sometimes display incomplete searches
+	    		 //
+	    		 mQueryCursor = MediaQuery.execute( mContext, mQuery );
+	    		 
+	    		 endTime = new Date().getTime();
+	    		 
+	    		 android.util.Log.i( "MediaQueryTask", startTime + "- " + endTime + " " + ( endTime - startTime ) );
+	    		 
+	    	 }
+	         
+	         return mQueryCursor;
+	         
+	     }
+
+	     protected void onPostExecute( Cursor result ) {
+	        
+	    	 //android.util.Log.i( "MediaQueryTask", "HERE" );
+	    	 if ( null != mListener ) {
+	    		 
+	    		 mListener.onQueryCompleted( mQuery, result );
+	    		 
+	    	 }
+	    	 
+	     }
+	     
+	 }
 	
 }
