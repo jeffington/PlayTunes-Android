@@ -1,64 +1,30 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.AsyncDrawable;
+import com.ideabag.playtunes.util.BitmapWorkerTask;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AlbumListAdapter extends BaseAdapter {
+public class AlbumListAdapter extends AsyncQueryAdapter {
 	
-	protected Context mContext;
 	protected LayoutInflater inflater;
-	protected Cursor cursor = null;
-	protected MediaQuery mQuery;
 	
 	public AlbumListAdapter( Context context ) {
-		
-		mContext = context;
+		super( context );
 
 		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
 	}
 	
-	public void requery() {
-		
-		if ( null != cursor && !cursor.isClosed() ) {
-			
-			cursor.close();
-			
-		}
-		
-    	cursor = MediaQuery.execute( mContext, mQuery );
-		
-	}
-	
-	@Override public int getCount() {
-		
-		return cursor.getCount();
-		
-	}
-
-	@Override public Object getItem( int position ) {
-		
-		return null;
-		
-	}
-
-	@Override public long getItemId(int position) {
-		
-		return 0;
-		
-	}
-
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
 		ViewHolder holder;
@@ -82,14 +48,14 @@ public class AlbumListAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor.moveToPosition( position );
+		mCursor.moveToPosition( position );
 		
-		convertView.setTag( R.id.tag_album_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums._ID ) ) );
+		convertView.setTag( R.id.tag_album_id, mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums._ID ) ) );
 		
-		String artistName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
-		String albumName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
+		String artistName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
+		String albumName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
 		
-		int songCount = cursor.getInt( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.NUMBER_OF_SONGS ) );
+		int songCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.NUMBER_OF_SONGS ) );
 		
 		holder.albumArtist.setText( artistName );
 		holder.albumTitle.setText( albumName );
@@ -100,19 +66,31 @@ public class AlbumListAdapter extends BaseAdapter {
 		// Set the album art
 		//
 		
-		String albumArtUriString = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+		String albumArtUriString = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
 		
 		if ( null != albumArtUriString ) {
 			
-			Uri albumArtUri = Uri.parse( albumArtUriString );
+			//Uri albumArtUri = Uri.parse( albumArtUriString );
 			
-			holder.albumThumb.setImageURI( albumArtUri );
+			//holder.albumThumb.setImageURI( albumArtUri );
 			
+			final BitmapWorkerTask task = new BitmapWorkerTask( holder.albumThumb );
+	        final AsyncDrawable asyncDrawable =
+	                new AsyncDrawable( mContext.getResources(),
+	                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+	                		task );
+	        
+	        holder.albumThumb.setImageDrawable( asyncDrawable );
+	        
+	        task.execute( albumArtUriString );
+	        
 		} else {
 			
 			holder.albumThumb.setImageResource( R.drawable.no_album_art_thumb );
 			
 		}
+		
+
 		
 		
 		return convertView;
@@ -127,7 +105,5 @@ public class AlbumListAdapter extends BaseAdapter {
 		TextView albumArtist;
 		
 	}
-	
-	public MediaQuery getQuery() { return mQuery; }
 	
 }
