@@ -16,7 +16,7 @@ public class ArtistsAllAdapter extends ArtistListAdapter {
     	
 	};
 	
-	public ArtistsAllAdapter( Context context ) {
+	public ArtistsAllAdapter( Context context, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context );
 		
     	mQuery = new MediaQuery(
@@ -26,6 +26,8 @@ public class ArtistsAllAdapter extends ArtistListAdapter {
 				null,
 				MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
 			);
+    	
+    	setOnQueryCompletedListener( listener );
     	
 		requery();
 		
