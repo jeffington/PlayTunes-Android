@@ -10,7 +10,6 @@ import android.view.View;
 public class ArtistSinglesAdapter extends SongListAdapter {
 
 	private String ARTIST_ID;
-	public String ARTIST_NAME;
 	
     private static final String[] allSongsSelection = new String[] {
     	
@@ -26,12 +25,12 @@ public class ArtistSinglesAdapter extends SongListAdapter {
     	
     };
     
-	public ArtistSinglesAdapter( Context context, String artist_id, View.OnClickListener menuClickListener ) {
+	public ArtistSinglesAdapter( Context context, String artist_id, View.OnClickListener menuClickListener, MediaQuery.OnQueryCompletedListener listener  ) {
 		super( context, menuClickListener );
 		
 		ARTIST_ID = artist_id;
     	
-		mQuery = new MediaQuery(
+		MediaQuery query = new MediaQuery(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				allSongsSelection,
 				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.ALBUM + "=?  AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
@@ -44,16 +43,9 @@ public class ArtistSinglesAdapter extends SongListAdapter {
 				MediaStore.Audio.Media.TITLE
 			);
 		
+		setOnQueryCompletedListener( listener );
+		
 		requery();
-		
-	}
-	
-	@Override public void requery() {
-		super.requery();
-		
-		cursor.moveToFirst();
-		
-		ARTIST_NAME = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 		
 	}
 
