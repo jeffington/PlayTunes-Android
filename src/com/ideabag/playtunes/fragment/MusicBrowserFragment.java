@@ -269,7 +269,8 @@ public class MusicBrowserFragment extends Fragment {
 	    	transaction.commit();
 			
 		}
-
+		
+		mActivity.NavigationFragment.hideNavigation();
     	
     }
     
