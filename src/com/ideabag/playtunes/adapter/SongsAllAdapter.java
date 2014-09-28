@@ -23,7 +23,7 @@ public class SongsAllAdapter extends SongListAdapter {
     	
     };
     
-	public SongsAllAdapter( Context context, View.OnClickListener menuClickListener ) {
+	public SongsAllAdapter( Context context, View.OnClickListener menuClickListener, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context, menuClickListener );
 		
     	mQuery = new MediaQuery(
@@ -34,6 +34,8 @@ public class SongsAllAdapter extends SongListAdapter {
     				MediaStore.Audio.Media.TITLE
     				);
 		
+    	setOnQueryCompletedListener( listener );
+    	
     	requery();
     	
 	}
