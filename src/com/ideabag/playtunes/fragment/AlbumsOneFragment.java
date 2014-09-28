@@ -1,17 +1,15 @@
 package com.ideabag.playtunes.fragment;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.LightingColorFilter;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -20,10 +18,14 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.util.AsyncDrawable;
+import com.ideabag.playtunes.util.BitmapWorkerTask;
 import com.ideabag.playtunes.util.GAEvent;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.IPlayableList;
@@ -36,12 +38,15 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	AlbumsOneAdapter adapter;
 	private MainActivity mActivity;
 	private Tracker mTracker;
+	private ContentResolver mResolver;
 	
 	private String ALBUM_ID = "";
 	
 	private View albumArtHeader;
 	private ImageView mAlbumArt;
 	private ImageView mAlbumArtBackground;
+	private TextView mAlbumTitle;
+	private TextView mAlbumSubtitle;
 	
 	@Override public void setMediaID( String media_id ) {
 		
@@ -56,6 +61,98 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mResolver = activity.getContentResolver();
+		
+		
+		mTracker.setScreenName( TAG );
+		
+		albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
+		mAlbumTitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtTitle );
+		mAlbumSubtitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtSubtitle );
+		
+		mAlbumArt = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
+		
+		mAlbumArtBackground = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtBackground );
+		
+    	MediaQuery albumQuery = new MediaQuery(
+    			MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+    			new String[] {
+    				
+    				MediaStore.Audio.Albums.ALBUM,
+    				MediaStore.Audio.Albums.ALBUM_ART,
+    				MediaStore.Audio.Albums.ARTIST,
+    				MediaStore.Audio.Albums._ID
+    				
+    			},
+    			MediaStore.Audio.Albums._ID + "=?",
+				new String[] {
+    				
+    				ALBUM_ID
+    				
+    			},
+    			null );
+    	
+    	MediaQuery.executeAsync( getActivity(), albumQuery, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				if ( null != mResult && mResult.getCount() > 0 ) {
+					
+					mResult.moveToFirst();
+			    	
+					String albumTitle, albumArtist;
+			    	
+			    	String albumUriString = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+			    	
+			    	albumTitle = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
+			    	albumArtist = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Albums.ARTIST ) );
+			    	
+			    	
+			    	mActivity.setActionbarTitle( albumTitle );
+					
+					mAlbumTitle.setText( albumTitle );
+					mAlbumSubtitle.setText( albumArtist );
+					
+					if ( null != albumUriString) {
+						
+						final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumArt );
+						final BitmapWorkerTask albumFullTask = new BitmapWorkerTask( mAlbumArtBackground );
+				        final AsyncDrawable asyncThumbDrawable =
+				                new AsyncDrawable( getResources(),
+				                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+				                		albumThumbTask );
+				        final AsyncDrawable asyncFullDrawable =
+				                new AsyncDrawable( getResources(),
+				                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+				                		albumFullTask );
+				        
+				        mAlbumArt.setImageDrawable( asyncThumbDrawable );
+				        albumThumbTask.execute( albumUriString );
+				        
+				        mAlbumArtBackground.setImageDrawable( asyncFullDrawable );
+				        albumFullTask.execute( albumUriString );
+				        
+				        
+				        
+					} else {
+						
+						mAlbumArtBackground.setImageResource( R.drawable.no_album_art_full );
+						mAlbumArt.setImageResource( R.drawable.no_album_art_thumb );
+						
+					}
+			        
+				}
+				
+				if ( null != mResult && !mResult.isClosed() ) {
+					
+			        mResult.close();
+					
+				}
+					
+			}
+			
+		});
+		
 	}
 
 	@Override public void onSaveInstanceState( Bundle outState ) {
@@ -73,60 +170,36 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 		}
 		
+		
 		//getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
 		
-		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener );
+		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
+				
+			}
+			
+		});
 		// TODO: A start at showing an indicator next to the song that's playing in the list.
 		//adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
 		
-		//if ( null != adapter.albumArtUri ) {
-			
-			int headerHeightPx = ( int ) TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, 196, getResources().getDisplayMetrics() );
-			albumArtHeader = getActivity().getLayoutInflater().inflate( R.layout.list_header_albumart, null, false );
-			albumArtHeader.setLayoutParams( new AbsListView.LayoutParams( AbsListView.LayoutParams.MATCH_PARENT, headerHeightPx ) );
-			
-			mAlbumArt = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtFull );
-			
-			mAlbumArtBackground = ( ImageView ) albumArtHeader.findViewById( R.id.AlbumArtBackground );
-			
-			TextView mAlbumTitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtTitle );
-			TextView mAlbumSubtitle = ( TextView ) albumArtHeader.findViewById( R.id.AlbumArtSubtitle );
-			
-			mAlbumTitle.setText( adapter.albumTitle );
-			mAlbumSubtitle.setText( adapter.albumArtist );
-			
-			Bitmap albumArtBitmap;
-			
-			if ( null != adapter.albumArtUri ) {
-				
-				albumArtBitmap = BitmapFactory.decodeFile( adapter.albumArtUri );
-				
-			} else {
-				
-				albumArtBitmap = BitmapFactory.decodeResource( getResources(), R.drawable.no_album_art_full );
-				
-			}
-			Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
-			
-			
-			getListView().addHeaderView( albumArtHeader, null, false );
-			getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
-			
-			mAlbumArtBackground.setImageBitmap( newAlbumArt );
-			//albumArtHeader.setBackground( new BitmapDrawable( getResources(), newAlbumArt ) );
-			//albumArtHeader.setBackgroundDrawable( new BitmapDrawable( getResources(), newAlbumArt ) );
-			
-			mAlbumArtBackground.setColorFilter( getResources().getColor( R.color.now_playing_background ), PorterDuff.Mode.MULTIPLY );
-			
-			mAlbumArt.setImageBitmap( albumArtBitmap );
-			//iv.setImageURI( Uri.parse( adapter.albumArtUri ) );
-			
-		//}
+		getListView().addHeaderView( albumArtHeader, null, false );
+		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
+		
+		mAlbumArtBackground.setColorFilter( getResources().getColor( R.color.now_playing_background ), PorterDuff.Mode.MULTIPLY );
 		
     	setListAdapter( adapter );
+    	
+    	mResolver.registerContentObserver(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	mResolver.registerContentObserver(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( new PlaylistManager( getActivity() ).createStarredIfNotExist() ) ), true, mediaStoreChanged );
+    	
 		
 	}
 	
@@ -153,18 +226,9 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 	@Override public void onResume() {
 		super.onResume();
 		
-		if ( null != adapter.albumTitle ) {
-			
-			mActivity.setActionbarTitle( adapter.albumTitle );
-			mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
-			
-		}
-		
-		
-		
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		mTracker.setScreenName( TAG );
+
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
@@ -183,9 +247,16 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		
 	}
 	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		mResolver.unregisterContentObserver( mediaStoreChanged );
+		
+	}
+	
 	@Override public void onDestroyView() {
 	    super.onDestroyView();
-	    
+	    /*
 	    if ( null != mAlbumArt ) {
 		    
 		    BitmapDrawable mAlbumArtDrawable = ( BitmapDrawable ) mAlbumArt.getDrawable();
@@ -211,7 +282,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			}
 			
 	    }
-	    
+	    */
 	    setListAdapter( null );
 	    
 	}
@@ -281,6 +352,26 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
         newFragment.show( ft, "dialog" );
 		
 	}
+	
+	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
+
+        @Override public void onChange( boolean selfChange ) {
+            
+            mActivity.runOnUiThread( new Runnable() {
+
+				@Override public void run() {
+					
+					adapter.requery();
+					
+				}
+            	
+            });
+            
+            super.onChange( selfChange );
+            
+        }
+
+	};
 
 	@Override public void onNowPlayingMediaChanged( String media_id ) {
 		
