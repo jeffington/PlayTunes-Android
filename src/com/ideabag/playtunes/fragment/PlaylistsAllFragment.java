@@ -51,6 +51,12 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		
+		mActivity.setActionbarTitle( getString( R.string.playlists_plural ) );
+    	mActivity.setActionbarSubtitle( null );
+		
+    	// Set screen name.
+		mTracker.setScreenName( TAG );
+		
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
@@ -97,11 +103,6 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
     	mActivity.setActionbarTitle( getString( R.string.playlists_plural ) );
     	mActivity.setActionbarSubtitle( null );
 		
-
-		
-		// Set screen name.
-	    // Where path is a String representing the screen name.
-		mTracker.setScreenName( TAG );
 		
 	    // Send a screen view.
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
@@ -127,6 +128,7 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 		setHasOptionsMenu( false );
 		//getListView().removeHeaderView( mActivity.AdContainer );
 		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		
 	}
 	
 	@Override public void onDestroyView() {
@@ -243,7 +245,6 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 				@Override public void run() {
 					
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 					
 				}
             	

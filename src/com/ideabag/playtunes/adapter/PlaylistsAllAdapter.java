@@ -2,6 +2,7 @@ package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,21 +10,16 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class PlaylistsAllAdapter extends BaseAdapter {
+public class PlaylistsAllAdapter extends AsyncQueryAdapter {
 	
-	protected Context mContext;
-	private LayoutInflater inflater;
-	protected Cursor cursor = null;
+	protected LayoutInflater inflater;
 	
-	private PlaylistManager mPlaylistManager;
+	protected PlaylistManager mPlaylistManager;
 	
-	View.OnClickListener playlistMenuClickListener;
-	
-	//View.OnClickListener playlistMenuClickListener;
+	protected View.OnClickListener playlistMenuClickListener;
 	
     private final String[] allPlaylistsSelection = new String[] {
     	
@@ -34,25 +30,16 @@ public class PlaylistsAllAdapter extends BaseAdapter {
     };
     
 	public PlaylistsAllAdapter( Context context, View.OnClickListener menuClickListener ) {
+		super( context );
 		
-		mContext = context;
-		
-		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-    	
 		playlistMenuClickListener = menuClickListener;
 		
 		mPlaylistManager = new PlaylistManager( mContext );
     	
-		requery();
 		
-	}
-	
-	public void requery() {
+		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 		
-		if ( null != cursor)
-			cursor.close(); 
-		
-    	cursor = mContext.getContentResolver().query(
+		mQuery = new MediaQuery(
 				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
 				allPlaylistsSelection,
 				MediaStore.Audio.Playlists._ID + " !=?",
@@ -64,34 +51,7 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 				MediaStore.Audio.Playlists.DATE_MODIFIED + " DESC"
 			);
 		
-	}
-
-	
-	@Override public int getCount() {
-		
-		return ( cursor != null ? cursor.getCount() : 0 );
-		
-	}
-
-	@Override public Object getItem( int position ) {
-		
-		return null;
-		
-	}
-
-	@Override public long getItemId( int position ) {
-		
-		int mID = 0;
-		
-		if ( cursor != null ) {
-			
-			cursor.moveToPosition( position );
-			
-			mID = cursor.getInt( cursor.getColumnIndex( MediaStore.Audio.Playlists._ID ) );
-			
-		}
-		
-		return mID;
+		requery();
 		
 	}
 
@@ -120,11 +80,11 @@ public class PlaylistsAllAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor.moveToPosition( position );
-		String playlist_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists._ID ) );
+		mCursor.moveToPosition( position );
+		String playlist_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists._ID ) );
 		convertView.setTag( R.id.tag_playlist_id, playlist_id );
 		
-		String playlistTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
+		String playlistTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
 		
 		// Get song count for the given playlist
 		//MediaStore.Audio.Playlists._COUNT
