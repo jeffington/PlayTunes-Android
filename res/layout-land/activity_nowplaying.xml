@@ -11,7 +11,7 @@
         
         android:layout_width="0dp"
         android:layout_height="240dp"
-        android:src="@drawable/carbon"
+        android:src="@drawable/no_album_art_thumb"
         android:layout_margin="8dp"
         android:layout_weight="1"
         
