@@ -460,7 +460,15 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	        	
 	        	showSearch();
 	        	return true;
-	            
+	        
+	        case KeyEvent.KEYCODE_BACK:
+	        	
+	        	if ( mDrawerLayout != null && mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	        		hideNavigation();
+	        		return true;
+	        	}
+	        	return false;
+	        	
     	}
     	
     	return false;
