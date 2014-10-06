@@ -201,11 +201,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     private void configureActionBarDrawerClosed() {
     	
     	mActivity.mShouldHideActionItems = false;
- 	   mActionBar.setTitle( mActionbarTitle );
- 	  mActionBar.setSubtitle( mActionbarSubtitle );
- 	   mActivity.supportInvalidateOptionsMenu();
- 	   mActivity.getSupportActionBar().setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
- 	  mActionBar.setDisplayUseLogoEnabled( true );
+    	mActionBar.setTitle( mActionbarTitle );
+    	mActionBar.setSubtitle( mActionbarSubtitle );
+    	mActivity.supportInvalidateOptionsMenu();
+    	mActivity.getSupportActionBar().setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+    	mActionBar.setDisplayUseLogoEnabled( true );
     	
     }
     
@@ -297,13 +297,9 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 			MusicBrowserFragment.transactFragment( mNewFragment );
 			
 		}
-		/*
-		if ( !silent ) {
-			
-			hideNavigation();
-			
-		}
-		*/
+		
+		this.configureActionBarDrawerOpen();
+		
 	}
 	
 	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
