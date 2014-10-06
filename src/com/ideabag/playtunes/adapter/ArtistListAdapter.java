@@ -1,8 +1,10 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.util.AsyncDrawable;
 import com.ideabag.playtunes.util.BitmapWorkerTask;
+import com.ideabag.playtunes.util.LoadAlbumStackTask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -67,33 +69,11 @@ public class ArtistListAdapter extends AsyncQueryAdapter {
 		}
 		
 		mCursor.moveToPosition( position );
-		
-		
-		String artistName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ).trim();
-		int songCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_TRACKS ) );
-		int albumCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_ALBUMS ) );
 		String artistID = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists._ID ) );
-		
-		convertView.setTag( R.id.tag_artist_id, artistID );
-		
-		if ( mContext.getString( R.string.no_artist_string ).equals( artistName ) ) {
-			
-			holder.artistName.setText( mContext.getString( R.string.artist_unknown ) );
-			convertView.setTag( R.id.tag_artist_unknown, "1" );
-			
-		} else {
-			
-			holder.artistName.setText( artistName );
-			convertView.setTag( R.id.tag_artist_unknown, "0" );
-			
-		}
-		
-		//holder.songCount.setText( "" + songCount );
-		//holder.albumCount.setText( "" + albumCount );
-		holder.subtitle.setText( "" + albumCount + " " + ( albumCount == 1 ? ALBUM_SINGULAR : ALBUMS_PLURAL ) + " " + songCount + " " + ( songCount == 1 ? SONG_SINGULAR : SONGS_PLURAL ) );
-		
-    	//MediaStore.Audio.Albums.ALBUM_ART
-		Cursor mAlbumArtQuery = mContext.getContentResolver().query(
+    	
+		new LoadAlbumStackTask( holder.albumArtOne, holder.albumArtTwo, holder.albumArtThree ).execute( artistID );
+		/*
+		Cursor mAlbumArtQuery = MediaQuery.execute( mContext, new MediaQuery(
 				MediaStore.Audio.Artists.Albums.getContentUri( "external", Long.parseLong( artistID ) ),
 				new String[] {
 					MediaStore.Audio.Artists.Albums.ALBUM_ART
@@ -102,8 +82,11 @@ public class ArtistListAdapter extends AsyncQueryAdapter {
 				MediaStore.Audio.Artists.Albums.ALBUM_ART + " IS NOT NULL",
 				null,
 				null//MediaStore.Audio.Artists.Albums.NUMBER_OF_SONGS
-			);
+			)
 		
+		);
+		
+		/*
 		if ( mAlbumArtQuery == null || mAlbumArtQuery.getCount() == 0 ) {
 			
 			
@@ -180,9 +163,34 @@ public class ArtistListAdapter extends AsyncQueryAdapter {
 			}
 			
 			
+			
 		}
 		
 		mAlbumArtQuery.close();
+		*/
+		String artistName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.ARTIST ) ).trim();
+		int songCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_TRACKS ) );
+		int albumCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Artists.NUMBER_OF_ALBUMS ) );
+		
+		
+		convertView.setTag( R.id.tag_artist_id, artistID );
+		
+		if ( mContext.getString( R.string.no_artist_string ).equals( artistName ) ) {
+			
+			holder.artistName.setText( mContext.getString( R.string.artist_unknown ) );
+			convertView.setTag( R.id.tag_artist_unknown, "1" );
+			
+		} else {
+			
+			holder.artistName.setText( artistName );
+			convertView.setTag( R.id.tag_artist_unknown, "0" );
+			
+		}
+		
+		//holder.songCount.setText( "" + songCount );
+		//holder.albumCount.setText( "" + albumCount );
+		holder.subtitle.setText( "" + albumCount + " " + ( albumCount == 1 ? ALBUM_SINGULAR : ALBUMS_PLURAL ) + " " + songCount + " " + ( songCount == 1 ? SONG_SINGULAR : SONGS_PLURAL ) );
+		
 		
 		return convertView;
 		
