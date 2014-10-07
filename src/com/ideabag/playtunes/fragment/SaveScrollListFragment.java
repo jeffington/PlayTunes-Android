@@ -1,53 +1,47 @@
 package com.ideabag.playtunes.fragment;
 
-import com.ideabag.playtunes.R;
-
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.widget.ListView;
 
 public class SaveScrollListFragment extends ListFragment {
 	
-	protected int mSavedScrollPosition = 0;
+	private static final String KEY_POSTION = "position_y";
+	private static final String KEY_OFFSET = "offset_y";
+	
+	protected int mSavedScrollOffset = 0;
+	protected int mSavedScrollListPosition = 0;
 	
 	@Override public void onSaveInstanceState( Bundle outState ) {
 		super.onSaveInstanceState( outState );
 		
-		outState.putInt( getString( R.string.key_state_scroll ), mSavedScrollPosition );
-		try {
-			
-			ListView lv = getListView();
-			
-			if ( null != lv ) {
-				
-				outState.putInt( getString( R.string.key_state_scroll ), getListView().getScrollY() );
-				
-			}
-			
-		} catch( Exception e ) { /* ... */ }
+		outState.putInt( KEY_POSTION, mSavedScrollListPosition );
+		outState.putInt( KEY_OFFSET, mSavedScrollOffset );
 	}
 	
-	@Override public void onActivityCreated( Bundle savedInstanceState ) {
-		super.onActivityCreated( savedInstanceState );
-    	
-		if ( null != savedInstanceState ) {
-			
-			mSavedScrollPosition = savedInstanceState.getInt( getString( R.string.key_state_scroll ), 0 );
-			
+	
+	@Override public void onActivityCreated( Bundle inState ) {
+		super.onActivityCreated( inState );
+		
+		if ( inState != null ) {
+			android.util.Log.i( "SaveScroll", "restoring scroll" );
+			mSavedScrollListPosition = inState.getInt( KEY_POSTION );
+			mSavedScrollOffset = inState.getInt( KEY_OFFSET );
 		}
 		
+		
 	}
 	
-	@Override public void onResume() {
-		super.onResume();
+	protected void restoreScrollPosition() {
 		
-		getListView().scrollTo( 0, mSavedScrollPosition );
+		getListView().setSelectionFromTop( mSavedScrollListPosition, mSavedScrollOffset );
 		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
-		mSavedScrollPosition = getListView().getScrollY();
+		
+		mSavedScrollListPosition = getListView().getFirstVisiblePosition();
+		mSavedScrollOffset = getListView().getChildAt( 0 ).getTop();
 		
 	}
 	
