@@ -1,5 +1,7 @@
 package com.ideabag.playtunes.adapter;
 
+import java.lang.ref.WeakReference;
+
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.database.MediaQuery.OnQueryCompletedListener;
 
@@ -15,7 +17,8 @@ public class AsyncQueryAdapter extends BaseAdapter implements MediaQuery.OnQuery
 	
 	protected Cursor mCursor = null;
 	protected MediaQuery mQuery = null;
-	protected MediaQuery.OnQueryCompletedListener mListener = null;
+	
+	protected WeakReference< MediaQuery.OnQueryCompletedListener > mListener = null;
 	
 	public AsyncQueryAdapter( Context context ) {
 		
@@ -29,9 +32,9 @@ public class AsyncQueryAdapter extends BaseAdapter implements MediaQuery.OnQuery
     	
     }
     
-    protected void setOnQueryCompletedListener( OnQueryCompletedListener listener ) {
+    public void setOnQueryCompletedListener( OnQueryCompletedListener listener ) {
     	
-    	mListener = listener;
+    	mListener = new WeakReference< MediaQuery.OnQueryCompletedListener > ( listener );
     	
     }
     
@@ -65,7 +68,13 @@ public class AsyncQueryAdapter extends BaseAdapter implements MediaQuery.OnQuery
 		
 		if ( null != mListener ) {
 			
-			mListener.onQueryCompleted( mQuery, mResult );
+			MediaQuery.OnQueryCompletedListener listener = mListener.get();
+			
+			if ( null != listener ) {
+				
+				listener.onQueryCompleted( mQuery, mResult );
+				
+			}
 			
 		}
 		
