@@ -10,7 +10,9 @@ import com.ideabag.playtunes.fragment.NavigationFragment;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
@@ -42,29 +44,56 @@ public class MainActivity extends ActionBarActivity {
 		
 		setContentView( R.layout.activity_main );
 		
-		ActionBar supportBar = getSupportActionBar();
-		
 		PlaylistManager = new PlaylistManager( this );
-        
-        
-        
-        supportBar.setLogo( R.drawable.ic_drawer );
-        supportBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
-        supportBar.setDisplayUseLogoEnabled( true ); // Hides the icon
-        //supportBar.setDisplayShowCustomEnabled( true );
-        supportBar.setDisplayShowHomeEnabled( true );
-        supportBar.setDisplayHomeAsUpEnabled( false );
-        
         
 	    mFooterControlsFragment = ( FooterControlsFragment ) getSupportFragmentManager().findFragmentById( R.id.FooterControlsFragment );
         NavigationFragment = ( NavigationFragment ) getSupportFragmentManager().findFragmentById( R.id.left_drawer );
 	    
-	    if ( null != savedInstanceState ) {
+        doBindService();
+	    
+	}
+	
+	@Override protected void onNewIntent( Intent intent ) {
+		super.onNewIntent( intent );
+		
+	    
+	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) ) {
 	    	
-	    	
+	    	NavigationFragment.showNowPlaying();//loadNowPlayingFragment();
+	    	showNowPlayingActivity();
 	    	
 	    }
-	    
+		
+	}
+	
+	public void setActionbarTitle( String titleString ) {
+		
+		if ( null != NavigationFragment ) {
+			
+			NavigationFragment.setActionbarTitle( titleString );
+			
+		}
+		
+	}
+	
+	public void setActionbarSubtitle( String subtitleString ) {
+		if ( null != NavigationFragment ) {
+			
+			NavigationFragment.setActionbarSubtitle( subtitleString );
+			
+		}
+		
+	}
+	
+	@Override public void onStart() {
+		super.onStart();
+		
+		if ( !mIsBound || mBoundService == null ) {
+			
+			doBindService();
+			
+		}
+		
 	    SharedPreferences prefs = getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
 	    //SharedPreferences.Editor edit = prefs.edit();
 	    
@@ -114,43 +143,6 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    }
 	    
-	    
-	    
-	}
-	
-	@Override protected void onNewIntent( Intent intent ) {
-		super.onNewIntent( intent );
-		
-	    
-	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) ) {
-	    	
-	    	NavigationFragment.showNowPlaying();//loadNowPlayingFragment();
-	    	showNowPlayingActivity();
-	    	
-	    }
-		
-	}
-	
-	public void setActionbarTitle( String titleString ) {
-		
-		NavigationFragment.setActionbarTitle( titleString );
-		
-	}
-	
-	public void setActionbarSubtitle( String subtitleString ) {
-		
-		NavigationFragment.setActionbarSubtitle( subtitleString );
-		
-	}
-	
-	@Override public void onStart() {
-		super.onStart();
-		
-		if ( !mIsBound || mBoundService == null ) {
-			
-			doBindService();
-			
-		}
 		
 	}
 	
@@ -165,6 +157,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		
 	}
+	
 	
     // 
     // Now the hardware menu button will toggle the drawer layout
@@ -248,11 +241,16 @@ public class MainActivity extends ActionBarActivity {
 	//
 	// Used by FooterControlFragment
 	//
-	public void showNowPlayingActivity() {
+	
+	private void showNowPlayingActivity() {
 		
-		Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
-		
-		startActivityForResult( startNowPlayingActivity, 0 );
+		//Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
+		/*
+		if ( mBoundService.CURRENT_MEDIA_ID != null ) {
+			startNowPlayingActivity.putExtra("media_id", mBoundService.CURRENT_MEDIA_ID );
+		}
+		*/
+		//startActivityForResult( startNowPlayingActivity, 0 );
 		
 	}
 	
@@ -276,7 +274,7 @@ public class MainActivity extends ActionBarActivity {
 	//
 	//
 	//
-	
+	/*
 	@Override public boolean onCreateOptionsMenu( Menu menu ) {
 		
 		MenuInflater inflater = getMenuInflater();
@@ -285,7 +283,7 @@ public class MainActivity extends ActionBarActivity {
 	    return true;
 		
 	}
-	
+	*/
     @Override public boolean onOptionsItemSelected( MenuItem item ) {
     	
         if ( NavigationFragment.onOptionsItemSelected( item ) ) {
