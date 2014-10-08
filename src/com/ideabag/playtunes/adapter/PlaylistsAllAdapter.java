@@ -3,6 +3,7 @@ package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.QueryCountTask;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -82,30 +83,29 @@ public class PlaylistsAllAdapter extends AsyncQueryAdapter {
 		
 		mCursor.moveToPosition( position );
 		String playlist_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists._ID ) );
+		
+		// Get song count for the given playlist
+		//MediaStore.Audio.Playlists._COUNT
+		new QueryCountTask( holder.songCount ).execute(
+			new MediaQuery(
+					MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( playlist_id ) ),
+					new String[] {
+						MediaStore.Audio.Playlists.Members._ID
+					},
+					null,
+					null,
+					null
+			)
+		);
+		
 		convertView.setTag( R.id.tag_playlist_id, playlist_id );
 		
 		String playlistTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
 		
-		// Get song count for the given playlist
-		//MediaStore.Audio.Playlists._COUNT
-		
-		Cursor songs = mContext.getContentResolver().query(
-				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( playlist_id ) ),
-				new String[] {
-					MediaStore.Audio.Playlists.Members._ID
-				},
-				null,
-				null,
-				null
-			);
-		
-		int song_count = songs.getCount();
-		
-		songs.close();
 		
 		holder.playlistName.setText( playlistTitle );
 		
-		holder.songCount.setText( "" + song_count );
+		//holder.songCount.setText( "" + song_count );
 		
 		
 		
