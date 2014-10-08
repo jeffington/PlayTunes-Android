@@ -25,8 +25,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,7 +58,11 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	
 	private boolean isStarred = false;
 	
-	private int scrollPosition = 0;
+	private static final String KEY_POSTION = "position_y";
+	private static final String KEY_OFFSET = "offset_y";
+	
+	protected int mSavedScrollOffset = 0;
+	protected int mSavedScrollListPosition = 0;
 	
 	
 	@Override public void setMediaID( String media_id ) {
@@ -75,7 +77,8 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		super.onSaveInstanceState( outState );
 		outState.putString( getString( R.string.key_state_media_id ), PLAYLIST_ID );
 		outState.putBoolean( getString( R.string.key_state_playlist_editing ), isEditing );
-		outState.putInt( getString( R.string.key_state_scroll ), scrollPosition );
+		outState.putInt( KEY_POSTION, mSavedScrollListPosition );
+		outState.putInt( KEY_OFFSET, mSavedScrollOffset );
 		
 	}
 	
@@ -131,6 +134,8 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 					
 				}
 				
+				mListView.setSelectionFromTop( mSavedScrollListPosition, mSavedScrollOffset );
+				
 				if ( mResult != null && !mResult.isClosed() ) {
 					
 					mResult.close();
@@ -151,11 +156,10 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 			
 			PLAYLIST_ID = savedInstanceState.getString( getString( R.string.key_state_media_id ) );
 			isEditing = savedInstanceState.getBoolean( getString( R.string.key_state_playlist_editing ) );
-			scrollPosition = savedInstanceState.getInt( getString( R.string.key_state_scroll ), 0 );
+			mSavedScrollListPosition = savedInstanceState.getInt( KEY_POSTION );
+			mSavedScrollOffset = savedInstanceState.getInt( KEY_OFFSET );
 			
 		}
-		
-		PlaylistManager pm = new PlaylistManager( getActivity() );
 		
 		setHasOptionsMenu( true );
 		
@@ -165,7 +169,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
 				
 				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular) : getString( R.string.songs_plural) ) );
-				mListView.scrollTo( 0, scrollPosition );
+				mListView.setSelectionFromTop( mSavedScrollListPosition, mSavedScrollOffset );
 				
 				mTracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( isStarred ? Categories.STARRED_PLAYLIST : Categories.PLAYLIST )
@@ -206,6 +210,8 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
     	
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ), true, mediaStoreChanged );
+		getActivity().getContentResolver().registerContentObserver(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( new PlaylistManager( getActivity() ).createStarredIfNotExist() ) ), true, mediaStoreChanged );
 		
 		mListView.setDropListener( mSongDropListener );
 		
@@ -225,7 +231,8 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	@Override public void onPause() {
 		super.onPause();
 		
-		scrollPosition = mListView.getScrollY();
+		mSavedScrollListPosition = mListView.getFirstVisiblePosition();
+		mSavedScrollOffset = mListView.getChildAt( 0 ).getTop();
 		
 	}
 	
