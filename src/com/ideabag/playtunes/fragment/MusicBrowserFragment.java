@@ -4,7 +4,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.adapter.NavigationListAdapter;
 import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.IMusicBrowser;
 
@@ -29,9 +28,11 @@ public class MusicBrowserFragment extends Fragment {
 	
 	private AdView mAdView;
 	
+	
+	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
-		return inflater.inflate( R.layout.fragment_music_browser, null, false );
+		return inflater.inflate( R.layout.fragment_music_browser, container, false );
 		
 	}
 	
@@ -41,8 +42,11 @@ public class MusicBrowserFragment extends Fragment {
 		
 		mActivity = ( MainActivity ) activity;
 		
+		//mActivity.getFragmentManager().getBackStackEntryCount()
+		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		
 		super.onActivityCreated( savedInstanceState );
@@ -160,10 +164,10 @@ public class MusicBrowserFragment extends Fragment {
 	}
 	
 	@Override public void onDestroy() {
+		super.onDestroy();
 		
 		mAdView.destroy();
 		
-		super.onDestroy();
 		
 	}
 	
