@@ -14,7 +14,7 @@
 	<ImageView android:id="@+id/FooterControlsAlbumArt"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:src="@drawable/carbon"
+		android:src="@drawable/no_album_art_thumb"
 		android:scaleType="fitXY"
 	/>
 	</RelativeLayout>
