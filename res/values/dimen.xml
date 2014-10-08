@@ -28,5 +28,7 @@
 	
 	<dimen name="navigation_drawer_width">240dp</dimen>
 	<dimen name="navigation_list_item_height">64dp</dimen>
+	
+	<dimen name="album_stack_height">36dp</dimen>
 
 </resources>

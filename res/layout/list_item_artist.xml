@@ -32,21 +32,23 @@
     </LinearLayout>
     
 	<ImageView android:id="@+id/ArtistAlbumThree"
-	    android:layout_width="36dp"
-	    android:layout_height="36dp"
-	    android:src="@drawable/no_album_art_full"
+	    android:layout_width="@dimen/album_stack_height"
+	    android:layout_height="@dimen/album_stack_height"
+	    android:src="@drawable/no_album_art_thumb"
 	    android:layout_marginRight="-16dp"
+	    android:visibility="invisible"
 	/>
 	<ImageView android:id="@+id/ArtistAlbumTwo"
-	    android:layout_width="36dp"
-	    android:layout_height="36dp"
-	    android:src="@drawable/no_album_art_full"
+	    android:layout_width="@dimen/album_stack_height"
+	    android:layout_height="@dimen/album_stack_height"
+	    android:src="@drawable/no_album_art_thumb"
 	    android:layout_marginRight="-16dp"
+	    android:visibility="invisible"
 	/>
 	<ImageView android:id="@+id/ArtistAlbumOne"
-	    android:layout_width="36dp"
-	    android:layout_height="36dp"
-	    android:src="@drawable/no_album_art_full"
+	    android:layout_width="@dimen/album_stack_height"
+	    android:layout_height="@dimen/album_stack_height"
+	    android:src="@drawable/no_album_art_thumb"
 	    android:layout_marginRight="8dp"
 	/>
 
