@@ -355,7 +355,11 @@ public class PlaylistManager {
 		
 		isStarred = ( null != starredQueryCursor && starredQueryCursor.getCount() > 0 );
 		
-		starredQueryCursor.close();
+		if ( starredQueryCursor != null && !starredQueryCursor.isClosed() ) {
+			
+			starredQueryCursor.close();
+			
+		}
 		
 		
 		return isStarred;
