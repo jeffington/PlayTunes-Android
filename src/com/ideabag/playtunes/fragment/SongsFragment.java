@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -56,18 +55,22 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
+		mActivity.setActionbarTitle( getString( R.string.all_songs ) );
+		
 		adapter = new SongsAllAdapter( getActivity(), songMenuClickListener, new MediaQuery.OnQueryCompletedListener() {
 			
 			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
 				
 				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) ) );
 				
+				restoreScrollPosition();
+				
 		    	mTracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( Categories.PLAYLIST )
 		    	.setAction( Playlist.ACTION_SHOWLIST )
 		    	.setValue( mResult.getCount() )
 		    	.build());
-				
+		    	
 			}
 			
 		});
