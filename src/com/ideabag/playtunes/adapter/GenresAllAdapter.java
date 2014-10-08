@@ -1,6 +1,8 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.AlbumSongsCountTask;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -100,42 +102,40 @@ public class GenresAllAdapter extends BaseAdapter {
 		
 		cursor.moveToPosition( position );
 		
-		String genreName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
+		
 		String genre_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) );
 		
-		Cursor genreSongCount = mContext.getContentResolver().query(
-				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
-				new String[] {
-					
-					MediaStore.Audio.Genres.Members._ID
-					
-				},
-				null,
-				null,
-				null
-			);
+
+		new AlbumSongsCountTask( holder.subtitle ).execute(
+				new MediaQuery( // First songs
+						MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
+						new String[] {
+							
+							MediaStore.Audio.Genres.Members._ID
+							
+						},
+						null,
+						null,
+						null
+					),
+					new MediaQuery( // Then albums
+							MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
+							new String[] {
+								
+								"DISTINCT " + MediaStore.Audio.Genres.Members.ALBUM_ID
+								
+							},
+							null,
+							null,
+							null
+						)
+				
+				);
+
 		
-		Cursor genreAlbumCount = mContext.getContentResolver().query(
-				MediaStore.Audio.Genres.Members.getContentUri( "external", Long.parseLong( genre_id ) ),
-				new String[] {
-					
-					"DISTINCT " + MediaStore.Audio.Genres.Members.ALBUM_ID
-					
-				},
-				null,
-				null,
-				null
-			);
 		
+		String genreName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
 		
-		
-		
-		
-		int songCount = genreSongCount.getCount();
-		genreSongCount.close();
-		
-		int albumCount = genreAlbumCount.getCount();
-		genreAlbumCount.close();
 		
 		convertView.setTag( R.id.tag_genre_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
 		
@@ -143,7 +143,7 @@ public class GenresAllAdapter extends BaseAdapter {
 		
 		
 		
-		holder.subtitle.setText( "" + albumCount + " " + ( albumCount == 1 ? ALBUM_SINGULAR : ALBUMS_PLURAL ) + " " + songCount + " " + ( songCount == 1 ? SONG_SINGULAR : SONGS_PLURAL ) );
+		//holder.subtitle.setText( "" + albumCount + " " + ( albumCount == 1 ? ALBUM_SINGULAR : ALBUMS_PLURAL ) + " " + songCount + " " + ( songCount == 1 ? SONG_SINGULAR : SONGS_PLURAL ) );
 		
 		
 		return convertView;
