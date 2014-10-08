@@ -183,22 +183,17 @@ public class MediaQuery {
 		
 	     protected Cursor doInBackground( MediaQuery... queries ) {
 	         
-	    	 long endTime, startTime;
 	    	 mQuery = queries[ 0 ];
 	         
 	    	 Cursor mQueryCursor = null;
 	    	 
 	    	 if ( null != mQuery ) {
-	    		 startTime = new Date().getTime();
 	    		 
 	    		 // Run the query of unknown execution time
 	    		 // The search queries have been running a little long and so they sometimes display incomplete searches
 	    		 //
 	    		 mQueryCursor = MediaQuery.execute( mContext, mQuery );
 	    		 
-	    		 endTime = new Date().getTime();
-	    		 
-	    		 android.util.Log.i( "MediaQueryTask", startTime + "- " + endTime + " " + ( endTime - startTime ) );
 	    		 
 	    	 }
 	         
