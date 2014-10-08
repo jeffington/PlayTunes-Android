@@ -17,7 +17,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -37,13 +39,17 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	public static final String TAG = "NavigationFragment";
 	
 	private MainActivity mActivity;
+	private FragmentManager mFragmentManager;
+	private DrawerLayout mDrawerLayout;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private ActionBar mActionBar;
+	
 	private PlaylistManager mPlaylistManager;
 	
 	private MusicBrowserFragment MusicBrowserFragment;
 	
-	private DrawerLayout mDrawerLayout;
-	private ActionBarDrawerToggle mDrawerToggle;
-	private ActionBar mActionBar;
+	
+	private boolean mCloseWarningOn = true;
 	
 	NavigationListAdapter adapter;
 	
@@ -65,7 +71,21 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		mActionBar = mActivity.getSupportActionBar();
 		
+        
+        mActionBar.setLogo( R.drawable.ic_drawer );
+        mActionBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
+        mActionBar.setDisplayUseLogoEnabled( true ); // Hides the icon
+        mActionBar.setDisplayShowHomeEnabled( true );
+        mActionBar.setDisplayHomeAsUpEnabled( false );
+        
+        mFragmentManager = mActivity.getSupportFragmentManager();
+		
+		mFragmentManager.addOnBackStackChangedListener( backStackChanged );
+
+        
+        
 	}
+	
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		
@@ -222,8 +242,10 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		super.onDestroy();
 		
 		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
+		mFragmentManager.removeOnBackStackChangedListener( backStackChanged );
 		
 	}
+	
 	
 	private View.OnClickListener NavigationClickListener = new View.OnClickListener() {
 		
@@ -278,13 +300,13 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 			((PlaylistsOneFragment)mNewFragment).setMediaID( mPlaylistManager.createStarredIfNotExist() );
 			
 			break;
-		/*
+		
 		case NavigationListAdapter.SEARCH:
 			
 			mNewFragment = new SearchFragment();
 			
 			break;
-		*/
+		
 		default:
 			
 			mNewFragment = new PlaylistsAllFragment();
@@ -294,7 +316,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		
 		if ( null != mNewFragment ) {
 			
-			MusicBrowserFragment.transactFragment( mNewFragment );
+			transactFragment( mNewFragment );
 			
 		}
 		
@@ -404,7 +426,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     		return true;
     		
     	}
-    	
+    	/*
     	// Search button!
         if ( item.getItemId() == R.id.MenuSearch ) {
         	
@@ -417,7 +439,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	    	return true;
         	
         }
-    	
+    	*/
     	return false;
     	
     }
@@ -433,13 +455,15 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     	
     	Fragment mSearchFragment = new SearchFragment();
     	
-    	MusicBrowserFragment.transactFragment( mSearchFragment );
+    	transactFragment( mSearchFragment );
     	
     }
     
     public void transactFragment( Fragment mFragment ) {
     	
     	MusicBrowserFragment.transactFragment( mFragment );
+    	
+    	mCloseWarningOn = false;
     	
     }
     
@@ -460,11 +484,51 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	        case KeyEvent.KEYCODE_BACK:
 	        	
 	        	if ( mDrawerLayout != null && mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	        		
 	        		hideNavigation();
+	        		
 	        		return true;
+	        		
+	        	} else if ( doBack() ) {
+	        		
+	        		return true;
+	        		
 	        	}
+	        	
 	        	return false;
 	        	
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    
+    OnBackStackChangedListener backStackChanged = new OnBackStackChangedListener() {
+
+		@Override public void onBackStackChanged() {
+			
+			int mCount = mFragmentManager.getBackStackEntryCount();
+			
+			if ( mCount == 0 ) {
+				
+				mCloseWarningOn = true;
+				
+			}
+			
+		}
+		
+	};
+    
+    public boolean doBack() {
+    	
+    	if ( mCloseWarningOn ) {
+    		
+    		mCloseWarningOn = false;
+    		android.widget.Toast.makeText( mActivity, "Press Back again to close PlayTunes", android.widget.Toast.LENGTH_LONG ).show();
+    		
+    		return true;
+    		
     	}
     	
     	return false;
