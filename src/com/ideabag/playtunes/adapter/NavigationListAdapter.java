@@ -1,6 +1,8 @@
 package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.QueryCountTask;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,7 +24,7 @@ public class NavigationListAdapter extends BaseAdapter {
 	
 	private static final int[] badge_resources = {
 		
-		//R.drawable.ic_action_search,
+		R.drawable.ic_action_search,
 		R.drawable.ic_action_star_10,
 		R.drawable.ic_action_mic,
 		R.drawable.ic_action_record,
@@ -36,7 +38,7 @@ public class NavigationListAdapter extends BaseAdapter {
 	
 	private static final int[] label_string_resources = {
 		
-		//R.string.search,
+		R.string.search,
 		R.string.playlist_name_starred,
 		R.string.artists_plural,
 		R.string.albums_plural,
@@ -48,22 +50,104 @@ public class NavigationListAdapter extends BaseAdapter {
 		
 	};
 	
-	//public static final int SEARCH = 0;
-	public static final int STARRED = 0;
+	public static final int SEARCH = 0;
+	public static final int STARRED = 1;
 	
-	public static final int ARTISTS = 1;
-	public static final int ALBUMS = 2;
-	public static final int SONGS = 3;
-	public static final int GENRES = 4;
-	public static final int PLAYLISTS = 5;
+	public static final int ARTISTS = 2;
+	public static final int ALBUMS = 3;
+	public static final int SONGS = 4;
+	public static final int GENRES = 5;
+	public static final int PLAYLISTS = 6;
 	
 	
 	
 	private Context mContext;
 	
+	MediaQuery mAllArtistQuery;
+	MediaQuery mAllSongsQuery;
+	MediaQuery mAllAlbumsQuery;
+	MediaQuery mAllGenresQuery;
+	MediaQuery mAllPlaylistsQuery;
+	MediaQuery mStarredQuery;
+	
+	
 	public NavigationListAdapter( Context context ) {
 		
 		mContext = context;
+		
+		mAllArtistQuery = new MediaQuery(
+				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+				new String[] {
+						
+					MediaStore.Audio.Artists._ID	
+						
+				},
+				null,
+				null,
+				null);
+		
+		mAllAlbumsQuery = new MediaQuery(
+				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+		new String[] {
+				
+			MediaStore.Audio.Albums._ID	
+				
+		},
+		MediaStore.Audio.Media.ALBUM + "!=?",
+		new String[] {
+			
+			mContext.getString( R.string.no_album_string )
+			
+		},
+		null);
+		
+		mAllGenresQuery = new MediaQuery(
+				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+				new String[] {
+						
+					MediaStore.Audio.Genres._ID	
+						
+				},
+				null,
+				null,
+				null);
+		mAllSongsQuery = new MediaQuery(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				new String[] {
+						
+					MediaStore.Audio.Media._ID	
+						
+				},
+				MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				null,
+				null);
+		
+		mAllPlaylistsQuery = new MediaQuery(
+						MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+						new String[] {
+								
+							MediaStore.Audio.Playlists._ID	
+								
+						},
+						null,
+						null,
+						null);
+		
+		String starred_playlist_id = new PlaylistManager( mContext ).createStarredIfNotExist();
+		
+		mStarredQuery = new MediaQuery(
+				
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( starred_playlist_id ) ),
+			    
+				new String[] {
+					
+					MediaStore.Audio.Playlists.Members.AUDIO_ID
+					
+			    },
+			    null,
+			    null,
+				null
+			);
 		
 	}
 	
@@ -109,106 +193,34 @@ public class NavigationListAdapter extends BaseAdapter {
 			
 		}
 		
-		String title = mContext.getResources().getString( label_string_resources[ position ] );
-		int icon_resource = badge_resources[ position ];
-		
-		int badgeCount = 0;
-		
 		if ( position == ARTISTS ) {
 			
-			Cursor artists = mContext.getContentResolver().query(
-					MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-					new String[] {
-							
-						MediaStore.Audio.Artists._ID	
-							
-					},
-					null,
-					null,
-					null);
-			
-			badgeCount = artists.getCount();
-			artists.close();
+			new QueryCountTask( holder.badgeCount ).execute( mAllArtistQuery );
 			
 		} else if ( position == ALBUMS ) {
 			
-			Cursor albums = mContext.getContentResolver().query(
-					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					new String[] {
-							
-						MediaStore.Audio.Albums._ID	
-							
-					},
-					MediaStore.Audio.Media.ALBUM + "!=?",
-					new String[] {
-						
-						mContext.getString( R.string.no_album_string )
-						
-					},
-					null);
-			
-			badgeCount = albums.getCount();
-			albums.close();
+			new QueryCountTask( holder.badgeCount ).execute( mAllAlbumsQuery );
 			
 		} else if ( position == GENRES ) {
 			
-			Cursor genres = mContext.getContentResolver().query(
-					MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-					new String[] {
-							
-						MediaStore.Audio.Genres._ID	
-							
-					},
-					null,
-					null,
-					null);
-			
-			badgeCount = genres.getCount();
-			genres.close();
+			new QueryCountTask( holder.badgeCount ).execute( mAllGenresQuery );
 			
 		} else if ( position == SONGS ) {
 			
-			Cursor songs = mContext.getContentResolver().query(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					new String[] {
-							
-						MediaStore.Audio.Media._ID	
-							
-					},
-					MediaStore.Audio.Media.IS_MUSIC + " != 0",
-					null,
-					null);
-			
-			badgeCount = songs.getCount();
-			songs.close();
+			new QueryCountTask( holder.badgeCount ).execute( mAllSongsQuery );
 			
 		} else if ( position == STARRED) {
 			
-			PlaylistManager mPlaylistManager = new PlaylistManager( mContext );
-			Cursor starredPlaylist = mPlaylistManager.getStarredCursor();
-			
-			badgeCount = starredPlaylist.getCount();
-			starredPlaylist.close();
+			new QueryCountTask( holder.badgeCount ).execute( mStarredQuery );
 			
 		} else if ( position == PLAYLISTS ) {
 			
-			Cursor playlists = mContext.getContentResolver().query(
-					MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-					new String[] {
-							
-						MediaStore.Audio.Playlists._ID	
-							
-					},
-					null,
-					null,
-					null);
-			
-			badgeCount = playlists.getCount();
-			
-			
-			playlists.close();
+			new QueryCountTask( holder.badgeCount ).execute( mAllPlaylistsQuery );
 			
 		}
+
+		String title = mContext.getResources().getString( label_string_resources[ position ] );
+		int icon_resource = badge_resources[ position ];
 		
 		holder.title.setText( title );
 		
@@ -222,8 +234,6 @@ public class NavigationListAdapter extends BaseAdapter {
 			holder.badgeIcon.setColorFilter( new LightingColorFilter( badgeColor, badgeColor ) );
 			
 		}
-		
-		holder.badgeCount.setText( "" + badgeCount );
 		
 		//.setColorFilter( Color.RED, Mode.MULTIPLY );
 		
