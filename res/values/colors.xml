@@ -19,7 +19,11 @@
 	
 	<color name="list_item_default">#FFFFFF</color>
 	<color name="list_item_pressed">#EEEEEE</color>
+	
 	<color name="list_item_focused">#F1F1F1</color>
+	
+	<color name="button_background_default">#F1F1F1</color>
+	<color name="button_background_pressed">#E0E0E0</color>
 	
 	<color name="list_divider_color">#CCCCCC</color>
 	
