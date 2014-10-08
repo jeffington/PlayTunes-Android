@@ -93,6 +93,8 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 						
 					}
 					
+					restoreScrollPosition();
+					
 				}
 				
 				if ( mResult != null && !mResult.isClosed() ) {

@@ -105,6 +105,8 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 						
 					}
 					
+					restoreScrollPosition();
+					
 				}
 				
 				if ( mResult != null && !mResult.isClosed() ) {

@@ -103,20 +103,11 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 					String albumTitle, albumArtist;
 			    	
 			    	String albumUriString = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-			    	
-			    	albumTitle = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
-			    	albumArtist = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Albums.ARTIST ) );
-			    	
-			    	
-			    	mActivity.setActionbarTitle( albumTitle );
-					
-					mAlbumTitle.setText( albumTitle );
-					mAlbumSubtitle.setText( albumArtist );
 					
 					if ( null != albumUriString) {
 						
 						final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumArt );
-						final BitmapWorkerTask albumFullTask = new BitmapWorkerTask( mAlbumArtBackground );
+						final BitmapWorkerTask albumFullTask = new BitmapWorkerTask( mAlbumArtBackground, -1 );
 				        final AsyncDrawable asyncThumbDrawable =
 				                new AsyncDrawable( getResources(),
 				                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
@@ -140,6 +131,16 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 						mAlbumArt.setImageResource( R.drawable.no_album_art_thumb );
 						
 					}
+			    	
+			    	albumTitle = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
+			    	albumArtist = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Albums.ARTIST ) );
+			    	
+			    	
+			    	mActivity.setActionbarTitle( albumTitle );
+					
+					mAlbumTitle.setText( albumTitle );
+					mAlbumSubtitle.setText( albumArtist );
+					restoreScrollPosition();
 			        
 				}
 				

@@ -48,8 +48,9 @@ public class ArtistsAllFragment extends SaveScrollListFragment implements IMusic
 			
 			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
 				
-				
 				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.artist_singular ) : getString( R.string.artists_plural ) ) );
+				
+				restoreScrollPosition();
 				
 				mTracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( Categories.PLAYLIST )
@@ -85,6 +86,7 @@ public class ArtistsAllFragment extends SaveScrollListFragment implements IMusic
 	@Override public void onResume() {
 		super.onResume();
 		
+		mActivity.setActionbarTitle( getString( R.string.artists_plural ) );
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
 	}

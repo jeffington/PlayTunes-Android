@@ -50,6 +50,8 @@ public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicB
 				
 				mActivity.setActionbarSubtitle( mResult.getCount() + " " + ( mResult.getCount() == 1 ? getString( R.string.album_singular ) : getString( R.string.albums_plural ) ) );
 				
+				restoreScrollPosition();
+				
 		    	mTracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( Categories.PLAYLIST )
 		    	.setAction( Playlist.ACTION_SHOWLIST )
