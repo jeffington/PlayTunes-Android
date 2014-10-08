@@ -30,7 +30,7 @@ public class ArtistSinglesAdapter extends SongListAdapter {
 		
 		ARTIST_ID = artist_id;
     	
-		MediaQuery query = new MediaQuery(
+		mQuery = new MediaQuery(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				allSongsSelection,
 				MediaStore.Audio.Media.ARTIST_ID + "=? AND " + MediaStore.Audio.Media.ALBUM + "=?  AND " + MediaStore.Audio.Media.IS_MUSIC + " != 0",
