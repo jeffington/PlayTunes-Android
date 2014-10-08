@@ -1,5 +1,9 @@
-package com.ideabag.playtunes;
+package com.ideabag.playtunes.service;
 
+import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.R.drawable;
+import com.ideabag.playtunes.R.id;
+import com.ideabag.playtunes.R.layout;
 import com.ideabag.playtunes.activity.MainActivity;
 
 import android.app.Notification;
@@ -20,8 +24,8 @@ public class PlaybackNotification {
 	
 	public static final String NOW_PLAYING_EXTRA = "now_playing";
 	
-	private static final int PAUSE_ICON_RESOURCE = R.drawable.ic_action_playback_pause_white;
-	private static final int TUNE_ICON_RESOURCE = R.drawable.ic_action_music_2_white;
+	//private static final int PAUSE_ICON_RESOURCE = R.drawable.ic_action_playback_pause_white;
+	//private static final int TUNE_ICON_RESOURCE = R.drawable.ic_action_music_2_white;
 	private static final int PLAY_NOTIFICATION_ID = 1;
 	
 	private Context mContext;
@@ -164,7 +168,7 @@ public class PlaybackNotification {
 		
 	}
 	
-	public void showSong( String song_content_id ) {
+	public void setMediaID( String song_content_id ) {
 		
 		if ( null != song_content_id ) {
 			

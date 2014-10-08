@@ -1,37 +1,27 @@
-package com.ideabag.playtunes;
+package com.ideabag.playtunes.service;
 
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.MediaMetadataRetriever;
-import android.media.RemoteControlClient;
 import android.os.Binder;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.R.string;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.AudioFocusHelper;
-import com.ideabag.playtunes.media.MediaButtonHelper;
 import com.ideabag.playtunes.media.MusicFocusable;
-import com.ideabag.playtunes.media.MusicIntentReceiver;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
-import com.ideabag.playtunes.media.RemoteControlClientCompat;
-import com.ideabag.playtunes.media.RemoteControlHelper;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.GAEvent;
 import com.ideabag.playtunes.util.GAEvent.AudioControls;
@@ -63,29 +53,19 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	
 	private PlaylistMediaPlayer MediaPlayer;
 	private PlaybackNotification Notification;
+	private LockscreenManager Lockscreen;
 	
 	private SharedPreferences mSharedPrefs;
 	
-	// our RemoteControlClient object, which will use remote control APIs available in
-    // SDK level >= 14, if they're available.
-    RemoteControlClientCompat mRemoteControlClientCompat;
-
-    // Dummy album art we will pass to the remote control (if the APIs are available).
-    //Bitmap mDummyAlbumArt;
-
-    // The component name of MusicIntentReceiver, for use with media button and remote control
-    // APIs
-    ComponentName mMediaButtonReceiverComponent;
     
     AudioManager mAudioManager;
-    
     AudioFocusHelper mAudioFocusHelper = null;
 	
+    // All used to save and restore what the user is playing across app open/close
 	public String CURRENT_MEDIA_ID = null;
 	public Class < ? extends Fragment > mPlaylistFragmentClass;
 	public String mPlaylistMediaID;
 	public String mPlaylistName;
-	private String mAlbumArtUri = null;
 	
 	boolean isServiceStarted = false;
 	
@@ -180,9 +160,11 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		Notification = new PlaybackNotification( getBaseContext() );
 		
+		Lockscreen = new LockscreenManager( getBaseContext() );
+		
 		mSharedPrefs = this.getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
 		mTracker = TrackerSingleton.getDefaultTracker( this );
-		mAudioManager = ( AudioManager ) getSystemService( AUDIO_SERVICE );
+		//
 		
 		IntentFilter mNotificationIntentFilter = new IntentFilter();
 		mNotificationIntentFilter.addAction( ACTION_PLAY_OR_PAUSE );
@@ -269,7 +251,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		ChangedListeners.clear();
 		
-		destroyRemoteControlClient();
+		Lockscreen.remove();
 		
 		// Save state
 		
@@ -382,8 +364,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		if ( null != MediaPlayer ) {
 			
-			android.util.Log.i("playlist position", "" + position );
-			
 			MediaPlayer.setPlaylistPosition( position );
 			
 		}
@@ -393,7 +373,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	public void setSeekPosition( int position ) {
 		
 		if ( null != MediaPlayer ) {
-			
 			
 			MediaPlayer.setSeekPosition( position );
 			
@@ -428,12 +407,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			MediaPlayer.play();
 			
-			if ( mRemoteControlClientCompat != null ) {
-	            
-				mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
-	            
-	        }
-			
 		}
 		
 	}
@@ -452,16 +425,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		MediaPlayer.setLooping( repeat );
 		
-		if ( MediaPlayer.isPlaying() ) {
-			
-			updateRemoteControlClientPlay();
-			
-		} else {
-			
-			updateRemoteControlClientPause();
-			
-		}
-		
 	}
 	
 	public void setShuffle( boolean isShuffling ) {
@@ -470,233 +433,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 	}
 	
-	
-	private void createRemoteControlClient() {
-		
-		if ( android.os.Build.VERSION.SDK_INT >= 14 ) {
-			
-	        if ( mRemoteControlClientCompat == null ) {
-	        	
-				mMediaButtonReceiverComponent = new ComponentName( this, MusicIntentReceiver.class );
-				MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
-	            Intent intent = new Intent( Intent.ACTION_MEDIA_BUTTON );
-	            //intent.setAction(  );
-	            intent.setComponent( mMediaButtonReceiverComponent );
-	            mRemoteControlClientCompat = new RemoteControlClientCompat(
-	                    PendingIntent.getBroadcast(this /*context*/,
-	                            0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
-	            
-	            RemoteControlHelper.registerRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
-	            
-	        }
-	        
-		}
-		
-	}
-	
-	private void destroyRemoteControlClient() {
-		
-		if ( null != mRemoteControlClientCompat ) {
-			
-			RemoteControlHelper.unregisterRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
-			MediaButtonHelper.unregisterMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
-			
-			mRemoteControlClientCompat = null;
-			
-		}
-		
-	}
-	
-	@SuppressLint("InlinedApi")
-	private void updateRemoteControlClientPause() {
-		
-		createRemoteControlClient();
-		
-		if ( null != mRemoteControlClientCompat ) {
-			
-	        int mFlags = RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE;
-	        
-	        if ( MediaPlayer.hasNextTrack() ) {
-	        	
-	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_NEXT;
-	        	
-	        }
-	        
-	        if ( MediaPlayer.hasPreviousTrack() ) {
-	        	
-	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS;
-	        	
-	        }
-	        
-	        mRemoteControlClientCompat.setTransportControlFlags( mFlags );
-	        
-			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PAUSED );
-			
-		}
-		
-	}
-	
-	@SuppressLint("InlinedApi")
-	private void updateRemoteControlClientPlay() {
-		
-		createRemoteControlClient();
-		
-		if ( null != mRemoteControlClientCompat ) {
-			
-	        int mFlags = RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE;
-	        
-	        if ( MediaPlayer.hasNextTrack() ) {
-	        	
-	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_NEXT;
-	        	
-	        }
-	        
-	        if ( MediaPlayer.hasPreviousTrack() ) {
-	        	
-	        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS;
-	        	
-	        }
-	        
-	        mRemoteControlClientCompat.setTransportControlFlags( mFlags );
-	        
-			mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
-			
-		}
-		
-	}
-	
-	@SuppressLint("InlinedApi")
-	private void updateRemoteControlClientMedia( String media_id ) {
-		
-		createRemoteControlClient();
-		
-		if ( null != mRemoteControlClientCompat ) {
-			
-			MediaQuery mSongQuery = new MediaQuery(
-					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-					new String[] {
-						
-						MediaStore.Audio.Media.ALBUM,
-						MediaStore.Audio.Media.ARTIST,
-						MediaStore.Audio.Media.TITLE,
-						MediaStore.Audio.Media.ALBUM_ID,
-						MediaStore.Audio.Media.DURATION,
-						MediaStore.Audio.Media._ID
-						
-					},
-					MediaStore.Audio.Media._ID + "=?",
-					new String[] {
-						
-							media_id
-						
-					},
-					null
-				);
-			
-			MediaQuery.executeAsync( this, mSongQuery, new MediaQuery.OnQueryCompletedListener() {
-				
-				@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
-
-					mResult.moveToFirst();
-					
-					String mSongTitle = mResult.getString( mResult.getColumnIndex(MediaStore.Audio.Media.TITLE ) );
-					String mSongAlbum = mResult.getString( mResult.getColumnIndex(MediaStore.Audio.Media.ALBUM ) );
-					String mSongArtist = mResult.getString( mResult.getColumnIndex(MediaStore.Audio.Media.ARTIST ) );
-					long mSongDuration = mResult.getLong( mResult.getColumnIndex( MediaStore.Audio.Media.DURATION ) );
-					String album_id = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
-					//Bitmap mAlbumArt = BitmapFactory.
-					
-					mResult.close();
-					
-			        mRemoteControlClientCompat.editMetadata( true )
-	                .putString( MediaMetadataRetriever.METADATA_KEY_ARTIST, mSongArtist )
-	                .putString( MediaMetadataRetriever.METADATA_KEY_ALBUM, mSongAlbum )
-	                .putString( MediaMetadataRetriever.METADATA_KEY_TITLE, mSongTitle )
-	                .putLong( MediaMetadataRetriever.METADATA_KEY_DURATION, mSongDuration )
-	                //.putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, mAlbumArtBitmap )
-	                .apply();
-			        
-					MediaQuery mAlbumQuery = new MediaQuery(
-							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-						    new String[] {
-						    	
-						    	MediaStore.Audio.Albums.ALBUM_ART,
-						    	MediaStore.Audio.Albums._ID
-						    	
-						    },
-						    MediaStore.Audio.Albums._ID + "=?",
-							new String[] {
-								
-								album_id
-								
-							},
-							null
-						);
-					
-					MediaQuery.executeAsync(self, mAlbumQuery, new MediaQuery.OnQueryCompletedListener() {
-						
-						@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
-							
-							mResult.moveToFirst();
-							
-							String newAlbumUri = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-							mResult.close();
-							
-							try {
-								
-								Bitmap mAlbumArtBitmap = null;
-								
-								if ( null == newAlbumUri ) {
-									
-									mAlbumArtBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.no_album_art_full );
-									
-								} else if ( !newAlbumUri.equals( mAlbumArtUri ) ){
-									
-									mAlbumArtBitmap = BitmapFactory.decodeFile( newAlbumUri );
-									
-								}
-								/*
-								mRemoteControlClientCompat.editMetadata( true )
-								.putBitmap( RemoteControlClientCompat.MetadataEditorCompat.METADATA_KEY_ARTWORK, mAlbumArtBitmap )
-								.apply();
-								*/
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							
-						}
-						
-					});
-					
-			        mRemoteControlClientCompat.setPlaybackState( RemoteControlClient.PLAYSTATE_PLAYING );
-			        
-			        int mFlags = RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE;
-			        
-			        if ( MediaPlayer.hasNextTrack() ) {
-			        	
-			        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_NEXT;
-			        	
-			        }
-			        
-			        if ( MediaPlayer.hasPreviousTrack() ) {
-			        	
-			        	mFlags |= RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS;
-			        	
-			        }
-			        
-			        mRemoteControlClientCompat.setTransportControlFlags( mFlags );
-					
-				}
-				
-			});
-			
-	
-	        // Update the remote controls
-	        
-	        
-		}
-	        
-	}
 	
 	// 
 	// The PlaylistMediaPlayer creates a PlaybackListener interface and uses it as a callback for changes in playback.
@@ -760,7 +496,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			if ( MediaPlayer.isPlaying()  ) {
 				
-				Notification.showSong( MediaPlayer.getCurrentMediaID() );
+				Notification.setMediaID( MediaPlayer.getCurrentMediaID() );
 				Notification.showPlaying();
 				
 			} else if ( isServiceStarted ) {
@@ -776,9 +512,13 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	
 	PlaybackListener MediaPlayerListener = new PlaybackListener() {
 		
+		// 
+		// No null check because null is a meaningful value in this situation
+		// 
+		
 		@Override public void onTrackChanged( String media_id ) {
 			
-			CURRENT_MEDIA_ID = media_id; // Set even if media_id is null
+			CURRENT_MEDIA_ID = media_id; 
 			
 			int count = ChangedListeners.size();
 			
@@ -788,11 +528,11 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			}
 			
-			updateRemoteControlClientMedia( media_id );
+			Lockscreen.setMediaID( media_id );
 			
 			if ( 0 == count ) {
 				
-				Notification.showSong( media_id );
+				Notification.setMediaID( media_id );
 				
 			}
 			
@@ -816,6 +556,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				ChangedListeners.get( x ).onPlaylistDone();
 				
 			}
+			
+			Lockscreen.remove();
 			
 			if ( 0 == count ) {
 				
@@ -864,7 +606,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			}
 			
-			updateRemoteControlClientPlay();
+			Lockscreen.play();
 			
 			if ( count == 0 ) {
 				
@@ -885,7 +627,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			}
 			
-			updateRemoteControlClientPause();
+			Lockscreen.pause();
 			
 			if ( count == 0 ) {
 				
@@ -910,7 +652,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		if ( !canDuck ) {
 			
-			destroyRemoteControlClient();
+			Lockscreen.remove();
+			//destroyRemoteControlClient();
 			pause();
 			
 		} else {
