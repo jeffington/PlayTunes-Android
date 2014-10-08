@@ -218,12 +218,14 @@ public class PlaylistMediaPlayer {
 			
 			mPlaylistSize = mPlaylistCursor.getCount();
 			mPlaylistPosition = 0;
-			
+			/*
 			if ( isShuffling ) {
 				
 				generateShuffledPlaylist();
 				
 			}
+			*/
+			setShuffle( false );
 			
 		}
 		
