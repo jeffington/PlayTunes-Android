@@ -25,7 +25,7 @@ import android.view.View;
 
 public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObject> {
 	
-	private static final String VERSION_FILE_URL = "https://dl.dropboxusercontent.com/u/12838430/version.json";
+	private static final String VERSION_FILE_URL = "http://version.playtunesapp.com";
 	private static final String UPDATE_PREF_FILE = "update_pref_file";
 	private static final String UPDATE_PREF_KEY = "update_timestamp";
 	
@@ -77,10 +77,26 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
     	long mNow = new Date().getTime();
     	
     	try {
-    		
+    		//HttpURLConnection.setFollowRedirects( true );
     		URL url = new URL( VERSION_FILE_URL );
     		HttpURLConnection mUrlConnection = ( HttpURLConnection ) url.openConnection();
     		mUrlConnection.setUseCaches( false );
+    		//mUrlConnection.setInstanceFollowRedirects( true );
+    		
+    		while (true ) {
+	    		switch (mUrlConnection.getResponseCode())
+	    	     {
+	    	        case HttpURLConnection.HTTP_MOVED_PERM:
+	    	        case HttpURLConnection.HTTP_MOVED_TEMP:
+	    	        	
+	    	        	url = new URL( mUrlConnection.getHeaderField( "Location" ) );
+	    	        	mUrlConnection.disconnect();
+	    	        	mUrlConnection = ( HttpURLConnection ) url.openConnection();
+	    	           continue;
+	    	     }
+	    		break;
+	    		
+    		}
     		
     		long lastModified = mUrlConnection.getLastModified();
     		
@@ -117,7 +133,7 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
 		} catch ( JSONException e ) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
+			android.util.Log.i( "CheckRemoveVersionFile", "" + result );
 		}
     	
         return job;
