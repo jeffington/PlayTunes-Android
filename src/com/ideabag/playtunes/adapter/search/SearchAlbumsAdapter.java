@@ -2,25 +2,28 @@ package com.ideabag.playtunes.adapter.search;
 
 import com.ideabag.playtunes.adapter.AlbumListAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 
 import android.content.Context;
 import android.provider.MediaStore;
 
-public class SearchAlbumsAdapter extends AlbumListAdapter {
+public class SearchAlbumsAdapter extends AlbumListAdapter implements ISearchableAdapter {
 	
 	public static final String TAG = "SongAlbumsAdapter";
-	String mQueryString;
+	String mSearchTerms;
 	
 	private int mTruncateAmount;
 	
-	public SearchAlbumsAdapter( Context context, String searchTerms, int truncated ) {
+	public SearchAlbumsAdapter( Context context, String searchTerms, int truncated, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context );
 		
 		mTruncateAmount = truncated;
 		
+		setOnQueryCompletedListener( listener );
+		
 		if ( null != searchTerms && searchTerms.length() > 0 ) {
 			
-			setQuery( searchTerms );
+			setSearchTerms( searchTerms );
     		
 		}
 		
@@ -28,21 +31,21 @@ public class SearchAlbumsAdapter extends AlbumListAdapter {
 	//
 	// Compare both the album name and artist
 	//
-	public void setQuery( String queryString ) {
+	public void setSearchTerms( String queryString ) {
 		
-		if ( null != queryString && !queryString.equals( mQueryString ) ) {
+		if ( null != queryString && !queryString.equals( mSearchTerms ) ) {
 			
-			mQueryString = queryString;
+			mSearchTerms = queryString;
 			
 			String mRelevance = "("; 
 			
-			mRelevance += "2 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '%" + mQueryString + "%' )";
-			mRelevance += "+ 20 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '" + mQueryString + "%' )";
-			mRelevance += "+ 6 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '% " + mQueryString + "%' )";
+			mRelevance += "2 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '%" + mSearchTerms + "%' )";
+			mRelevance += "+ 20 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '" + mSearchTerms + "%' )";
+			mRelevance += "+ 6 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '% " + mSearchTerms + "%' )";
 			
-			mRelevance += "+ (" + MediaStore.Audio.Albums.ARTIST + " LIKE '%" + mQueryString + "%' )";
-			mRelevance += "+ 10 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '" + mQueryString + "%' )";
-			mRelevance += "+ 3 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '% " + mQueryString + "%' )";
+			mRelevance += "+ (" + MediaStore.Audio.Albums.ARTIST + " LIKE '%" + mSearchTerms + "%' )";
+			mRelevance += "+ 10 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '" + mSearchTerms + "%' )";
+			mRelevance += "+ 3 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '% " + mSearchTerms + "%' )";
 			
 			mRelevance += ") WEIGHT";
 			
@@ -59,7 +62,7 @@ public class SearchAlbumsAdapter extends AlbumListAdapter {
 		    
 		    //android.util.Log.i( TAG + "@setQuery", "Weight projection: " + mRelevance );
 			
-	    	mQuery = new MediaQuery(
+	    	MediaQuery query = new MediaQuery(
 					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 					allAlbumsSelection,
 					"WEIGHT > 0",
@@ -67,7 +70,7 @@ public class SearchAlbumsAdapter extends AlbumListAdapter {
 					"WEIGHT DESC"
 					);
 			
-			requery();
+			setMediaQuery( query );
 	    	
 		}
     	
@@ -77,15 +80,15 @@ public class SearchAlbumsAdapter extends AlbumListAdapter {
 		
 		int count = 0;
 		
-		if ( null != cursor ) {
+		if ( null != mCursor ) {
 			
 			if ( mTruncateAmount <= 0 ) {
 				
-				count = cursor.getCount();
+				count = mCursor.getCount();
 				
 			} else {
 				
-				count = ( cursor.getCount() > mTruncateAmount ? mTruncateAmount : cursor.getCount() );
+				count = ( mCursor.getCount() > mTruncateAmount ? mTruncateAmount : mCursor.getCount() );
 				
 			}
 			
@@ -97,9 +100,15 @@ public class SearchAlbumsAdapter extends AlbumListAdapter {
 	
 	public int hasMore() {
 		
-		return ( cursor != null && mTruncateAmount > 0 && cursor.getCount() > mTruncateAmount ? cursor.getCount() - mTruncateAmount : 0 );
+		return ( mCursor != null && mTruncateAmount > 0 && mCursor.getCount() > mTruncateAmount ? mCursor.getCount() - mTruncateAmount : 0 );
 		
 	}
 	
+	public void setTruncateAmount( int mAmt ) {
+		
+		mTruncateAmount = mAmt;
+		notifyDataSetChanged();
+		
+	}
 	
 }

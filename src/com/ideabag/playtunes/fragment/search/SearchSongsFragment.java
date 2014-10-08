@@ -53,7 +53,7 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
 		
 		if ( adapter == null ) {
 			
-			adapter = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQuery, SEARCH_RESULT_NO_LIMIT );
+			adapter = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQuery, SEARCH_RESULT_NO_LIMIT, null );
 			
 		} else {
 			

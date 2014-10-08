@@ -16,10 +16,12 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchableAd
 	
 	private int mTruncateAmount;
 	
-	public SearchSongsAdapter( Context context, OnClickListener menuClickListener, String searchTerms, int truncated ) {
+	public SearchSongsAdapter( Context context, OnClickListener menuClickListener, String searchTerms, int truncated, MediaQuery.OnQueryCompletedListener listener ) {
 		super(context, menuClickListener);
 		
 		mTruncateAmount = truncated;
+		
+		setOnQueryCompletedListener( listener );
 		
 		if ( null != searchTerms && searchTerms.length() > 0 ) {
 			
@@ -86,7 +88,8 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchableAd
 				"WEIGHT DESC"
 				);
     	
-    	setMediaQuery( mQuery );
+    	//setMediaQuery( mQuery );
+    	requery();
     	
 	}
 	

@@ -1,6 +1,8 @@
 package com.ideabag.playtunes.fragment.search;
 
+import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
@@ -8,21 +10,44 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
+import com.ideabag.playtunes.adapter.search.SearchAlbumsAdapter;
 import com.ideabag.playtunes.adapter.search.SearchArtistsAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.util.ISearchableAdapter;
+import com.ideabag.playtunes.util.TrackerSingleton;
 
 public class SearchArtistsFragment extends SaveScrollListFragment implements ISearchableAdapter {
-
+	public static final String TAG = "Artist Search Fragment";
+	
 	private static final int SEARCH_RESULT_NO_LIMIT = -1;
 	
 	private MainActivity mActivity;
+	private Tracker mTracker;
 	private SearchArtistsAdapter adapter;
 	String mQuery;
+	
+	public SearchArtistsFragment() { }
+	
+	public SearchArtistsFragment( SearchArtistsAdapter mAdapter ) {
+		
+		adapter = mAdapter;
+		
+	}
+	
+	@Override public void onAttach( Activity activity ) {
+		super.onAttach( activity );
+		
+		mActivity = ( MainActivity ) activity;
+		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mTracker.setScreenName( TAG );
+		
+	}
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
@@ -32,8 +57,18 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 			mQuery = savedInstanceState.getString( getString( R.string.key_state_query_string ) );
 			
 		}
+	
+		if ( null != adapter ) {
+			
+			adapter = new SearchArtistsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT, queryCompleted );
+			
+		} else {
+			
+			adapter.setTruncateAmount( SEARCH_RESULT_NO_LIMIT );
+			adapter.setOnQueryCompletedListener( queryCompleted );
+			
+		}
 		
-		adapter = new SearchArtistsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT );
 		
 		setListAdapter( adapter );
 		
@@ -112,7 +147,6 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 				@Override public void run() {
 					
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 					
 				}
             	
@@ -122,6 +156,16 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
             
         }
 
+	};
+	
+	MediaQuery.OnQueryCompletedListener queryCompleted = new MediaQuery.OnQueryCompletedListener() {
+		
+		@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+			
+			
+			
+		}
+		
 	};
 
 }

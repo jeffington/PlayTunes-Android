@@ -2,6 +2,7 @@ package com.ideabag.playtunes.fragment.search;
 
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.search.SearchAlbumsAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.fragment.AlbumsOneFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.util.ISearchableAdapter;
@@ -57,11 +59,12 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 		
 		if ( null == adapter ) {
 			
-			adapter = new SearchAlbumsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT );
+			adapter = new SearchAlbumsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT, queryCompleted );
 			
 		} else {
 			
 			adapter.setTruncateAmount( SEARCH_RESULT_NO_LIMIT );
+			adapter.setOnQueryCompletedListener( queryCompleted );
 			
 		}
 		
@@ -133,6 +136,16 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
             
         }
 
+	};
+	
+	MediaQuery.OnQueryCompletedListener queryCompleted = new MediaQuery.OnQueryCompletedListener() {
+		
+		@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+			
+			
+			
+		}
+		
 	};
 	
 }

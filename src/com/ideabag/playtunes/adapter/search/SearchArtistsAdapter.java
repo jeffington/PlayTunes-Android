@@ -2,31 +2,33 @@ package com.ideabag.playtunes.adapter.search;
 
 import com.ideabag.playtunes.adapter.ArtistListAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
-import com.ideabag.playtunes.util.ISearchable;
+import com.ideabag.playtunes.util.ISearchableAdapter;
 
 import android.content.Context;
 import android.provider.MediaStore;
 
-public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchable {
+public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchableAdapter {
 	
 	private String searchTerms;
 	
 	private int mTruncateAmount;
 	
-	public SearchArtistsAdapter( Context context, String query, int truncate ) {
+	public SearchArtistsAdapter( Context context, String query, int truncate, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context );
 		
 		mTruncateAmount = truncate;
 		
-		if ( null != searchTerms && searchTerms.length() > 0) {
+		setOnQueryCompletedListener( listener );
+		
+		if ( null != query && query.length() > 0) {
 			
-			setQuery( query );
+			setSearchTerms( query );
 			
 		}
 		
 	}
 	
-	@Override public void setQuery( String queryString ) {
+	@Override public void setSearchTerms( String queryString ) {
 		
 		if ( null != queryString && !queryString.equals( searchTerms ) ) {
 			
@@ -49,8 +51,6 @@ public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchab
 			    	mRelevance
 				};
 		    
-		    //android.util.Log.i( TAG + "@setQuery", "Weight projection: " + mRelevance );
-			
 			mQuery = new MediaQuery(
 					MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
 					artistsSelection,
@@ -69,15 +69,15 @@ public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchab
 		
 		int count = 0;
 		
-		if ( null != cursor ) {
+		if ( null != mCursor ) {
 			
 			if ( mTruncateAmount <= 0 ) {
 				
-				count = cursor.getCount();
+				count = mCursor.getCount();
 				
 			} else {
 				
-				count = ( cursor.getCount() > mTruncateAmount ? mTruncateAmount : cursor.getCount() );
+				count = ( mCursor.getCount() > mTruncateAmount ? mTruncateAmount : mCursor.getCount() );
 				
 			}
 			
@@ -89,7 +89,14 @@ public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchab
 	
 	public int hasMore() {
 		
-		return ( cursor != null && mTruncateAmount > 0 && cursor.getCount() > mTruncateAmount ? cursor.getCount() - mTruncateAmount : 0 );
+		return ( mCursor != null && mTruncateAmount > 0 && mCursor.getCount() > mTruncateAmount ? mCursor.getCount() - mTruncateAmount : 0 );
+		
+	}
+	
+	public void setTruncateAmount( int mAmt ) {
+		
+		mTruncateAmount = mAmt;
+		notifyDataSetChanged();
 		
 	}
 

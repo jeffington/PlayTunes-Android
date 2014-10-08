@@ -1,8 +1,11 @@
 package com.ideabag.playtunes.fragment.search;
 
 import android.app.Activity;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,7 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.search.SearchAlbumsAdapter;
 import com.ideabag.playtunes.adapter.search.SearchArtistsAdapter;
 import com.ideabag.playtunes.adapter.search.SearchSongsAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.fragment.AlbumsOneFragment;
 import com.ideabag.playtunes.fragment.ArtistsOneFragment;
@@ -92,13 +96,65 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		
 		adapter = new MergeAdapter();
 		
-		mSearchSongs = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQueryString, SEARCH_RESULT_LIMIT );
-		mSearchAlbums = new SearchAlbumsAdapter( getActivity(), mQueryString, SEARCH_RESULT_LIMIT );
-		mSearchArtists = new SearchArtistsAdapter( getActivity(), mQueryString, SEARCH_RESULT_LIMIT );
-		
-		mSearchSongs.registerDataSetObserver( mAdapterObserver );
-		mSearchAlbums.registerDataSetObserver( mAdapterObserver );
-		mSearchArtists.registerDataSetObserver( mAdapterObserver );
+		mSearchSongs = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQueryString, SEARCH_RESULT_LIMIT, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted(MediaQuery mQuery, Cursor mResult) {
+				
+				int mSongCount = mResult.getCount();
+				
+				if ( mSongCount == 0 ) {
+					
+					mSongsCount.setText( "None found" );
+					
+				} else {
+					
+					mSongsCount.setText( "" + mSongCount );
+					
+				}
+				
+			}
+			
+		});
+		mSearchAlbums = new SearchAlbumsAdapter( getActivity(), mQueryString, SEARCH_RESULT_LIMIT, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				int mAlbumCount = mResult.getCount();
+				
+				if ( mAlbumCount == 0 ) {
+					
+					mAlbumsCount.setText( "None found" );
+					
+				} else {
+					
+					mAlbumsCount.setText( "" + mAlbumCount );
+					
+				}
+				
+			}
+			
+		});
+		mSearchArtists = new SearchArtistsAdapter( getActivity(), mQueryString, SEARCH_RESULT_LIMIT, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				int mArtistCount = mResult.getCount();
+				
+				android.util.Log.i( TAG, "Artists found! " + mArtistCount );
+				
+				if ( mArtistCount == 0 ) {
+					
+					mArtistsCount.setText( "None found" );
+					
+				} else {
+					
+					mArtistsCount.setText( "" + mArtistCount );
+					
+				}
+				
+			}
+			
+		});
 		
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		
@@ -129,44 +185,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		adapter.addView( mArtistsHeader, true );
 		adapter.addAdapter( mSearchArtists );
 		
-		int mSongCount = mSearchSongs.getCount();
-		int mArtistCount = mSearchArtists.getCount();
-		int mAlbumCount = mSearchAlbums.getCount();
-		
-		if ( mSongCount == 0 ) {
-			
-			mSongsCount.setText( "None found" );
-			
-		} else {
-			
-			mSongsCount.setText( "" + ( mSongCount + mSearchSongs.hasMore() ) );
-			
-		}
-		
-		if ( mArtistCount == 0 ) {
-			
-			mArtistsCount.setText( "None found" );
-			
-		} else {
-			
-			mArtistsCount.setText( "" + ( mArtistCount + mSearchArtists.hasMore() ) );
-			
-		}
-		if ( mAlbumCount == 0 ) {
-			
-			mAlbumsCount.setText( "None found" );
-			
-		} else {
-			
-			mAlbumsCount.setText( "" + ( mAlbumCount + mSearchAlbums.hasMore() ) );
-			
-		}
-		
-		getListView().setHeaderDividersEnabled( true );
-		
 		setListAdapter( adapter );
-		
-		adapter.registerDataSetObserver( mAdapterObserver );
 		
 	}
 	
@@ -181,8 +200,6 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 	
 	@Override public void onDestroy() {
 		super.onDestroy();
-		
-		adapter.unregisterDataSetObserver( mAdapterObserver );
 		
 	}
 	
@@ -218,27 +235,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		
 	}
 	
-	DataSetObserver mAdapterObserver = new DataSetObserver() {
-		
-		@Override public void onChanged() {
-			
-			android.util.Log.i( TAG, "onChanged");
-			
-			int mSongCount = mSearchSongs.getCount();
-			int mArtistCount = mSearchArtists.getCount();
-			int mAlbumCount = mSearchAlbums.getCount();
-			
-			mSongsCount.setText( "" + ( mSongCount + mSearchSongs.hasMore() ) );
-			
-			mArtistsCount.setText( "" + ( mArtistCount + mSearchArtists.hasMore() ) );
-			
-			mAlbumsCount.setText( "" + ( mAlbumCount + mSearchAlbums.hasMore() ) );
-			
-		}
-		
-	};
 	
-	/*
 	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
 
         @Override public void onChange( boolean selfChange ) {
@@ -247,8 +244,9 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
             	
 				@Override public void run() {
 					
-					adapter.requery();
-					adapter.notifyDataSetChanged();
+					mSearchSongs.requery();
+					mSearchAlbums.requery();
+					mSearchArtists.requery();
 					
 				}
             	
@@ -259,7 +257,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
         }
 
 	};
-	*/
+	
 	
 	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
@@ -308,11 +306,11 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		//convertView.setTag( R.id.tag_album_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) ) );
 		
 		
-		int mSongSection = 1 + mSearchSongs.getCount();
+		int mSongSection = mSearchSongs.getCount() + 1;
 		
 		int mAlbumsSection = mSongSection + mSearchAlbums.getCount() + 1;
 		
-		int mArtistsSection = mAlbumsSection + mSearchArtists.getCount() + 1;
+		int mArtistsSection = mAlbumsSection + mSearchArtists.getCount();
 		
 		if ( position == 0 ) {
 			// Songs header
@@ -321,7 +319,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			
 			mSearchFragment.transactFragment( songFragment );
 			
-		} else if ( position <= mSongSection ) {
+		} else if ( position > 0 && position < mSongSection ) {
 			
 			// Play song
 			String playlistName = getString( R.string.search ) + " \"" + mQueryString + "\"";
@@ -339,13 +337,14 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			mActivity.mBoundService.play();
 			
 			
-		} else if ( position == mAlbumsSection - 1 ) {
+		} else if ( position == mSongSection ) { // Album Header
 			
-			SearchAlbumsFragment mAlbumsFragment = new SearchAlbumsFragment( mSearchAlbums );
+			SearchAlbumsFragment albumFragment = new SearchAlbumsFragment( mSearchAlbums );
 			
-			mSearchFragment.transactFragment( mAlbumsFragment );
+			mSearchFragment.transactFragment( albumFragment );
 			
-		} else if ( position > mSongSection && position <= mAlbumsSection ) {
+			
+		} else if ( position > mSongSection && position < mAlbumsSection ) {
 			
 			// Show Album
 			String albumID = ( String ) v.getTag( R.id.tag_album_id );
@@ -353,6 +352,12 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			albumFragment.setMediaID( albumID );
 			
 			mSearchFragment.transactFragment( albumFragment );
+			
+		} else if ( position == mAlbumsSection ) { // Artists Header
+			
+			SearchArtistsFragment artistFragment = new SearchArtistsFragment( mSearchArtists );
+			
+			mSearchFragment.transactFragment( artistFragment );
 			
 		} else if ( position > mAlbumsSection && position <= mArtistsSection ) {
 			
@@ -365,7 +370,6 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			mSearchFragment.transactFragment( artistFragment );
 			
 		}
-		
 		
 
 		
