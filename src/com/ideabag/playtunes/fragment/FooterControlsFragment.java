@@ -113,7 +113,7 @@ public class FooterControlsFragment extends Fragment {
 			
 			if ( id == R.id.FooterControls ) {
 				
-				mActivity.showNowPlayingActivity();
+				showNowPlayingActivity();
 				
 				mTracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( Categories.FOOTER_CONTROLS )
@@ -173,7 +173,7 @@ public class FooterControlsFragment extends Fragment {
 	   
    }
 	
-	   public PlaybackListener PlaybackListener = new PlaybackListener() {
+   public PlaybackListener PlaybackListener = new PlaybackListener() {
 
 		@Override public void onTrackChanged(String media_id) {
 			
@@ -211,7 +211,7 @@ public class FooterControlsFragment extends Fragment {
 	    		
 	    		current_media_id = media_id;
 	    		
-	    		Cursor mSongCursor = mActivity.getContentResolver().query(
+	    		MediaQuery mSongQuery = new MediaQuery(
 						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 						new String[] {
 							
@@ -232,129 +232,138 @@ public class FooterControlsFragment extends Fragment {
 						null
 					);
 				
-	    		
-				mSongCursor.moveToFirst();
-				
-				String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-				String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-				
-				String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
-				
-				
-				// 
-				// This tests if we loaded previous album art and that it wasn't null
-				// If the nextAlbumUri is null, it means there's no album art and 
-				// we load from an image resource.
-				// 
-				
-				
-				/*
-				if ( null == nextAlbumUri && null != lastAlbumUri) {
-					
-					recycleAlbumArt();
-					
-				} else if ( null != nextAlbumUri && null != lastAlbumUri && !lastAlbumUri.equals( nextAlbumUri ) ) {
-					
-					recycleAlbumArt();
-					
-				}
-
-				if ( null == nextAlbumUri ) {
-					
-					mAlbumCover.setImageResource( R.drawable.no_album_art_thumb );
-					
-				    
-				} else {
-					
-					Uri albumArtUri = Uri.parse( nextAlbumUri );
-					
-					mAlbumCover.setImageURI( albumArtUri );
-					
-					lastAlbumUri = nextAlbumUri;
-					
-				}
-				
-				// Otherwise, nextAlbumUri and lastAlbumUri are the same, we leave the ImageView alone
-				// and don't recycle the backing bitmap;
-				
-				lastAlbumUri = nextAlbumUri;
-				
-				albumCursor.close();
-				mSongCursor.close();
-				*/
-				
-				MediaQuery albumQuery = new MediaQuery(
-						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					    new String[] {
-					    	
-					    	MediaStore.Audio.Albums.ALBUM_ART,
-					    	MediaStore.Audio.Albums._ID
-					    	
-					    },
-					    MediaStore.Audio.Albums._ID + "=?",
-						new String[] {
-							
-							album_id
-							
-						},
-						null
-					);
-				
-				MediaQuery.executeAsync(getActivity(), albumQuery, new MediaQuery.OnQueryCompletedListener() {
+	    		MediaQuery.executeAsync( mActivity, mSongQuery, new MediaQuery.OnQueryCompletedListener() {
 					
 					@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
 						
+
 						mResult.moveToFirst();
 						
-						String nextAlbumUri = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+						String title = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+						String artist = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 						
-						if ( null != nextAlbumUri) {
+						String album_id = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+						mResult.close();
+						
+						// 
+						// This tests if we loaded previous album art and that it wasn't null
+						// If the nextAlbumUri is null, it means there's no album art and 
+						// we load from an image resource.
+						// 
+						
+						
+						/*
+						if ( null == nextAlbumUri && null != lastAlbumUri) {
 							
-							if ( !nextAlbumUri.equals( lastAlbumUri ) ) {
-								
-								lastAlbumUri = nextAlbumUri;
-								
-								final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumCover );
-								
-								final AsyncDrawable asyncThumbDrawable =
-						                new AsyncDrawable( getResources(),
-						                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
-						                		albumThumbTask );
-						        
-								mAlbumCover.setImageDrawable( asyncThumbDrawable );
-						        albumThumbTask.execute( nextAlbumUri );
-						        
-							}
-					        
-						} else {
+							recycleAlbumArt();
+							
+						} else if ( null != nextAlbumUri && null != lastAlbumUri && !lastAlbumUri.equals( nextAlbumUri ) ) {
+							
+							recycleAlbumArt();
+							
+						}
+
+						if ( null == nextAlbumUri ) {
 							
 							mAlbumCover.setImageResource( R.drawable.no_album_art_thumb );
 							
+						    
+						} else {
+							
+							Uri albumArtUri = Uri.parse( nextAlbumUri );
+							
+							mAlbumCover.setImageURI( albumArtUri );
+							
+							lastAlbumUri = nextAlbumUri;
+							
 						}
+						
+						// Otherwise, nextAlbumUri and lastAlbumUri are the same, we leave the ImageView alone
+						// and don't recycle the backing bitmap;
+						
+						lastAlbumUri = nextAlbumUri;
+						
+						albumCursor.close();
+						mSongCursor.close();
+						*/
+						
+						MediaQuery albumQuery = new MediaQuery(
+								MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+							    new String[] {
+							    	
+							    	MediaStore.Audio.Albums.ALBUM_ART,
+							    	MediaStore.Audio.Albums._ID
+							    	
+							    },
+							    MediaStore.Audio.Albums._ID + "=?",
+								new String[] {
+									
+									album_id
+									
+								},
+								null
+							);
+						
+						MediaQuery.executeAsync(getActivity(), albumQuery, new MediaQuery.OnQueryCompletedListener() {
+							
+							@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+								
+								mResult.moveToFirst();
+								
+								String nextAlbumUri = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+								
+								if ( null != nextAlbumUri) {
+									
+									if ( !nextAlbumUri.equals( lastAlbumUri ) ) {
+										
+										lastAlbumUri = nextAlbumUri;
+										
+										final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumCover, getResources().getDimensionPixelSize( R.dimen.footer_height ) );
+										
+										final AsyncDrawable asyncThumbDrawable =
+								                new AsyncDrawable( getResources(),
+								                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+								                		albumThumbTask );
+								        
+										mAlbumCover.setImageDrawable( asyncThumbDrawable );
+								        albumThumbTask.execute( nextAlbumUri );
+								        
+									}
+							        
+								} else {
+									
+									mAlbumCover.setImageResource( R.drawable.no_album_art_thumb );
+									
+								}
+								
+							}
+							
+						});
+				        
+						
+						mTitle.setText( title );
+						mArtist.setText( artist );
+						
+						// Show the footer controls
+						
+			    		if ( !isShowing ) {
+			    			
+			    			FragmentManager fm = getActivity().getSupportFragmentManager();
+			    			fm.beginTransaction()
+			    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
+			    			          .show( mFragmentSelf )
+			    			          .commit();
+				    		
+			    			//getActivity().findViewById( R.id.FooterShadow ).setVisibility( View.VISIBLE );
+			    			
+				    		isShowing = true;
+			    			
+			    		}
 						
 					}
 					
 				});
-		        
-				
-				mTitle.setText( title );
-				mArtist.setText( artist );
-				
-				// Show the footer controls
-				
-	    		if ( !isShowing ) {
-	    			
-	    			FragmentManager fm = getActivity().getSupportFragmentManager();
-	    			fm.beginTransaction()
-	    			          .setCustomAnimations( R.anim.slide_up, R.anim.slide_down )
-	    			          .show( mFragmentSelf )
-	    			          .commit();
-		    		
-	    			//getActivity().findViewById( R.id.FooterShadow ).setVisibility( View.VISIBLE );
-	    			
-		    		isShowing = true;
-	    			
-	    		}
+	    		
 				
 	    	}
 			
@@ -397,5 +406,15 @@ public class FooterControlsFragment extends Fragment {
 		}
 		
 	   };
+	   
+		private void showNowPlayingActivity() {
+			
+			Intent startNowPlayingActivity = new Intent( getActivity(), NowPlayingActivity.class );
+			if ( current_media_id != null ) {
+				startNowPlayingActivity.putExtra("album_art_uri", lastAlbumUri );
+			}
+			startActivityForResult( startNowPlayingActivity, 0 );
+			
+		}
 	   
 }
