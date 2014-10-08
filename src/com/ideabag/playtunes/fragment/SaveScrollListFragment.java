@@ -23,9 +23,10 @@ public class SaveScrollListFragment extends ListFragment {
 		super.onActivityCreated( inState );
 		
 		if ( inState != null ) {
-			android.util.Log.i( "SaveScroll", "restoring scroll" );
+			
 			mSavedScrollListPosition = inState.getInt( KEY_POSTION );
 			mSavedScrollOffset = inState.getInt( KEY_OFFSET );
+			
 		}
 		
 		
@@ -40,8 +41,12 @@ public class SaveScrollListFragment extends ListFragment {
 	@Override public void onPause() {
 		super.onPause();
 		
-		mSavedScrollListPosition = getListView().getFirstVisiblePosition();
-		mSavedScrollOffset = getListView().getChildAt( 0 ).getTop();
+		if ( null != getListView() ) {
+			
+			mSavedScrollListPosition = getListView().getFirstVisiblePosition();
+			mSavedScrollOffset = getListView().getChildAt( 0 ).getTop();
+			
+		}
 		
 	}
 	
