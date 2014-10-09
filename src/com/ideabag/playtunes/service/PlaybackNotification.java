@@ -1,10 +1,8 @@
 package com.ideabag.playtunes.service;
 
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.R.drawable;
-import com.ideabag.playtunes.R.id;
-import com.ideabag.playtunes.R.layout;
 import com.ideabag.playtunes.activity.MainActivity;
+import com.ideabag.playtunes.database.MediaQuery;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,7 +10,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.StaleDataException;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
@@ -30,9 +27,11 @@ public class PlaybackNotification {
 	
 	private Context mContext;
 	
-	private Cursor mSongCursor = null;
+	//private Cursor mSongCursor = null;
 	
 	private String lastAlbumUri = null;
+	
+	private boolean isShowing = false;
 	
 	private NotificationManager mNotificationManager;
 	private RemoteViews mRemoteViews;
@@ -83,60 +82,158 @@ public class PlaybackNotification {
 		
 	}
 	
-	private void requery() {
+	
+	public void setMediaID( String song_content_id ) {
 		
-		if ( null != mSongCursor && !mSongCursor.isClosed() ) {
+		if ( null != song_content_id && !song_content_id.equals( MEDIA_ID )) {
 			
-			mSongCursor.close();
+			MEDIA_ID = song_content_id;
+			
+			MediaQuery mQuery = new MediaQuery(
+					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+					new String[] {
+						
+						MediaStore.Audio.Media.ALBUM,
+						MediaStore.Audio.Media.ARTIST,
+						MediaStore.Audio.Media.TITLE,
+						MediaStore.Audio.Media.ALBUM_ID,
+						MediaStore.Audio.Media._ID
+						
+					},
+					MediaStore.Audio.Media._ID + "=?",
+					new String[] {
+						
+						MEDIA_ID
+						
+					},
+					null
+				);
+			
+			MediaQuery.executeAsync(mContext, mQuery, new MediaQuery.OnQueryCompletedListener() {
+				
+				@Override
+				public void onQueryCompleted(MediaQuery mQuery, Cursor mResult) {
+					
+					mResult.moveToFirst();
+					
+					String title = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+					String artist = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+					
+					if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
+						
+						String album_id = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+						
+						Cursor albumCursor = mContext.getContentResolver().query(
+								MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+							    new String[] {
+							    	
+							    	MediaStore.Audio.Albums.ALBUM_ART,
+							    	MediaStore.Audio.Albums._ID
+							    	
+							    },
+							    MediaStore.Audio.Albums._ID + "=?",
+								new String[] {
+									
+									album_id
+									
+								},
+								null
+							);
+						//android.util.Log.i( "album_id", album_id );
+						//android.util.Log.i( "album count" , "" + albumCursor.getCount() );
+						
+						if ( null != albumCursor && albumCursor.getCount() > 0 ) {
+							
+							albumCursor.moveToFirst();
+							
+							String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+							albumCursor.close();
+							
+							lastAlbumUri = newAlbumUri;
+							
+							if ( newAlbumUri == null ) {
+								
+								mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art_thumb );
+								
+							} else {
+								
+								
+								
+								Uri albumArtUri = Uri.parse( newAlbumUri );
+								
+								mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
+								
+								
+								
+							}
+							
+						}
+						
+					}
+					
+					mRemoteViews.setTextViewText( R.id.NotificationSongName, title );
+					mRemoteViews.setTextViewText( R.id.NotificationArtistName, artist );
+					
+					if ( isShowing ) {
+						
+						show();
+						
+					}
+					
+				}
+				
+			});
+			
+		} else { // media_id is null
+			
+			remove();
 			
 		}
-		
-		mSongCursor = mContext.getContentResolver().query(
-				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				new String[] {
-					
-					MediaStore.Audio.Media.ALBUM,
-					MediaStore.Audio.Media.ARTIST,
-					MediaStore.Audio.Media.TITLE,
-					MediaStore.Audio.Media.ALBUM_ID,
-					MediaStore.Audio.Media._ID
-					
-				},
-				MediaStore.Audio.Media._ID + "=?",
-				new String[] {
-					
-					MEDIA_ID
-					
-				},
-				null
-			);
-		
-		mSongCursor.moveToFirst();
 		
 	}
 	
-	private void buildAndShowNotification() {
+	public void play() {
 		
-		String tickerString = "";
-		
-		if ( null != mSongCursor ) {
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
 			
-			try {
+			mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_pause_white );
+			
+			if ( isShowing ) {
 				
-				mSongCursor.moveToFirst();
-				
-			} catch ( StaleDataException e ) {
-				
-				requery();
+				show();
 				
 			}
 			
-			String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-			String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+		}
+		
+	}
+	
+	public void pause() {
+		
+		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
 			
-			tickerString = title + " " + Character.toString( DASH_SYMBOL ) + " " + artist;
+			mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_play_white );
+			
+			if ( isShowing ) {
+				
+				show();
+				
+			}
 			
 		}
+		
+	}
+	
+	public void remove() {
+		
+		mNotificationManager.cancel( PLAY_NOTIFICATION_ID );
+		isShowing = false;
+		
+	}
+	
+	public void show() {
+		
+		String tickerString = "";
 		
 		NotificationCompat.Builder mBuilder =
 		        new NotificationCompat.Builder( mContext )
@@ -165,129 +262,8 @@ public class PlaybackNotification {
 		}
 		
 		mNotificationManager.notify( PLAY_NOTIFICATION_ID, mBuiltNotification );
+		isShowing = true;
 		
 	}
 	
-	public void setMediaID( String song_content_id ) {
-		
-		if ( null != song_content_id ) {
-			
-			MEDIA_ID = song_content_id;
-			
-			requery();
-			
-			mSongCursor.moveToFirst();
-			
-			String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-			String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-			
-			if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
-				
-				String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
-				
-				Cursor albumCursor = mContext.getContentResolver().query(
-						MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-					    new String[] {
-					    	
-					    	MediaStore.Audio.Albums.ALBUM_ART,
-					    	MediaStore.Audio.Albums._ID
-					    	
-					    },
-					    MediaStore.Audio.Albums._ID + "=?",
-						new String[] {
-							
-							album_id
-							
-						},
-						null
-					);
-				//android.util.Log.i( "album_id", album_id );
-				//android.util.Log.i( "album count" , "" + albumCursor.getCount() );
-				
-				if ( null != albumCursor && albumCursor.getCount() > 0 ) {
-					
-					albumCursor.moveToFirst();
-					
-					String newAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-					albumCursor.close();
-					
-					lastAlbumUri = newAlbumUri;
-					
-					if ( newAlbumUri == null ) {
-						
-						mRemoteViews.setImageViewResource( R.id.NotificationAlbumArt, R.drawable.no_album_art_thumb );
-						
-					} else {
-						
-						
-						
-						Uri albumArtUri = Uri.parse( newAlbumUri );
-						
-						mRemoteViews.setImageViewUri( R.id.NotificationAlbumArt, albumArtUri );
-						
-						
-						
-					}
-					
-				}
-				
-			}
-			
-			
-			
-			mRemoteViews.setTextViewText( R.id.NotificationSongName, title );
-			mRemoteViews.setTextViewText( R.id.NotificationArtistName, artist );
-			
-			buildAndShowNotification();
-			
-		} else { // media_id is null
-			
-			remove();
-			
-		}
-		
-	}
-	
-	public void showPlaying() {
-		
-		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
-			
-			mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_pause_white );
-			
-		}
-		
-		buildAndShowNotification();
-		
-	}
-	
-	public void showPaused() {
-		
-		if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
-			
-			mRemoteViews.setImageViewResource( R.id.NotificationPlayPauseButton, R.drawable.ic_action_playback_play_white );
-			
-		}
-		
-		buildAndShowNotification();
-		
-	}
-	
-	public void remove() {
-		
-		if ( null != mSongCursor && !mSongCursor.isClosed() ) {
-			
-			mSongCursor.close();
-			
-		}
-		
-		mNotificationManager.cancel( PLAY_NOTIFICATION_ID );
-		
-	}
-	/*
-	public void setMediaId( String media_id ) {
-		
-		MEDIA_ID = media_id;
-		
-	}
-	*/
 }

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.support.v4.app.Fragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.R.string;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.AudioFocusHelper;
 import com.ideabag.playtunes.media.MusicFocusable;
@@ -57,8 +55,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	
 	private SharedPreferences mSharedPrefs;
 	
-    
-    AudioManager mAudioManager;
     AudioFocusHelper mAudioFocusHelper = null;
 	
     // All used to save and restore what the user is playing across app open/close
@@ -76,8 +72,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	BroadcastReceiver NotificationActionReceiver = new BroadcastReceiver() {
 
 		@Override public void onReceive( Context context, Intent intent ) {
-			
-			
 			
 			String action = intent.getAction();
 			
@@ -176,24 +170,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		registerReceiver( NotificationActionReceiver, mNotificationIntentFilter );
 		
 		mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
-		
-		//private static final String PREF_KEY_NOWPLAYING_CLASS = "now_playing_class";
-		//private static final String PREF_KEY_NOWPLAYING_NAME = "now_playing_name";
-		//private static final String PREF_KEY_NOWPLAYING_ID = "now_playing_media_id";
-		
-		//String className = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_CLASS, "" );
-		//String nowPlayingName, nowPlayingMediaID;
-		
-		//if ( null != className && className.length() > 0 ) {
-			
-			//nowPlayingName = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_NAME, "" );
-			//nowPlayingMediaID = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_ID, "" );
-			
-			//this.setP
-			
-		//}
-		
-		//Gson gson = new Gson();
 		
 		String mMediaQueryJSONString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_QUERY, null );
 		int mPlaylistPosition = mSharedPrefs.getInt( PREF_KEY_NOWPLAYING_POSITION, 0 );
@@ -400,7 +376,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 	}
 	
-	@SuppressLint("InlinedApi")
 	public void play() {
 		
 		if ( null != MediaPlayer && !MediaPlayer.isPlaying() ) {
@@ -472,11 +447,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		// the notification in this case.
 		//
 		
-		if ( this.ChangedListeners.size() > 0 ) {
-			
-			Notification.remove();
-			
-		}
+		Notification.remove();
 		
 	}
 	
@@ -492,12 +463,11 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		if ( this.ChangedListeners.size() == 0 ) {
 			
-			//android.util.Log.i( TAG, "" + MediaPlayer.isPlaying() );
-			
 			if ( MediaPlayer.isPlaying()  ) {
 				
-				Notification.setMediaID( MediaPlayer.getCurrentMediaID() );
-				Notification.showPlaying();
+				Notification.setMediaID( CURRENT_MEDIA_ID );
+				Notification.play();
+				Notification.show();
 				
 			} else if ( isServiceStarted ) {
 				
@@ -528,13 +498,9 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			}
 			
-			Lockscreen.setMediaID( media_id );
+			Lockscreen.setMediaID( media_id, MediaPlayer.hasPreviousTrack(), MediaPlayer.hasNextTrack()  );
 			
-			if ( 0 == count ) {
-				
-				Notification.setMediaID( media_id );
-				
-			}
+			Notification.setMediaID( media_id );
 			
 			if ( MediaPlayer.isPlaying() ) {
 				
@@ -559,11 +525,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			Lockscreen.remove();
 			
-			if ( 0 == count ) {
-				
-				Notification.remove();
-				
-			}
+			Notification.remove();
 			
 		}
 
@@ -608,11 +570,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			Lockscreen.play();
 			
-			if ( count == 0 ) {
-				
-				Notification.showPlaying();
-				
-			}
+			Notification.play();
 			
 		}
 
@@ -629,11 +587,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			Lockscreen.pause();
 			
-			if ( count == 0 ) {
-				
-				Notification.showPaused();
-				
-			}
+			Notification.pause();
 			
 		}
 		
