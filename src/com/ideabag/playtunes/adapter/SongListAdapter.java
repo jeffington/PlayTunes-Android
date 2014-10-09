@@ -74,7 +74,7 @@ public class SongListAdapter extends AsyncQueryAdapter {
 			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
 			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
 			
-			holder.indicator = convertView.findViewById( R.id.NowPlayingIndicator );
+			//holder.indicator = convertView.findViewById( R.id.NowPlayingIndicator );
 			
 			holder.starButton.setOnClickListener( songMenuClickListener );
 			holder.menuButton.setOnClickListener( songMenuClickListener );
@@ -103,11 +103,10 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		holder.starButton.setTag( R.id.tag_song_id, song_id );
 		holder.menuButton.setTag( R.id.tag_song_id, song_id );
 		
-		//holder.starButton.setChecked( f ); 
-		
+		// TODO: Add now playing indicator
+		/*
 		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
 			
-			//convertView.setBackgroundResource(resid)
 			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.primaryAccentColor ) );
 			holder.indicator.setVisibility( View.VISIBLE );
 			
@@ -115,10 +114,9 @@ public class SongListAdapter extends AsyncQueryAdapter {
 			
 			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.textColorPrimary ) );
 			
-			//convertView.setBackgroundResource(resid)
 			holder.indicator.setVisibility( View.INVISIBLE );
 		}
-		
+		*/
 		return convertView;
 		
 	}
@@ -130,8 +128,8 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		TextView songTitle;
 		TextView songArtist;
 		TextView songAlbum;
-		
-		View indicator;
+		// TODO: Add now playing indicator
+		//View indicator;
 		
 	}
 
