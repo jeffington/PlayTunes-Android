@@ -16,7 +16,7 @@
 
 package com.ideabag.playtunes.media;
 
-import com.ideabag.playtunes.MusicPlayerService;
+import com.ideabag.playtunes.service.MusicPlayerService;
 import com.ideabag.playtunes.util.GAEvent;
 
 import android.content.BroadcastReceiver;
@@ -55,7 +55,7 @@ public class MusicIntentReceiver extends BroadcastReceiver {
 	                return;
 	            
 	            
-	            mIntent.addCategory( GAEvent.Categories.LOCKSCREEN );
+	            mIntent.putExtra( GAEvent.Categories.LOCKSCREEN, true );
 	            
 	            switch ( keyEvent.getKeyCode() ) {
 	            	
