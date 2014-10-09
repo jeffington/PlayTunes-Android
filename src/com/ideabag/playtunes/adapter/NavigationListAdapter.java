@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 public class NavigationListAdapter extends BaseAdapter {
 	
-	private static final int ROW_COUNT = 6;
+	private static final int ROW_COUNT = 7;
 	
 	private static final int[] badge_resources = {
 		
