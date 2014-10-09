@@ -490,8 +490,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			CURRENT_MEDIA_ID = media_id; 
 			
-			android.util.Log.i( TAG, "" + media_id );
-			
 			int count = ChangedListeners.size();
 			
 			for ( int x = 0; x < count; x++ ) {
