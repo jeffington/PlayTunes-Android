@@ -5,8 +5,7 @@ import com.ideabag.playtunes.util.AsyncDrawable;
 import com.ideabag.playtunes.util.BitmapWorkerTask;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +17,14 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 	
 	protected LayoutInflater inflater;
 	
+	private int mAlbumThumbWidthPx;
+	
 	public AlbumListAdapter( Context context ) {
 		super( context );
 
 		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		
+		mAlbumThumbWidthPx = context.getResources().getDimensionPixelSize( R.dimen.list_item_height );
 		
 	}
 	
@@ -46,21 +49,21 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 			
 			holder = ( ViewHolder ) convertView.getTag();
 			
+			//holder.albumThumb.get
+			
+			BitmapDrawable mAlbumArtDrawable = ( BitmapDrawable ) holder.albumThumb.getDrawable();
+				
+			if ( null != mAlbumArtDrawable ) {
+				
+				// Clear the drawable, but we retain the reference through mAlbumArtDrawable
+				holder.albumThumb.setImageBitmap( null ); 
+				//new RecycleBitmapTask().execute( mAlbumArtDrawable );
+				
+			}
+			
 		}
 		
 		mCursor.moveToPosition( position );
-		
-		convertView.setTag( R.id.tag_album_id, mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums._ID ) ) );
-		
-		String artistName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
-		String albumName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
-		
-		int songCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.NUMBER_OF_SONGS ) );
-		
-		holder.albumArtist.setText( artistName );
-		holder.albumTitle.setText( albumName );
-		
-		holder.songCount.setText( "" + songCount );
 		
 		//
 		// Set the album art
@@ -74,7 +77,8 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 			
 			//holder.albumThumb.setImageURI( albumArtUri );
 			
-			final BitmapWorkerTask task = new BitmapWorkerTask( holder.albumThumb );
+			
+			final BitmapWorkerTask task = new BitmapWorkerTask( holder.albumThumb, mAlbumThumbWidthPx );
 	        final AsyncDrawable asyncDrawable =
 	                new AsyncDrawable( mContext.getResources(),
 	                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
@@ -90,7 +94,19 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 			
 		}
 		
-
+		
+		
+		convertView.setTag( R.id.tag_album_id, mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums._ID ) ) );
+		
+		String artistName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ARTIST ) );
+		String albumName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM ) );
+		
+		int songCount = mCursor.getInt( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.NUMBER_OF_SONGS ) );
+		
+		holder.albumArtist.setText( artistName );
+		holder.albumTitle.setText( albumName );
+		
+		holder.songCount.setText( "" + songCount );
 		
 		
 		return convertView;
