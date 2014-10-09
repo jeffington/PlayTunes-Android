@@ -2,6 +2,7 @@ package com.ideabag.playtunes.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.View;
 
 public class SaveScrollListFragment extends ListFragment {
 	
@@ -44,7 +45,9 @@ public class SaveScrollListFragment extends ListFragment {
 		if ( null != getListView() ) {
 			
 			mSavedScrollListPosition = getListView().getFirstVisiblePosition();
-			mSavedScrollOffset = getListView().getChildAt( 0 ).getTop();
+			View v = getListView().getChildAt( 0 );
+			
+			mSavedScrollOffset = (v == null ? 0 : v.getTop() );
 			
 		}
 		
