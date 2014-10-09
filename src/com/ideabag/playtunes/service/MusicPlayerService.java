@@ -177,6 +177,18 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		boolean mIsShuffling = mSharedPrefs.getBoolean( PREF_KEY_NOWPLAYING_SHUFFLE, false );
 		int looping = mSharedPrefs.getInt( PREF_KEY_NOWPLAYING_LOOP, PlaylistMediaPlayer.LOOP_NO );
 		
+		mPlaylistMediaID = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_ID, null );
+		mPlaylistName = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_NAME, "" );
+		String classNameString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_CLASS, "" );
+		try {
+			mPlaylistFragmentClass = (Class<? extends Fragment>) Class.forName( classNameString );
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		
+		MediaPlayer.setPlaybackListener( MediaPlayerListener );
+		
 		if ( mMediaQueryJSONString != null ) {
 			
 			MediaQuery mMediaQuery = new MediaQuery( mMediaQueryJSONString );
@@ -194,18 +206,6 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			}
 			
 		}
-		
-		mPlaylistMediaID = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_ID, null );
-		mPlaylistName = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_NAME, "" );
-		String classNameString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_CLASS, "" );
-		try {
-			mPlaylistFragmentClass = (Class<? extends Fragment>) Class.forName( classNameString );
-		} catch (ClassNotFoundException e) {
-			
-			e.printStackTrace();
-		}
-		
-		MediaPlayer.setPlaybackListener( MediaPlayerListener );
 		
 		if ( !isServiceStarted ) {
 			
@@ -489,6 +489,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		@Override public void onTrackChanged( String media_id ) {
 			
 			CURRENT_MEDIA_ID = media_id; 
+			
+			android.util.Log.i( TAG, "" + media_id );
 			
 			int count = ChangedListeners.size();
 			
