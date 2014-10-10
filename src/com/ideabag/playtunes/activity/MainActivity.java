@@ -1,12 +1,12 @@
 package com.ideabag.playtunes.activity;
 
-import com.ideabag.playtunes.MusicPlayerService;
-import com.ideabag.playtunes.PlaybackNotification;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
 import com.ideabag.playtunes.fragment.FooterControlsFragment;
 import com.ideabag.playtunes.fragment.NavigationFragment;
+import com.ideabag.playtunes.service.MusicPlayerService;
+import com.ideabag.playtunes.service.PlaybackNotification;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
 
 import android.support.v4.app.Fragment;
@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
         NavigationFragment = ( NavigationFragment ) getSupportFragmentManager().findFragmentById( R.id.left_drawer );
 	    
         doBindService();
-	    
+        
 	}
 	
 	@Override protected void onNewIntent( Intent intent ) {
@@ -244,13 +244,9 @@ public class MainActivity extends ActionBarActivity {
 	
 	private void showNowPlayingActivity() {
 		
-		//Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
-		/*
-		if ( mBoundService.CURRENT_MEDIA_ID != null ) {
-			startNowPlayingActivity.putExtra("media_id", mBoundService.CURRENT_MEDIA_ID );
-		}
-		*/
-		//startActivityForResult( startNowPlayingActivity, 0 );
+		Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
+		
+		startActivityForResult( startNowPlayingActivity, 0 );
 		
 	}
 	
