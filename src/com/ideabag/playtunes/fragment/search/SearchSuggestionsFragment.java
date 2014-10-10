@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 	
 	public static final String TAG = "Search Suggestions Fragment";
 	
-	TextView mClearHistory;
+	LinearLayout mClearHistory;
 	SearchFragment mSearchFragment;
 	
 	SharedPreferences mSharedPrefs;
@@ -56,17 +57,17 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 			
 			adapter = new ArrayAdapter < String >( getActivity(), R.layout.list_item_title, R.id.Title, mSearchQueries );
 			setListAdapter( adapter );
-			
+			restoreScrollPosition();
 		}
 		
-    	if ( adapter.getCount() < 1 ) {
+    	if ( adapter.getCount() >= 1 ) {
     		
         	mClearHistory.setVisibility( View.VISIBLE );
-        	
+        	getListView().setHeaderDividersEnabled( true );
     	} else {
     		
     		mClearHistory.setVisibility( View.GONE );
-    		
+    		getListView().setHeaderDividersEnabled( false );
     	}
 		
 	}
@@ -81,10 +82,10 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		LayoutInflater inflater = getActivity().getLayoutInflater();
     	
 		
-    	mClearHistory = ( TextView ) inflater.inflate( R.layout.list_item_title, null );
-    	mClearHistory.setText( getString( R.string.clear_search_history ) );
+    	mClearHistory = ( LinearLayout ) inflater.inflate( R.layout.list_item_button, null );
+    	( ( TextView ) mClearHistory.findViewById( R.id.Title ) ).setText( getString( R.string.clear_search_history ) );
     	getListView().addFooterView( mClearHistory, null, true );
-    
+    	
     	
     	
     	getListView().setHeaderDividersEnabled( true );
