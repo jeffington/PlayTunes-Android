@@ -13,12 +13,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class GenresAllAdapter extends BaseAdapter {
+public class GenresAllAdapter extends AsyncQueryAdapter {
 	
-	private Context mContext;
 	private LayoutInflater inflater;
-	private Cursor cursor = null;
-
+	
 	private final String SONG_SINGULAR, SONGS_PLURAL, ALBUM_SINGULAR, ALBUMS_PLURAL;
 	
     private static final String[] allGenresSelection = new String[] {
@@ -28,57 +26,28 @@ public class GenresAllAdapter extends BaseAdapter {
 		
     };
     
-	public GenresAllAdapter( Context context ) {
-		super();
-		
-		mContext = context;
-		
-		inflater = ( LayoutInflater ) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+	public GenresAllAdapter( Context context, MediaQuery.OnQueryCompletedListener listener ) {
+		super( context );
 		
 		SONG_SINGULAR = mContext.getString( R.string.song_singular );
 		SONGS_PLURAL = mContext.getString( R.string.songs_plural );
 		ALBUM_SINGULAR = mContext.getString( R.string.album_singular );
 		ALBUMS_PLURAL = mContext.getString( R.string.albums_plural );
 		
-		requery();
-		
-	}
-	
-	public void requery() {
-		
-		if ( null != cursor && !cursor.isClosed() ) {
-			
-			cursor.close();
-			
-		}
-		
-		cursor = mContext.getContentResolver().query(
+    	mQuery = new MediaQuery(
 				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
 				allGenresSelection,
 				null,
 				null,
-				MediaStore.Audio.Genres.NAME
+				MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
 			);
+    	
+    	setOnQueryCompletedListener( listener );
+    	
+		requery();
 		
 	}
-
-	@Override public int getCount() {
-		
-		return cursor.getCount();
-	}
-
-	@Override
-	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public long getItemId(int position) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
 		ViewHolder holder;
@@ -100,10 +69,10 @@ public class GenresAllAdapter extends BaseAdapter {
 			
 		}
 		
-		cursor.moveToPosition( position );
+		mCursor.moveToPosition( position );
 		
 		
-		String genre_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) );
+		String genre_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) );
 		
 
 		new AlbumSongsCountTask( holder.subtitle ).execute(
@@ -134,10 +103,10 @@ public class GenresAllAdapter extends BaseAdapter {
 
 		
 		
-		String genreName = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
+		String genreName = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
 		
 		
-		convertView.setTag( R.id.tag_genre_id, cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
+		convertView.setTag( R.id.tag_genre_id, mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
 		
 		holder.genreName.setText( genreName );
 		

@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.GenresAllAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
@@ -12,6 +13,7 @@ import com.ideabag.playtunes.util.GAEvent.Categories;
 
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -38,12 +40,30 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
 		mActivity.setActionbarTitle( getString( R.string.genres_plural) );
 		
+		mTracker.setScreenName( TAG );
+		
 	}
     
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		adapter = new GenresAllAdapter( getActivity() );
+		adapter = new GenresAllAdapter( getActivity(), new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.genre_singular ) : getString( R.string.genres_plural ) ) );
+		    	
+				restoreScrollPosition();
+				
+		    	mTracker.send( new HitBuilders.EventBuilder()
+		    	.setCategory( Categories.PLAYLIST )
+		    	.setAction( Playlist.ACTION_SHOWLIST )
+		    	.setValue( adapter.getCount() )
+		    	.build());
+				
+			}
+			
+		});
 		
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
@@ -62,22 +82,10 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 	@Override public void onResume() {
 		super.onResume();
 		
-    	mActivity.setActionbarTitle( getString( R.string.genres_plural) );
-    	mActivity.setActionbarSubtitle( adapter.getCount() + " " + ( adapter.getCount() == 1 ? getString( R.string.genre_singular ) : getString( R.string.genres_plural ) ) );
-
-	    // Set screen name.
-	    // Where path is a String representing the screen name.
-    	mTracker.setScreenName( TAG );
-		//t.set( "_count", ""+adapter.getCount() );
-		
+		mActivity.setActionbarTitle( getString( R.string.genres_plural) );
+    	
 	    // Send a screen view.
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
-		
-    	mTracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( Categories.PLAYLIST )
-    	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
-    	.build());
 		
 	}
 		
@@ -111,8 +119,6 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 		genreFragment.setMediaID( genre_id );
 		
 		mActivity.transactFragment( genreFragment );
-		
-		restoreScrollPosition();
 		
     	mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
