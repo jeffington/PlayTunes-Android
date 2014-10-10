@@ -31,6 +31,9 @@
 		android:layout_height="wrap_content"
 		android:textColor="@color/textColorPrimaryDark"
 		android:textSize="@dimen/text_large"
+		android:singleLine="true"
+		android:ellipsize="end"
+		
 	/>
     
 	<TextView android:id="@+id/FooterControlsArtistName"
