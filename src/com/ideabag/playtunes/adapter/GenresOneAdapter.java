@@ -10,7 +10,7 @@ import android.view.View;
 public class GenresOneAdapter extends SongListAdapter {
 	
 	protected String GENRE_ID;
-	public String GenreName;
+	//public String GenreName;
 	
     private static final String[] oneGenreSelection = new String[] {
     	
@@ -25,7 +25,7 @@ public class GenresOneAdapter extends SongListAdapter {
 		
     };
     
-	public GenresOneAdapter( Context context, String genre_id, View.OnClickListener menuClickListener ) {
+	public GenresOneAdapter( Context context, String genre_id, View.OnClickListener menuClickListener, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context, menuClickListener );
 		
 		this.GENRE_ID = genre_id;
@@ -39,30 +39,5 @@ public class GenresOneAdapter extends SongListAdapter {
 		
 	}
 	
-	@Override public void requery() {
-		super.requery();
-		
-    	Cursor genre = mContext.getContentResolver().query(
-    			MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-    			new String[] {
-    				
-    				MediaStore.Audio.Genres.NAME
-    				
-    			},
-    			MediaStore.Audio.Genres._ID + "=?",
-				new String[] {
-    				
-    					GENRE_ID
-    				
-    			},
-    			null);
-    			
-    	
-    	genre.moveToFirst();
-    	
-    	GenreName = genre.getString( genre.getColumnIndexOrThrow( MediaStore.Audio.Genres.NAME ) );
-    	genre.close();
-		
-	}
 
 }
