@@ -72,6 +72,7 @@
     
     <string name="playlist_name">Playlist Name</string>
     
+    <string name="back_warning">Press Back again to close PlayTunes</string>
   
     
 </resources>

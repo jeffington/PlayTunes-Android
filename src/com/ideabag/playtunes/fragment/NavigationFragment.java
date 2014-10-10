@@ -490,7 +490,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	        		
 	        		if ( !mCloseWarningOn ) {
 		        		
-		        		android.widget.Toast.makeText( mActivity, "Press the Back button again to close PlayTunes", android.widget.Toast.LENGTH_LONG ).show();
+		        		android.widget.Toast.makeText( mActivity, getString( R.string.back_warning ), android.widget.Toast.LENGTH_LONG ).show();
 		        		mCloseWarningOn = true;
 		        		
 		        		return true;
