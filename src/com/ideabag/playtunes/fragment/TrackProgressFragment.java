@@ -28,6 +28,8 @@ public class TrackProgressFragment extends Fragment {
 	
 	TextView mPlayLength, mPlayPosition;
 	
+	int mPlayLengthMilli, mPlayPositionMilli;
+	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
@@ -115,7 +117,10 @@ public class TrackProgressFragment extends Fragment {
 			
 			
 			//android.util.Log.i("mBar Progress",  "" + mBar.getProgress() );
-			setProgress( mBar.getProgress() + ONE_SECOND_IN_MILLI );
+			
+			mPlayPositionMilli += ONE_SECOND_IN_MILLI;
+			
+			setProgress( mPlayPositionMilli );
 			
 			handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 			
@@ -145,7 +150,9 @@ public class TrackProgressFragment extends Fragment {
 		
 		stopProgress();
 		
-		mBar.setProgress( progress );
+		mPlayPositionMilli = progress;
+		
+		mBar.setProgress( mPlayPositionMilli );
 		
 		int seconds = progress / ONE_SECOND_IN_MILLI;
 		int minutes = seconds / 60;
@@ -159,7 +166,9 @@ public class TrackProgressFragment extends Fragment {
 	
 	public void setDuration( int duration ) {
 		
-		mBar.setMax( duration );
+		mPlayLengthMilli = duration;
+		
+		mBar.setMax( mPlayLengthMilli );
 		
 		int seconds = duration / ONE_SECOND_IN_MILLI;
 		int minutes = seconds / 60;
