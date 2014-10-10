@@ -36,6 +36,7 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 		
 		mActivity = ( MainActivity ) activity;
 		mTracker = TrackerSingleton.getDefaultTracker( mActivity );
+		mActivity.setActionbarTitle( getString( R.string.genres_plural) );
 		
 	}
     
@@ -90,7 +91,7 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 	@Override public void onDestroyView() {
 	    super.onDestroyView();
 	    
-	    setListAdapter( null );
+	    //setListAdapter( null );
 	    
 	}
 	
@@ -110,6 +111,8 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 		genreFragment.setMediaID( genre_id );
 		
 		mActivity.transactFragment( genreFragment );
+		
+		restoreScrollPosition();
 		
     	mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
