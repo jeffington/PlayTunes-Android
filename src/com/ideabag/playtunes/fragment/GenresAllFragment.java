@@ -55,7 +55,7 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 		    	mTracker.send( new HitBuilders.EventBuilder()
 		    	.setCategory( Categories.PLAYLIST )
 		    	.setAction( Playlist.ACTION_SHOWLIST )
-		    	.setValue( adapter.getCount() )
+		    	.setValue( mResult.getCount() )
 		    	.build());
 				
 			}
