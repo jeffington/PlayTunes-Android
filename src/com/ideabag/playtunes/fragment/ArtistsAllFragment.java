@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class ArtistsAllFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
