@@ -48,8 +48,8 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	
 	private MusicBrowserFragment MusicBrowserFragment;
 	
-	
-	private boolean mCloseWarningOn = true;
+	// Have we warned the user that pressing Back will close the app?
+	private boolean mCloseWarningOn = false;
 	
 	NavigationListAdapter adapter;
 	
@@ -79,11 +79,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
         mActionBar.setDisplayHomeAsUpEnabled( false );
         
         mFragmentManager = mActivity.getSupportFragmentManager();
-		
-		mFragmentManager.addOnBackStackChangedListener( backStackChanged );
-
-        
-        
+		        
 	}
 	
 	
@@ -242,7 +238,6 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		super.onDestroy();
 		
 		getActivity().getContentResolver().unregisterContentObserver( mediaStoreChanged );
-		mFragmentManager.removeOnBackStackChangedListener( backStackChanged );
 		
 	}
 	
@@ -489,46 +484,25 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	        		
 	        		return true;
 	        		
-	        	} else if ( doBack() ) {
-	        		
-	        		return true;
-	        		
 	        	}
 	        	
-	        	return false;
-	        	
-    	}
-    	
-    	return false;
-    	
-    }
-    
-    
-    OnBackStackChangedListener backStackChanged = new OnBackStackChangedListener() {
-
-		@Override public void onBackStackChanged() {
-			
-			int mCount = mFragmentManager.getBackStackEntryCount();
-			
-			if ( mCount == 0 ) {
-				
-				mCloseWarningOn = true;
-				
-			}
-			
-		}
-		
-	};
-    
-    public boolean doBack() {
-    	
-    	if ( mCloseWarningOn ) {
-    		
-    		mCloseWarningOn = false;
-    		android.widget.Toast.makeText( mActivity, "Press Back again to close PlayTunes", android.widget.Toast.LENGTH_LONG ).show();
-    		
-    		return true;
-    		
+	        	if ( mFragmentManager.getBackStackEntryCount() == 0 ) {
+	        		
+	        		if ( !mCloseWarningOn ) {
+		        		
+		        		android.widget.Toast.makeText( mActivity, "Press the Back button again to close PlayTunes", android.widget.Toast.LENGTH_LONG ).show();
+		        		mCloseWarningOn = true;
+		        		
+		        		return true;
+		        		
+		        	}
+	        		
+	        	} else {
+	        		
+	        		mCloseWarningOn = false;
+	        		
+	        	}
+	        	break;
     	}
     	
     	return false;
