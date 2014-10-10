@@ -5,19 +5,15 @@ import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.util.AlbumSongsCountTask;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class GenresAllAdapter extends AsyncQueryAdapter {
 	
 	private LayoutInflater inflater;
-	
-	private final String SONG_SINGULAR, SONGS_PLURAL, ALBUM_SINGULAR, ALBUMS_PLURAL;
 	
     private static final String[] allGenresSelection = new String[] {
     	
@@ -28,11 +24,6 @@ public class GenresAllAdapter extends AsyncQueryAdapter {
     
 	public GenresAllAdapter( Context context, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context );
-		
-		SONG_SINGULAR = mContext.getString( R.string.song_singular );
-		SONGS_PLURAL = mContext.getString( R.string.songs_plural );
-		ALBUM_SINGULAR = mContext.getString( R.string.album_singular );
-		ALBUMS_PLURAL = mContext.getString( R.string.albums_plural );
 		
     	mQuery = new MediaQuery(
 				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
@@ -109,10 +100,6 @@ public class GenresAllAdapter extends AsyncQueryAdapter {
 		convertView.setTag( R.id.tag_genre_id, mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Genres._ID ) ) );
 		
 		holder.genreName.setText( genreName );
-		
-		
-		
-		//holder.subtitle.setText( "" + albumCount + " " + ( albumCount == 1 ? ALBUM_SINGULAR : ALBUMS_PLURAL ) + " " + songCount + " " + ( songCount == 1 ? SONG_SINGULAR : SONGS_PLURAL ) );
 		
 		
 		return convertView;
