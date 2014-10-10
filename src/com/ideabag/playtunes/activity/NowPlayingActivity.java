@@ -1,12 +1,16 @@
 package com.ideabag.playtunes.activity;
 
-import com.ideabag.playtunes.MusicPlayerService;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.AddToPlaylistDialogFragment;
 import com.ideabag.playtunes.fragment.TrackProgressFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
+import com.ideabag.playtunes.service.MusicPlayerService;
 import com.ideabag.playtunes.util.AdmobUtil;
+import com.ideabag.playtunes.util.AsyncDrawable;
+import com.ideabag.playtunes.util.BitmapWorkerTask;
+import com.ideabag.playtunes.util.StarToggleTask;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import com.google.android.gms.ads.AdRequest;
@@ -67,6 +71,13 @@ public class NowPlayingActivity extends ActionBarActivity {
 	protected ImageView mAlbumArtBackground;
 	protected ImageView mAlbumCover;
 	
+	TextView mSongTitle;
+	TextView mSongArtist;
+	TextView mSongAlbum;
+	
+	ToggleButton starButton;
+	ImageButton playPauseButton;
+	
 	private String current_media_id;
 	
 	Tracker tracker;
@@ -78,6 +89,8 @@ public class NowPlayingActivity extends ActionBarActivity {
 		setContentView( R.layout.activity_nowplaying );
 		
 		mPlaylistManager = new PlaylistManager( this );
+		
+		Intent intent = getIntent();
 		
         ActionBar supportBar = getSupportActionBar();
         
@@ -102,9 +115,20 @@ public class NowPlayingActivity extends ActionBarActivity {
 		
 		mAlbumArtBackground = ( ImageView ) findViewById( R.id.NowPlayingBackground );
 		mAlbumCover = ( ImageView ) findViewById( R.id.NowPlayingAlbumCover );
+		mSongTitle = ( TextView ) findViewById( R.id.SongTitle );
+		starButton = ( ToggleButton ) findViewById( R.id.StarButton );
+		playPauseButton =  ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton );
+		
+		mAlbumArtBackground.setColorFilter( getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
+		
 		// Show Playlist
-		
-		
+		/*
+		if ( null != intent && intent.hasExtra( "media_id" ) ) {
+			
+			setMediaID( intent.getStringExtra( "media_id" ) );
+			
+		}
+		*/
 		// Set up ad banner
 		
 		adView = (AdView) findViewById( R.id.adView );
@@ -121,6 +145,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 		adView.loadAd(adRequest);
 		
 		tracker = TrackerSingleton.getDefaultTracker( this );
+		tracker.setScreenName( TAG );
 		
 		getContentResolver().registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
@@ -167,7 +192,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 
 	        // Set screen name.
 	        // Where path is a String representing the screen name.
-		tracker.setScreenName( TAG );
+		
 		//t.set( "_count", ""+adapter.getCount() );
 		
 	        // Send a screen view.
@@ -406,7 +431,7 @@ public class NowPlayingActivity extends ActionBarActivity {
     
     public void setMediaID( String media_id ) {
     	
-    	//android.util.Log.i("now playing media_id", ( media_id == null ? "Is Null" : media_id ) );
+    	android.util.Log.i("now playing media_id", ( media_id == null ? "Is Null" : media_id ) );
     	
     	if ( null == media_id ) {
     		
@@ -417,8 +442,11 @@ public class NowPlayingActivity extends ActionBarActivity {
     		
     		this.current_media_id = media_id;
     		
+    		starButton.setTag( R.id.tag_song_id, media_id );
     		
-    		Cursor mSongCursor = getContentResolver().query(
+    		new StarToggleTask( starButton ).execute( media_id );
+			
+    		MediaQuery mSongQuery = new MediaQuery(
 					MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 					new String[] {
 						
@@ -439,120 +467,150 @@ public class NowPlayingActivity extends ActionBarActivity {
 					null
 				);
 			
-			mSongCursor.moveToFirst();
-			
-			String title = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-			String artist = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
-			String album = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
-			int duration = mSongCursor.getInt( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.DURATION ) );
-			
-			String album_id = mSongCursor.getString( mSongCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
-			
-			Cursor albumCursor = getContentResolver().query(
-					MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-				    new String[] {
-				    	
-				    	MediaStore.Audio.Albums.ALBUM_ART,
-				    	MediaStore.Audio.Albums._ID
-				    	
-				    },
-				    MediaStore.Audio.Albums._ID + "=?",
-					new String[] {
+    		MediaQuery.executeAsync( this, mSongQuery, new MediaQuery.OnQueryCompletedListener() {
+				
+				@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+					
+					mResult.moveToFirst();
+					
+					String title = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+					String artist = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+					String album = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
+					int duration = mResult.getInt( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.DURATION ) );
+					
+					String album_id = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+					
+					
+					
+					MediaQuery mAlbumArt = new MediaQuery(
+							MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+						    new String[] {
+						    	
+						    	MediaStore.Audio.Albums.ALBUM_ART,
+						    	MediaStore.Audio.Albums._ID
+						    	
+						    },
+						    MediaStore.Audio.Albums._ID + "=?",
+							new String[] {
+								
+								album_id
+								
+							},
+							null
+						);
+					
+					MediaQuery.executeAsync( getBaseContext(), mAlbumArt, new MediaQuery.OnQueryCompletedListener() {
 						
-						album_id
+						@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+							
+							mResult.moveToFirst();
+							String nextAlbumUri = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
+							
+							// 
+							// This tests if we loaded previous album art and that it wasn't null
+							// If the nextAlbumUri is null, it means there's no album art and 
+							// we load from an image resource.
+							// 
+							
+							
+							/*
+							if ( null == nextAlbumUri && null != lastAlbumUri) {
+								
+								recycleAlbumArt();
+								
+							} else if ( null != nextAlbumUri && null != lastAlbumUri && !lastAlbumUri.equals( nextAlbumUri ) ) {
+								
+								recycleAlbumArt();
+								
+							}
+							*/
+							if ( null == nextAlbumUri ) {
+								
+								mAlbumCover.setImageResource( R.drawable.no_album_art_full );
+								
+							} else {
+								
+								
+								
+								Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri );
+								Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+								
+								mAlbumArtBackground.setImageBitmap( newAlbumArt );
+								//findViewById( R.id.NowPlayingBackground ).setBackgroundDrawable( new BitmapDrawable( newAlbumArt ) );
+								
+								final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumCover );
+								final BitmapWorkerTask albumFullTask = new BitmapWorkerTask( mAlbumArtBackground );
+						        final AsyncDrawable asyncThumbDrawable =
+						                new AsyncDrawable( getResources(),
+						                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+						                		albumThumbTask );
+						        final AsyncDrawable asyncFullDrawable =
+						                new AsyncDrawable( getResources(),
+						                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+						                		albumFullTask );
+						        
+						        mAlbumCover.setImageDrawable( asyncThumbDrawable );
+						        albumThumbTask.execute( nextAlbumUri );
+						        
+						        mAlbumArtBackground.setImageDrawable( asyncFullDrawable );
+						        albumFullTask.execute( nextAlbumUri );
+								
+						        lastAlbumUri = nextAlbumUri;
+						        
+							}
+							
+							// Otherwise, nextAlbumUri and lastAlbumUri are the same, we leave the ImageView alone
+							// and don't recycle the backing bitmap;
+							
+							lastAlbumUri = nextAlbumUri;
+							
+							mResult.close();
+							
+						}
 						
-					},
-					null
-				);
-			
-			albumCursor.moveToFirst();
-			
-			String nextAlbumUri = albumCursor.getString( albumCursor.getColumnIndexOrThrow( MediaStore.Audio.Albums.ALBUM_ART ) );
-			
-			// 
-			// This tests if we loaded previous album art and that it wasn't null
-			// If the nextAlbumUri is null, it means there's no album art and 
-			// we load from an image resource.
-			// 
-			
-			
-			
-			if ( null == nextAlbumUri && null != lastAlbumUri) {
+					});
+					
+					mSongTitle.setText( title );
+					( ( TextView ) findViewById( R.id.SongArtist ) ).setText( artist );
+					( ( TextView ) findViewById( R.id.SongAlbum ) ).setText( album );
+					
+					mProgressFragment.setDuration( duration );
+					
+					mResult.close();
+					
+				}
 				
-				recycleAlbumArt();
-				
-			} else if ( null != nextAlbumUri && null != lastAlbumUri && !lastAlbumUri.equals( nextAlbumUri ) ) {
-				
-				recycleAlbumArt();
-				
-			}
-			
-			if ( null == nextAlbumUri ) {
-				
-				mAlbumCover.setImageResource( R.drawable.no_album_art_full );
-				
-			} else {
-				
-				Uri albumArtUri = Uri.parse( nextAlbumUri );
-				
-				mAlbumCover.setImageURI( albumArtUri );
-				
-				lastAlbumUri = nextAlbumUri;
-				
-				Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri );
-				Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
-				
-				mAlbumArtBackground.setImageBitmap( newAlbumArt );
-				//findViewById( R.id.NowPlayingBackground ).setBackgroundDrawable( new BitmapDrawable( newAlbumArt ) );
-				mAlbumArtBackground.setColorFilter( getResources().getColor( R.color.textColorPrimary ), PorterDuff.Mode.MULTIPLY );
-				
-			}
-			
-			// Otherwise, nextAlbumUri and lastAlbumUri are the same, we leave the ImageView alone
-			// and don't recycle the backing bitmap;
-			
-			lastAlbumUri = nextAlbumUri;
-			
-			albumCursor.close();
-			mSongCursor.close();
-			
-			( ( TextView ) findViewById( R.id.SongTitle ) ).setText( title );
-			( ( TextView ) findViewById( R.id.SongArtist ) ).setText( artist );
-			( ( TextView ) findViewById( R.id.SongAlbum ) ).setText( album );
-			
-			mProgressFragment.setDuration( duration );
+			});
     		
-			ToggleButton starButton = (ToggleButton) findViewById( R.id.StarButton );
-			
-			starButton.setChecked( mPlaylistManager.isStarred( media_id ) );
+
 			
     	}
     	
     }
-    
-   private void recycleAlbumArt() {
-	   
-	   BitmapDrawable mAlbumDrawable = ( BitmapDrawable ) mAlbumCover.getDrawable();
-	   BitmapDrawable mBackgroundDrawable = ( BitmapDrawable ) mAlbumArtBackground.getDrawable();
-	   
-	   if ( null != mAlbumDrawable && null != mAlbumDrawable.getBitmap() ) {
+    /*
+	   private void recycleAlbumArt() {
 		   
-		   mAlbumDrawable.getBitmap().recycle();
-		   mAlbumCover.setImageBitmap( null );
+		   BitmapDrawable mAlbumDrawable = ( BitmapDrawable ) mAlbumCover.getDrawable();
+		   BitmapDrawable mBackgroundDrawable = ( BitmapDrawable ) mAlbumArtBackground.getDrawable();
 		   
-	   }
-	   
-	   if ( null != mBackgroundDrawable && null != mBackgroundDrawable.getBitmap() ) {
+		   if ( null != mAlbumDrawable && null != mAlbumDrawable.getBitmap() ) {
+			   
+			   mAlbumDrawable.getBitmap().recycle();
+			   mAlbumCover.setImageBitmap( null );
+			   
+		   }
+		   
+		   if ( null != mBackgroundDrawable && null != mBackgroundDrawable.getBitmap() ) {
+				
+			   mBackgroundDrawable.getBitmap().recycle();
+			   mAlbumArtBackground.setImageBitmap( null );
+			   
+		   }
+		   
 			
-		   mBackgroundDrawable.getBitmap().recycle();
-		   mAlbumArtBackground.setImageBitmap( null );
-		   
+			
 	   }
-	   
-		
-		
-   }
-    
+     */
     private PlaylistMediaPlayer.PlaybackListener mPlaybackListener = new PlaylistMediaPlayer.PlaybackListener() {
 
 		@Override public void onTrackChanged( String media_id ) {
@@ -567,8 +625,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 			mProgressFragment.setProgress( playbackPositionMilliseconds );
 			mProgressFragment.startProgress();
 			
-			( ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_pause_white );
-			
+			playPauseButton.setImageResource( R.drawable.ic_action_playback_pause_white );
 			
 		}
 
@@ -577,7 +634,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 			isPlaying = false;
 			mProgressFragment.setProgress( playbackPositionMilliseconds );
 			mProgressFragment.stopProgress();
-			( ( ImageButton ) findViewById( R.id.NowPlayingPlayPauseButton ) ).setImageResource( R.drawable.ic_action_playback_play_white );
+			playPauseButton.setImageResource( R.drawable.ic_action_playback_play_white );
 			
 		}
 
@@ -702,9 +759,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 
 				@Override public void run() {
 					
-					ToggleButton starButton = (ToggleButton) findViewById( R.id.StarButton );
-					
-					starButton.setChecked( mPlaylistManager.isStarred( current_media_id ) );
+					new StarToggleTask( starButton ).execute( current_media_id );
 					
 				}
             	
