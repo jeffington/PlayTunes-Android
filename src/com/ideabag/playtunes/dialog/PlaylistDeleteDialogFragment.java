@@ -98,12 +98,11 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
         
         
         ( (TextView) view.findViewById( R.id.DeletePlaylistMessage)).setText(
-        		mPlaylistName
-        		+ " has " + mSongCount
-        		+ " "
+        		mPlaylistName + "\n"
+        		+ mSongCount + " "
         		+ ( mSongCount == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) )
         		+ "\n\n"
-        		+ "Are you sure you want to delete this playlist?"
+        		+ getString( R.string.playlist_delete_confirm )
         );
         
         //view.findViewById( R.id.DialogConfirmButton ).setOnClickListener( buttonClickListener );
