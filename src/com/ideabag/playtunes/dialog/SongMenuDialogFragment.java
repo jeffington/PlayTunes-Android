@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.fragment.AlbumsOneFragment;
 import com.ideabag.playtunes.fragment.ArtistsOneFragment;
 
@@ -22,9 +23,16 @@ public class SongMenuDialogFragment extends DialogFragment {
 	
 	String mMediaID;
 	
-	Cursor mSongCursor = null;
+	//Cursor mSongCursor = null;
+	MediaQuery mSongQuery;
 	
 	private MainActivity mActivity;
+	
+	TextView mSongArtist;
+	TextView mSongAlbum;
+	View songArtistButton;
+	View songAlbumButton;
+	
 	
     public SongMenuDialogFragment() {
         // Empty constructor required for DialogFragment
@@ -36,15 +44,7 @@ public class SongMenuDialogFragment extends DialogFragment {
     	
     	this.mMediaID = media_id;
     	
-    	
-    }
-    
-    @Override public void onAttach( Activity activity ) {
-    	super.onAttach( activity );
-    	
-    	mActivity = ( MainActivity ) activity;
-    	
-    	mSongCursor = mActivity.getContentResolver().query(
+    	mSongQuery = new MediaQuery(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
 				new String[] {
 					
@@ -65,18 +65,12 @@ public class SongMenuDialogFragment extends DialogFragment {
 				null
 			);
     	
-    	mSongCursor.moveToFirst();
-    	
     }
     
-    @Override public void onDestroy() {
-    	super.onDestroy();
+    @Override public void onAttach( Activity activity ) {
+    	super.onAttach( activity );
     	
-    	if ( mSongCursor != null && !mSongCursor.isClosed() ) {
-    		
-    		mSongCursor.close();
-    		
-    	}
+    	mActivity = ( MainActivity ) activity;
     	
     }
 
@@ -86,44 +80,54 @@ public class SongMenuDialogFragment extends DialogFragment {
         //mEditText = (EditText) view.findViewById(R.id.txt_your_name);
         getDialog().requestWindowFeature( Window.FEATURE_NO_TITLE );
         
+        mSongArtist = ( TextView ) view.findViewById( R.id.SongMenuArtistTitle );
+        mSongAlbum = ( TextView ) view.findViewById( R.id.SongMenuAlbumTitle );
+        songArtistButton = view.findViewById( R.id.SongMenuArtist );
+        songAlbumButton = view.findViewById( R.id.SongMenuAlbum );
+        
         view.findViewById( R.id.DialogCloseButton ).setOnClickListener( mMenuClickListener );
-        view.findViewById( R.id.SongMenuAlbum ).setOnClickListener( mMenuClickListener );
-        view.findViewById( R.id.SongMenuArtist ).setOnClickListener( mMenuClickListener );
+        songAlbumButton.setOnClickListener( mMenuClickListener );
+        songArtistButton.setOnClickListener( mMenuClickListener );
         view.findViewById( R.id.SongMenuAddTo ).setOnClickListener( mMenuClickListener );
         
-        String songArtist = mSongCursor.getString( mSongCursor.getColumnIndex( MediaStore.Audio.Media.ARTIST ) );
-        String songArtistID = mSongCursor.getString( mSongCursor.getColumnIndex( MediaStore.Audio.Media.ARTIST_ID ) );
-        String songAlbum = mSongCursor.getString( mSongCursor.getColumnIndex( MediaStore.Audio.Media.ALBUM ) );
-        String songAlbumID = mSongCursor.getString( mSongCursor.getColumnIndex( MediaStore.Audio.Media.ALBUM_ID ) );
-        
-        View songArtistButton = view.findViewById( R.id.SongMenuArtist );
-        View songAlbumButton = view.findViewById( R.id.SongMenuAlbum );
-        
-        // Show Artist name
-        if ( songArtist.equals( getString( R.string.no_artist_string ) ) ) {
-        	
-        	songArtistButton.setVisibility( View.GONE );
-        	
-        } else {
-        	
-        	( ( TextView ) view.findViewById( R.id.SongMenuArtistTitle ) ).setText( songArtist );
-        	
-        	songArtistButton.setTag( R.id.tag_artist_id, songArtistID );
-        	
-        }
-        
-        // Show album name
-        if ( songAlbum.equals( getString( R.string.no_album_string ) ) ) {
-        	
-        	songAlbumButton.setVisibility( View.GONE );
-        	
-        } else {
-        	
-        	( ( TextView ) view.findViewById( R.id.SongMenuAlbumTitle ) ).setText( songAlbum );
-        	
-        	songAlbumButton.setTag( R.id.tag_album_id, songAlbumID );
-        	
-        }
+        MediaQuery.executeAsync( getActivity(), mSongQuery, new MediaQuery.OnQueryCompletedListener() {
+			
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				String songArtist = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ARTIST ) );
+		        String songArtistID = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ARTIST_ID ) );
+		        String songAlbum = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ALBUM ) );
+		        String songAlbumID = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ALBUM_ID ) );
+		        
+		        // Show Artist name
+		        if ( songArtist.equals( getString( R.string.no_artist_string ) ) ) {
+		        	
+		        	songArtistButton.setVisibility( View.GONE );
+		        	
+		        } else {
+		        	
+		        	mSongArtist.setText( songArtist );
+		        	songArtistButton.setTag( R.id.tag_artist_id, songArtistID );
+		        	
+		        }
+		        
+		        // Show album name
+		        if ( songAlbum.equals( getString( R.string.no_album_string ) ) ) {
+		        	
+		        	songAlbumButton.setVisibility( View.GONE );
+		        	
+		        } else {
+		        	
+		        	mSongAlbum.setText( songAlbum );
+		        	songAlbumButton.setTag( R.id.tag_album_id, songAlbumID );
+		        	
+		        }
+				
+		        mResult.close();
+		        
+			}
+			
+		});
         
         return view;
         
