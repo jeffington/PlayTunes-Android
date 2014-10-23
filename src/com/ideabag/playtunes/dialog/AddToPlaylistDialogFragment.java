@@ -2,7 +2,6 @@ package com.ideabag.playtunes.dialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,9 +21,9 @@ import android.widget.Toast;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.fragment.PlaylistsAllFragment;
-import com.ideabag.playtunes.fragment.PlaylistsOneFragment;
+import com.ideabag.playtunes.adapter.AsyncQueryAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.QueryCountTask;
 
 public class AddToPlaylistDialogFragment extends DialogFragment implements OnItemClickListener {
 	
@@ -57,7 +55,6 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
     @Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	
         View view = inflater.inflate(R.layout.dialog_fragment_addtoplaylist, container);
-        //mEditText = (EditText) view.findViewById(R.id.txt_your_name);
         getDialog().requestWindowFeature( Window.FEATURE_NO_TITLE );
         
         
@@ -105,7 +102,7 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 			
 			mPlaylistManager.addFavorite( mMediaID );
 			
-			Toast.makeText( getActivity(), "Starred song.", Toast.LENGTH_SHORT ).show();
+			Toast.makeText( getActivity(), getString( R.string.playlist_did_star ), Toast.LENGTH_SHORT ).show();
 			
 		} else {
 			
@@ -113,7 +110,7 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         	
 			mPlaylistManager.addSong( playlist_id, mMediaID );
 			
-			Toast.makeText( getActivity(), "Added song to playlist.", Toast.LENGTH_SHORT ).show();
+			Toast.makeText( getActivity(), getString( R.string.playlist_added ), Toast.LENGTH_SHORT ).show();
 			
 		}
 		
@@ -121,16 +118,9 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 		
 	}
     
-    public class ChoosePlaylistAdapter extends BaseAdapter {
-    	
-    	protected Context mContext;
-    	protected Cursor cursor = null;
-    	
-    	private PlaylistManager mPlaylistManager;
+    public class ChoosePlaylistAdapter extends AsyncQueryAdapter {
     	
     	View.OnClickListener playlistMenuClickListener;
-    	
-    	//View.OnClickListener playlistMenuClickListener;
     	
         private final String[] allPlaylistsSelection = new String[] {
         	
@@ -141,24 +131,11 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         };
         
     	public ChoosePlaylistAdapter( Context context ) {
+    		super( context );
     		
-    		mContext = context;
+    		String starred_id = new PlaylistManager( context ).createStarredIfNotExist();
     		
-    		mPlaylistManager = new PlaylistManager( mContext );
-    		
-    		requery();
-        	
-    	}
-    	
-    	public void requery() {
-    		
-    		if ( null != cursor)
-    			cursor.close(); 
-    		
-    		String starred_id = mPlaylistManager.createStarredIfNotExist();
-    		
-    		
-        	cursor = mContext.getContentResolver().query(
+    		mQuery = new MediaQuery(
     				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
     				allPlaylistsSelection,
     				MediaStore.Audio.Playlists._ID + " !=?",
@@ -170,27 +147,10 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
     				MediaStore.Audio.Playlists.DATE_MODIFIED + " DESC"
     			);
     		
+    		requery();
+        	
     	}
-
     	
-    	@Override public int getCount() {
-    		
-    		return cursor.getCount();
-    		
-    	}
-
-    	@Override public Object getItem( int position ) {
-    		
-    		return null;
-    		
-    	}
-
-    	@Override public long getItemId( int position ) {
-    		
-    		return 0;
-    		
-    	}
-
     	@Override public View getView( int position, View convertView, ViewGroup parent ) {
     		
     		ViewHolder holder;
@@ -217,16 +177,10 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
     			
     		}
     		
-    		cursor.moveToPosition( position );
-    		String playlist_id = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists._ID ) );
-    		convertView.setTag( R.id.tag_playlist_id, playlist_id );
+    		mCursor.moveToPosition( position );
+    		String playlist_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists._ID ) );
     		
-    		String playlistTitle = cursor.getString( cursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
-    		
-    		// Get song count for the given playlist
-    		//MediaStore.Audio.Playlists._COUNT
-    		
-    		Cursor songs = mContext.getContentResolver().query(
+    		MediaQuery mSongCountQuery = new MediaQuery(
     				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( playlist_id ) ),
     				new String[] {
     					MediaStore.Audio.Playlists.Members._ID
@@ -236,13 +190,12 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
     				null
     			);
     		
-    		int song_count = songs.getCount();
+    		new QueryCountTask( holder.songCount ).execute( mSongCountQuery );
     		
-    		songs.close();
+    		convertView.setTag( R.id.tag_playlist_id, playlist_id );
+    		String playlistTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Playlists.NAME ) );
     		
     		holder.playlistName.setText( playlistTitle );
-    		
-    		holder.songCount.setText( "" + song_count );
     		
     		return convertView;
     		
