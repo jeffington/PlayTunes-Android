@@ -41,7 +41,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 	private MainActivity mActivity;
 	private FragmentManager mFragmentManager;
 	private DrawerLayout mDrawerLayout;
-	private ActionBarDrawerToggle mDrawerToggle;
+	public ActionBarDrawerToggle mDrawerToggle;
 	private ActionBar mActionBar;
 	
 	private PlaylistManager mPlaylistManager;
@@ -72,12 +72,13 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		mActionBar = mActivity.getSupportActionBar();
 		
         
-        mActionBar.setLogo( R.drawable.ic_drawer );
+        //mActionBar.setLogo( R.drawable.ic_drawer );
+		mActionBar.setDisplayHomeAsUpEnabled( true );
         mActionBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
-        mActionBar.setDisplayUseLogoEnabled( true ); // Hides the icon
-        mActionBar.setDisplayShowHomeEnabled( true );
-        mActionBar.setDisplayHomeAsUpEnabled( false );
-        
+        //mActionBar.setDisplayUseLogoEnabled( true ); // Hides the icon
+        //mActionBar.setDisplayShowHomeEnabled( true );
+        //mActionBar.setIcon( android.R.color.transparent ); 
+        mActionBar.setDisplayShowHomeEnabled( false );
         mFragmentManager = mActivity.getSupportFragmentManager();
 		        
 	}
@@ -207,10 +208,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     	
 		mActionBar.setTitle( getString( R.string.app_name ) );
     	mActionBar.setSubtitle( null );
-    	mActivity.supportInvalidateOptionsMenu();
-    	mActionBar.setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
-    	mActionBar.setDisplayUseLogoEnabled( false );
     	
+    	mActionBar.setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+    	//mActionBar.setDisplayUseLogoEnabled( false );
+    	mActionBar.setDisplayShowHomeEnabled( true );
+    	mActivity.supportInvalidateOptionsMenu();
     	
     }
     
@@ -219,10 +221,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     	mActivity.mShouldHideActionItems = false;
     	mActionBar.setTitle( mActionbarTitle );
     	mActionBar.setSubtitle( mActionbarSubtitle );
-    	mActivity.supportInvalidateOptionsMenu();
-    	mActivity.getSupportActionBar().setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
-    	mActionBar.setDisplayUseLogoEnabled( true );
     	
+    	mActivity.getSupportActionBar().setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+    	//mActionBar.setDisplayUseLogoEnabled( true );
+    	mActionBar.setDisplayShowHomeEnabled( false );
+    	mActivity.supportInvalidateOptionsMenu();
     }
     
 	
