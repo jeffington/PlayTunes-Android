@@ -6,18 +6,12 @@ import com.google.gson.Gson;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 
 public class MediaQuery {
-	/*
-	protected Uri mContentUri;
 	
-	protected String[] mProjection;
-	protected String mSelection;
-	protected String[] mSelectionArgs;
-	protected String mOrderBy;
-	*/
 	protected class MediaQueryJSONObject {
 		
 		public String mContentUriString;
@@ -71,12 +65,24 @@ public class MediaQuery {
 	*/
 	public static Cursor execute( Context mContext, MediaQuery query ) {
 		
-		return mContext.getContentResolver().query(
+		Cursor result = null;
+		
+		try {
+			
+			result = mContext.getContentResolver().query(
 				Uri.parse( query.mQueryObject.mContentUriString ),
 				query.mQueryObject.mProjection,
 				query.mQueryObject.mSelection,
 				query.mQueryObject.mSelectionArgs,
 				query.mQueryObject.mOrderBy );
+		 
+		 } catch( SQLiteException e ) {
+			 
+			 // Failed
+			 
+		 }
+		
+		return result;
 		
 	}
 	
