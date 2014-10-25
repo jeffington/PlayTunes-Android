@@ -25,12 +25,14 @@ public class GenresAllAdapter extends AsyncQueryAdapter {
 	public GenresAllAdapter( Context context, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context );
 		
+		inflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+		
     	mQuery = new MediaQuery(
 				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
 				allGenresSelection,
 				null,
 				null,
-				MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
+				MediaStore.Audio.Genres.DEFAULT_SORT_ORDER
 			);
     	
     	setOnQueryCompletedListener( listener );
