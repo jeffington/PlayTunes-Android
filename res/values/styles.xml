@@ -3,10 +3,6 @@
     
 	<style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
 		
-	    <item name="displayOptions">showTitle</item>
-	    
-		
-		
 		<!-- Support library compatibility -->
 		<item name="background">@color/primaryAccentColor</item>
 		
@@ -22,10 +18,8 @@
 	</style>
 	
 	<style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-	    <item name="android:layout_width">match_parent</item>
 	    
 	    <item name="android:textColor">@color/textColorPrimaryDark</item>
-	    <item name="android:background">@drawable/button_background_dark</item>
 	    <!-- The textColor property is backward compatible with the Support Library -->
 		
 	</style>
