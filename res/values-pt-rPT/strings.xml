@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">Música</string>
+	<string name="songs_plural">Músicas</string>
+	<string name="all_songs">Todas as músicas</string>
+	<string name="dialog_title_song_options">Opções de música</string>
+	
+	<string name="genres_plural">Géneros</string>
+	<string name="genre_singular">Género</string>
+	
+	<string name="playlists_plural">Listas</string>
+	<string name="playlists_options">Opções de Listas</string>
+	<string name="playlist_new">Criar Nova Lista</string>
+	<string name="playlist_rename">Renomear Lista</string>
+	<string name="playlist_delete">Excluir lista?</string>
+	<string name="playlist_editing">Editar</string>
+	<string name="playlist_name_starred">Marcada</string>
+	
+	<string name="playlist_created">Lista criada</string>
+	<string name="playlist_cant_name_starred">A lista não pode ser nomeada marcada</string>
+	<string name="playlist_did_star">Música marcada</string>
+	<string name="playlist_add">Adicionar à Lista</string>
+	<string name="playlist_removed">Música removida da Lista</string>
+	<string name="playlist_added">Música adicionada à Lista</string>
+	<string name="playlist_cant_play_when_editing">Prima Feito para terminar a edição</string>
+	<string name="playlist_added_song_to_new">Música adicionada à nova lista</string>
+	<string name="playlist_delete_confirm">Tem certeza de que deseja excluir esta lista?</string>
+	<string name="playlist_enter_name">Por favor insira um nome da lista.</string>
+	
+	<string name="settings">Configurações</string>
+	
+	<string name="discover">Descobrir</string>
+	
+	<string name="albums_plural">Álbuns</string>
+	<string name="album_singular">Álbum</string>
+	
+	<string name="search">Pesquisa</string>
+	<string name="clear_search_history">Limpar histórico de pesquisa</string>
+	<string name="search_hint">Pesquisar Música</string>
+	<string name="see_all">Ver todos</string>
+	
+	<string name="activity_title_now_playing">A reproduzir</string>
+	<string name="activity_title_settings">Configurações PlayTunes</string>
+	
+	<string name="cancel">Cancelar</string>
+	<string name="update">Atualizar</string>
+	
+	<string name="shuffle_on">Shuffle ligado</string>
+	<string name="shuffle_off">Shuffle desligado</string>
+	
+	<string name="drawer_open">Abrir bandeja de navegação</string>
+    <string name="drawer_close">Fechar bandeja de navegação</string>
+    
+    <string name="artist_all_songs">Todas as músicas</string>
+    <string name="artist_singles">Singles</string>
+    <string name="artists_plural">Artistas</string>
+    <string name="artist_singular">Artista</string>
+    <string name="artist_unknown">Artista Desconhecido</string>
+    
+    <string name="delete">Excluir</string>
+    <string name="rename">Renomear</string>
+    <string name="done">Feito</string>
+    <string name="edit">Editar</string>
+    <string name="ok">OK</string>
+    
+    <string name="send_feedback">Enviar comentários</string>
+    <string name="send">Enviar</string>
+    <string name="feedback_form_hint">Conte-nos como podemos melhorar o PlayTunes</string>
+    <string name="feedback_thanks">Obrigado pelo seu contributo!</string>
+    
+    <string name="support_plus_one">Ajude-nos com um +1</string>
+    <string name="support_rate">Apoie-nos ao classificar</string>
+    <string name="rate_beg">Por favor, classifique-nos no Google Play</string>
+    <string name="rate_app">Classifique no PlayTunes</string>
+    <string name="no_thanks">Não, obrigado</string>
+    
+    <string name="update_app">Atualizar App</string>
+    <string name="version_outdated">Esta versão do PlayTunes está desatualizado. Ir para o Google Play Store para atualizar.</string>
+    
+    <string name="playlist_name">Nome da Lista</string>
+    
+    <string name="back_warning">Pressione novamente para sair</string>
+  
+    
+</resources>
