@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">Lied</string>
+	<string name="songs_plural">Lieder</string>
+	<string name="all_songs">Alle Lieder</string>
+	<string name="dialog_title_song_options">Lied-Optionen</string>
+	
+	<string name="genres_plural">Genres</string>
+	<string name="genre_singular">Genre</string>
+	
+	<string name="playlists_plural">Wiedergabeliste</string>
+	<string name="playlists_options">Wiedergabeliste Optionen</string>
+	<string name="playlist_new">Neue Wiedergabeliste erstellen</string>
+	<string name="playlist_rename">Wiedergabeliste umbenennen</string>
+	<string name="playlist_delete">Wiedergabeliste köschen?</string>
+	<string name="playlist_editing">Wird bearbeitet...</string>
+	<string name="playlist_name_starred">Bewertet</string>
+	
+	<string name="playlist_created">Wiedergabeliste erstellt</string>
+	<string name="playlist_cant_name_starred">Wiedergabeliste kann nicht benannt werden</string>
+	<string name="playlist_did_star">Bewertetes Lied.</string>
+	<string name="playlist_add">Zur Wiedergabeliste hinzufügen</string>
+	<string name="playlist_removed">Lied aus Wiedergabeliste entfernt</string>
+	<string name="playlist_added">Lied zur Wiedergabeliste hinzugefügt</string>
+	<string name="playlist_cant_play_when_editing">Drücken Sie zum Fertigstellung der Berarbeitung auf \"Fertig\".</string>
+	<string name="playlist_added_song_to_new">Lied zur neuen Wiedergabeliste hinzugefügt</string>
+	<string name="playlist_delete_confirm">Sind Sie sicher, dass Sie diese Wiedergabeliste löschen möchten?</string>
+	<string name="playlist_enter_name">Bitte geben Sie einen Namen für die Wiedergabeliste ein.</string>
+	
+	<string name="settings">Einstellungen</string>
+	
+	<string name="discover">Entdecken</string>
+	
+	<string name="albums_plural">Alben</string>
+	<string name="album_singular">Album</string>
+	
+	<string name="search">Suche</string>
+	<string name="clear_search_history">Verlauf löschen</string>
+	<string name="search_hint">Nach Musik suchen</string>
+	<string name="see_all">Alle ansehen</string>
+	
+	<string name="activity_title_now_playing">Derzeit läuft</string>
+	<string name="activity_title_settings">PlayTunes-Einstellungen</string>
+	
+	<string name="cancel">Abbrechen</string>
+	<string name="update">Update</string>
+	
+	<string name="shuffle_on">Shuffle an</string>
+	<string name="shuffle_off">Shuffle aus</string>
+	
+	<string name="drawer_open">Navigationsleiste öffnen</string>
+    <string name="drawer_close">Navigationsleiste schließen</string>
+    
+    <string name="artist_all_songs">Alle Lieder</string>
+    <string name="artist_singles">Singles</string>
+    <string name="artists_plural">Künstler</string>
+    <string name="artist_singular">Künstler</string>
+    <string name="artist_unknown">Unbekannter Künstler</string>
+    
+    <string name="delete">Löschen</string>
+    <string name="rename">Umbenennen</string>
+    <string name="done">Fertig</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="ok">OK</string>
+    
+    <string name="send_feedback">Feedback senden</string>
+    <string name="send">Senden</string>
+    <string name="feedback_form_hint">Sagen Sie uns, wie wir PlayTunes verbessern können.</string>
+    <string name="feedback_thanks">Vielen Dank für Ihren Beitrag!</string>
+    
+    <string name="support_plus_one">Unterstützen Sie uns mit einer +1.</string>
+    <string name="support_rate">Unterstützen Sie uns durch Ihre Bewertung.</string>
+    <string name="rate_beg">Bitte bewerten Sie uns in Google Play.</string>
+    <string name="rate_app">PlayTunes bewerten</string>
+    <string name="no_thanks">Nein, danke.</string>
+    
+    <string name="update_app">App aktualisieren</string>
+    <string name="version_outdated">Diese Version von PlayTunes ist veraltet. Gehen Sie in den Google Play Store und starten Sie ein Update.</string>
+    
+    <string name="playlist_name">Wiedergabeliste-Bezeichnung</string>
+    
+    <string name="back_warning">Drücken Sie zum Beenden erneut.</string>
+  
+    
+</resources>
