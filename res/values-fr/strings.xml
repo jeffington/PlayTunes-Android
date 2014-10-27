@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">Morceau</string>
+	<string name="songs_plural">Morceaux</string>
+	<string name="all_songs">Tous les morceaux</string>
+	<string name="dialog_title_song_options">Options de morceau</string>
+	
+	<string name="genres_plural">Genres</string>
+	<string name="genre_singular">Genre</string>
+	
+	<string name="playlists_plural">Listes de lecture</string>
+	<string name="playlists_options">Options de la liste de lecture</string>
+	<string name="playlist_new">Créer une nouvelle liste de lecture</string>
+	<string name="playlist_rename">Renommer la liste de lecture</string>
+	<string name="playlist_delete">Supprimer la liste de lecture ?</string>
+	<string name="playlist_editing">Modifier</string>
+	<string name="playlist_name_starred">Favoris</string>
+	
+	<string name="playlist_created">Liste de lecture créee</string>
+	<string name="playlist_cant_name_starred">La liste de lecture ne peut pas être nommée favorite</string>
+	<string name="playlist_did_star">Morceau favori.</string>
+	<string name="playlist_add">Ajouter à la liste de lecture</string>
+	<string name="playlist_removed">Chanson supprimée de la liste de lecture.</string>
+	<string name="playlist_added">Chanson ajoutée à la liste de lecture.</string>
+	<string name="playlist_cant_play_when_editing">Appuyez sur Terminé pour terminer la modification</string>
+	<string name="playlist_added_song_to_new">Morceau ajouté à la nouvelle liste de lecture</string>
+	<string name="playlist_delete_confirm">Voulez-vous vraiment supprimer cette liste de lecture ?</string>
+	<string name="playlist_enter_name">Merci d\'entrer un nom de liste lecture.</string>
+	
+	<string name="settings">Paramètres</string>
+	
+	<string name="discover">Découvrez</string>
+	
+	<string name="albums_plural">Les albums</string>
+	<string name="album_singular">Album</string>
+	
+	<string name="search">Rechercher</string>
+	<string name="clear_search_history">Effacer l\'historique des recherches</string>
+	<string name="search_hint">Recherche de musique</string>
+	<string name="see_all">Voir tous</string>
+	
+	<string name="activity_title_now_playing">À l\'écoute</string>
+	<string name="activity_title_settings"> Paramètres PlayTunes</string>
+	
+	<string name="cancel">Annuler</string>
+	<string name="update">Mettre à jour</string>
+	
+	<string name="shuffle_on">Mode aléatoire activé</string>
+	<string name="shuffle_off">Mode aléatoire désactivé</string>
+	
+	<string name="drawer_open">Ouvrez le tiroir de navigation</string>
+    <string name="drawer_close">Fermer le menu de navigation</string>
+    
+    <string name="artist_all_songs">Tous les morceaux</string>
+    <string name="artist_singles">Singles</string>
+    <string name="artists_plural">Artistes</string>
+    <string name="artist_singular">Artiste</string>
+    <string name="artist_unknown">Artiste inconnu</string>
+    
+    <string name="delete">Supprimer</string>
+    <string name="rename">Renommer</string>
+    <string name="done">Effectué</string>
+    <string name="edit">Modifier</string>
+    <string name="ok">OK</string>
+    
+    <string name="send_feedback">Envoyer les commentaires</string>
+    <string name="send">Envoyer</string>
+    <string name="feedback_form_hint">Dites-nous comment nous pouvons améliorer PlayTunes</string>
+    <string name="feedback_thanks">Merci de votre contribution!</string>
+    
+    <string name="support_plus_one">Soutenez-nous avec un +1</string>
+    <string name="support_rate">Soutenez-nous en nous évaluant</string>
+    <string name="rate_beg">Merci de nous évaluer dans Google Play</string>
+    <string name="rate_app">Évaluez PlayTunes</string>
+    <string name="no_thanks">Non Merci</string>
+    
+    <string name="update_app">Mise à jour de l\'app</string>
+    <string name="version_outdated">Cette version de PlayTunes est obsolète. Rendez-vous sur Google Play Store pour la mettre à jour.</string>
+    
+    <string name="playlist_name">Nom de la liste de lecture</string>
+    
+    <string name="back_warning">Appuyez à nouveau pour quitter</string>
+  
+    
+</resources>
