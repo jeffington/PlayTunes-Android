@@ -77,16 +77,19 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 			
 			//holder.albumThumb.setImageURI( albumArtUri );
 			
-			
-			final BitmapWorkerTask task = new BitmapWorkerTask( holder.albumThumb, mAlbumThumbWidthPx );
-	        final AsyncDrawable asyncDrawable =
-	                new AsyncDrawable( mContext.getResources(),
-	                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
-	                		task );
-	        
-	        holder.albumThumb.setImageDrawable( asyncDrawable );
-	        
-	        task.execute( albumArtUriString );
+			if ( BitmapWorkerTask.cancelPotentialWork( albumArtUriString, holder.albumThumb ) ) {
+				
+				final BitmapWorkerTask task = new BitmapWorkerTask( holder.albumThumb, mAlbumThumbWidthPx );
+		        final AsyncDrawable asyncDrawable =
+		                new AsyncDrawable( mContext.getResources(),
+		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+		                		task );
+		        
+		        holder.albumThumb.setImageDrawable( asyncDrawable );
+		        
+		        task.execute( albumArtUriString );
+		        
+			}
 	        
 		} else {
 			

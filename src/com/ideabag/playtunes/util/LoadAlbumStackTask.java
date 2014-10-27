@@ -79,15 +79,18 @@ public class LoadAlbumStackTask extends AsyncTask<String, Void, Cursor > {
 				
 				String albumUriString = albumCovers.getString( albumCovers.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART ) );
 				
-				
-				final BitmapWorkerTask albumTask = new BitmapWorkerTask( TopRecord, mAlbumThumbWidthPx );
-		        final AsyncDrawable asyncThumbDrawable =
-		                new AsyncDrawable( mContext.getResources(),
-		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
-		                		albumTask );
-		        
-		        TopRecord.setImageDrawable( asyncThumbDrawable );
-		        albumTask.execute( albumUriString );
+				if ( BitmapWorkerTask.cancelPotentialWork( albumUriString, TopRecord ) ) {
+					
+					final BitmapWorkerTask albumTask = new BitmapWorkerTask( TopRecord, mAlbumThumbWidthPx );
+			        final AsyncDrawable asyncThumbDrawable =
+			                new AsyncDrawable( mContext.getResources(),
+			                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+			                		albumTask );
+			        
+			        TopRecord.setImageDrawable( asyncThumbDrawable );
+			        albumTask.execute( albumUriString );
+			        
+				}
 		        
 			} else {
 				
@@ -100,16 +103,19 @@ public class LoadAlbumStackTask extends AsyncTask<String, Void, Cursor > {
 				albumCovers.moveToPosition( 1 );
 				String albumUriString = albumCovers.getString( albumCovers.getColumnIndex( MediaStore.Audio.Artists.Albums.ALBUM_ART ) );
 				
-				final BitmapWorkerTask albumTask = new BitmapWorkerTask( MiddleRecord, mAlbumThumbWidthPx );
-		        final AsyncDrawable asyncThumbDrawable =
-		                new AsyncDrawable( mContext.getResources(),
-		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
-		                		albumTask );
-		        
-		        MiddleRecord.setImageDrawable( asyncThumbDrawable );
-		        albumTask.execute( albumUriString );
-		        MiddleRecord.setVisibility( View.VISIBLE );
-				
+				if ( BitmapWorkerTask.cancelPotentialWork( albumUriString, MiddleRecord ) ) {
+					
+					final BitmapWorkerTask albumTask = new BitmapWorkerTask( MiddleRecord, mAlbumThumbWidthPx );
+			        final AsyncDrawable asyncThumbDrawable =
+			                new AsyncDrawable( mContext.getResources(),
+			                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+			                		albumTask );
+			        
+			        MiddleRecord.setImageDrawable( asyncThumbDrawable );
+			        albumTask.execute( albumUriString );
+			        MiddleRecord.setVisibility( View.VISIBLE );
+			        
+				}
 				
 			} else {
 				
@@ -123,15 +129,19 @@ public class LoadAlbumStackTask extends AsyncTask<String, Void, Cursor > {
 				albumCovers.moveToPosition( 2 );
 				String albumUriString = albumCovers.getString( albumCovers.getColumnIndex(MediaStore.Audio.Artists.Albums.ALBUM_ART ) );
 				
-				final BitmapWorkerTask albumTask = new BitmapWorkerTask( BottomRecord, mAlbumThumbWidthPx );
-		        final AsyncDrawable asyncThumbDrawable =
-		                new AsyncDrawable( mContext.getResources(),
-		                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
-		                		albumTask );
-		        
-		        BottomRecord.setImageDrawable( asyncThumbDrawable );
-		        albumTask.execute( albumUriString );
-		        BottomRecord.setVisibility( View.VISIBLE );
+				if ( BitmapWorkerTask.cancelPotentialWork( albumUriString, BottomRecord ) ) {
+					
+					final BitmapWorkerTask albumTask = new BitmapWorkerTask( BottomRecord, mAlbumThumbWidthPx );
+			        final AsyncDrawable asyncThumbDrawable =
+			                new AsyncDrawable( mContext.getResources(),
+			                		null, // BitmapFactory.decodeResource( mContext.getResources(), R.drawable.no_album_art_thumb )
+			                		albumTask );
+			        
+			        BottomRecord.setImageDrawable( asyncThumbDrawable );
+			        albumTask.execute( albumUriString );
+			        BottomRecord.setVisibility( View.VISIBLE );
+			        
+				}
 				
 				
 			} else {

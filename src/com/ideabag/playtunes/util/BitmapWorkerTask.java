@@ -2,10 +2,9 @@ package com.ideabag.playtunes.util;
 
 import java.lang.ref.WeakReference;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -46,24 +45,32 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
     	final BitmapFactory.Options options = new BitmapFactory.Options();
     	path = paths[0];
     	// First decode with inJustDecodeBounds=true to check dimensions
-    		
-        if ( mImageWidth > 0 ) {
-        	
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile( path, options );
-	        int sample = calculateInSampleSize( options, mImageWidth, mImageWidth );
-	        //android.util.Log.i( "BitmapWorkerTask", "Sample: " + sample + " desired width: " + mImageWidth );
-	        // Calculate inSampleSize
-	        options.inSampleSize = sample;
-	
-	        // Decode bitmap with inSampleSize set
+    	Bitmap bmp = null;
+    	
+    	if ( !isCancelled() ) {
+	    	
+	        if ( mImageWidth > 0 ) {
+	        	
+	            options.inJustDecodeBounds = true;
+	            BitmapFactory.decodeFile( path, options );
+		        int sample = calculateInSampleSize( options, mImageWidth, mImageWidth );
+		        //android.util.Log.i( "BitmapWorkerTask", "Sample: " + sample + " desired width: " + mImageWidth );
+		        // Calculate inSampleSize
+		        options.inSampleSize = sample;
+		        
+		        // Decode bitmap with inSampleSize set
+		        
+	        }
+	        options.inJustDecodeBounds = false;
 	        
-        }
-        options.inJustDecodeBounds = false;
-        Bitmap bmp = BitmapFactory.decodeFile( path, options );
-    	//BitmapFactory.Options options = new BitmapFactory.Options();
-
-        
+	        
+	        if ( !isCancelled() ) {
+	        	
+	        	bmp = BitmapFactory.decodeFile( path, options );
+	        	
+	        }
+	        
+    	}
         
         return bmp;
     }
@@ -71,6 +78,12 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
     // Once complete, see if ImageView is still around and set bitmap.
     @Override
     protected void onPostExecute( Bitmap bitmap ) {
+    	
+    	if ( isCancelled() ) {
+    		
+    		bitmap = null;
+    		
+    	}
     	
         if ( imageViewReference != null && bitmap != null ) {
         	
@@ -85,10 +98,28 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         
     }
     
+    private static BitmapWorkerTask getBitmapWorkerTask( ImageView imageView ) {
+    		
+    	   if ( imageView != null ) {
+    		   
+    	       final Drawable drawable = imageView.getDrawable();
+    	       
+    	       if ( drawable instanceof AsyncDrawable ) {
+    	           
+    	    	   final AsyncDrawable asyncDrawable = ( AsyncDrawable ) drawable;
+    	           return asyncDrawable.getBitmapWorkerTask();
+    	           
+    	       }
+    	       
+    	   }
+    	    
+    	   return null;
+    	    
+    }
     
     public static boolean cancelPotentialWork( String data, ImageView imageView ) {
     	
-        final BitmapWorkerTask bitmapWorkerTask = null;//getBitmapWorkerTask(imageView);
+        final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask( imageView );
 
         if ( bitmapWorkerTask != null ) {
         	
@@ -106,6 +137,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         }
         // No task associated with the ImageView, or an existing task was cancelled
         return true;
+        
     }
     
     
