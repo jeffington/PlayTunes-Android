@@ -92,13 +92,13 @@ public class CreatePlaylistDialogFragment extends DialogFragment implements OnEd
     	
     	if ( null == playlistName || playlistName.length() < 1 ) {
     		
-    		Toast.makeText(getActivity(), "Please enter a playlist name.", Toast.LENGTH_SHORT ).show();
+    		Toast.makeText( getActivity(), getString( R.string.playlist_enter_name ), Toast.LENGTH_SHORT ).show();
     		
     	} else {
     		
     		if ( playlistName.toLowerCase().equals( getString( R.string.playlist_name_starred ).toLowerCase() ) ) {
     			
-    			Toast.makeText(getActivity(), "Your playlist can't be named `Starred`.", Toast.LENGTH_SHORT ).show();
+    			Toast.makeText( getActivity(), getString( R.string.playlist_cant_name_starred ), Toast.LENGTH_SHORT ).show();
     			
     		} else {
 	    		
@@ -108,11 +108,11 @@ public class CreatePlaylistDialogFragment extends DialogFragment implements OnEd
 	    			
 	    			mPlaylistManager.addSong( "" + playlist_id, mMediaID );
 	    			
-	    			Toast.makeText(getActivity(), "Added song to new playlist " + playlistName, Toast.LENGTH_SHORT ).show();
+	    			Toast.makeText( getActivity(), getString( R.string.playlist_added_song_to_new )  + " " + playlistName, Toast.LENGTH_SHORT ).show();
 	    			
 	    		} else {
 	    			
-	    			Toast.makeText(getActivity(), "Created playlist " + playlistName, Toast.LENGTH_SHORT ).show();
+	    			Toast.makeText( getActivity(), getString( R.string.playlist_created ) + " " + playlistName, Toast.LENGTH_SHORT ).show();
 	    			
 	    		}
 	    		
