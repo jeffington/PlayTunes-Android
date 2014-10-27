@@ -94,6 +94,8 @@ public class SongMenuDialogFragment extends DialogFragment {
 			
 			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
 				
+				mResult.moveToFirst();
+				
 				String songArtist = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ARTIST ) );
 		        String songArtistID = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ARTIST_ID ) );
 		        String songAlbum = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ALBUM ) );
