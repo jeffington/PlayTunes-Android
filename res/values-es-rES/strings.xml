@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">Canción</string>
+	<string name="songs_plural">Canciones</string>
+	<string name="all_songs">Todas las canciones</string>
+	<string name="dialog_title_song_options">Opciones de canciones</string>
+	
+	<string name="genres_plural">Géneros</string>
+	<string name="genre_singular">Género</string>
+	
+	<string name="playlists_plural">Listas de reproducción</string>
+	<string name="playlists_options">Opciones de la lista de reproducción</string>
+	<string name="playlist_new">Crear nueva lista de reproducción</string>
+	<string name="playlist_rename">Cambiar el nombre de la lista de reproducción</string>
+	<string name="playlist_delete">¿Borrar lista de reproducción?</string>
+	<string name="playlist_editing">Edición</string>
+	<string name="playlist_name_starred">Con Estrella</string>
+	
+	<string name="playlist_created">Lista de reproducción creada</string>
+	<string name="playlist_cant_name_starred">La lista de reproducción no puede ser nombrada \"Con estrellas\"</string>
+	<string name="playlist_did_star">Canción con estrellas.</string>
+	<string name="playlist_add">Añadir a lista de reproducción</string>
+	<string name="playlist_removed">Canción eliminada de la lista de reproducción.</string>
+	<string name="playlist_added">Canción agregada a lista de reproducción.</string>
+	<string name="playlist_cant_play_when_editing">Oprima Listo para finalizar la edición</string>
+	<string name="playlist_added_song_to_new">Canción agregada a la nueva lista de reproducción</string>
+	<string name="playlist_delete_confirm">¿Está seguro que desea eliminar esta lista de reproducción?</string>
+	<string name="playlist_enter_name">Por favor, introduzca un nombre para la lista de reproducción.</string>
+	
+	<string name="settings">Ajustes</string>
+	
+	<string name="discover">Descubrir</string>
+	
+	<string name="albums_plural">Álbumes</string>
+	<string name="album_singular">Álbum</string>
+	
+	<string name="search">Búsqueda</string>
+	<string name="clear_search_history">Limpiar el historial de búsqueda</string>
+	<string name="search_hint">Buscar Música</string>
+	<string name="see_all">Ver Todos</string>
+	
+	<string name="activity_title_now_playing">Reproduciendo ahora</string>
+	<string name="activity_title_settings">Ajustes de PlayTunes</string>
+	
+	<string name="cancel">Cancelar</string>
+	<string name="update">Actualización</string>
+	
+	<string name="shuffle_on">Reproducción aleatoria activada</string>
+	<string name="shuffle_off">Reproducción aleatoria desactivada</string>
+	
+	<string name="drawer_open">Abrir el cajón de navegación</string>
+    <string name="drawer_close">Cerrar el cajón de navegación</string>
+    
+    <string name="artist_all_songs">Todas las canciones</string>
+    <string name="artist_singles">Singles</string>
+    <string name="artists_plural">Artistas</string>
+    <string name="artist_singular">Artista</string>
+    <string name="artist_unknown">Artista Desconocido</string>
+    
+    <string name="delete">Borrar</string>
+    <string name="rename">Renombrar</string>
+    <string name="done">Listo</string>
+    <string name="edit">Editar</string>
+    <string name="ok">OK</string>
+    
+    <string name="send_feedback">Enviar comentarios</string>
+    <string name="send">Enviar</string>
+    <string name="feedback_form_hint">Díganos cómo podemos mejorar PlayTunes</string>
+    <string name="feedback_thanks">¡Gracias por su comentario!</string>
+    
+    <string name="support_plus_one">Apóyenos con un +1</string>
+    <string name="support_rate">Apóyenos con una calificación</string>
+    <string name="rate_beg">Por favor evalúenos en Google Play</string>
+    <string name="rate_app">Evalúe PlayTunes</string>
+    <string name="no_thanks">No, gracias</string>
+    
+    <string name="update_app">Actualizar App</string>
+    <string name="version_outdated">Esta versión de PlayTunes no está actualizada. Ir a Google Play Store para actualizar.</string>
+    
+    <string name="playlist_name">Nombre de la lista de reproducción</string>
+    
+    <string name="back_warning">Presione nuevamente para salir</string>
+  
+    
+</resources>
