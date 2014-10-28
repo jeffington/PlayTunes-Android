@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">गाना</string>
+	<string name="songs_plural">गाने</string>
+	<string name="all_songs">सभी गाने</string>
+	<string name="dialog_title_song_options">गाने के विकल्प</string>
+	
+	<string name="genres_plural">शैलियां</string>
+	<string name="genre_singular">शैली</string>
+	
+	<string name="playlists_plural">प्लेसूची</string>
+	<string name="playlists_options">प्लेसूची</string>
+	<string name="playlist_new">नया प्लेलिस्ट बनाएँ</string>
+	<string name="playlist_rename">प्लेलिस्ट का नाम बदलें</string>
+	<string name="playlist_delete">प्लेलिस्ट हटाएँ?</string>
+	<string name="playlist_editing">संपादन</string>
+	<string name="playlist_name_starred">तारांकित</string>
+	
+	<string name="playlist_created">बनाया गया प्लेलिस्ट</string>
+	<string name="playlist_cant_name_starred">प्लेलिस्ट का नाम तारांकित नहीं किया जा सकता है</string>
+	<string name="playlist_did_star">तारांकित गाने.</string>
+	<string name="playlist_add">प्लेलिस्ट में जोड़ें</string>
+	<string name="playlist_removed">प्लेलिस्ट से गाना हटाया गया</string>
+	<string name="playlist_added">प्लेलिस्ट में गाना जोड़ा गया</string>
+	<string name="playlist_cant_play_when_editing">संपादन समाप्त करने के लिए संपन्न दबाएँ</string>
+	<string name="playlist_added_song_to_new">नया प्लेलिस्ट में गाना जोड़ा गया</string>
+	<string name="playlist_delete_confirm">क्या आप निश्चित रूप से इस प्लेलिस्ट को हटाना चाहते हैं?</string>
+	<string name="playlist_enter_name">कृपया प्लेलिस्ट का नाम दर्ज करें।</string>
+	
+	<string name="settings">सेटिंग्स</string>
+	
+	<string name="discover">पता लगाएँ</string>
+	
+	<string name="albums_plural">एल्बम्स</string>
+	<string name="album_singular">एल्बम</string>
+	
+	<string name="search">खोजें</string>
+	<string name="clear_search_history">खोज इतिहास साफ करें</string>
+	<string name="search_hint">संगीत की खोज करें</string>
+	<string name="see_all">सभी को देखें</string>
+	
+	<string name="activity_title_now_playing">अब चल रहा है</string>
+	<string name="activity_title_settings">PlayTunes सेटिंग्स</string>
+	
+	<string name="cancel">रद्द करें</string>
+	<string name="update">अपडेट करें</string>
+	
+	<string name="shuffle_on">शफ़ल चालू</string>
+	<string name="shuffle_off">शफ़ल बंद</string>
+	
+	<string name="drawer_open">नेविगेशन दराज खोलें</string>
+    <string name="drawer_close">नेविगेशन दराज बंद करें</string>
+    
+    <string name="artist_all_songs">सभी गाने</string>
+    <string name="artist_singles">एकल</string>
+    <string name="artists_plural">कलाकार</string>
+    <string name="artist_singular">कलाकार</string>
+    <string name="artist_unknown">अज्ञात कलाकार</string>
+    
+    <string name="delete">हटाएँ</string>
+    <string name="rename">नाम बदलें</string>
+    <string name="done">संपन्न</string>
+    <string name="edit">संपादित करें</string>
+    <string name="ok">ठीक</string>
+    
+    <string name="send_feedback">फ़ीडबैक भेजें</string>
+    <string name="send">भेजें</string>
+    <string name="feedback_form_hint">हमें बताएँ कि हम PlayTunes में किस प्रकार सुधार कर सकते हैं</string>
+    <string name="feedback_thanks">आपके इनपुट के लिए धन्यवाद!</string>
+    
+    <string name="support_plus_one">a +1 के जरिए हमारी सहायता करें</string>
+    <string name="support_rate">रेट करके हमारी सहायता करें</string>
+    <string name="rate_beg">कृपया हमें Google Play में रेट करें</string>
+    <string name="rate_app">PlayTunes को रेट करें</string>
+    <string name="no_thanks">नहीं, धन्यवाद</string>
+    
+    <string name="update_app">ऐप्प को अपडेट करें</string>
+    <string name="version_outdated">PlayTunes का यह संस्करण पुराना है। अपडेट करने के लिए Google Play Store पर जाएँ।</string>
+    
+    <string name="playlist_name">प्लेलिस्ट का नाम</string>
+    
+    <string name="back_warning">बाहर जाने के लिए पुनः दबाएँ</string>
+  
+    
+</resources>
