@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">Música</string>
+	<string name="songs_plural">Músicas</string>
+	<string name="all_songs">Todas as músicas</string>
+	<string name="dialog_title_song_options">Opções de música</string>
+	
+	<string name="genres_plural">Gêneros</string>
+	<string name="genre_singular">Gênero</string>
+	
+	<string name="playlists_plural">Listas de reprodução</string>
+	<string name="playlists_options">Opções da lista de reprodução</string>
+	<string name="playlist_new">Criar nova lista de reprodução</string>
+	<string name="playlist_rename">Renomear lista de reprodução</string>
+	<string name="playlist_delete">Excluir lista de reprodução?</string>
+	<string name="playlist_editing">Editando</string>
+	<string name="playlist_name_starred">Marcado</string>
+	
+	<string name="playlist_created">Lista de reprodução criada</string>
+	<string name="playlist_cant_name_starred">A lista de reprodução não pode ser nomeada como Marcada</string>
+	<string name="playlist_did_star">Música marcada.</string>
+	<string name="playlist_add">Adicionar à lista de reprodução</string>
+	<string name="playlist_removed">Música removida da lista de reprodução.</string>
+	<string name="playlist_added">Música adicionada à lista de reprodução.</string>
+	<string name="playlist_cant_play_when_editing">Pressione Concluído para terminar a edição</string>
+	<string name="playlist_added_song_to_new">Música adicionada à nova lista de reprodução</string>
+	<string name="playlist_delete_confirm">Tem certeza de que deseja excluir esta lista de reprodução?</string>
+	<string name="playlist_enter_name">Insira um nome de lista de reprodução.</string>
+	
+	<string name="settings">Configurações</string>
+	
+	<string name="discover">Descobrir</string>
+	
+	<string name="albums_plural">Álbuns</string>
+	<string name="album_singular">Álbum</string>
+	
+	<string name="search">Pesquisar</string>
+	<string name="clear_search_history">Limpar histórico de pesquisa</string>
+	<string name="search_hint">Procurar música</string>
+	<string name="see_all">Ver tudo</string>
+	
+	<string name="activity_title_now_playing">Agora reproduzindo</string>
+	<string name="activity_title_settings">Configurações do PlayTunes</string>
+	
+	<string name="cancel">Cancelar</string>
+	<string name="update">Atualizar</string>
+	
+	<string name="shuffle_on">Mistura ativada</string>
+	<string name="shuffle_off">Mistura desativada</string>
+	
+	<string name="drawer_open">Abrir gaveta de navegação</string>
+    <string name="drawer_close">Fechar gaveta de navegação</string>
+    
+    <string name="artist_all_songs">Todas as músicas</string>
+    <string name="artist_singles">Singles</string>
+    <string name="artists_plural">Artistas</string>
+    <string name="artist_singular">Artista</string>
+    <string name="artist_unknown">Artista desconhecido</string>
+    
+    <string name="delete">Excluir</string>
+    <string name="rename">Renomear</string>
+    <string name="done">Concluído</string>
+    <string name="edit">Editar</string>
+    <string name="ok">OK</string>
+    
+    <string name="send_feedback">Enviar comentários</string>
+    <string name="send">Enviar</string>
+    <string name="feedback_form_hint">Diga-nos como podemos melhorar o PlayTunes</string>
+    <string name="feedback_thanks">Obrigado pela sua contribuição!</string>
+    
+    <string name="support_plus_one">Ajude-nos com um +1</string>
+    <string name="support_rate">Ajude-nos avaliando</string>
+    <string name="rate_beg">Avalie-nos no Google Play</string>
+    <string name="rate_app">Avalie o PlayTunes</string>
+    <string name="no_thanks">Não, obrigado</string>
+    
+    <string name="update_app">Atualizar aplicativo</string>
+    <string name="version_outdated">Esta versão do PlayTunes está desatualizada. Acesse o Google Play Store para atualizar.</string>
+    
+    <string name="playlist_name">Nome da lista de reprodução</string>
+    
+    <string name="back_warning">Pressione novamente para sair</string>
+  
+    
+</resources>
