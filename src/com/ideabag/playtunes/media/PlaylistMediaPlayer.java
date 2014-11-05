@@ -12,6 +12,7 @@ import com.ideabag.playtunes.database.MediaQuery;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
 import android.provider.MediaStore;
@@ -84,6 +85,7 @@ public class PlaylistMediaPlayer {
 		
 		
 		mMediaPlayer = new MediaPlayer();
+		mMediaPlayer.setAudioStreamType( AudioManager.STREAM_MUSIC );
 		
 		mMediaPlayer.setOnCompletionListener( loopOnCompletionListener );
 		mMediaPlayer.setOnPreparedListener( onPreparedListener );
