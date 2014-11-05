@@ -49,8 +49,8 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		if ( mCursor != null ) {
 			
 			mCursor.moveToPosition( position );
-			
-			mID = mCursor.getInt( mCursor.getColumnIndex( MediaStore.Audio.Media._ID ) );
+			// TODO: Remember, in any playlist or song query, the first field _MUST_ be a media _id
+			mID = mCursor.getInt( 0 );
 			
 		}
 		
