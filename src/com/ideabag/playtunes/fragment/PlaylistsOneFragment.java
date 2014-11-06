@@ -289,7 +289,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 				
 			} else {
 				
-				showSongMenuDialog( "" + adapter.getItemId( position ) );
+				showSongMenuDialog( "" + id );
 				
 			}
 			
