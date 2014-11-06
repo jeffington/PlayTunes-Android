@@ -10,14 +10,10 @@ import com.ideabag.playtunes.service.PlaybackNotification;
 import com.ideabag.playtunes.util.CheckRemoteVersionFileTask;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.content.ComponentName;
 import android.content.Context;
