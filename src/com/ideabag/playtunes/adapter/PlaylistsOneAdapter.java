@@ -1,17 +1,13 @@
 package com.ideabag.playtunes.adapter;
 
-import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.util.StarToggleTask;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
