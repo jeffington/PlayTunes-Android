@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">Песня</string>
+	<string name="songs_plural">Песни</string>
+	<string name="all_songs">Все песни</string>
+	<string name="dialog_title_song_options">Параметры песни</string>
+	
+	<string name="genres_plural">Жанры</string>
+	<string name="genre_singular">Жанр</string>
+	
+	<string name="playlists_plural">Списки воспроизведения</string>
+	<string name="playlists_options">Параметры списка воспроизведения</string>
+	<string name="playlist_new">Создать новый список воспроизведения</string>
+	<string name="playlist_rename">Переименовать список воспроизведения</string>
+	<string name="playlist_delete">Удалить список воспроизведения?</string>
+	<string name="playlist_editing">Редактирование</string>
+	<string name="playlist_name_starred">Избранное</string>
+	
+	<string name="playlist_created">Список воспроизведения создан</string>
+	<string name="playlist_cant_name_starred">Список воспроизведения не может называться \"Избранное\"</string>
+	<string name="playlist_did_star">Избранная песня.</string>
+	<string name="playlist_add">Добавить в список воспроизведения</string>
+	<string name="playlist_removed">Песня удалена из списка воспроизведения.</string>
+	<string name="playlist_added">Песня добавлена в список воспроизведения.</string>
+	<string name="playlist_cant_play_when_editing">Нажмите \"Готово\", чтобы завершить редактирование</string>
+	<string name="playlist_added_song_to_new">Песня добавлена в новый список воспроизведения</string>
+	<string name="playlist_delete_confirm">Действительно удалить этот список воспроизведения?</string>
+	<string name="playlist_enter_name">Введите название списка воспроизведения.</string>
+	
+	<string name="settings">Настройки</string>
+	
+	<string name="discover">Узнать новое</string>
+	
+	<string name="albums_plural">Альбомы</string>
+	<string name="album_singular">Альбом</string>
+	
+	<string name="search">Поиск</string>
+	<string name="clear_search_history">Очистить историю поиска</string>
+	<string name="search_hint">Поиск музыки</string>
+	<string name="see_all">Отображать все</string>
+	
+	<string name="activity_title_now_playing">Сейчас играет</string>
+	<string name="activity_title_settings">Настройки PlayTunes</string>
+	
+	<string name="cancel">Отмена</string>
+	<string name="update">Обновить</string>
+	
+	<string name="shuffle_on">Проигрывать в случайном порядке</string>
+	<string name="shuffle_off">Проигрывать по порядку</string>
+	
+	<string name="drawer_open">Открыть панель навигации</string>
+    <string name="drawer_close">Закрыть панель навигации</string>
+    
+    <string name="artist_all_songs">Все песни</string>
+    <string name="artist_singles">Синглы</string>
+    <string name="artists_plural">Исполнители</string>
+    <string name="artist_singular">Исполнитель</string>
+    <string name="artist_unknown">Неизвестный исполнитель</string>
+    
+    <string name="delete">Удалить</string>
+    <string name="rename">Переименовать</string>
+    <string name="done">Готово</string>
+    <string name="edit">Редактировать</string>
+    <string name="ok">ОК</string>
+    
+    <string name="send_feedback">Отправить отзыв</string>
+    <string name="send">Отправить</string>
+    <string name="feedback_form_hint">Расскажите, как мы можем улучшить PlayTunes</string>
+    <string name="feedback_thanks">Спасибо за ваш отзыв!</string>
+    
+    <string name="support_plus_one">Поддержите нас. Поставьте +1</string>
+    <string name="support_rate">Поддержите нас. Поставьте оценку</string>
+    <string name="rate_beg">Оцените нас на Google Play</string>
+    <string name="rate_app">Оценить PlayTunes</string>
+    <string name="no_thanks">Нет, спасибо</string>
+    
+    <string name="update_app">Обновить приложение</string>
+    <string name="version_outdated">Ваша версия PlayTunes устарела. Обновите ее в магазине Google Play.</string>
+    
+    <string name="playlist_name">Название списка воспроизведения</string>
+    
+    <string name="back_warning">Нажмите еще раз, чтобы выйти</string>
+  
+    
+</resources>
