@@ -41,6 +41,8 @@ public class PlaybackNotification {
 	
 	private String MEDIA_ID;
 	
+	private String mSongTitle, mSongArtist;
+	
 	public PlaybackNotification( Context context ) {
 		
 		mContext = context;
@@ -116,8 +118,8 @@ public class PlaybackNotification {
 					
 					mResult.moveToFirst();
 					
-					String title = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
-					String artist = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
+					mSongTitle = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
+					mSongArtist = mResult.getString( mResult.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST ) );
 					
 					if ( android.os.Build.VERSION.SDK_INT >= 11 ) {
 						
@@ -171,8 +173,8 @@ public class PlaybackNotification {
 						
 					}
 					
-					mRemoteViews.setTextViewText( R.id.NotificationSongName, title );
-					mRemoteViews.setTextViewText( R.id.NotificationArtistName, artist );
+					mRemoteViews.setTextViewText( R.id.NotificationSongName, mSongTitle );
+					mRemoteViews.setTextViewText( R.id.NotificationArtistName, mSongArtist );
 					
 					if ( isShowing ) {
 						
@@ -233,7 +235,7 @@ public class PlaybackNotification {
 	
 	public void show() {
 		
-		String tickerString = "";
+		String tickerString = mSongTitle + " " + DASH_SYMBOL + " " + mSongArtist;
 		
 		NotificationCompat.Builder mBuilder =
 		        new NotificationCompat.Builder( mContext )
