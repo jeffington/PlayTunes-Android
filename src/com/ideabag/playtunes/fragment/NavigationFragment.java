@@ -5,7 +5,6 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.SettingsActivity;
 import com.ideabag.playtunes.adapter.NavigationListAdapter;
-import com.ideabag.playtunes.dialog.FeedbackDialogFragment;
 import com.ideabag.playtunes.fragment.search.SearchFragment;
 
 import android.app.Activity;
@@ -15,11 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -80,7 +76,8 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
         //mActionBar.setIcon( android.R.color.transparent ); 
         mActionBar.setDisplayShowHomeEnabled( false );
         mFragmentManager = mActivity.getSupportFragmentManager();
-		        
+		
+        
 	}
 	
 	
@@ -124,13 +121,13 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		// Set up navigation drawer ( if we have one )
 		// 
 		
-		 View mDrawerView = getActivity().findViewById( R.id.drawer_layout );
-	        
-		 if ( null != mDrawerView ) {
+		View mDrawerView = getActivity().findViewById( R.id.drawer_layout );
+	    
+		if ( null != mDrawerView ) {
 		        
-	        	mDrawerLayout = ( DrawerLayout ) mDrawerView;
+	        mDrawerLayout = ( DrawerLayout ) mDrawerView;
 	        	
-		        mDrawerLayout.setDrawerShadow( R.drawable.drawer_shadow, GravityCompat.START );
+		    mDrawerLayout.setDrawerShadow( R.drawable.drawer_shadow, GravityCompat.START );
 		        
 		        mDrawerToggle = new ActionBarDrawerToggle(
 		        		mActivity,
@@ -159,11 +156,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		            public void onDrawerSlide( View drawerView, float slideOffset ) {
 		            	super.onDrawerSlide( drawerView, slideOffset);
 		            	
-		            	if ( slideOffset > mPreviousOffset && !mActivity.mShouldHideActionItems ) {
+		            	if ( slideOffset > mPreviousOffset ) {
 		                	
 		            		configureActionBarDrawerOpen();
 		                	
-		               } else if ( mPreviousOffset > slideOffset && slideOffset < 0.5f && mActivity.mShouldHideActionItems ) {
+		               } else if ( mPreviousOffset > slideOffset && slideOffset < 0.5f ) {
 		            	   
 		            	   configureActionBarDrawerClosed();
 		            	   
@@ -201,7 +198,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     
     private void configureActionBarDrawerOpen() {
     	
-    	mActivity.mShouldHideActionItems = true;
+    	//mActivity.mShouldHideActionItems = true;
     	
 		//mActivity.setActionbarTitle( (String) mActionBar.getTitle() );
 		//mActivity.setActionbarSubtitle( (String) mActionBar.getSubtitle() );
@@ -209,7 +206,7 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		mActionBar.setTitle( getString( R.string.app_name ) );
     	mActionBar.setSubtitle( null );
     	
-    	mActionBar.setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+    	mActionBar.setDisplayShowCustomEnabled( false );
     	//mActionBar.setDisplayUseLogoEnabled( false );
     	mActionBar.setDisplayShowHomeEnabled( true );
     	mActivity.supportInvalidateOptionsMenu();
@@ -218,19 +215,44 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     
     private void configureActionBarDrawerClosed() {
     	
-    	mActivity.mShouldHideActionItems = false;
-    	mActionBar.setTitle( mActionbarTitle );
+    	//mActivity.mShouldHideActionItems = false;
+    	
+    	if ( mActionbarTitle != null && mActionbarTitle.equals( "*" ) ) {
+    		
+    		mActionBar.setDisplayShowHomeEnabled( true );
+    		
+    	} else {
+    		
+    		mActionBar.setDisplayShowHomeEnabled( false );
+    		mActionBar.setTitle( mActionbarTitle );
+    		
+    	}
     	mActionBar.setSubtitle( mActionbarSubtitle );
     	
-    	mActivity.getSupportActionBar().setDisplayShowCustomEnabled( !mActivity.mShouldHideActionItems );
+    	mActivity.getSupportActionBar().setDisplayShowCustomEnabled( true );
     	//mActionBar.setDisplayUseLogoEnabled( true );
-    	mActionBar.setDisplayShowHomeEnabled( false );
+    	
     	mActivity.supportInvalidateOptionsMenu();
     }
     
 	
 	@Override public void onResume() {
 		super.onResume();
+		
+		if ( mDrawerLayout != null ) {
+			
+			if ( mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
+	    		
+				configureActionBarDrawerClosed();
+				
+			} else {
+				
+				configureActionBarDrawerOpen();
+				
+			}
+			
+		}
+		
 	}
 	
 	@Override public void onPause() {
@@ -396,7 +418,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 		// Set the ActionBar title if the drawer is closed, otherwise just hold onto it for later
 		if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
 			
-			mActionBar.setTitle( mActionbarTitle );
+			if ( null != titleString && !titleString.equals( "*" ) ) {
+				
+				mActionBar.setTitle( mActionbarTitle );
+				
+			}
 			
 		}
 		
