@@ -288,7 +288,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected( item );
         
     }
-	
+	/*
 	@Override public boolean onPrepareOptionsMenu( Menu menu ) {
 
 	    // If the nav drawer is open, hide action items related to the content view
@@ -299,7 +299,7 @@ public class MainActivity extends ActionBarActivity {
 	    return super.onPrepareOptionsMenu( menu );
 	    
 	}
-	
+	/*
 	public boolean mShowSearch = true;
 	
 	private void hideMenuItems( Menu menu, boolean visible ) {
@@ -322,7 +322,7 @@ public class MainActivity extends ActionBarActivity {
 	    }
 	    
 	}
-	
+	*/
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
