@@ -61,8 +61,6 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		
 		mActivity.setActionbarTitle( null );
     	mActivity.setActionbarSubtitle( null );
-    	mActivity.mShowSearch = false;
-    	mActivity.supportInvalidateOptionsMenu();
 		
 	}
 	
@@ -142,18 +140,6 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 			}
 			
 		});
-		/*
-		mQueryTextView.setOnKeyListener( new OnKeyListener() {
-
-			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
-				
-				
-				return false;
-				
-			}
-			
-		});
-		*/
 		
 		
 		if ( null != mSearchQuery ) {
@@ -196,22 +182,12 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 	@Override public void onResume() {
 		super.onResume();
 		
-		mActivity.setActionbarTitle( null );
+		mActivity.setActionbarTitle( "*" );
     	mActivity.setActionbarSubtitle( null );
-    	mActivity.mShowSearch = false;
-    	mActivity.supportInvalidateOptionsMenu();
-		
+    	mActivity.getSupportActionBar().setDisplayShowCustomEnabled( true );
     	
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
-		/*
-		//t.set( "_count", ""+adapter.getCount() );
-		tracker.send( new HitBuilders.EventBuilder()
-    	.setCategory( "playlist" )
-    	.setAction( "show" )
-    	.setLabel( TAG )
-    	.setValue( adapter.getCount() )
-    	.build());
-		*/
+		
 	}
 	
 	@Override public void onDestroyView() {
@@ -221,8 +197,7 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		ActionBar bar = mActivity.getSupportActionBar();
 		bar.getCustomView().setVisibility( View.GONE );
 		bar.setCustomView( null );
-		mActivity.mShowSearch = true;
-    	mActivity.supportInvalidateOptionsMenu();
+		mActivity.supportInvalidateOptionsMenu();
 		//mActivity.supportInvalidateOptionsMenu();
 		
 	}
