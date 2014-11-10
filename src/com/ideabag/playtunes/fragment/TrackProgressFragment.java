@@ -160,7 +160,11 @@ public class TrackProgressFragment extends Fragment {
 		
 		mPlayPosition.setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
 		
-		startProgress();
+		if ( isPlaying ) {
+			
+			startProgress();
+			
+		}
 		
 	}
 	
