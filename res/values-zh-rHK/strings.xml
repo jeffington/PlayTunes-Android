@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	
+	<string name="song_singular">歌曲</string>
+	<string name="songs_plural">歌曲</string>
+	<string name="all_songs">全部歌曲</string>
+	<string name="dialog_title_song_options">歌曲選項</string>
+	
+	<string name="genres_plural">流派</string>
+	<string name="genre_singular">流派</string>
+	
+	<string name="playlists_plural">播放清單</string>
+	<string name="playlists_options">播放清單選項</string>
+	<string name="playlist_new">新建播放清單</string>
+	<string name="playlist_rename">重命名播放清單</string>
+	<string name="playlist_delete">是否刪除播放清單？</string>
+	<string name="playlist_editing">編輯</string>
+	<string name="playlist_name_starred">星標</string>
+	
+	<string name="playlist_created">已建立的播放清單</string>
+	<string name="playlist_cant_name_starred">播放清單無法命名為星標</string>
+	<string name="playlist_did_star">星標歌曲。</string>
+	<string name="playlist_add">添加至播放清單</string>
+	<string name="playlist_removed">已自播放清單移除。</string>
+	<string name="playlist_added">歌曲已添加至播放清單。</string>
+	<string name="playlist_cant_play_when_editing">按「完成」以完成編輯。</string>
+	<string name="playlist_added_song_to_new">歌曲已添加至新播放清單</string>
+	<string name="playlist_delete_confirm">是否確定要刪除此播放清單？</string>
+	<string name="playlist_enter_name">請輸入一個播放清單名稱。</string>
+	
+	<string name="settings">設定</string>
+	
+	<string name="discover">發現</string>
+	
+	<string name="albums_plural">專輯</string>
+	<string name="album_singular">專輯</string>
+	
+	<string name="search">搜尋</string>
+	<string name="clear_search_history">清除搜尋歷史</string>
+	<string name="search_hint">搜尋音樂</string>
+	<string name="see_all">查看全部</string>
+	
+	<string name="activity_title_now_playing">正在播放</string>
+	<string name="activity_title_settings">PlayTunes 設定</string>
+	
+	<string name="cancel">取消</string>
+	<string name="update">更新</string>
+	
+	<string name="shuffle_on">隨機播放開啟</string>
+	<string name="shuffle_off">隨機播放關閉</string>
+	
+	<string name="drawer_open">打開導航抽屜</string>
+    <string name="drawer_close">關閉導航抽屜</string>
+    
+    <string name="artist_all_songs">全部歌曲</string>
+    <string name="artist_singles">單曲</string>
+    <string name="artists_plural">藝術家</string>
+    <string name="artist_singular">藝術家</string>
+    <string name="artist_unknown">未知藝術家</string>
+    
+    <string name="delete">刪除</string>
+    <string name="rename">重命名</string>
+    <string name="done">完成</string>
+    <string name="edit">編輯</string>
+    <string name="ok">確定</string>
+    
+    <string name="send_feedback">發送回饋</string>
+    <string name="send">發送</string>
+    <string name="feedback_form_hint">告知我們可如何改進 PlayTunes</string>
+    <string name="feedback_thanks">感謝您的意見！</string>
+    
+    <string name="support_plus_one">利用 +1 支持我們</string>
+    <string name="support_rate">透過評價支持我們</string>
+    <string name="rate_beg">請在 Google Play 中評價我們</string>
+    <string name="rate_app">評價 PlayTunes</string>
+    <string name="no_thanks">不，謝謝</string>
+    
+    <string name="update_app">更新應用程式</string>
+    <string name="version_outdated">該版本的 PlayTunes 已過期。前往 Google Play Store 以更新。</string>
+    
+    <string name="playlist_name">播放清單名稱</string>
+    
+    <string name="back_warning">再按一下以退出</string>
+  
+    
+</resources>
