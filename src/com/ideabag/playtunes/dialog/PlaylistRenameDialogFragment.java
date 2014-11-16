@@ -86,10 +86,10 @@ public class PlaylistRenameDialogFragment extends DialogFragment implements OnEd
         mEditText.setSelected( false );
         
         mEditText.setText( mPlaylistName );
+        android.util.Log.i( "Rename playlist", "old name: " + mPlaylistName );
         
         view.findViewById( R.id.DialogRenameConfirm ).setOnClickListener( headerButtonClickListener );
         view.findViewById( R.id.DialogRenameCancel ).setOnClickListener( headerButtonClickListener );
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener ); 
         
         return view;
         
@@ -109,7 +109,7 @@ public class PlaylistRenameDialogFragment extends DialogFragment implements OnEd
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton || id == R.id.DialogRenameCancel ) {
+			if ( id == R.id.DialogRenameCancel ) {
 				
 				dismiss();
 				

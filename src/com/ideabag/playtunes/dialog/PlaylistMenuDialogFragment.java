@@ -34,7 +34,7 @@ public class PlaylistMenuDialogFragment extends DialogFragment {
         //mEditText = (EditText) view.findViewById(R.id.txt_your_name);
         getDialog().requestWindowFeature( Window.FEATURE_NO_TITLE );
         
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( mMenuClickListener );
+        view.findViewById( R.id.ButtonCancel ).setOnClickListener( mMenuClickListener );
         view.findViewById( R.id.PlaylistOptionsRename ).setOnClickListener( mMenuClickListener );
         view.findViewById( R.id.PlaylistOptionsDelete ).setOnClickListener( mMenuClickListener );
         
@@ -82,7 +82,7 @@ public class PlaylistMenuDialogFragment extends DialogFragment {
 	        	
 	            newFragment.show( ft, "dialog" );
 				
-			} else if ( id == R.id.DialogCloseButton ) {
+			} else if ( id == R.id.ButtonCancel ) {
 				
 				dismiss();
 				

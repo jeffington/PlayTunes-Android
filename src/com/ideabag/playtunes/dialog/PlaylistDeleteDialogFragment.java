@@ -96,17 +96,10 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
         
         mPlaylistManager = new PlaylistManager( getActivity() );
         
+        ( ( TextView ) view.findViewById( R.id.Title) ).setText( mPlaylistName );
+        ( ( TextView ) view.findViewById( R.id.BadgeCount ) ).setText( "" + mSongCount );
         
-        ( (TextView) view.findViewById( R.id.DeletePlaylistMessage)).setText(
-        		mPlaylistName + "\n"
-        		+ mSongCount + " "
-        		+ ( mSongCount == 1 ? getString( R.string.song_singular ) : getString( R.string.songs_plural ) )
-        		+ "\n\n"
-        		+ getString( R.string.playlist_delete_confirm )
-        );
         
-        //view.findViewById( R.id.DialogConfirmButton ).setOnClickListener( buttonClickListener );
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( buttonClickListener ); 
         view.findViewById( R.id.DialogDeleteCancel ).setOnClickListener( buttonClickListener );
         view.findViewById( R.id.DialogDeleteConfirm ).setOnClickListener( buttonClickListener );
         
@@ -126,11 +119,11 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton || id == R.id.DialogDeleteCancel ) {
+			if ( id == R.id.DialogDeleteCancel ) {
 				
 				dismiss();
 				
-			} else if ( id == R.id.DialogConfirmButton || id == R.id.DialogDeleteConfirm ) {
+			} else if ( id == R.id.DialogDeleteConfirm ) {
 				
 				deletePlaylist();
 				

@@ -85,7 +85,7 @@ public class SongMenuDialogFragment extends DialogFragment {
         songArtistButton = view.findViewById( R.id.SongMenuArtist );
         songAlbumButton = view.findViewById( R.id.SongMenuAlbum );
         
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( mMenuClickListener );
+        view.findViewById( R.id.ButtonCancel ).setOnClickListener( mMenuClickListener );
         songAlbumButton.setOnClickListener( mMenuClickListener );
         songArtistButton.setOnClickListener( mMenuClickListener );
         view.findViewById( R.id.SongMenuAddTo ).setOnClickListener( mMenuClickListener );
@@ -155,7 +155,7 @@ public class SongMenuDialogFragment extends DialogFragment {
 				
 				AddToPlaylistDialogFragment newFragment = new AddToPlaylistDialogFragment();
 				newFragment.setMediaID( mMediaID );
-	        	
+	        	//ft.addToBackStack( null );
 	            newFragment.show( ft, "dialog" );
 				
 			} else if ( id == R.id.SongMenuArtist ) {
@@ -180,7 +180,7 @@ public class SongMenuDialogFragment extends DialogFragment {
 				
 				dismiss();
 				
-			} else if ( id == R.id.DialogCloseButton ) {
+			} else if ( id == R.id.ButtonCancel ) {
 				
 				dismiss();
 				

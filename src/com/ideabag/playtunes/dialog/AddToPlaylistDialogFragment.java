@@ -73,7 +73,7 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         lv.setOnItemClickListener( this );
         lv.setAdapter( new ChoosePlaylistAdapter( getActivity() ) );
         
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener );
+        view.findViewById( R.id.ButtonCancel ).setOnClickListener( headerButtonClickListener );
         
         return view;
         
@@ -217,7 +217,7 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton ) {
+			if ( id == R.id.ButtonCancel ) {
 				
 				dismiss();
 				

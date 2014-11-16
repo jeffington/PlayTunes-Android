@@ -52,7 +52,7 @@ public class CreatePlaylistDialogFragment extends DialogFragment implements OnEd
         
         view.findViewById( R.id.DialogConfirm ).setOnClickListener( headerButtonClickListener );
         view.findViewById( R.id.DialogCancel ).setOnClickListener( headerButtonClickListener );
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener );
+        //view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener );
         
         return view;
         
@@ -72,7 +72,7 @@ public class CreatePlaylistDialogFragment extends DialogFragment implements OnEd
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton || id == R.id.DialogCancel ) {
+			if ( id == R.id.DialogCancel ) {
 				
 				dismiss();
 				

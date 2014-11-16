@@ -6,41 +6,64 @@
     android:orientation="vertical"
     android:background="@android:color/white">
     
-    <RelativeLayout
+    <TextView android:id="@+id/DialogHeaderTitle"
+        
         android:layout_width="match_parent"
         android:layout_height="@dimen/touch_target_minimum"
-        android:orientation="horizontal"
-        android:background="@color/primaryAccentColor">
-        
-
-        
-	    <TextView android:id="@+id/DialogHeaderTitle"
-	        
-	        android:layout_width="match_parent"
-	        android:layout_height="@dimen/touch_target_minimum"
-	        android:textColor="@color/textColorPrimaryDark"
-	        android:textSize="@dimen/text_xlarge"
-	        android:gravity="center"
-	        android:text="@string/playlist_delete"
-		/>
-        
-		<ImageButton android:id="@+id/DialogCloseButton"
-	        
-	        android:layout_width="@dimen/touch_target_minimum"
-	        android:layout_height="@dimen/touch_target_minimum"
-	        android:src="@drawable/ic_action_cancel"
-	        android:background="@drawable/button_background_dark"
-			android:layout_alignParentLeft="true"
-		/>
-	    
-    </RelativeLayout>
+        android:textColor="@color/textColorPrimaryDark"
+        android:textSize="@dimen/text_xlarge"
+        android:gravity="center"
+        android:text="@string/playlist_delete"
+        android:background="@color/primaryAccentColor"
+	/>
 	
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/navigation_list_item_height"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/navigation_list_item_height"
+    android:gravity="center_vertical"
+    android:paddingLeft="@dimen/spacing_medium"
+    android:paddingRight="@dimen/spacing_medium"
+    android:layout_marginLeft="@dimen/spacing_medium"
+    android:layout_marginRight="@dimen/spacing_medium"
+    android:layout_marginTop="@dimen/spacing_medium"
+    android:background="@drawable/inset_list_item_background">
+   	
+   	<ImageView android:id="@+id/BadgeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_list_2"
+            />
+        
+    <TextView android:id="@+id/Title"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="left|center_vertical"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/textColorPrimary"
+        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+        android:text="Playlist Name"
+        />
+    
+        <TextView android:id="@+id/BadgeCount"
+            style="@style/BadgeNumber"
+			android:textColor="@color/textColorSecondary"
+			android:text="10"
+            />
+
+</LinearLayout>
+    
     <TextView android:id="@+id/DeletePlaylistMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:textSize="@dimen/text_xlarge"
-        />
+        
+        android:textSize="@dimen/text_large"
+        android:text="@string/playlist_delete_confirm"
+    />
+    
     <LinearLayout
         
         android:layout_width="match_parent"

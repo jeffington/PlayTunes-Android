@@ -6,11 +6,6 @@
     android:orientation="vertical"
     android:background="@android:color/white">
     
-    <RelativeLayout android:id="@+id/DialogHeader"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/touch_target_minimum"
-        android:background="@color/primaryAccentColor" >
-        
 	    <TextView android:id="@+id/DialogHeaderTitle"
 	        
 	        android:layout_width="match_parent"
@@ -19,18 +14,9 @@
 	        android:textSize="@dimen/text_xlarge"
 	        android:gravity="center"
 	        android:text="@string/playlists_options"
+	        android:background="@color/primaryAccentColor"
 	        
 		/>
-        		
-        <ImageButton android:id="@+id/DialogCloseButton"
-	        
-	        android:layout_width="@dimen/touch_target_minimum"
-	        android:layout_height="@dimen/touch_target_minimum"
-	        android:src="@drawable/ic_action_cancel"
-	        android:background="@drawable/button_background_dark"
-			android:layout_alignParentLeft="true"
-		/>
-    </RelativeLayout>
 	<Button
     	android:id="@+id/PlaylistOptionsRename"
 		android:layout_width="match_parent"
@@ -60,6 +46,16 @@
 		android:text="@string/delete"
 		android:background="@drawable/list_item_background"
 	/>
+	
+	<Button
+    android:id="@+id/ButtonCancel"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/touch_target_minimum"
+    android:text="@string/cancel"
+    android:textSize="@dimen/text_medium"
+    android:background="@drawable/list_button_background"
+    
+    />
     
 </LinearLayout>
 
