@@ -53,7 +53,9 @@
 	<ImageButton android:id="@+id/NotificationCloseButton"
 	    android:layout_width="48dip"
 	    android:layout_height="match_parent"
-	    android:scaleType="centerInside"
+	    android:padding="12dp"
+	    android:scaleType="fitCenter"
+	    
 	    android:src="@drawable/abc_ic_clear"
 	    
 	    android:background="@drawable/button_background_dark"
