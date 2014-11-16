@@ -37,7 +37,6 @@ public class RateAppDialogFragment extends DialogFragment {
         
         getDialog().requestWindowFeature( Window.FEATURE_NO_TITLE );
         
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( buttonClickListener ); 
         view.findViewById( R.id.DialogCancel ).setOnClickListener( buttonClickListener );
         view.findViewById( R.id.DialogConfirm ).setOnClickListener( buttonClickListener );
         
@@ -78,7 +77,7 @@ public class RateAppDialogFragment extends DialogFragment {
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton || id == R.id.DialogCancel ) {
+			if ( id == R.id.DialogCancel ) {
 				
 				dismiss();
 				

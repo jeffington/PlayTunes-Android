@@ -7,9 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -49,7 +47,6 @@ public class FeedbackDialogFragment extends DialogFragment {
         
         view.findViewById( R.id.DialogConfirm ).setOnClickListener( headerButtonClickListener );
         view.findViewById( R.id.DialogCancel ).setOnClickListener( headerButtonClickListener );
-        view.findViewById( R.id.DialogCloseButton ).setOnClickListener( headerButtonClickListener );
         
         return view;
         
@@ -69,7 +66,7 @@ public class FeedbackDialogFragment extends DialogFragment {
 			
 			int id = v.getId();
 			
-			if ( id == R.id.DialogCloseButton || id == R.id.DialogCancel ) {
+			if ( id == R.id.DialogCancel ) {
 				
 				dismiss();
 				
