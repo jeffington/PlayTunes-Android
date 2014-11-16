@@ -8,12 +8,4 @@
         compat:showAsAction="always"
         
         />
-    <item android:id="@+id/MenuSearch"
-        android:title="@string/edit"
-        android:icon="@drawable/ic_action_search_white"
-        android:orderInCategory="100"
-        
-        compat:showAsAction="always"
-        
-        />
 </menu>
