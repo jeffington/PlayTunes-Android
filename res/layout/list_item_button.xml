@@ -15,7 +15,6 @@
         android:layout_weight="1"
         android:gravity="center"
         android:textSize="@dimen/text_medium"
-        android:textStyle="bold"
         android:textColor="@color/textColorPrimary"
         android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
         android:text="@string/clear_search_history"
