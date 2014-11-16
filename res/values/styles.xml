@@ -104,4 +104,9 @@
 	  <item name="android:textColor">#FFFFFF</item>
 </style>
 
+<style name="AccentedField" parent="android:Widget.EditText">
+	  <item name="android:background">@drawable/textfield_accented</item>
+	  <item name="android:textColor">#FFFFFF</item>
+</style>
+
 </resources>
