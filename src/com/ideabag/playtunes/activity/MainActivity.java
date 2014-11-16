@@ -97,15 +97,7 @@ public class MainActivity extends ActionBarActivity {
 	    int openCount = prefs.getInt( getString( R.string.pref_key_appopen ), 0 );
 	    int rateAppPromptCount = getResources().getInteger( R.integer.rate_app_prompt_count );
 	    
-	    if ( openCount == 0 ) {
-	    	/*
-	    	if ( null != mDrawerLayout && !mDrawerLayout.isDrawerOpen( GravityCompat.START ) ) {
-	    		
-	    		mDrawerLayout.openDrawer( GravityCompat.START );
-	    		
-	    	}
-	    	*/
-	    } else if ( openCount == rateAppPromptCount ) {
+	    if ( openCount == rateAppPromptCount ) {
 	    	
 	    	// Show rate dialog
 	    	FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -126,7 +118,7 @@ public class MainActivity extends ActionBarActivity {
 	    	
 	    	// We don't want to show multiple dialogs
 	    	
-	    	new CheckRemoteVersionFileTask( this ).execute( new String[]{} );
+	    	new CheckRemoteVersionFileTask( this ).execute( );
 	    	
 	    	
 	    }

@@ -8,7 +8,9 @@ import com.ideabag.playtunes.adapter.NavigationListAdapter;
 import com.ideabag.playtunes.fragment.search.SearchFragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
@@ -193,6 +195,17 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
 			}
 			
 		 });
+		 
+		 SharedPreferences prefs = mActivity.getSharedPreferences( getString( R.string.prefs_file) , Context.MODE_PRIVATE );
+	    //SharedPreferences.Editor edit = prefs.edit();
+	    
+	    int openCount = prefs.getInt( getString( R.string.pref_key_appopen ), 0 );
+	    
+	    if ( openCount == 0 ) {
+	    	
+	    	showNavigation();
+	    	
+	    }
 		 
 	}
     

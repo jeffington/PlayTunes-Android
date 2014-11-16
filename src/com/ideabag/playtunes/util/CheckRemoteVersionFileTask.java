@@ -29,6 +29,8 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
 	private static final String UPDATE_PREF_FILE = "update_pref_file";
 	private static final String UPDATE_PREF_KEY = "update_timestamp";
 	
+	private static final int ONE_WEEK_MILLI = 604800000;
+	
 	Context mContext;
 	SharedPreferences prefs;
 	
@@ -40,7 +42,6 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
 		
 		
 	}
-	
 	
 /*
 	This is what the JSON file looks like:
@@ -76,65 +77,76 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
     	long then = prefs.getLong( UPDATE_PREF_KEY, 0 );
     	long mNow = new Date().getTime();
     	
-    	try {
-    		//HttpURLConnection.setFollowRedirects( true );
-    		URL url = new URL( VERSION_FILE_URL );
-    		HttpURLConnection mUrlConnection = ( HttpURLConnection ) url.openConnection();
-    		mUrlConnection.setUseCaches( false );
-    		//mUrlConnection.setInstanceFollowRedirects( true );
+    	
+    	if ( mNow - ONE_WEEK_MILLI < then ) {
     		
-    		while (true ) {
-	    		switch (mUrlConnection.getResponseCode())
-	    	     {
-	    	        case HttpURLConnection.HTTP_MOVED_PERM:
-	    	        case HttpURLConnection.HTTP_MOVED_TEMP:
-	    	        	
-	    	        	url = new URL( mUrlConnection.getHeaderField( "Location" ) );
-	    	        	mUrlConnection.disconnect();
-	    	        	mUrlConnection = ( HttpURLConnection ) url.openConnection();
-	    	           continue;
-	    	     }
-	    		break;
+    		cancel( true );
+    		
+    	} else {
+	    	
+	    	try {
+	    		//HttpURLConnection.setFollowRedirects( true );
+	    		URL url = new URL( VERSION_FILE_URL );
+	    		HttpURLConnection mUrlConnection = ( HttpURLConnection ) url.openConnection();
+	    		mUrlConnection.setUseCaches( false );
+	    		//mUrlConnection.setInstanceFollowRedirects( true );
 	    		
-    		}
-    		
-    		long lastModified = mUrlConnection.getLastModified();
-    		
-    		if ( mNow > lastModified ) {
+	    		while ( true ) {
+		    		switch ( mUrlConnection.getResponseCode() ) {
+		    			
+		    	        case HttpURLConnection.HTTP_MOVED_PERM:
+		    	        case HttpURLConnection.HTTP_MOVED_TEMP:
+		    	        	
+		    	        	url = new URL( mUrlConnection.getHeaderField( "Location" ) );
+		    	        	mUrlConnection.disconnect();
+		    	        	mUrlConnection = ( HttpURLConnection ) url.openConnection();
+		    	           continue;
+		    	           
+		    	     }
+		    		
+		    		break;
+		    		
+	    		}
 	    		
-    			//mUrlConnection.connect();
-    			
-				InputStream in = new BufferedInputStream( mUrlConnection.getInputStream() );
+	    		long lastModified = mUrlConnection.getLastModified();
+	    		
+	    		if ( mNow > lastModified ) {
+		    		
+	    			//mUrlConnection.connect();
+	    			
+					InputStream in = new BufferedInputStream( mUrlConnection.getInputStream() );
+					    
+					@SuppressWarnings("resource")
+					Scanner s = new Scanner( in ).useDelimiter("\\A");
 				    
-				@SuppressWarnings("resource")
-				Scanner s = new Scanner( in ).useDelimiter("\\A");
-			    
-				while ( s.hasNext() ) {
+					while ( s.hasNext() ) {
+						
+						result = result.concat( s.next() );
+						
+					}
 					
-					result = result.concat( s.next() );
+					s.close();
 					
-				}
+					//mUrlConnection.disconnect();
+					
+					job = new JSONObject( result );
+					SharedPreferences.Editor edit = prefs.edit();
+					edit.putLong( UPDATE_PREF_KEY, mNow );
+					edit.commit();
+					
+	    		}
 				
-				s.close();
-				
-				//mUrlConnection.disconnect();
-				
-				job = new JSONObject( result );
-				SharedPreferences.Editor edit = prefs.edit();
-				edit.putLong( UPDATE_PREF_KEY, mNow );
-				edit.commit();
-				
-    		}
-			
-		} catch ( IOException e ) {
-				
-			e.printStackTrace();
-				
-		} catch ( JSONException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			android.util.Log.i( "CheckRemoveVersionFile", "" + result );
-		}
+			} catch ( IOException e ) {
+					
+				e.printStackTrace();
+					
+			} catch ( JSONException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				android.util.Log.i( "CheckRemoveVersionFile", "" + result );
+			}
+	    	
+    	}
     	
         return job;
     }
@@ -143,37 +155,40 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
       * the result from doInBackground() */
     protected void onPostExecute( JSONObject result ) {
         
-    	if ( null != result ) {
-    		
-    		try {
-    			
-    			int remoteVersionCode = result.getInt( VERSION_CODE );
-    			String changelog = result.getString( CHANGE_LOG );
-    			
-    			int versionCode = mContext.getPackageManager()
-    				    .getPackageInfo( mContext.getPackageName(), 0).versionCode;
-    			
-    			if ( versionCode < remoteVersionCode ) {
-    				
-    				//handle.post( notUpToDate );
-    				
-    				new AlertDialog.Builder( mContext )
-    										.setTitle( mContext.getString( R.string.update_app ) )
-    										.setMessage( mContext.getString( R.string.version_outdated ) + ( changelog != null && changelog.length() > 1 ? "\n\n" + changelog : "" ) )
-    										.setNegativeButton( mContext.getString( R.string.cancel ), mClickListener)
-    										.setPositiveButton( mContext.getString( R.string.update ), mClickListener)
-    										.show();
-    				
-    				
-    			}
-    			
-    			
-    		} catch( Exception e ) {
-    			
-    			
-    			
-    		}
-    		
+    	if ( !isCancelled() ) {
+    	
+	    	if ( null != result ) {
+	    		
+	    		try {
+	    			
+	    			int remoteVersionCode = result.getInt( VERSION_CODE );
+	    			String changelog = result.getString( CHANGE_LOG );
+	    			
+	    			int versionCode = mContext.getPackageManager()
+	    				    .getPackageInfo( mContext.getPackageName(), 0).versionCode;
+	    			
+	    			if ( versionCode < remoteVersionCode ) {
+	    				
+	    				//handle.post( notUpToDate );
+	    				
+	    				new AlertDialog.Builder( mContext )
+	    										.setTitle( mContext.getString( R.string.update_app ) )
+	    										.setMessage( mContext.getString( R.string.version_outdated ) + ( changelog != null && changelog.length() > 1 ? "\n\n" + changelog : "" ) )
+	    										.setNegativeButton( mContext.getString( R.string.cancel ), mClickListener)
+	    										.setPositiveButton( mContext.getString( R.string.update ), mClickListener)
+	    										.show();
+	    				
+	    				
+	    			}
+	    			
+	    			
+	    		} catch( Exception e ) {
+	    			
+	    			
+	    			
+	    		}
+	    		
+	    	}
     		
     	}
     	
