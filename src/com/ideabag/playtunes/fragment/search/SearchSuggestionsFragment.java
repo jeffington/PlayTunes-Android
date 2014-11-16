@@ -13,19 +13,27 @@ import com.ideabag.playtunes.util.GAEvent.Playlist;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SearchSuggestionsFragment extends SaveScrollListFragment {
+public class SearchSuggestionsFragment extends Fragment implements ListView.OnItemClickListener {
 	
 	public static final String TAG = "Search Suggestions Fragment";
 	
-	LinearLayout mClearHistory;
 	SearchFragment mSearchFragment;
+	ListView mListView;
+	
+	private Button mButtonClearHistory;
 	
 	SharedPreferences mSharedPrefs;
 	
@@ -56,19 +64,30 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		if ( null != mSearchQueries ) {
 			
 			adapter = new ArrayAdapter < String >( getActivity(), R.layout.list_item_title, R.id.Title, mSearchQueries );
-			setListAdapter( adapter );
-			restoreScrollPosition();
+			mListView.setAdapter( adapter );
+			
+			if ( this.isResumed() ) {
+				
+				//restoreScrollPosition();
+				
+			}
+			
 		}
 		
     	if ( adapter.getCount() >= 1 ) {
     		
-        	mClearHistory.setVisibility( View.VISIBLE );
-        	getListView().setHeaderDividersEnabled( true );
+    		mButtonClearHistory.setVisibility( View.VISIBLE );
+    		
     	} else {
     		
-    		mClearHistory.setVisibility( View.GONE );
-    		getListView().setHeaderDividersEnabled( false );
+    		mButtonClearHistory.setVisibility( View.GONE );
     	}
+		
+	}
+	
+	@Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		
+		return inflater.inflate( R.layout.fragment_search_suggestions, container, false );
 		
 	}
 	
@@ -78,24 +97,28 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		mSharedPrefs = getActivity().getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
 		mSharedPrefs.registerOnSharedPreferenceChangeListener( mPreferencesChangeListener );
 		
-		
-		LayoutInflater inflater = getActivity().getLayoutInflater();
-    	
-		
-    	mClearHistory = ( LinearLayout ) inflater.inflate( R.layout.list_item_button, null );
-    	( ( TextView ) mClearHistory.findViewById( R.id.Title ) ).setText( getString( R.string.clear_search_history ) );
-    	getListView().addFooterView( mClearHistory, null, true );
+		mListView = ( ListView ) getView().findViewById( R.id.SuggestionListView );
+		mButtonClearHistory = ( Button ) getView().findViewById( R.id.ButtonClearHistory );
     	
     	
+    	mListView.setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+    	mListView.setDividerHeight( 1 );
     	
-    	getListView().setHeaderDividersEnabled( true );
-		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
-		getListView().setDividerHeight( 1 );
+    	mListView.setOnItemClickListener( this );
     	
 		mTracker = TrackerSingleton.getDefaultTracker( getActivity() );
 		
 		loadSearchHistory();
     	
+		mButtonClearHistory.setOnClickListener( new OnClickListener() {
+
+			@Override public void onClick( View v ) {
+				
+				clearSearchHistory();
+				
+			}
+			
+		});
 		
 	}
 	
@@ -114,13 +137,6 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		
 	}
 	
-	@Override public void onDestroyView() {
-	    super.onDestroyView();
-	    
-	    setListAdapter( null );
-	    
-	}
-	
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
@@ -128,26 +144,18 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		
 	}
 	
-	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
+	@Override public void onItemClick(AdapterView<?> list, View v, int position, long id ) {
 		
-		if ( position >= adapter.getCount() ) {
+		String mSearchTerm = ( String ) adapter.getItem( position );
 			
-			clearSearchHistory();
-			
-		} else {
-			
-			String mSearchTerm = ( String ) adapter.getItem( position );
-			
-			mSearchFragment.mQueryTextView.setText( mSearchTerm );
-			mSearchFragment.setMediaID( mSearchTerm );
-			
-			mTracker.send( new HitBuilders.EventBuilder()
-	    	.setCategory( Categories.PLAYLIST )
-	    	.setAction( Playlist.ACTION_CLICK )
-	    	.setValue( position )
-	    	.build());
-			
-		}
+		mSearchFragment.mQueryTextView.setText( mSearchTerm );
+		mSearchFragment.setMediaID( mSearchTerm );
+		
+		mTracker.send( new HitBuilders.EventBuilder()
+    	.setCategory( Categories.PLAYLIST )
+    	.setAction( Playlist.ACTION_CLICK )
+    	.setValue( position )
+    	.build());
 		
 	}
 	
@@ -158,11 +166,11 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		
 		if ( adapter.getCount() > 0 ) {
 			
-			mClearHistory.setVisibility( View.VISIBLE );
+			mButtonClearHistory.setVisibility( View.VISIBLE );
 			
 		} else {
 			
-			mClearHistory.setVisibility( View.GONE );
+			mButtonClearHistory.setVisibility( View.GONE );
 			
 		}
 		
@@ -187,5 +195,5 @@ public class SearchSuggestionsFragment extends SaveScrollListFragment {
 		}
 		
 	};
-	
+
 }
