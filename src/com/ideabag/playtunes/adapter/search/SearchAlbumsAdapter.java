@@ -36,16 +36,30 @@ public class SearchAlbumsAdapter extends AlbumListAdapter implements ISearchable
 		if ( null != queryString && !queryString.equals( mSearchTerms ) ) {
 			
 			mSearchTerms = queryString;
+
+			String[] terms = mSearchTerms.split( "\\s+" );
 			
 			String mRelevance = "("; 
 			
-			mRelevance += "2 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '%" + mSearchTerms + "%' )";
-			mRelevance += "+ 20 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '" + mSearchTerms + "%' )";
-			mRelevance += "+ 6 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '% " + mSearchTerms + "%' )";
+			for ( int i = 0, count = terms.length; i < count; i++ ) {
+				
+				String term = terms[ i ];
+				
+				if ( i > 0 ) {
+					
+					mRelevance += "+";
+					
+				}
 			
-			mRelevance += "+ (" + MediaStore.Audio.Albums.ARTIST + " LIKE '%" + mSearchTerms + "%' )";
-			mRelevance += "+ 10 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '" + mSearchTerms + "%' )";
-			mRelevance += "+ 3 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '% " + mSearchTerms + "%' )";
+				mRelevance += "2 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '%" + term + "%' )";
+				mRelevance += "+ 20 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '" + term + "%' )";
+				mRelevance += "+ 6 * (" + MediaStore.Audio.Albums.ALBUM + " LIKE '% +" + term + "%' )";
+				
+				mRelevance += "+ (" + MediaStore.Audio.Albums.ARTIST + " LIKE '%" + term + "%' )";
+				mRelevance += "+ 10 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '" + term + "%' )";
+				mRelevance += "+ 3 * (" + MediaStore.Audio.Albums.ARTIST + " LIKE '% +" + term + "%' )";
+				
+			}
 			
 			mRelevance += ") WEIGHT";
 			

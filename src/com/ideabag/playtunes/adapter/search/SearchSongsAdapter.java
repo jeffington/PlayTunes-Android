@@ -31,9 +31,16 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchableAd
 		
 	}
 	
+	//
+	// This is where the search query is generated using the SQL LIKE operator, we use a dumb algorithm to determine a 'best' match
+	// If a term is anywhere in the title, artist, or album ('%term%') it gets 3 points,
+	// if a term is at the beginning of the title, artist, or album ('term%') it gets 30 points
+	// if a term is in the title, artist, or album and is preceded by whitespace (' +term%') it gets 9 points
+	// 
+	
 	@Override public void setSearchTerms( String searchTerms ) {
 		
-		String[] terms = searchTerms.split( " " );
+		String[] terms = searchTerms.split( "\\s+" );
 		
 		String mRelevance = "("; 
 		
@@ -49,15 +56,15 @@ public class SearchSongsAdapter extends SongListAdapter implements ISearchableAd
 			
 			mRelevance += "3 * (" + MediaStore.Audio.Media.TITLE + " LIKE '%" + term + "%' )";
 			mRelevance += "+ 30 * (" + MediaStore.Audio.Media.TITLE + " LIKE '" + term + "%' )";
-			mRelevance += "+ 9 * (" + MediaStore.Audio.Media.TITLE + " LIKE '% " + term + "%' )";
+			mRelevance += "+ 9 * (" + MediaStore.Audio.Media.TITLE + " LIKE '% +" + term + "%' )";
 			
 			mRelevance += "+ (" + MediaStore.Audio.Media.ARTIST + " LIKE '%" + term + "%' )";
 			mRelevance += "+ 10 * (" + MediaStore.Audio.Media.ARTIST + " LIKE '" + term + "%' )";
-			mRelevance += "+ 3 * (" + MediaStore.Audio.Media.ARTIST + " LIKE '% " + term + "%' )";
+			mRelevance += "+ 3 * (" + MediaStore.Audio.Media.ARTIST + " LIKE '% +" + term + "%' )";
 			
 			mRelevance += "+ (" + MediaStore.Audio.Media.ALBUM + " LIKE '%" + term + "%' )";
 			mRelevance += "+ 10 * (" + MediaStore.Audio.Media.ALBUM + " LIKE '" + term + "%' )";
-			mRelevance += "+ 3 * (" + MediaStore.Audio.Media.ALBUM + " LIKE '% " + term + "%' )";
+			mRelevance += "+ 3 * (" + MediaStore.Audio.Media.ALBUM + " LIKE '% +" + term + "%' )";
 			
 		}
 		

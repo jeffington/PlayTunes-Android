@@ -34,11 +34,25 @@ public class SearchArtistsAdapter extends ArtistListAdapter implements ISearchab
 			
 			searchTerms = queryString;
 			
+			String[] terms = searchTerms.split( "\\s+" );
+			
 			String mRelevance = "("; 
 			
-			mRelevance += "(" + MediaStore.Audio.Artists.ARTIST + " LIKE '%" + searchTerms + "%' )";
-			mRelevance += "+ 10 * (" + MediaStore.Audio.Artists.ARTIST + " LIKE '" + searchTerms + "%' )";
-			mRelevance += "+ 3 * (" + MediaStore.Audio.Artists.ARTIST + " LIKE '% " + searchTerms + "%' )";
+			for ( int i = 0, count = terms.length; i < count; i++ ) {
+				
+				String term = terms[ i ];
+				
+				if ( i > 0 ) {
+					
+					mRelevance += "+";
+					
+				}
+				
+				mRelevance += "(" + MediaStore.Audio.Artists.ARTIST + " LIKE '%" + term + "%' )";
+				mRelevance += "+ 10 * (" + MediaStore.Audio.Artists.ARTIST + " LIKE '" + term + "%' )";
+				mRelevance += "+ 3 * (" + MediaStore.Audio.Artists.ARTIST + " LIKE '% +" + term + "%' )";
+				
+			}
 			
 			mRelevance += ") WEIGHT";
 			
