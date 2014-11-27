@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -34,12 +35,19 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
 	Context mContext;
 	SharedPreferences prefs;
 	
+	int mVersionCode = 0;
+	
 	public CheckRemoteVersionFileTask( Context context) {
 		
 		mContext = context;
 		prefs = mContext.getSharedPreferences( UPDATE_PREF_FILE, Context.MODE_PRIVATE );
 		
-		
+		try {
+			mVersionCode = mContext.getPackageManager().getPackageInfo( mContext.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -130,8 +138,21 @@ public class CheckRemoteVersionFileTask extends AsyncTask< String, Void, JSONObj
 					//mUrlConnection.disconnect();
 					
 					job = new JSONObject( result );
+					
+					int remoteVersionCode = job.getInt( VERSION_CODE );
+					
 					SharedPreferences.Editor edit = prefs.edit();
-					edit.putLong( UPDATE_PREF_KEY, mNow );
+					
+					if ( mVersionCode < remoteVersionCode ) {
+						
+						edit.putLong( UPDATE_PREF_KEY, 0 );
+						
+					} else {
+						
+						edit.putLong( UPDATE_PREF_KEY, mNow );
+						
+					}
+					
 					edit.commit();
 					
 	    		}
