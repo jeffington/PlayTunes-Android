@@ -222,7 +222,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		super.onDestroy();
 		
 		mAudioFocusHelper.abandonFocus();
-		
+		Notification.remove();
 		unregisterReceiver( NotificationActionReceiver );
 		
 		ChangedListeners.clear();
@@ -255,7 +255,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		// Remove Notification (if showing)
 		
-		Notification.remove();
+		
 		
 	}
 	 
@@ -568,6 +568,12 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 				
 			}
 			
+			if ( null == Lockscreen || !Lockscreen.ready() ) {
+				
+				Lockscreen = new LockscreenManager( getBaseContext() );
+				Lockscreen.setMediaID( CURRENT_MEDIA_ID, MediaPlayer.hasPreviousTrack(), MediaPlayer.hasNextTrack() );
+			}
+			
 			Lockscreen.play();
 			
 			Notification.play();
@@ -597,7 +603,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		// TODO:
 		MediaPlayer.stopVolumeDucking();
-		
+		//
+
 	}
 	
 
@@ -607,6 +614,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		if ( !canDuck ) {
 			
 			Lockscreen.remove();
+			
 			//destroyRemoteControlClient();
 			pause();
 			

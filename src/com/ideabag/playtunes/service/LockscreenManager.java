@@ -108,6 +108,12 @@ public class LockscreenManager {
 		}
     	
     }
+    
+    public boolean ready() {
+    	
+    	return ( null != mRemoteControlClientCompat );
+    	
+    }
 
 	@SuppressLint("InlinedApi")
 	public void setMediaID( String id, boolean prev, boolean next ) {
