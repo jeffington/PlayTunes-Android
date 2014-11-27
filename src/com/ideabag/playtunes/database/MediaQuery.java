@@ -212,7 +212,15 @@ public class MediaQuery {
 	    	 //android.util.Log.i( "MediaQueryTask", "HERE" );
 	    	 if ( null != mListener ) {
 	    		 
-	    		 mListener.onQueryCompleted( mQuery, result );
+	    		 try {
+	    			 
+	    			 mListener.onQueryCompleted( mQuery, result );
+	    			 
+	    		 } catch ( Exception e ) {
+	    			 
+	    			 // Fail silently
+	    			 
+	    		 }
 	    		 
 	    	 }
 	    	 
