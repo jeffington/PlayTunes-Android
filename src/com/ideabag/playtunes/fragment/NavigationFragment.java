@@ -220,8 +220,9 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     	mActionBar.setSubtitle( null );
     	
     	mActionBar.setDisplayShowCustomEnabled( false );
-    	//mActionBar.setDisplayUseLogoEnabled( false );
     	mActionBar.setDisplayShowHomeEnabled( true );
+    	//mActionBar.setDisplayUseLogoEnabled( false );
+    	//mActionBar.setDisplayShowHomeEnabled( true );
     	mActivity.supportInvalidateOptionsMenu();
     	
     }
@@ -233,10 +234,11 @@ public class NavigationFragment extends Fragment implements OnItemClickListener 
     	if ( mActionbarTitle != null && mActionbarTitle.equals( "*" ) ) {
     		
     		mActionBar.setDisplayShowHomeEnabled( true );
+    		mActionBar.setTitle( null );
     		
     	} else {
     		
-    		mActionBar.setDisplayShowHomeEnabled( false );
+    		//mActionBar.setDisplayShowHomeEnabled( false );
     		mActionBar.setTitle( mActionbarTitle );
     		
     	}
