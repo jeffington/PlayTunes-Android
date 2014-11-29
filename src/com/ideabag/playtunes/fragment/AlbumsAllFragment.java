@@ -81,7 +81,7 @@ public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicB
 		super.onResume();
 		
     	//mActivity.setActionbarTitle( getString( R.string.albums_plural) );
-    	
+		mActivity.setActionbarTitle( getString( R.string.albums_plural) );
 
 
 	        // Set screen name.
