@@ -1,105 +1,96 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/FooterControls"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical"
-	android:clickable="true"
-	android:background="@color/now_playing_background">
-	
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/now_playing_background"
+    android:clickable="true"
+    android:orientation="vertical" >
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/spacing_medium"
-		android:paddingRight="@dimen/spacing_medium"
-		android:background="@drawable/button_background_dark">
-               <ToggleButton android:id="@+id/StarButton"
-           style="@style/DarkStarButton"
-            android:layout_height="@dimen/list_item_height"
-            android:layout_width="@dimen/touch_target_minimum"
-            android:minWidth="@dimen/list_item_height"
-            />
-        <LinearLayout
-	    android:layout_width="0dip"
-	    android:layout_height="match_parent"
-	    android:layout_gravity="center_vertical"
-	    android:layout_weight="1"
-	    android:gravity="center_vertical"
-	    android:orientation="vertical" >
-	    
-    <TextView android:id="@+id/SongTitle"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@color/textColorPrimaryDark"
-		android:textSize="@dimen/text_large"
-		android:singleLine="true"
-		android:ellipsize="end"
-		
-	/>
-    
-	<TextView android:id="@+id/SongArtist"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@color/textColorSecondaryDark"
-		android:lines="1"
-		android:textSize="@dimen/text_small"
-	/>
-	
-	        <TextView android:id="@+id/SongAlbum"
-        	android:gravity="center"
-        	android:layout_width="match_parent"
-        	android:layout_height="wrap_content"
-           	android:textColor="@color/textColorSecondaryDark"
-           	android:textSize="@dimen/text_medium"
-        	android:visibility="gone"
-        	android:ellipsize="end"
-        	android:lines="1"
-        	android:singleLine="true"
-        	
-        />
-	        
-	        </LinearLayout>
-	
-		<ImageButton android:id="@+id/SongMenuButton"
-	    android:layout_width="56dip"
-	    android:layout_height="match_parent"
-	    android:src="@drawable/ic_action_overflow_white"
-	    android:background="@drawable/button_background_dark"
-	    />
-        
-    </LinearLayout>
-    
-		<RelativeLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="0dp"
-			android:layout_weight="1"
-			android:padding="8dp"
-			android:layout_marginTop="8dp">
-	    
-		    <ImageView android:id="@+id/AlbumArt"
-		        
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
-		        android:src="@drawable/no_album_art_full"
-		        
-			/>
-	    
-	    </RelativeLayout>
-	
-			<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
-		    	android:id="@+id/TrackProgressFragment"
-	    	    android:layout_width="match_parent"
-	    	    android:layout_height="wrap_content"
-	    	    />
-		
-	    <include android:id="@+id/NowPlayingControls"
-	        layout="@layout/view_nowplaying_controls"
-	        
-	        android:layout_height="@dimen/list_item_height"
-	        android:layout_width="match_parent"
-	        
-	    	
-	    />
+        android:background="@drawable/button_background_dark"
+        android:orientation="horizontal" >
 
-	
+        <ToggleButton
+            android:id="@+id/StarButton"
+            style="@style/DarkStarButton"
+            android:layout_width="@dimen/touch_target_minimum"
+            android:layout_height="@dimen/list_item_height"
+            android:minWidth="@dimen/touch_target_minimum" />
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical|top"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/SongTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/textColorPrimaryDark"
+                android:textSize="@dimen/text_large" />
+
+            <TextView
+                android:id="@+id/SongArtist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:textColor="@color/textColorSecondaryDark"
+                android:textSize="@dimen/text_small" />
+
+            <TextView
+                android:id="@+id/SongAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:lines="1"
+                android:singleLine="true"
+                android:textColor="@color/textColorSecondaryDark"
+                android:textSize="@dimen/text_medium"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/SongMenuButton"
+            android:layout_width="@dimen/touch_target_minimum"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_background_dark"
+            android:src="@drawable/ic_action_overflow_white" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:padding="8dp" >
+
+        <ImageView
+            android:id="@+id/AlbumArt"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/no_album_art_full" />
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/TrackProgressFragment"
+        android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_track_progress" />
+
+    <include
+        android:id="@+id/NowPlayingControls"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        layout="@layout/view_nowplaying_controls" />
+
 </LinearLayout>

@@ -11,7 +11,7 @@
 		android:layout_height="@dimen/footer_height"
 		android:layout_marginRight="8dip">
 		
-	<ImageView android:id="@+id/FooterControlsAlbumArt"
+	<ImageView android:id="@+id/AlbumArt"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:src="@drawable/no_album_art_thumb"
@@ -26,7 +26,7 @@
 	    android:gravity="center_vertical"
 	    android:orientation="vertical" >
 	    
-    <TextView android:id="@+id/FooterControlsSongTitle"
+    <TextView android:id="@+id/SongTitle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:textColor="@color/textColorPrimaryDark"
@@ -36,7 +36,7 @@
 		
 	/>
     
-	<TextView android:id="@+id/FooterControlsArtistName"
+	<TextView android:id="@+id/SongArtist"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:textColor="@color/textColorSecondaryDark"
@@ -46,7 +46,7 @@
 	
 	</LinearLayout>
 	
-	<ImageButton android:id="@+id/FooterControlsPlayPauseButton"
+	<ImageButton android:id="@+id/PlayPauseButton"
 	    android:layout_width="56dip"
 	    android:layout_height="match_parent"
 	    android:src="@drawable/ic_action_playback_pause_white"

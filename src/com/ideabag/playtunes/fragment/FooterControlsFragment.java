@@ -13,6 +13,7 @@ import com.ideabag.playtunes.util.GAEvent.FooterControls;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.AsyncDrawable;
 import com.ideabag.playtunes.util.BitmapWorkerTask;
+import com.ideabag.playtunes.util.IMusicBrowser;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.annotation.SuppressLint;
@@ -27,6 +28,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,12 +74,12 @@ public class FooterControlsFragment extends Fragment {
 		getView().findViewById( R.id.FooterControls ).setOnClickListener( controlsClickListener );
     	
 		
-		mPlayPauseButton = ( ImageButton ) getView().findViewById( R.id.FooterControlsPlayPauseButton );
+		mPlayPauseButton = ( ImageButton ) getView().findViewById( R.id.PlayPauseButton );
 		mPlayPauseButton.setOnClickListener( controlsClickListener );
 		
-		mTitle = ( TextView ) getView().findViewById( R.id.FooterControlsSongTitle );
-		mArtist = ( TextView ) getView().findViewById( R.id.FooterControlsArtistName );
-		mAlbumCover = ( ImageView ) getView().findViewById( R.id.FooterControlsAlbumArt );
+		mTitle = ( TextView ) getView().findViewById( R.id.SongTitle );
+		mArtist = ( TextView ) getView().findViewById( R.id.SongArtist );
+		mAlbumCover = ( ImageView ) getView().findViewById( R.id.AlbumArt );
 		 
 		View mNextButton = getView().findViewById( R.id.FooterControlsNextButton );
 		
@@ -120,7 +122,7 @@ public class FooterControlsFragment extends Fragment {
 		    	.setAction( Playlist.ACTION_CLICK )
 		    	.build());
 				
-			} else if ( id == R.id.FooterControlsPlayPauseButton ) {
+			} else if ( id == R.id.PlayPauseButton ) {
 				
 				if ( isPlaying ) {
 					
@@ -408,13 +410,30 @@ public class FooterControlsFragment extends Fragment {
 	   };
 	   
 		private void showNowPlayingActivity() {
-			
+			/*
 			Intent startNowPlayingActivity = new Intent( getActivity(), NowPlayingActivity.class );
 			if ( current_media_id != null ) {
 				startNowPlayingActivity.putExtra("album_art_uri", lastAlbumUri );
 			}
 			startActivityForResult( startNowPlayingActivity, 0 );
+			*/
 			
+			FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
+	    	
+			//transaction.
+			// Replace whatever is in the fragment_container view with this fragment,
+	    	// and add the transaction to the back stack
+	    	//transaction.replace( R.id.MusicBrowserContainer, newFragment );
+	    	//transaction.addToBackStack( null );
+	    	
+			Fragment newFragment = new MediaControls();
+			
+			//transaction.setCustomAnimations( R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down );
+	    	
+			transaction.replace( R.id.FooterControlsFragment, newFragment );
+			transaction.addToBackStack( null );
+	    	// Commit the transaction
+	    	transaction.commit();
 		}
 	   
 }
