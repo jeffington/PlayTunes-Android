@@ -16,20 +16,13 @@ import com.ideabag.playtunes.util.TrackerSingleton;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -50,6 +43,8 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
     
 	private String ARTIST_ID = "";
 	
+	int singlesCount;
+	
 	@Override public void setMediaID( String media_id ) {
 		
 		ARTIST_ID = media_id;
@@ -59,7 +54,7 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	@Override public String getMediaID() { return ARTIST_ID; }
 	
 	@Override public void onAttach( Activity activity ) {
-			
+		
 		super.onAttach( activity );
 		
 		mActivity = ( MainActivity ) activity;
@@ -165,7 +160,7 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		
     	
-    	int singlesCount = singlesCountCursor.getCount();
+    	singlesCount = singlesCountCursor.getCount();
     	singlesCountCursor.close();
     	
     	if ( singlesCount > 0) {
@@ -175,8 +170,6 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
     		( ( TextView ) Singles.findViewById( R.id.Title ) ).setText( getString( R.string.artist_singles ) );
     		//getListView().addHeaderView( Singles, null, true );
     		adapter.addView( Singles );
-    		
-    		
     		
     	}
     	
@@ -220,9 +213,10 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	}
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
-		int hasSingles = 0;
 		
-		if ( position < mAlbumsAdapter.getCount() + hasSingles ) {
+		int mAlbumCount = mAlbumsAdapter.getCount();
+		
+		if ( position < mAlbumCount ) {
 		
 			
 			String albumID = ( String ) v.getTag( R.id.tag_album_id );
@@ -239,14 +233,41 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	    	.setLabel( "album" )
 	    	.build());
 			
-		} else if ( position >= mAlbumsAdapter.getCount() + hasSingles ) {
+		} else if ( singlesCount > 0 && position == mAlbumCount ) {
+			
+			// Singles
+			
+			ArtistSinglesFragment singlesFragment = new ArtistSinglesFragment();
+			singlesFragment.setMediaID( ARTIST_ID );
+			
+			mActivity.transactFragment( singlesFragment );
+			
+		} else if ( singlesCount == 0 && position >= mAlbumCount ) {
 			
 			String playlistName = mActivity.getSupportActionBar().getTitle().toString();
 			
 			mActivity.mBoundService.setPlaylist( mSongsAdapter.getQuery(), playlistName, ArtistsOneFragment.class, ARTIST_ID );
 			//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
 			
-			mActivity.mBoundService.setPlaylistPosition( position - ( mAlbumsAdapter.getCount() + hasSingles ) );
+			mActivity.mBoundService.setPlaylistPosition( position - mAlbumCount );
+			
+			mActivity.mBoundService.play();
+			
+	    	mTracker.send( new HitBuilders.EventBuilder()
+	    	.setCategory( Categories.PLAYLIST )
+	    	.setAction( Playlist.ACTION_CLICK )
+	    	.setValue( position - mAlbumsAdapter.getCount() )
+	    	.setLabel( "song" )
+	    	.build());
+			
+		} else if ( singlesCount > 0 && position > mAlbumCount ) {
+			
+			String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+			
+			mActivity.mBoundService.setPlaylist( mSongsAdapter.getQuery(), playlistName, ArtistsOneFragment.class, ARTIST_ID );
+			//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+			
+			mActivity.mBoundService.setPlaylistPosition( position - ( mAlbumCount + 1 ) );
 			
 			mActivity.mBoundService.play();
 			
