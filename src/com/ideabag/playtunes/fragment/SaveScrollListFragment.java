@@ -39,8 +39,7 @@ public class SaveScrollListFragment extends ListFragment {
 		
 	}
 	
-	@Override public void onPause() {
-		super.onPause();
+	protected void saveScrollPosition() {
 		
 		if ( null != getListView() ) {
 			
@@ -50,6 +49,13 @@ public class SaveScrollListFragment extends ListFragment {
 			mSavedScrollOffset = (v == null ? 0 : v.getTop() );
 			
 		}
+		
+	}
+	
+	@Override public void onPause() {
+		super.onPause();
+		
+		saveScrollPosition();
 		
 	}
 	
