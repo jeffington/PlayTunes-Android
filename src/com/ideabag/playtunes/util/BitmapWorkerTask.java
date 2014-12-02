@@ -2,10 +2,14 @@ package com.ideabag.playtunes.util;
 
 import java.lang.ref.WeakReference;
 
+import com.ideabag.playtunes.R;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
@@ -90,7 +94,10 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
             final ImageView imageView = imageViewReference.get();
             if ( imageView != null ) {
                 
+            	AlphaAnimation fadeIn = ( AlphaAnimation ) AnimationUtils.loadAnimation( imageView.getContext(), R.anim.fadein );
+            	
             	imageView.setImageBitmap( bitmap );
+            	imageView.startAnimation( fadeIn );
                 
             }
             
