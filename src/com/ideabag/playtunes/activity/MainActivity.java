@@ -147,6 +147,17 @@ public class MainActivity extends ActionBarActivity {
 		
 	}
 	
+	@Override public void onDestroy() {
+		super.onDestroy();
+		
+		if ( mIsBound || mBoundService != null ) {
+			
+			doUnbindService();
+			
+		}
+		
+	}
+	
 	
     // 
     // Now the hardware menu button will toggle the drawer layout

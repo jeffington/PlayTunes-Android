@@ -93,6 +93,7 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
     	
     	mResolver.registerContentObserver(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
+    	
     	mResolver.registerContentObserver(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
     	
@@ -227,6 +228,7 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
 				
 				}

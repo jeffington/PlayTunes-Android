@@ -38,22 +38,22 @@
 	</LinearLayout>
 	
 	<ImageButton android:id="@+id/NotificationPlayPauseButton"
-	    android:layout_width="48dip"
+	    android:layout_width="40dip"
 	    android:layout_height="match_parent"
 	    android:src="@drawable/ic_action_playback_pause_white"
 	    android:background="@drawable/button_background_dark"
 	    />
 	
 	<ImageButton android:id="@+id/NotificationNextButton"
-	    android:layout_width="48dip"
+	    android:layout_width="40dip"
 	    android:layout_height="match_parent"
 	    android:src="@drawable/ic_action_playback_next_white"
 	    android:background="@drawable/button_background_dark"
 	    />
 	<ImageButton android:id="@+id/NotificationCloseButton"
-	    android:layout_width="48dip"
+	    android:layout_width="40dip"
 	    android:layout_height="match_parent"
-	    android:padding="12dp"
+	    android:padding="8dp"
 	    android:scaleType="fitCenter"
 	    
 	    android:src="@drawable/abc_ic_clear"

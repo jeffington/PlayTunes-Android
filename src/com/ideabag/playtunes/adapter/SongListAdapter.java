@@ -57,6 +57,12 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		return mID;
 		
 	}
+	
+	@Override public boolean hasStableIds() {
+		
+        return true;
+        
+	}
 
 	@Override public View getView( int position, View convertView, ViewGroup parent ) {
 		
