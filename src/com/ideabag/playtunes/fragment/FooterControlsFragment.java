@@ -100,7 +100,7 @@ public class FooterControlsFragment extends Fragment {
 	@Override public void onDestroyView() {
 		super.onDestroyView();
 		
-		recycleAlbumArt();
+		//recycleAlbumArt();
 		
 	}
 	
