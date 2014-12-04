@@ -57,6 +57,7 @@ public class StarToggleTask extends AsyncTask<String, Void, Boolean > {
             	
             	if ( mTagId.equals( media_id ) ) {
             		
+            		mStarButton.setTag( null );
             		mStarButton.setChecked( isFavorite.booleanValue() );
             		
             	}

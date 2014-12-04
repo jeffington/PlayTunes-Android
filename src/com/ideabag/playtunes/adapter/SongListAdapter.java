@@ -91,6 +91,14 @@ public class SongListAdapter extends AsyncQueryAdapter {
 			
 			holder = ( ViewHolder ) convertView.getTag();
 			
+			StarToggleTask starTask = ( StarToggleTask ) holder.starButton.getTag();
+			
+			if ( starTask != null && !starTask.isCancelled() ) {
+				
+				starTask.cancel( true );
+				
+			}
+			
 		}
 		
 		mCursor.moveToPosition( position );
@@ -100,7 +108,11 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		String songAlbum = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM ) );
 		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
-		new StarToggleTask( holder.starButton ).execute( song_id );
+		StarToggleTask starTask = new StarToggleTask( holder.starButton );
+		
+		holder.starButton.setTag( starTask );
+		
+		starTask.execute( song_id );
 		
 		holder.songTitle.setText( songTitle );
 		holder.songArtist.setText( songArtist );
