@@ -140,7 +140,11 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
-		mSharedPrefs.unregisterOnSharedPreferenceChangeListener( mPreferencesChangeListener );
+		if ( mSharedPrefs != null ) {
+			
+			mSharedPrefs.unregisterOnSharedPreferenceChangeListener( mPreferencesChangeListener );
+			
+		}
 		
 	}
 	
