@@ -41,15 +41,20 @@ public class SaveScrollListFragment extends ListFragment {
 	
 	protected void saveScrollPosition() {
 		
-		if ( null != getListView() ) {
+		try {
+				
+			if ( null != getListView() ) {
 			
-			mSavedScrollListPosition = getListView().getFirstVisiblePosition();
-			View v = getListView().getChildAt( 0 );
+				mSavedScrollListPosition = getListView().getFirstVisiblePosition();
+				View v = getListView().getChildAt( 0 );
+				
+				mSavedScrollOffset = (v == null ? 0 : v.getTop() );
+			}
 			
-			mSavedScrollOffset = (v == null ? 0 : v.getTop() );
+		} catch( Exception e ) {
 			
 		}
-		
+			
 	}
 	
 	@Override public void onPause() {
