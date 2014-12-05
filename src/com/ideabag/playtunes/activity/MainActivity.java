@@ -1,5 +1,6 @@
 package com.ideabag.playtunes.activity;
 
+import com.crashlytics.android.Crashlytics;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.dialog.RateAppDialogFragment;
@@ -23,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends ActionBarActivity {
 	
@@ -38,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	@Override public void onCreate( Bundle savedInstanceState ) {
 		super.onCreate( savedInstanceState );
+		Fabric.with(this, new Crashlytics());
 		
 		setContentView( R.layout.activity_main );
 		

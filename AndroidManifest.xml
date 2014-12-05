@@ -100,6 +100,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="4ddabeb6a3b49aa48c754f6425fbb51805e8eec8"/>
         
     	
 	</application>
