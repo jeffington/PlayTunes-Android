@@ -7,3 +7,4 @@ res/values/admob.xml
 res/xml/analytics.xml
 res/values/admob_test_devices.xml
 .settings/org.eclipse.jdt.core.prefs
+assets/crashlytics-build.properties
