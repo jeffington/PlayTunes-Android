@@ -231,8 +231,20 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	@Override public void onPause() {
 		super.onPause();
 		
-		mSavedScrollListPosition = mListView.getFirstVisiblePosition();
-		mSavedScrollOffset = mListView.getChildAt( 0 ).getTop();
+		try {
+			
+			if ( null != mListView ) {
+				
+				mSavedScrollListPosition = mListView.getFirstVisiblePosition();
+				
+				View v = mListView.getChildAt( 0 );
+				mSavedScrollOffset = ( v == null ? 0 : v.getTop() );
+				
+			}
+			
+		} catch( Exception e ) {
+			
+		}
 		
 	}
 	
