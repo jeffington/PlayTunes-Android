@@ -531,11 +531,19 @@ public class NowPlayingActivity extends ActionBarActivity {
 							} else if ( lastAlbumUri == null || !nextAlbumUri.equals( lastAlbumUri ) ) {
 								
 								
-								
-								Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri );
-								Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
-								
-								mAlbumArtBackground.setImageBitmap( newAlbumArt );
+								try {
+									
+									Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri );
+									Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+									
+									mAlbumArtBackground.setImageBitmap( newAlbumArt );
+									
+								} catch( Throwable t) {
+									
+									// OutOfMemoryException :-/
+									t.printStackTrace();
+									
+								}
 								//findViewById( R.id.NowPlayingBackground ).setBackgroundDrawable( new BitmapDrawable( newAlbumArt ) );
 								
 								final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumCover );
@@ -735,7 +743,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 	
 	void doUnbindService() {
 		
-	    if ( mIsBound ) {
+	    if ( mIsBound && mBoundService != null ) {
 	        
 	    	// Remove service's reference to local object
 	    	//mBoundService.doDetachActivity();
