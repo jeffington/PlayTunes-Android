@@ -351,7 +351,8 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			AlbumsOneFragment albumFragment = new AlbumsOneFragment( );
 			albumFragment.setMediaID( albumID );
 			
-			mSearchFragment.transactFragment( albumFragment );
+			mActivity.NavigationFragment.transactFragment( albumFragment );
+			//mSearchFragment.transactFragment( albumFragment );
 			
 		} else if ( position == mAlbumsSection ) { // Artists Header
 			
@@ -367,7 +368,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			ArtistsOneFragment artistFragment = new ArtistsOneFragment();
 			artistFragment.setMediaID( artistID );
 			
-			mSearchFragment.transactFragment( artistFragment );
+			mActivity.NavigationFragment.transactFragment( artistFragment );
 			
 		}
 		
