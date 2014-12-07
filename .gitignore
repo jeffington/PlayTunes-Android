@@ -10,3 +10,5 @@ res/values/admob_test_devices.xml
 assets/crashlytics-build.properties
 res/values/com_crashlytics_export_strings.xml
 kit-libs/
+.classpath
+project.properties
