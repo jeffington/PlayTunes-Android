@@ -101,17 +101,9 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
             if ( imageView != null ) {
                 
             	AlphaAnimation fadeIn = ( AlphaAnimation ) AnimationUtils.loadAnimation( imageView.getContext(), R.anim.fadein );
-            	
-            	try {
-	            	
-            		imageView.setImageBitmap( bitmap );
-	            	imageView.startAnimation( fadeIn );
-	            	
-            	} catch( Throwable t ) {
-            		
-            		t.printStackTrace();
-            		
-            	}
+        	
+        		imageView.setImageBitmap( bitmap );
+            	imageView.startAnimation( fadeIn );
             	
             }
             
