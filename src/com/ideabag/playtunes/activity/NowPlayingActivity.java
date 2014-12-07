@@ -530,13 +530,18 @@ public class NowPlayingActivity extends ActionBarActivity {
 								
 							} else if ( lastAlbumUri == null || !nextAlbumUri.equals( lastAlbumUri ) ) {
 								
-								
+								/*
 								try {
 									
-									Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri );
-									Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+									BitmapFactory.Options options = new BitmapFactory.Options();
 									
-									mAlbumArtBackground.setImageBitmap( newAlbumArt );
+									Bitmap albumArtBitmap = BitmapFactory.decodeFile( nextAlbumUri, options );
+									
+									
+									
+									//Bitmap newAlbumArt = Bitmap.createScaledBitmap( albumArtBitmap, albumArtBitmap.getWidth() * 4, albumArtBitmap.getHeight() * 4, true );
+									
+									mAlbumArtBackground.setImageBitmap( albumArtBitmap );
 									
 								} catch( Throwable t) {
 									
@@ -545,7 +550,7 @@ public class NowPlayingActivity extends ActionBarActivity {
 									
 								}
 								//findViewById( R.id.NowPlayingBackground ).setBackgroundDrawable( new BitmapDrawable( newAlbumArt ) );
-								
+								*/
 								final BitmapWorkerTask albumThumbTask = new BitmapWorkerTask( mAlbumCover );
 								final BitmapWorkerTask albumFullTask = new BitmapWorkerTask( mAlbumArtBackground );
 						        final AsyncDrawable asyncThumbDrawable =
