@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.util.QueryCountTask;
 
 public class PlaylistDeleteDialogFragment extends DialogFragment {
 	
@@ -22,6 +24,9 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
 	private String mMediaID = null;
 	private String mPlaylistName = null;
 	private int mSongCount;
+	
+	private TextView mTitle;
+	private TextView mCount;
 	
 	public PlaylistDeleteDialogFragment() {
 		
@@ -39,7 +44,13 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
 		super.onAttach( activity );
 		
 		
-		Cursor playlistMembers = getActivity().getContentResolver().query(
+	}
+	
+    @Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	
+        View view = inflater.inflate( R.layout.dialog_fragment_deleteplaylist, container);
+       
+        MediaQuery mPlaylistMembers = new MediaQuery(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mMediaID ) ),
 				new String[] {
 			    	
@@ -55,11 +66,7 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
 				null
 			);
 		
-		playlistMembers.moveToFirst();
-		mSongCount = playlistMembers.getCount();
-		playlistMembers.close();
-		
-		Cursor cursor = getActivity().getContentResolver().query(
+		MediaQuery mPlaylistTitle = new MediaQuery(
 				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
 				new String[] {
 			    	
@@ -75,44 +82,49 @@ public class PlaylistDeleteDialogFragment extends DialogFragment {
 				},
 				null
 			);
-		
-		cursor.moveToFirst();
-		
-		mPlaylistName = cursor.getString( cursor.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
-		cursor.close();
-		
-		
-		
-		
-	}
-	
-    @Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    	
-        View view = inflater.inflate( R.layout.dialog_fragment_deleteplaylist, container);
-       
-        
         
         getDialog().requestWindowFeature( Window.FEATURE_NO_TITLE );
         
+        mTitle = ( TextView ) view.findViewById( R.id.Title );//.setText( mPlaylistName );
+        mCount = ( TextView ) view.findViewById( R.id.BadgeCount );// ).setText( "" + mSongCount );
+        
+		MediaQuery.executeAsync(getActivity(), mPlaylistMembers, new MediaQuery.OnQueryCompletedListener() {
+
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mResult.moveToFirst();
+				mSongCount = mResult.getCount();//( mResult.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
+				mCount.setText( "" + mSongCount );
+				mResult.close();
+				
+			}
+			
+		});
+		
+		MediaQuery.executeAsync(getActivity(), mPlaylistTitle, new MediaQuery.OnQueryCompletedListener() {
+
+			@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+				
+				mResult.moveToFirst();
+				mPlaylistName = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Playlists.NAME ) );
+				mTitle.setText( mPlaylistName );
+				mResult.close();
+				
+			}
+			
+		});
+		
+		
         mPlaylistManager = new PlaylistManager( getActivity() );
-        
-        ( ( TextView ) view.findViewById( R.id.Title) ).setText( mPlaylistName );
-        ( ( TextView ) view.findViewById( R.id.BadgeCount ) ).setText( "" + mSongCount );
-        
         
         view.findViewById( R.id.DialogDeleteCancel ).setOnClickListener( buttonClickListener );
         view.findViewById( R.id.DialogDeleteConfirm ).setOnClickListener( buttonClickListener );
+        
         
         return view;
         
     }
 	
-    @Override public void onStart() {
-    	super.onStart();
-    	
-    	
-    }
-    
     private View.OnClickListener buttonClickListener = new View.OnClickListener() {
 		
 		@Override public void onClick(View v) {
