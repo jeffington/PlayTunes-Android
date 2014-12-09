@@ -244,6 +244,7 @@ public class PlaylistsAllFragment extends SaveScrollListFragment implements IMus
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
 					
 				}

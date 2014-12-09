@@ -171,7 +171,6 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 			
 		}
 		
-		
 		//getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
@@ -363,6 +362,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
 					
 				}

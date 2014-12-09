@@ -278,6 +278,7 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
 				
 				}

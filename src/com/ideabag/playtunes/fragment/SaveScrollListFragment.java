@@ -30,13 +30,21 @@ public class SaveScrollListFragment extends ListFragment {
 			
 		}
 		
+		setRetainInstance( true );
 		
 	}
 	
 	protected void restoreScrollPosition() {
 		
-		getListView().setSelectionFromTop( mSavedScrollListPosition, mSavedScrollOffset );
+		try {
+			
+			getListView().setSelectionFromTop( mSavedScrollListPosition, mSavedScrollOffset );
 		
+		} catch( Exception e ) {
+			// Out of bounds
+			e.printStackTrace(); 
+			
+		}
 	}
 	
 	protected void saveScrollPosition() {

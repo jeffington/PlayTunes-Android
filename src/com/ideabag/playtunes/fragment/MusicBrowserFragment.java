@@ -174,9 +174,10 @@ public class MusicBrowserFragment extends Fragment {
 	
 	public void showNowPlaying() {
 		
-		Class < ? extends Fragment > nowPlayingFragmentClass;
+		Class < ? extends Fragment > nowPlayingFragmentClass = null;
 		
-		String nowPlayingMediaID;
+		String nowPlayingMediaID = null;
+		
 		
 		try {
 			
@@ -227,6 +228,10 @@ public class MusicBrowserFragment extends Fragment {
 			e.printStackTrace();
 		} catch ( ClassCastException e ) {
 			e.printStackTrace();
+		} catch( NullPointerException e ) {
+			
+			e.printStackTrace();
+			
 		}
 		
 	}
