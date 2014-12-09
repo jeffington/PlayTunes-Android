@@ -121,21 +121,30 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 
 			@Override public boolean onEditorAction( TextView view, int actionId, KeyEvent event ) {
 				
-				if ( actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == KeyEvent.KEYCODE_ENTER ) {
+				boolean mConsumed = false;
+				String query = mQueryTextView.getEditableText().toString();
+				
+				if ( event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER ) {
 					
-					setMediaID( mQueryTextView.getEditableText().toString() );
+					setMediaID( query );
 					
-					return true;
+					mConsumed = true;
 					
-				} else if ( event.getAction() == KeyEvent.ACTION_DOWN ) {
+				} else if ( event != null && event.getAction() == KeyEvent.ACTION_DOWN ) {
 					
-					android.util.Log.i( TAG, "key down");
+					setMediaID( query );
 					
-					setMediaID( mQueryTextView.getEditableText().toString() );
+					mConsumed = true;
+					
+				} else if ( actionId == EditorInfo.IME_ACTION_SEARCH ) {
+					
+					setMediaID( query );
+					
+					mConsumed = true;
 					
 				}
 				
-				return false;
+				return mConsumed;
 				
 			}
 			
