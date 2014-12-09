@@ -57,7 +57,9 @@ public class MainActivity extends ActionBarActivity {
 		super.onNewIntent( intent );
 		
 	    
-	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) ) {
+	    if ( intent.hasExtra( PlaybackNotification.NOW_PLAYING_EXTRA ) 
+	    		&& mBoundService != null
+	    		&& mBoundService.mPlaylistFragmentClass != null ) {
 	    	
 	    	NavigationFragment.showNowPlaying();//loadNowPlayingFragment();
 	    	showNowPlayingActivity();
