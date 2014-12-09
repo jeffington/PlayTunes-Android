@@ -59,15 +59,17 @@ public class MusicIntentReceiver extends BroadcastReceiver {
 	            
 	            switch ( keyEvent.getKeyCode() ) {
 	            	
-	                case KeyEvent.KEYCODE_HEADSETHOOK:
+	            	case KeyEvent.KEYCODE_MEDIA_PAUSE:
+	            	case KeyEvent.KEYCODE_MEDIA_PLAY:
 	                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-	                    
+	                case KeyEvent.KEYCODE_HEADSETHOOK:
+	                	
 	                	mIntent.setAction( MusicPlayerService.ACTION_PLAY_OR_PAUSE );
 	                	
 	                	context.sendBroadcast( mIntent );
 	                    
 	                    break;
-	                    
+	                    /*
 	                case KeyEvent.KEYCODE_MEDIA_PLAY:
 	                	
 	                	mIntent.setAction( MusicPlayerService.ACTION_PLAY );
@@ -83,7 +85,7 @@ public class MusicIntentReceiver extends BroadcastReceiver {
 	                	context.sendBroadcast( mIntent );
 	                    
 	                    break;
-	                /*
+	               
 	                case KeyEvent.KEYCODE_MEDIA_STOP:
 	                	
 	                    context.startService( new Intent( MusicPlayerService.ACTION_STOP ) );
