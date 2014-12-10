@@ -217,17 +217,24 @@ public class PlaylistMediaPlayer {
 			mPlaylistCursor = MediaQuery.execute( mContext, mMediaQuery );
 			
 			//mPlaylistCursor.registerDataSetObserver( mPlaylistCursorObserver );
-			
-			mPlaylistSize = mPlaylistCursor.getCount();
-			mPlaylistPosition = 0;
-			/*
-			if ( isShuffling ) {
+			if ( mPlaylistCursor != null ) {
 				
-				generateShuffledPlaylist();
+				mPlaylistSize = mPlaylistCursor.getCount();
+				mPlaylistPosition = 0;
+				/*
+				if ( isShuffling ) {
+					
+					generateShuffledPlaylist();
+					
+				}
+				*/
+				setShuffle( false );
+				
+			} else {
+				
+				mMediaQuery = null;
 				
 			}
-			*/
-			setShuffle( false );
 			
 		}
 		
