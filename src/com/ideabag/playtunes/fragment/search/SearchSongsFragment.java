@@ -2,6 +2,7 @@ package com.ideabag.playtunes.fragment.search;
 
 import android.app.Activity;
 import android.database.ContentObserver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.widget.ToggleButton;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.search.SearchSongsAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
@@ -53,11 +55,12 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
 		
 		if ( adapter == null ) {
 			
-			adapter = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQuery, SEARCH_RESULT_NO_LIMIT, null );
+			adapter = new SearchSongsAdapter( getActivity(), songMenuClickListener, mQuery, SEARCH_RESULT_NO_LIMIT, queryCompleted );
 			
 		} else {
 			
 			adapter.setTruncateAmount( SEARCH_RESULT_NO_LIMIT );
+			adapter.setOnQueryCompletedListener( queryCompleted );
 			
 		}
 		
@@ -136,7 +139,6 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
             	
 				@Override public void run() {
 					
-					adapter.requery();
 					adapter.notifyDataSetChanged();
 					
 				}
@@ -149,5 +151,14 @@ public class SearchSongsFragment extends SaveScrollListFragment implements ISear
 
 	};
 	
+	MediaQuery.OnQueryCompletedListener queryCompleted = new MediaQuery.OnQueryCompletedListener() {
+		
+		@Override public void onQueryCompleted( MediaQuery mQuery, Cursor mResult ) {
+			
+			
+			
+		}
+		
+	};
 
 }

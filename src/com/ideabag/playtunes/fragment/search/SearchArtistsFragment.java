@@ -17,6 +17,7 @@ import com.ideabag.playtunes.adapter.search.SearchAlbumsAdapter;
 import com.ideabag.playtunes.adapter.search.SearchArtistsAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.fragment.ArtistsOneFragment;
 import com.ideabag.playtunes.fragment.SaveScrollListFragment;
 import com.ideabag.playtunes.fragment.SongsFragment;
 import com.ideabag.playtunes.util.ISearchableAdapter;
@@ -58,7 +59,7 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 			
 		}
 	
-		if ( null != adapter ) {
+		if ( null == adapter ) {
 			
 			adapter = new SearchArtistsAdapter( getActivity(), mQuery, SEARCH_RESULT_NO_LIMIT, queryCompleted );
 			
@@ -89,17 +90,16 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 	
 	@Override public void onListItemClick( ListView l, View v, int position, long id ) {
 		
-		String playlistName = mActivity.getSupportActionBar().getTitle().toString();
+		// Show Artist
+		String artistID = ( String ) v.getTag( R.id.tag_artist_id );
 		
-		mActivity.mBoundService.setPlaylist( adapter.getQuery(), playlistName, SongsFragment.class, null );
-		//mActivity.mBoundService.setPlaylistCursor( adapter.getCursor() );
+		ArtistsOneFragment artistFragment = new ArtistsOneFragment();
+		artistFragment.setMediaID( artistID );
 		
-		mActivity.mBoundService.setPlaylistPosition( position );
-		
-		mActivity.mBoundService.play();
+		mActivity.NavigationFragment.transactFragment( artistFragment );
 		
 	}
-
+/*
 	View.OnClickListener songMenuClickListener = new View.OnClickListener() {
 		
 		@Override public void onClick( View v ) {
@@ -137,7 +137,7 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 		}
 		
 	};
-	
+*/
 	ContentObserver mediaStoreChanged = new ContentObserver(new Handler()) {
 
         @Override public void onChange( boolean selfChange ) {
@@ -167,5 +167,5 @@ public class SearchArtistsFragment extends SaveScrollListFragment implements ISe
 		}
 		
 	};
-
+	
 }
