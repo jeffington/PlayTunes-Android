@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
     
-    <item android:state_pressed="true"
-        android:drawable="@drawable/list_item_background_pressed" />
+    <item android:state_pressed="true">
+        
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" >
     
-	<item android:state_focused="true"
-        android:drawable="@drawable/list_item_background_focused" />
+			<solid android:color="@color/list_item_pressed" />
+
+		</shape>
+        
+	</item>
     
-    <item android:drawable="@drawable/list_item_background_default" />
+	<item android:state_focused="true">
+	    
+	    <shape xmlns:android="http://schemas.android.com/apk/res/android" >
+		    
+		    <solid android:color="@color/list_item_focused" />
+			
+		</shape>
+		
+	</item>
+    
+    <item>
+    
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" >
+		    
+		    <solid android:color="@color/list_item_default" />
+		
+		</shape>
+        
+	</item>
 
 </selector>
