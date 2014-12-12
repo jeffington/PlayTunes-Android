@@ -28,6 +28,7 @@
 	<color name="list_divider_color">#CCCCCC</color>
 	
 	<color name="primaryAccentColor">#F1510B</color>
+	<color name="primaryAccentColorTranslucent">#99F1510B</color>
 	
 	<color name="now_playing_background">#222222</color>
 	
