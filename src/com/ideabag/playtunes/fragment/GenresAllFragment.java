@@ -140,8 +140,8 @@ public class GenresAllFragment extends SaveScrollListFragment implements IMusicB
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 				
 				}
             	

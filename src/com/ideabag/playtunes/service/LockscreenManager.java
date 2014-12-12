@@ -15,7 +15,6 @@ import android.provider.MediaStore;
 
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
-import com.ideabag.playtunes.media.MediaButtonHelper;
 import com.ideabag.playtunes.media.MusicIntentReceiver;
 import com.ideabag.playtunes.media.RemoteControlClientCompat;
 import com.ideabag.playtunes.media.RemoteControlClientCompat.MetadataEditorCompat;
@@ -49,12 +48,14 @@ public class LockscreenManager {
 	        	
 	        	mContext = context;
 	        	
-	        	mAudioManager = ( AudioManager ) mContext.getSystemService( Context.AUDIO_SERVICE );
-				mMediaButtonReceiverComponent = new ComponentName( mContext, MusicIntentReceiver.class );
-				MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
-	            final Intent intent = new Intent( Intent.ACTION_MEDIA_BUTTON );
+	        	//mAudioManager = ( AudioManager ) mContext.getSystemService( Context.AUDIO_SERVICE );
+				//mMediaButtonReceiverComponent = new ComponentName( mContext, MusicIntentReceiver.class );
+				//MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
+	            
+	        	Intent intent = new Intent( mContext, MusicIntentReceiver.class );
+	            intent.setAction( Intent.ACTION_MEDIA_BUTTON );
+	            
 	            //intent.setAction(  );
-	            intent.setComponent( mMediaButtonReceiverComponent );
 	            mRemoteControlClientCompat = new RemoteControlClientCompat(
 	                    PendingIntent.getBroadcast(mContext /*context*/,
 	                            0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
@@ -101,7 +102,7 @@ public class LockscreenManager {
 		if ( null != mRemoteControlClientCompat ) {
 			
 			RemoteControlHelper.unregisterRemoteControlClient( mAudioManager, mRemoteControlClientCompat );
-			MediaButtonHelper.unregisterMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
+			//MediaButtonHelper.unregisterMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
 			
 			mRemoteControlClientCompat = null;
 			

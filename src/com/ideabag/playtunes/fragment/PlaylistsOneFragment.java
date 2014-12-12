@@ -161,6 +161,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 			
 		}
 		
+		setRetainInstance( true );
 		setHasOptionsMenu( true );
 		
 		// Adapter is asyncronous
@@ -231,8 +232,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 	@Override public void onPause() {
 		super.onPause();
 		
-		mSavedScrollListPosition = mListView.getFirstVisiblePosition();
-		mSavedScrollOffset = mListView.getChildAt( 0 ).getTop();
+		saveScrollPosition();
 		
 	}
 	
@@ -513,6 +513,7 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
 					adapter.notifyDataSetChanged();
 					
@@ -546,6 +547,25 @@ public class PlaylistsOneFragment extends Fragment implements IMusicBrowser, Ada
 		//android.util.Log.i( TAG, "Coefficient: " + mCoefficient +" amount to scroll: " + scrollAmount );
 		
 		return (int) scrollAmount;
+		
+	}
+	
+	private void saveScrollPosition() {
+		
+		try {
+			
+			if ( null != mListView ) {
+				
+				mSavedScrollListPosition = mListView.getFirstVisiblePosition();
+				
+				View v = mListView.getChildAt( 0 );
+				mSavedScrollOffset = ( v == null ? 0 : v.getTop() );
+				
+			}
+			
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
 		
 	}
 	

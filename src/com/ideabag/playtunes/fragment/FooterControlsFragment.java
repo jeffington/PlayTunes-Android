@@ -102,7 +102,7 @@ public class FooterControlsFragment extends Fragment {
 	@Override public void onDestroyView() {
 		super.onDestroyView();
 		
-		recycleAlbumArt();
+		//recycleAlbumArt();
 		
 	}
 	
@@ -177,9 +177,9 @@ public class FooterControlsFragment extends Fragment {
 	
    public PlaybackListener PlaybackListener = new PlaybackListener() {
 
-		@Override public void onTrackChanged(String media_id) {
-			
-		if ( null == media_id ) {
+		@Override public void onTrackChanged( String media_id ) {
+		
+		if ( null == media_id && isAdded() ) {
 	    		
 	    		if ( isShowing ) {
 		    		

@@ -76,7 +76,7 @@ public class MediaQuery {
 				query.mQueryObject.mSelectionArgs,
 				query.mQueryObject.mOrderBy );
 		 
-		 } catch( SQLiteException e ) {
+		 } catch( Exception e ) {
 			 
 			 // Failed
 			 

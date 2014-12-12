@@ -69,9 +69,15 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
 	        
 	        
 	        if ( !isCancelled() ) {
-	        	
-	        	bmp = BitmapFactory.decodeFile( path, options );
-	        	
+	        	try {
+	        		
+	        		bmp = BitmapFactory.decodeFile( path, options );
+	        		
+	        	} catch( Throwable t ) {
+	        		
+	        		t.printStackTrace();
+	        		
+	        	}
 	        }
 	        
     	}
@@ -95,10 +101,10 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
             if ( imageView != null ) {
                 
             	AlphaAnimation fadeIn = ( AlphaAnimation ) AnimationUtils.loadAnimation( imageView.getContext(), R.anim.fadein );
-            	
-            	imageView.setImageBitmap( bitmap );
+        	
+        		imageView.setImageBitmap( bitmap );
             	imageView.startAnimation( fadeIn );
-                
+            	
             }
             
         }

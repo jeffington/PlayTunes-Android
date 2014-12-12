@@ -139,6 +139,7 @@ public class AlbumsAllFragment extends SaveScrollListFragment implements IMusicB
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery(); // notifyDataSetChanged() gets called at the end of the asynchronous query
 				
 				}

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,7 @@ import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.media.AudioFocusHelper;
 import com.ideabag.playtunes.media.MusicFocusable;
+import com.ideabag.playtunes.media.MusicIntentReceiver;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.GAEvent;
@@ -52,6 +55,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 	private PlaylistMediaPlayer MediaPlayer;
 	private PlaybackNotification Notification;
 	private LockscreenManager Lockscreen;
+	
+	private AudioManager mAudioManager;
 	
 	private SharedPreferences mSharedPrefs;
 	
@@ -169,6 +174,10 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		
 		registerReceiver( NotificationActionReceiver, mNotificationIntentFilter );
 		
+		mAudioManager = ( AudioManager ) getBaseContext().getSystemService( Context.AUDIO_SERVICE );
+		
+		mAudioManager.registerMediaButtonEventReceiver( new ComponentName( getBaseContext(), MusicIntentReceiver.class ) );
+		
 		mAudioFocusHelper = new AudioFocusHelper( getApplicationContext(), this );
 		
 		String mMediaQueryJSONString = mSharedPrefs.getString( PREF_KEY_NOWPLAYING_QUERY, null );
@@ -224,6 +233,8 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		mAudioFocusHelper.abandonFocus();
 		Notification.remove();
 		unregisterReceiver( NotificationActionReceiver );
+		
+		mAudioManager.unregisterMediaButtonEventReceiver( new ComponentName( getBaseContext(), MusicIntentReceiver.class ) );
 		
 		ChangedListeners.clear();
 		

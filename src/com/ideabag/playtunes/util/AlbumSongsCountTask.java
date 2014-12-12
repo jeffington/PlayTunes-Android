@@ -60,7 +60,7 @@ public class AlbumSongsCountTask extends AsyncTask<MediaQuery, Void, String > {
         	
             final TextView mTextBadge = toggleButtonReference.get();
             
-            if ( mCount != null ) {
+            if ( mCount != null && mTextBadge != null ) {
                 
             	mTextBadge.setText( mCount );
             	

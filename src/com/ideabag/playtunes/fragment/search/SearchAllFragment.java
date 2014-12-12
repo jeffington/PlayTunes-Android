@@ -102,15 +102,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 				
 				int mSongCount = mResult.getCount();
 				
-				if ( mSongCount == 0 ) {
-					
-					mSongsCount.setText( "None found" );
-					
-				} else {
-					
-					mSongsCount.setText( "" + mSongCount );
-					
-				}
+				mSongsCount.setText( "" + mSongCount );
 				
 			}
 			
@@ -121,15 +113,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 				
 				int mAlbumCount = mResult.getCount();
 				
-				if ( mAlbumCount == 0 ) {
-					
-					mAlbumsCount.setText( "None found" );
-					
-				} else {
-					
-					mAlbumsCount.setText( "" + mAlbumCount );
-					
-				}
+				mAlbumsCount.setText( "" + mAlbumCount );
 				
 			}
 			
@@ -140,17 +124,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 				
 				int mArtistCount = mResult.getCount();
 				
-				android.util.Log.i( TAG, "Artists found! " + mArtistCount );
-				
-				if ( mArtistCount == 0 ) {
-					
-					mArtistsCount.setText( "None found" );
-					
-				} else {
-					
-					mArtistsCount.setText( "" + mArtistCount );
-					
-				}
+				mArtistsCount.setText( "" + mArtistCount );
 				
 			}
 			
@@ -351,7 +325,8 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			AlbumsOneFragment albumFragment = new AlbumsOneFragment( );
 			albumFragment.setMediaID( albumID );
 			
-			mSearchFragment.transactFragment( albumFragment );
+			mActivity.NavigationFragment.transactFragment( albumFragment );
+			//mSearchFragment.transactFragment( albumFragment );
 			
 		} else if ( position == mAlbumsSection ) { // Artists Header
 			
@@ -367,7 +342,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 			ArtistsOneFragment artistFragment = new ArtistsOneFragment();
 			artistFragment.setMediaID( artistID );
 			
-			mSearchFragment.transactFragment( artistFragment );
+			mActivity.NavigationFragment.transactFragment( artistFragment );
 			
 		}
 		

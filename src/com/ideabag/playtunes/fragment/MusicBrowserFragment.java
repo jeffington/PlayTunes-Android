@@ -174,11 +174,15 @@ public class MusicBrowserFragment extends Fragment {
 	
 	public void showNowPlaying() {
 		
-		Class < ? extends Fragment > nowPlayingFragmentClass = mActivity.mBoundService.mPlaylistFragmentClass;
+		Class < ? extends Fragment > nowPlayingFragmentClass = null;
 		
-		String nowPlayingMediaID = mActivity.mBoundService.mPlaylistMediaID;
+		String nowPlayingMediaID = null;
+		
 		
 		try {
+			
+			nowPlayingFragmentClass = mActivity.mBoundService.mPlaylistFragmentClass;
+			nowPlayingMediaID = mActivity.mBoundService.mPlaylistMediaID;
 			
 			// 
 			// Check to see if the currently playing Fragment is already showing
@@ -224,6 +228,10 @@ public class MusicBrowserFragment extends Fragment {
 			e.printStackTrace();
 		} catch ( ClassCastException e ) {
 			e.printStackTrace();
+		} catch( NullPointerException e ) {
+			
+			e.printStackTrace();
+			
 		}
 		
 	}

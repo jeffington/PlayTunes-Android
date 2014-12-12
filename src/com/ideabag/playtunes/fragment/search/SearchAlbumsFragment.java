@@ -126,7 +126,6 @@ public class SearchAlbumsFragment extends SaveScrollListFragment implements ISea
 				@Override public void run() {
 					
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 					
 				}
             	

@@ -158,8 +158,8 @@ public class ArtistsAllFragment extends SaveScrollListFragment implements IMusic
 
 				@Override public void run() {
 					
+					saveScrollPosition();
 					adapter.requery();
-					adapter.notifyDataSetChanged();
 				
 				}
             	
