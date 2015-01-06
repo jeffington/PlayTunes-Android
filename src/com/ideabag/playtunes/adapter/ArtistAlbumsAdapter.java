@@ -23,18 +23,21 @@ public class ArtistAlbumsAdapter extends AlbumListAdapter {
 		super( context );
 		
 		ARTIST_ID = artist_id;
-		
-		mQuery = new MediaQuery(
-    			MediaStore.Audio.Artists.Albums.getContentUri( "external", Long.parseLong( ARTIST_ID ) ),
-    			albumsSelection,
-				null,
-				null,
-				MediaStore.Audio.Artists.Albums.ALBUM
-			);
-    	
-		setOnQueryCompletedListener( listener );
-		
-		requery();
+		if ( null != ARTIST_ID && !artist_id.equals("") ) {
+			
+			mQuery = new MediaQuery(
+	    			MediaStore.Audio.Artists.Albums.getContentUri( "external", Long.parseLong( ARTIST_ID ) ),
+	    			albumsSelection,
+					null,
+					null,
+					MediaStore.Audio.Artists.Albums.ALBUM
+				);
+	    	
+			setOnQueryCompletedListener( listener );
+			
+			requery();
+			
+		}
 		
 	}
 	
