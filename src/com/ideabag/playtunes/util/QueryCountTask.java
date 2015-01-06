@@ -41,8 +41,16 @@ public class QueryCountTask extends AsyncTask<MediaQuery, Void, String > {
     	
     	Cursor c = MediaQuery.execute(mContext, query);
     	
-    	mQueryCount += c.getCount();
-    	c.close();
+    	if ( null != c ) {
+    		
+    		mQueryCount += c.getCount();
+    		c.close();
+    		
+    	} else {
+    		
+    		mQueryCount = "0";
+    		
+    	}
     	
         return mQueryCount;
         
