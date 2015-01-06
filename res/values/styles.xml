@@ -72,14 +72,13 @@
 	    <item name="android:layout_height">match_parent</item>
 	    <item name="android:layout_width">@dimen/touch_target_minimum</item>
 	    <item name="android:gravity">center</item>
-	    <item name="android:src">@drawable/abc_ic_menu_moreoverflow_normal_holo_light</item>
-	
+	    <item name="android:src">@drawable/ic_action_overflow</item>
 	</style>
 	
 	<style name="MenuButtonDark" parent="@style/MenuButton">
 	    
 	    <item name="android:background">@drawable/button_background_dark</item>
-	    <item name="android:src">@drawable/abc_ic_menu_moreoverflow_normal_holo_dark</item>
+	    <item name="android:src">@drawable/ic_action_overflow_white</item>
 	
 	</style>
 	
@@ -107,6 +106,34 @@
 <style name="AccentedField" parent="android:Widget.EditText">
 	  <item name="android:background">@drawable/textfield_accented</item>
 	  
+</style>
+
+<style name="DialogButton" parent="android:Widget.Button">
+    
+    
+</style>
+
+<style name="TextViewXLarge" parent="android:Widget.TextView">
+    
+    <item name="android:gravity">left|center_vertical</item>
+    <item name="android:textSize">@dimen/text_xlarge</item>
+	<item name="android:textColor">@color/textColorPrimary</item>
+	<item name="android:layout_marginLeft">@dimen/list_item_horizontal_spacing</item>
+	
+</style>
+
+<style name="NavigationListItem">
+    
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">@dimen/navigation_list_item_height</item>
+	<item name="android:orientation">horizontal</item>
+	<item name="android:minHeight">@dimen/navigation_list_item_height</item>
+	<item name="android:gravity">center_vertical</item>
+	<item name="android:paddingLeft">@dimen/list_item_horizontal_spacing</item>
+	<item name="android:paddingRight">@dimen/list_item_horizontal_spacing</item>
+	<item name="android:background">@drawable/list_item_background</item>
+	<item name="android:clickable">true</item>
+	
 </style>
 
 </resources>

@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
-      <item name="android:windowContentOverlay">@null</item>
-		<item name="android:windowBackground">@null</item>
-		<item name="actionBarStyle">@style/MyActionBar</item>
-		<item name="android:listViewStyle">@style/CompatListView</item>
+      <!-- Set AppCompat’s color theming attrs -->
+	    <item name="colorPrimary">@color/primaryAccentColor</item>
+	    <item name="colorPrimaryDark">@color/primaryAccentColorTranslucent</item>
 		
-		<item name="actionButtonStyle">@style/ActionButtonCompat</item>
-		<item name="titleTextStyle">@style/MyActionBarTitleText</item>
-		<item name="actionBarItemBackground">@drawable/button_background_dark</item>
 		
     </style>
     
