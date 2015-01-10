@@ -39,7 +39,7 @@
 	/>
 	
 	</LinearLayout>
-	<ImageView
+	<ImageView android:id="@+id/NotificationIndicator"
 		android:layout_width="24dip"
 		android:layout_height="24dip"
 		android:src="@drawable/ic_action_music_2"
