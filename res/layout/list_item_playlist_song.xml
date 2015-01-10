@@ -7,8 +7,9 @@
         
            <ImageButton android:id="@+id/RemoveButton"
             style="@style/MenuButton"
-			android:src="@drawable/abc_ic_clear_holo_light"
+			android:src="@drawable/ic_action_cancel_grey"
 			android:scaleType="centerInside"
+			android:padding="12dp"
             />
         
     	<LinearLayout android:orientation="vertical"
@@ -68,11 +69,12 @@
             
             />
        
-       <View
-			android:id="@+id/DragButton"
+       <View android:id="@+id/DragButton"
+			
 			android:layout_width="@dimen/drag_handle_width"
 			android:layout_height="match_parent"
 			android:background="@drawable/reorder_handle"
+			android:visibility="gone"
             />
 
 </LinearLayout>
