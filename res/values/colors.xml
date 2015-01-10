@@ -7,7 +7,7 @@
 	<color name="button_pressed_dark">#22FFFFFF</color>
 	<color name="button_selected_dark">#44FFFFFF</color>
 	
-	<color name="textColorPrimary">#222222</color>
+	<color name="textColorPrimary">#444444</color>
 	<color name="textColorSecondary">#555555</color>
 	<color name="textColorTertiary">#999999</color>
 	
@@ -25,10 +25,11 @@
 	<color name="button_background_default">#F1F1F1</color>
 	<color name="button_background_pressed">#E0E0E0</color>
 	
-	<color name="list_divider_color">#CCCCCC</color>
+	<color name="list_divider_color">#DDDDDD</color>
 	
 	<color name="primaryAccentColor">#F1510B</color>
-	<color name="primaryAccentColorTranslucent">#99F1510B</color>
+	<color name="secondaryAccentColor">#BE1E00</color>
+	<color name="primaryAccentColorTranslucent">#9D3104</color>
 	
 	<color name="now_playing_background">#222222</color>
 	
