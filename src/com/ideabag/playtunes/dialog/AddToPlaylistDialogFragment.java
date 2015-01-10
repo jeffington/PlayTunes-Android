@@ -79,6 +79,17 @@ public class AddToPlaylistDialogFragment extends DialogFragment implements OnIte
         
     }
     
+    @Override public void onStart() {
+    	super.onStart();
+    	
+    	if ( android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB ) {
+    		
+    		getDialog().getWindow().setBackgroundDrawableResource( R.drawable.gb_dialog_background );
+    		
+    	}
+    	
+    }
+    
 	@Override public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
 		
 		if ( 0 == position ) { // New playlist

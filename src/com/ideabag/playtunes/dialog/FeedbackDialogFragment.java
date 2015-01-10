@@ -55,6 +55,11 @@ public class FeedbackDialogFragment extends DialogFragment {
     @Override public void onStart() {
     	super.onStart();
     	
+    	if ( android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB ) {
+    		
+    		getDialog().getWindow().setBackgroundDrawableResource( R.drawable.gb_dialog_background );
+    		
+    	}
     	
     	mEditText.performClick();
     	
