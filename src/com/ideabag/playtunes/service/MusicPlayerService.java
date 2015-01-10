@@ -440,14 +440,15 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			listener.onTrackChanged( MediaPlayer.getCurrentMediaID() );
 			listener.onLoopingChanged( MediaPlayer.getLoopState() );
 			listener.onShuffleChanged( MediaPlayer.isShuffling() );
+			listener.onDurationChanged( MediaPlayer.getTrackPosition() , MediaPlayer.getTrackDuration() );
 			
 			if ( MediaPlayer.isPlaying() ) {
 				
-				listener.onPlay( MediaPlayer.getTrackPlaybackPosition() );
+				listener.onPlay();
 				
 			} else {
 				
-				listener.onPause( MediaPlayer.getTrackPlaybackPosition() );
+				listener.onPause();
 				
 			}
 			
@@ -567,7 +568,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		}
 
 
-		@Override public void onPlay(int playbackPositionMilliseconds ) {
+		@Override public void onPlay() {
 			
 			int count = ChangedListeners.size();
 			
@@ -575,7 +576,7 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 			
 			for ( int x = 0; x < count; x++ ) {
 				
-				ChangedListeners.get( x ).onPlay( playbackPositionMilliseconds );
+				ChangedListeners.get( x ).onPlay();
 				
 			}
 			
@@ -592,19 +593,32 @@ public class MusicPlayerService extends Service implements MusicFocusable {
 		}
 
 
-		@Override public void onPause( int playbackPositionMilliseconds ) {
+		@Override public void onPause() {
 			
 			int count = ChangedListeners.size();
 			
 			for ( int x = 0; x < count; x++ ) {
 				
-				ChangedListeners.get( x ).onPause( playbackPositionMilliseconds );
+				ChangedListeners.get( x ).onPause();
 				
 			}
 			
 			Lockscreen.pause();
 			
 			Notification.pause();
+			
+		}
+
+
+		@Override public void onDurationChanged( int position, int duration ) {
+			
+			int count = ChangedListeners.size();
+			
+			for ( int x = 0; x < count; x++ ) {
+				
+				ChangedListeners.get( x ).onDurationChanged( position, duration );
+				
+			}
 			
 		}
 		
