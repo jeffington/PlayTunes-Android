@@ -17,17 +17,19 @@
 	        android:background="@color/primaryAccentColor"
 	        
 		/>
+
 	<Button
-    	android:id="@+id/PlaylistOptionsRename"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/list_item_height"
-		android:gravity="left|center_vertical"
-		android:textSize="@dimen/text_xlarge"
-		android:paddingLeft="@dimen/list_item_horizontal_spacing"
-		android:textColor="@color/textColorPrimary"
-		android:text="@string/rename"
-		android:background="@drawable/list_item_background"
-	/>
+	    android:id="@+id/PlaylistOptionsRename"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/list_item_height"
+	    android:background="@drawable/list_item_background"
+	    android:gravity="left|center_vertical"
+	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+	    android:text="@string/rename"
+	    android:textColor="@color/textColorPrimary"
+	    android:textSize="@dimen/text_large"
+	    android:textAllCaps="false"
+	    />
 	
    	<View
    	    android:layout_width="match_parent"
@@ -36,16 +38,16 @@
    	    />
 	
 	<Button
-    	android:id="@+id/PlaylistOptionsDelete"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/list_item_height"
-		android:gravity="left|center_vertical"
-		android:textSize="@dimen/text_xlarge"
-		android:paddingLeft="@dimen/list_item_horizontal_spacing"
-		android:textColor="@color/textColorPrimary"
-		android:text="@string/delete"
-		android:background="@drawable/list_item_background"
-	/>
+	    android:id="@+id/PlaylistOptionsDelete"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/list_item_height"
+	    android:background="@drawable/list_item_background"
+	    android:gravity="left|center_vertical"
+	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+	    android:text="@string/delete"
+	    android:textColor="@color/textColorPrimary"
+	    android:textSize="@dimen/text_large"
+	    android:textAllCaps="false"/>
 	
 	<Button
     android:id="@+id/ButtonCancel"
