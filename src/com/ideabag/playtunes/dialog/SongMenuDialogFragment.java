@@ -102,7 +102,7 @@ public class SongMenuDialogFragment extends DialogFragment {
 		        String songAlbumID = mResult.getString( mResult.getColumnIndex( MediaStore.Audio.Media.ALBUM_ID ) );
 		        
 		        // Show Artist name
-		        if ( songArtist.equals( getString( R.string.no_artist_string ) ) ) {
+		        if ( songArtist == null || songArtist.equals( getString( R.string.no_artist_string ) ) || songArtist.equals("") ) {
 		        	
 		        	songArtistButton.setVisibility( View.GONE );
 		        	
@@ -114,7 +114,7 @@ public class SongMenuDialogFragment extends DialogFragment {
 		        }
 		        
 		        // Show album name
-		        if ( songAlbum.equals( getString( R.string.no_album_string ) ) ) {
+		        if ( songAlbum == null || songAlbum.equals( getString( R.string.no_album_string ) ) || songAlbum.equals("") ) {
 		        	
 		        	songAlbumButton.setVisibility( View.GONE );
 		        	
@@ -133,6 +133,17 @@ public class SongMenuDialogFragment extends DialogFragment {
         
         return view;
         
+    }
+    
+    @Override public void onStart() {
+    	super.onStart();
+    	
+    	if ( android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB ) {
+    		
+    		getDialog().getWindow().setBackgroundDrawableResource( R.drawable.gb_dialog_background );
+    		
+    	}
+    	
     }
 
 	View.OnClickListener mMenuClickListener = new View.OnClickListener() {
