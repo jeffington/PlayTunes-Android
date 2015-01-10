@@ -16,7 +16,7 @@
 	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
     	android:paddingRight="@dimen/list_item_horizontal_spacing">
 	    
-	   	<ImageView android:id="@+id/BadgeIcon"
+	   	<ImageView
 	            android:layout_width="24dp"
 	            android:layout_height="24dp"
 	            android:src="@drawable/ic_action_settings"
@@ -36,14 +36,19 @@
 		
 	</LinearLayout>
      
-     <ListView android:id="@+id/NavigationListView"
-        
-        android:layout_width="match_parent"
+	<ScrollView
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentTop="true"
+        android:layout_above="@id/SettingsButton">
+	<include layout="@layout/view_basic_navigation"
+	    
+	    android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/SettingsButton"
         
-	/>
+        
+        />
+	</ScrollView>
 	
 	<View
 		
