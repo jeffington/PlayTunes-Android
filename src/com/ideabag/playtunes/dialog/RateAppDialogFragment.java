@@ -44,6 +44,8 @@ public class RateAppDialogFragment extends DialogFragment {
         
     }
 	
+    
+    
     // 
     // Set the app open count to 100, so we don't bother the user about ratings again
     // 
@@ -68,6 +70,11 @@ public class RateAppDialogFragment extends DialogFragment {
     @Override public void onStart() {
     	super.onStart();
     	
+    	if ( android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB ) {
+    		
+    		getDialog().getWindow().setBackgroundDrawableResource( R.drawable.gb_dialog_background );
+    		
+    	}
     	
     }
     
