@@ -19,6 +19,7 @@
 	        android:layout_height="wrap_content"
 	        android:gravity="left|center_vertical"
 	        android:textSize="@dimen/text_xlarge"
+	        android:textColor="@color/textColorPrimary"
 	        />
 	    
 	    <TextView android:id="@+id/Subtitle"
