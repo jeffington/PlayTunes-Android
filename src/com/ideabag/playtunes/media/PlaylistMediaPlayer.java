@@ -48,8 +48,8 @@ public class PlaylistMediaPlayer {
 	
 	private long shuffleRandomNumberSeed = -1;
 	
-	private PowerManager pm;
-	private PowerManager.WakeLock wl;
+	//private PowerManager pm;
+	//private PowerManager.WakeLock wl;
 	
 	//
 	//
@@ -59,15 +59,17 @@ public class PlaylistMediaPlayer {
 		
 		void onTrackChanged( String media_id );
 		
-		void onPlay( int playbackPositionMilliseconds );
+		void onPlay();
 		
-		void onPause( int playbackPositionMilliseconds );
+		void onPause();
 		
 		void onPlaylistDone();
 		
 		void onLoopingChanged( int loop );
 		
 		void onShuffleChanged( boolean isShuffling );
+		
+		void onDurationChanged( int position, int duration );
 		
 	}
 	
@@ -86,6 +88,7 @@ public class PlaylistMediaPlayer {
 		
 		mMediaPlayer = new MediaPlayer();
 		mMediaPlayer.setAudioStreamType( AudioManager.STREAM_MUSIC );
+		mMediaPlayer.setWakeMode( mContext, PowerManager.PARTIAL_WAKE_LOCK );
 		
 		mMediaPlayer.setOnCompletionListener( loopOnCompletionListener );
 		mMediaPlayer.setOnPreparedListener( onPreparedListener );
@@ -101,8 +104,8 @@ public class PlaylistMediaPlayer {
 		
 		//mContext.registerReceiver(HardwareStopReceiver, hardwareStopIntents);
 		
-		pm = ( PowerManager ) mContext.getSystemService( Context.POWER_SERVICE );
-		wl = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, TAG );
+		//pm = ( PowerManager ) mContext.getSystemService( Context.POWER_SERVICE );
+		//wl = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, TAG );
 		
 	}
 	
@@ -155,11 +158,17 @@ public class PlaylistMediaPlayer {
 			
 			isPrepared = true;
 			
+			if ( PlaybackChanged != null ) {
+				
+				PlaybackChanged.onDurationChanged( mp.getCurrentPosition(), mp.getDuration() );
+				
+			}
+			
 			if ( isPlaying ) {
 				
 				if ( null != PlaybackChanged ) {
 					
-					PlaybackChanged.onPlay( 0 );
+					PlaybackChanged.onPlay();
 				
 				}
 				
@@ -169,7 +178,7 @@ public class PlaylistMediaPlayer {
 				
 				if ( null != PlaybackChanged ) {
 					
-					PlaybackChanged.onPause( 0 );
+					PlaybackChanged.onPause();
 				
 				}
 				
@@ -191,13 +200,13 @@ public class PlaylistMediaPlayer {
 		
 		mMediaPlayer.reset();
 		mMediaPlayer.release();
-		
+		/*
 		if ( wl.isHeld() ) {
 			
 			wl.release();
 			
 		}
-		
+		*/
 		//mContext.unregisterReceiver( HardwareStopReceiver );
 		
 	}
@@ -262,7 +271,7 @@ public class PlaylistMediaPlayer {
 			
 			if ( null != PlaybackChanged ) {
 				
-				PlaybackChanged.onPlay( mMediaPlayer.getCurrentPosition() );
+				PlaybackChanged.onPlay();
 				
 			}
 			
@@ -271,13 +280,13 @@ public class PlaylistMediaPlayer {
 				mMediaPlayer.start();
 				
 			}
-			
+			/*
 			if ( !wl.isHeld() ) {
 				
 				wl.acquire(); // Wake lock acquired
 				
 			}
-			
+			*/
 		}
 		
 	}
@@ -292,7 +301,7 @@ public class PlaylistMediaPlayer {
 			
 			if ( null != PlaybackChanged ) {
 				
-				PlaybackChanged.onPause( mMediaPlayer.getCurrentPosition() );
+				PlaybackChanged.onPause();
 				
 			}
 			
@@ -399,9 +408,15 @@ public class PlaylistMediaPlayer {
 		
 	}
 	
-	public int getTrackPlaybackPosition() {
+	public int getTrackPosition() {
 		
 		return mMediaPlayer.getCurrentPosition();
+		
+	}
+	
+	public int getTrackDuration() {
+		
+		return mMediaPlayer.getDuration();
 		
 	}
 	
@@ -601,7 +616,7 @@ public class PlaylistMediaPlayer {
 	}
 	
 	// 
-	// Implementing FisherÐYates shuffle
+	// Implementing Fisherï¿½Yates shuffle
 	void shuffleArray( int[] ar ) {
 		
 	    Random rnd = new Random();
