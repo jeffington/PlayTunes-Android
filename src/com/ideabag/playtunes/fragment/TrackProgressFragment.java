@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -18,7 +20,7 @@ public class TrackProgressFragment extends Fragment {
 	
 	private static final int ONE_SECOND_IN_MILLI = 1000;
 	
-	private NowPlayingActivity mActivity;
+	//private NowPlayingActivity mActivity;
 	
 	private SeekBar mBar;
 	
@@ -28,13 +30,13 @@ public class TrackProgressFragment extends Fragment {
 	
 	TextView mPlayLength, mPlayPosition;
 	
-	int mPlayLengthMilli, mPlayPositionMilli;
+	int mPlayLengthMilli = 0, mPlayPositionMilli = 0;
 	
 	@Override public void onAttach( Activity activity ) {
 		
 		super.onAttach( activity );
 		
-		mActivity = ( NowPlayingActivity ) activity;
+		//mActivity = ( NowPlayingActivity ) activity;
 		
 		handle = new Handler();
 		
@@ -83,7 +85,7 @@ public class TrackProgressFragment extends Fragment {
 				
 				setProgress( progress );
 				
-				mActivity.mBoundService.setSeekPosition( progress );
+				//mActivity.mBoundService.setSeekPosition( progress );
 				
 			}
 			
@@ -134,6 +136,7 @@ public class TrackProgressFragment extends Fragment {
 	public void startProgress() {
 		
 		stopProgress();
+		isPlaying = true;
 		handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 		//handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 		
@@ -142,6 +145,7 @@ public class TrackProgressFragment extends Fragment {
 	
 	public void stopProgress() {
 		
+		isPlaying = false;
 		handle.removeCallbacks( mUpdateTimer );
 		
 	}
@@ -172,13 +176,17 @@ public class TrackProgressFragment extends Fragment {
 		
 		mPlayLengthMilli = duration;
 		
-		mBar.setMax( mPlayLengthMilli );
+		
 		
 		int seconds = duration / ONE_SECOND_IN_MILLI;
 		int minutes = seconds / 60;
 		seconds = seconds % 60;
 		
 		mPlayLength.setText( minutes + ":" + ( seconds < 10 ? "0" + seconds : seconds ) );
+		
+		//Animation fadeIn = AnimationUtils.loadAnimation(mActivity, R.anim.fadein );
+		mBar.setMax( mPlayLengthMilli );
+		//mBar.startAnimation( fadeIn );
 		
 	}
 	
