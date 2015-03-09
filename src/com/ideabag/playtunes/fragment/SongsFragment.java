@@ -8,11 +8,12 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.SongsAllAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
-import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
 import com.ideabag.playtunes.util.GAEvent.Categories;
+import com.ideabag.playtunes.widget.StarButton;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -27,7 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-public class SongsFragment extends SaveScrollListFragment implements IMusicBrowser, IPlayableList {
+public class SongsFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "All Songs Fragment";
 	
@@ -74,10 +75,6 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 			}
 			
 		});
-    	
-		//adapter.setNowPlayingMedia( mActivity.mBoundService.CURRENT_MEDIA_ID );
-		
-		//adapter.set
 		
     	mPlaylistManager = new PlaylistManager( getActivity() );
 		
@@ -86,6 +83,13 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
     	getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
+		
+		if ( android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB ) {
+			
+			getListView().setSelector( R.drawable.list_item_background );
+			
+		}
+		
 		getListView().setOnItemLongClickListener( mSongMenuLongClickListener );
     	
 		
@@ -106,14 +110,15 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 		
 		mActivity.setActionbarTitle( getString( R.string.all_songs ) );
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
-		
-		
+		mActivity.addPlaybackListener( mPlaybackListener );
+		android.util.Log.i( TAG, "onResume");
 	}
 		
 	@Override public void onPause() {
 		super.onPause();
 		//mActivity.AdView.pause();
-		
+		mActivity.removePlaybackListener( mPlaybackListener );
+		android.util.Log.i( TAG, "onPause");
 	}
 	
 	@Override public void onDestroyView() {
@@ -176,7 +181,7 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
 			
 			if ( viewID == R.id.StarButton ) {
 				
-				ToggleButton starButton = ( ToggleButton ) v;
+				StarButton starButton = ( StarButton ) v;
 				
 				if ( starButton.isChecked() ) {
 					
@@ -240,11 +245,28 @@ public class SongsFragment extends SaveScrollListFragment implements IMusicBrows
         }
 
 	};
+	
+	
+	private PlaybackListener mPlaybackListener = new PlaybackListener() {
 
-	@Override public void onNowPlayingMediaChanged(String media_id) {
-		// TODO Auto-generated method stub
-		adapter.setNowPlayingMedia( media_id );
+		@Override public void onTrackChanged( String media_id ) {
+			
+			adapter.setNowPlayingMedia( media_id );
+			
+		}
+
+		@Override public void onPlaylistDone() {
+			
+			adapter.setNowPlayingMedia( null );
+			
+		}
 		
-	}
+		@Override public void onPlay() {  }
+		@Override public void onPause() {  }
+		@Override public void onLoopingChanged(int loop) {  }
+		@Override public void onShuffleChanged(boolean isShuffling) {  }
+		@Override public void onDurationChanged( int position, int duration ) {  }
+		
+	};
 	
 }
