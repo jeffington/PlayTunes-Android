@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="196dp"
-    android:minHeight="196dp"
+    android:layout_height="@dimen/album_art_header_height"
+    android:minHeight="@dimen/album_art_header_height"
     android:orientation="vertical"
     android:background="@color/now_playing_background"
     android:gravity="center_horizontal">

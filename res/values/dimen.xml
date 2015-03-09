@@ -30,5 +30,7 @@
 	<dimen name="navigation_list_item_height">64dp</dimen>
 	
 	<dimen name="album_stack_height">36dp</dimen>
+	
+	<dimen name="album_art_header_height">196dp</dimen>
 
 </resources>
