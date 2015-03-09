@@ -22,7 +22,7 @@ public class PlaylistsAllAdapter extends AsyncQueryAdapter {
 	
 	protected View.OnClickListener playlistMenuClickListener;
 	
-    private final String[] allPlaylistsSelection = new String[] {
+    public static final String[] SELECTION = new String[] {
     	
     	MediaStore.Audio.Playlists.NAME,
     	MediaStore.Audio.Playlists.DATE_MODIFIED,
@@ -42,7 +42,7 @@ public class PlaylistsAllAdapter extends AsyncQueryAdapter {
 		
 		mQuery = new MediaQuery(
 				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-				allPlaylistsSelection,
+				SELECTION,
 				MediaStore.Audio.Playlists._ID + " !=?",
 				new String[] {
 					
