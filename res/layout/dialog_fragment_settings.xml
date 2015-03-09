@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/DialogFragmentSettings"
+    android:layout_width="@dimen/dialog_width"
+    android:minWidth="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    
+    <TextView android:id="@+id/DialogHeaderTitle"
+        
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/touch_target_minimum"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/text_xlarge"
+        android:gravity="center"
+        android:text="@string/activity_title_settings"
+        android:background="@color/primaryAccentColor"
+	/>
+    
+
+	
+    <FrameLayout
+        android:id="@+id/SettingsFragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    	<Button android:id="@+id/ButtonCancel"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/touch_target_minimum"
+	    android:text="@string/cancel"
+	    android:textSize="@dimen/text_medium"
+	    android:background="@drawable/list_button_background"
+	    
+    />
+    
+</LinearLayout>
