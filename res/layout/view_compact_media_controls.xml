@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:layout_width="wrap_content"
+		    android:layout_height="match_parent">
+		    
+    <ImageButton android:id="@+id/CompactPlayPauseButton"
+		    android:layout_width="@dimen/footer_height"
+		    android:layout_height="match_parent"
+		    android:src="@drawable/ic_action_playback_pause_white"
+		    android:background="@drawable/button_background_dark" />
+    
+</LinearLayout>
