@@ -8,6 +8,7 @@ import com.ideabag.playtunes.adapter.ArtistAlbumsAdapter;
 import com.ideabag.playtunes.adapter.ArtistAllSongsAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.GAEvent.Categories;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
 import com.ideabag.playtunes.util.IMusicBrowser;
@@ -188,6 +189,8 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	@Override public void onResume() {
 		super.onResume();
 		
+		mActivity.addPlaybackListener( mPlaybackListener );
+		
     	mTracker.send( new HitBuilders.AppViewBuilder().build() );
 		
 		mTracker.send( new HitBuilders.EventBuilder()
@@ -201,7 +204,7 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
 	@Override public void onPause() {
 		super.onPause();
 		
-		
+		mActivity.removePlaybackListener( mPlaybackListener );
 		
 	}
 	
@@ -353,5 +356,27 @@ public class ArtistsOneFragment extends SaveScrollListFragment implements IMusic
         newFragment.show( ft, "dialog" );
 		
 	}
+	
+	private PlaybackListener mPlaybackListener = new PlaybackListener() {
+
+		@Override public void onTrackChanged( String media_id ) {
+			
+			mSongsAdapter.setNowPlayingMedia( media_id );
+			
+		}
+
+		@Override public void onPlaylistDone() {
+			
+			mSongsAdapter.setNowPlayingMedia( null );
+			
+		}
+		
+		@Override public void onPlay() {  }
+		@Override public void onPause() {  }
+		@Override public void onLoopingChanged(int loop) {  }
+		@Override public void onShuffleChanged(boolean isShuffling) {  }
+		@Override public void onDurationChanged( int position, int duration ) { }
+		
+	};
 	
 }
