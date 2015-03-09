@@ -15,7 +15,7 @@ public class GenresAllAdapter extends AsyncQueryAdapter {
 	
 	private LayoutInflater inflater;
 	
-    private static final String[] allGenresSelection = new String[] {
+    public static final String[] SELECTION = new String[] {
     	
 		MediaStore.Audio.Genres.NAME,
 		MediaStore.Audio.Genres._ID
@@ -29,7 +29,7 @@ public class GenresAllAdapter extends AsyncQueryAdapter {
 		
     	mQuery = new MediaQuery(
 				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-				allGenresSelection,
+				SELECTION,
 				null,
 				null,
 				MediaStore.Audio.Genres.DEFAULT_SORT_ORDER
