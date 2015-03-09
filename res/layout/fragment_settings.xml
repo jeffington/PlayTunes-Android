@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
+    android:id="@+id/FragmentSettings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    
+    <Button android:id="@+id/SettingsButtonFeedback"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:text="@string/send_feedback"
+        android:textSize="@dimen/text_large"
+        android:textColor="@color/textColorPrimary"
+        android:gravity="center_vertical"
+        android:textStyle="normal"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:paddingRight="@dimen/list_item_horizontal_spacing"
+        android:background="@drawable/list_item_background"
+        />
+    
+    <include layout="@layout/view_list_divider" />
+    
+	<LinearLayout android:id="@+id/SettingsScanMediaButton"
+    	android:baselineAligned="false"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:minHeight="@dimen/list_item_height"
+        android:background="@drawable/list_item_background"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:paddingRight="@dimen/list_item_horizontal_spacing"
+        android:gravity="center_vertical">
+    	
+        <TextView
+            
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+           	android:text="@string/scan_for_new_media"
+           	android:gravity="center_vertical"
+           	
+        />
+		    
+    </LinearLayout>
+
+<include layout="@layout/view_list_divider" />
+    
+<LinearLayout android:id="@+id/SettingsButtonSupport"
+    	android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:minHeight="@dimen/list_item_height"
+        android:background="@drawable/list_item_background">
+        
+    	<LinearLayout android:orientation="vertical"
+    	    android:layout_width="0dp"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical"
+    	    android:layout_weight="1"
+    	    android:paddingTop="4dp"
+    	    android:paddingBottom="4dp"
+    	    android:paddingRight="2dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing" >
+    	    
+        <TextView android:id="@+id/Title"
+            
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+           	android:text="@string/support_rate"
+           	
+        />
+        
+        <TextView android:id="@+id/Subtitle"
+            
+           	android:layout_width="match_parent"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+           	android:ellipsize="marquee"
+			android:textColor="@color/textColorSecondary"
+			android:textSize="@dimen/text_medium"
+			android:text="@string/rate_beg"
+           	
+        />
+        
+        
+        </LinearLayout>
+
+</LinearLayout>
+    
+<include layout="@layout/view_list_divider" />
+    
+	<LinearLayout android:id="@+id/SettingsPlusOneRow"
+    	android:baselineAligned="false"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:minHeight="@dimen/list_item_height"
+        android:background="@drawable/list_item_background"
+        android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        android:paddingRight="@dimen/list_item_horizontal_spacing"
+        android:gravity="center_vertical">
+    	
+        <TextView android:id="@+id/PlusOneTitle"
+            
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+           	android:text="@string/support_plus_one"
+           	android:gravity="center_vertical"
+           	android:layout_marginBottom="4dp"
+           	
+        />
+    <com.google.android.gms.plus.PlusOneButton
+		  
+		  android:id="@+id/plus_one_button"
+		  android:layout_width="wrap_content"
+		  android:layout_height="wrap_content"
+		  plus:size="standard"
+		  plus:annotation="inline" />
+		    
+    </LinearLayout>
+    
+<include layout="@layout/view_list_divider" />
+
+</LinearLayout>
