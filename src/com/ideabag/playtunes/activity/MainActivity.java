@@ -86,7 +86,8 @@ public class MainActivity extends ActionBarActivity {
 	    		&& mBoundService.mPlaylistFragmentClass != null ) {
 	    	
 	    	NavigationFragment.showNowPlaying();//loadNowPlayingFragment();
-	    	showNowPlayingActivity();
+	    	//showNowPlayingActivity();
+	    	// TODO: Slide up expanded controls
 	    	
 	    }
 		
@@ -312,18 +313,6 @@ public class MainActivity extends ActionBarActivity {
 	        
 	    }
 	    
-	}
-    
-	//
-	// Used by FooterControlFragment
-	//
-	
-	private void showNowPlayingActivity() {
-		
-		Intent startNowPlayingActivity = new Intent( this, NowPlayingActivity.class );
-		
-		startActivityForResult( startNowPlayingActivity, 0 );
-		
 	}
 	
 	// 
