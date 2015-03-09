@@ -45,7 +45,7 @@ public class AsyncQueryAdapter extends BaseAdapter implements MediaQuery.OnQuery
     }
     
     //
-    // Probably depreciated, use requeryAsync instead
+    // 
 	//
     public void requery() {
 		
