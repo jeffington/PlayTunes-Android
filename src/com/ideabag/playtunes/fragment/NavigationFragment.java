@@ -1,43 +1,50 @@
 package com.ideabag.playtunes.fragment;
 
-import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.activity.SettingsActivity;
+import com.ideabag.playtunes.adapter.AlbumsAllAdapter;
+import com.ideabag.playtunes.adapter.ArtistsAllAdapter;
+import com.ideabag.playtunes.adapter.GenresAllAdapter;
+import com.ideabag.playtunes.adapter.PlaylistsAllAdapter;
+import com.ideabag.playtunes.adapter.PlaylistsOneAdapter;
+import com.ideabag.playtunes.adapter.SongsAllAdapter;
+import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.fragment.search.SearchFragment;
+import com.ideabag.playtunes.util.QueryCountTask;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBar;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
-public class NavigationFragment extends Fragment implements View.OnClickListener {
+public class NavigationFragment extends BaseNavigationFragment implements View.OnClickListener {
 	
 	public static final String TAG = "NavigationFragment";
+
 	
-	protected MainActivity mActivity;
-	protected FragmentManager mFragmentManager;
-	protected ActionBar mActionBar;
+	private TextView mBadgeSongsAll;
+	private TextView mBadgeAlbumsAll;
+	private TextView mBadgeArtistsAll;
+	private TextView mBadgeGenresAll;
+	private TextView mBadgePlaylistsAll;
+	private TextView mBadgeStarredCount;
 	
-	protected PlaylistManager mPlaylistManager;
+	MediaQuery mArtistsAllQuery;
+	MediaQuery mGenresAllQuery;
+	MediaQuery mPlaylistsAllQuery;
+	MediaQuery mStarredCountQuery;
+	MediaQuery mSongsAllQuery;
+	MediaQuery mAlbumsAllQuery;
 	
-	protected MusicBrowserFragment MusicBrowserFragment;
-	
-	// Have we warned the user that pressing Back will close the app?
-	protected boolean mCloseWarningOn = false;
-	
-	public CharSequence mActionbarTitle, mActionbarSubtitle;
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		
@@ -45,32 +52,77 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
 		
 	}
 	
-	@Override public void onAttach( Activity activity ) {
-		
-		super.onAttach( activity );
-		
-		mActivity = ( MainActivity ) activity;
-		
-		mPlaylistManager = new PlaylistManager( getActivity() );
-		
-		mActionBar = mActivity.getSupportActionBar();
-		
-        //mActionBar.setLogo( R.drawable.ic_drawer );
-		mActionBar.setDisplayHomeAsUpEnabled( true );
-        mActionBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
-        //mActionBar.setDisplayUseLogoEnabled( true ); // Hides the icon
-        //mActionBar.setDisplayShowHomeEnabled( true );
-        //mActionBar.setIcon( android.R.color.transparent ); 
-        mActionBar.setDisplayShowHomeEnabled( false );
-        mFragmentManager = mActivity.getSupportFragmentManager();
-		
-        
-	}
 	
 	
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		
 		super.onActivityCreated( savedInstanceState );
+		
+		mBadgeStarredCount = ( TextView ) getView().findViewById( R.id.BadgeStarredCount );
+		mBadgeSongsAll = ( TextView ) getView().findViewById( R.id.BadgeSongsAll );
+		mBadgeAlbumsAll = ( TextView ) getView().findViewById( R.id.BadgeAlbumsAll );
+		mBadgeArtistsAll = ( TextView ) getView().findViewById( R.id.BadgeArtistsAll );
+		mBadgeGenresAll = ( TextView ) getView().findViewById( R.id.BadgeGenresAll );
+		mBadgePlaylistsAll = ( TextView ) getView().findViewById( R.id.BadgePlaylistsAll );
+		
+		mArtistsAllQuery = new MediaQuery(
+				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+				ArtistsAllAdapter.SELECTION,
+				null,
+				null,
+				MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
+			);
+		
+		mGenresAllQuery = new MediaQuery(
+				MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+				GenresAllAdapter.SELECTION,
+				null,
+				null,
+				MediaStore.Audio.Genres.DEFAULT_SORT_ORDER
+			);
+		
+		String mStarredId = mPlaylistManager.createStarredIfNotExist();
+		
+		mPlaylistsAllQuery = new MediaQuery(
+				MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+				PlaylistsAllAdapter.SELECTION,
+				MediaStore.Audio.Playlists._ID + " !=?",
+				new String[] {
+					
+						mStarredId
+						
+				},
+				null
+			);
+		
+		mStarredCountQuery = new MediaQuery(
+				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( mStarredId ) ),
+				PlaylistsOneAdapter.SELECTION,
+				MediaStore.Audio.Playlists.Members.PLAYLIST_ID + "=?",
+				new String[] {
+					
+					mStarredId
+					
+				},
+				null
+			);
+		
+		mSongsAllQuery = new MediaQuery(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				SongsAllAdapter.SELECTION,
+				MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				null,
+				null
+				);
+		
+		mAlbumsAllQuery = new MediaQuery(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+				AlbumsAllAdapter.SELECTION,
+				MediaStore.Audio.Media.ALBUM + "!=?",
+				new String[] {
+						getString( R.string.no_album_string )
+				},
+				MediaStore.Audio.Albums.DEFAULT_SORT_ORDER
+			);
 		
 		getView().findViewById( R.id.NavigationArtistsAll ).setOnClickListener( this );
 		getView().findViewById( R.id.NavigationAlbumsAll ).setOnClickListener( this );
@@ -86,11 +138,12 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
 			
 			settingsButton.setOnClickListener( this );
 			
-		} else {
-			
-			// Add extra options into the app overflow menu
+			ImageView settingsIcon = ( ImageView ) getView().findViewById( R.id.SettingsIcon );
+			settingsIcon.getDrawable().mutate().setColorFilter( 0xFF999999, Mode.MULTIPLY );
 			
 		}
+		
+		
 		
 		getActivity().getContentResolver().registerContentObserver(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, true, mediaStoreChanged );
@@ -99,9 +152,8 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
 				MediaStore.Audio.Playlists.Members.getContentUri( "external",
 						Long.parseLong( mPlaylistManager.createStarredIfNotExist() ) ), true, mediaStoreChanged );
 		
-		 
-		 MusicBrowserFragment = ( MusicBrowserFragment ) getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserFragment );
-		 
+		updateBadges();
+		
 		 
 	}
     
@@ -189,6 +241,7 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
 				@Override public void run() {
 					
 					//adapter.notifyDataSetChanged();
+					updateBadges();
 					
 				}
             	
@@ -200,77 +253,16 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
 
 	};
 	
-    
-    public void showNowPlaying() {
+    public void updateBadges() {
     	
-    	MusicBrowserFragment.showNowPlaying();
-    	
-    }
-    
-    public void showSearch() {
-    	
-    	Fragment mSearchFragment = new SearchFragment();
-    	
-    	transactFragment( mSearchFragment );
+    	new QueryCountTask( mBadgeSongsAll ).execute( mSongsAllQuery );
+    	new QueryCountTask( mBadgeArtistsAll ).execute( mArtistsAllQuery );
+    	new QueryCountTask( mBadgeAlbumsAll ).execute( mAlbumsAllQuery );
+    	new QueryCountTask( mBadgePlaylistsAll ).execute( mPlaylistsAllQuery );
+    	new QueryCountTask( mBadgeSongsAll ).execute( mSongsAllQuery );
+    	new QueryCountTask( mBadgeGenresAll ).execute( mGenresAllQuery );
+    	new QueryCountTask( mBadgeStarredCount ).execute( mStarredCountQuery );
     	
     }
-    
-    public void transactFragment( Fragment mFragment ) {
-    	
-    	MusicBrowserFragment.transactFragment( mFragment );
-    	
-    	mCloseWarningOn = false;
-    	
-    }
-    
-    public boolean onKeyDown( int keycode, KeyEvent e ) {
-    	
-    	switch ( keycode ) {
-	        
-	        case KeyEvent.KEYCODE_SEARCH:
-	        	
-	        	showSearch();
-	        	return true;
-	        
-	        case KeyEvent.KEYCODE_BACK:
-	        	
-	        	if ( mFragmentManager.getBackStackEntryCount() == 0 ) {
-	        		
-	        		if ( !mCloseWarningOn ) {
-		        		
-		        		android.widget.Toast.makeText( mActivity, getString( R.string.back_warning ), android.widget.Toast.LENGTH_LONG ).show();
-		        		mCloseWarningOn = true;
-		        		
-		        		return true;
-		        		
-		        	}
-	        		
-	        	} else {
-	        		
-	        		mCloseWarningOn = false;
-	        		
-	        	}
-	        	break;
-    	}
-    	
-    	return false;
-    	
-    }
-	
-	public void setActionbarTitle( String titleString ) {
-		
-		mActionbarTitle = ( CharSequence ) titleString;
-		
-		mActionBar.setTitle( mActionbarTitle );
-		
-	}
-	
-	public void setActionbarSubtitle( String subtitleString ) {
-		
-		mActionbarSubtitle = ( CharSequence ) subtitleString;
-		
-		mActionBar.setSubtitle( mActionbarSubtitle );
-		
-	}
     
 }

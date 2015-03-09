@@ -7,8 +7,8 @@
 	<LinearLayout android:id="@+id/SettingsButton"
 	    android:layout_width="match_parent"
 	    android:layout_height="@dimen/touch_target_minimum"
-    android:orientation="horizontal"
-    android:minHeight="@dimen/touch_target_minimum"
+   		android:orientation="horizontal"
+		android:minHeight="@dimen/touch_target_minimum"
 	    android:gravity="center_vertical"
 	    android:layout_alignParentBottom="true"
 	    android:background="@drawable/list_button_background"
@@ -16,10 +16,11 @@
 	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
     	android:paddingRight="@dimen/list_item_horizontal_spacing">
 	    
-	   	<ImageView
+	   	<ImageView android:id="@+id/SettingsIcon"
 	            android:layout_width="24dp"
 	            android:layout_height="24dp"
-	            android:src="@drawable/ic_action_settings"
+	            android:src="@drawable/ic_action_settings_white"
+	            
 	            />
 	        
 	    <TextView android:id="@+id/Title"
@@ -27,7 +28,7 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:gravity="left|center_vertical"
-	        android:textSize="@dimen/text_large"
+	        android:textSize="@dimen/text_medium"
 	        android:textStyle="bold"
 	        android:textColor="@color/textColorPrimary"
 	        android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
@@ -53,8 +54,8 @@
 	<View
 		
 		android:layout_width="match_parent"
-    	android:layout_height="1px"
-    	android:background="@color/list_divider_color"
+    	android:layout_height="1dp"
+    	android:background="@color/button_border"
     	android:layout_above="@id/SettingsButton"
 	/>
 
