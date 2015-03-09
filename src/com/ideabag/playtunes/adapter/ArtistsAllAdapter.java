@@ -7,7 +7,7 @@ import android.provider.MediaStore;
 
 public class ArtistsAllAdapter extends ArtistListAdapter {
 	
-	private static final String[] artistsSelection = new String[] {
+	public static final String[] SELECTION = new String[] {
 		
     	MediaStore.Audio.Artists.ARTIST,
     	MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
@@ -18,15 +18,15 @@ public class ArtistsAllAdapter extends ArtistListAdapter {
 	
 	public ArtistsAllAdapter( Context context, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context );
-		
-    	mQuery = new MediaQuery(
+    	
+		mQuery = new MediaQuery(
 				MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-				artistsSelection,
+				SELECTION,
 				null,
 				null,
 				MediaStore.Audio.Artists.DEFAULT_SORT_ORDER
 			);
-    	
+		
     	setOnQueryCompletedListener( listener );
     	
 		requery();
