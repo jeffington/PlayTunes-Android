@@ -203,11 +203,29 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		super.onDestroyView();
 	    
 	    //setListAdapter( null );
-		ActionBar bar = mActivity.getSupportActionBar();
-		bar.getCustomView().setVisibility( View.GONE );
-		bar.setCustomView( null );
-		mActivity.supportInvalidateOptionsMenu();
-		//mActivity.supportInvalidateOptionsMenu();
+		if ( mActivity != null ) {
+			
+			
+			
+			ActionBar bar = mActivity.getSupportActionBar();
+			
+			if ( bar != null ) {
+				
+				View searchView = bar.getCustomView();
+				
+				if ( searchView != null ) {
+					
+					searchView.setVisibility( View.GONE );
+					bar.setCustomView( null );
+					
+				}
+				
+			}
+			
+			mActivity.supportInvalidateOptionsMenu();
+			//mActivity.supportInvalidateOptionsMenu();
+			
+		}
 		
 	}
 	
@@ -229,15 +247,6 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 		if ( null != media_id && media_id.length() > 1 ) {
 			
 			mSearchQuery = media_id;
-			/*
-			if ( null != mCurrentFragment ) {
-				
-				ISearchable mSearchable = ( ISearchable ) mCurrentFragment;
-				
-				mSearchable.setQuery( mSearchQuery );
-				
-			}
-			*/
 			
 			// Check if there is a Searchable fragment 
 			// Load SearchAllFragment if there isn't
@@ -245,7 +254,9 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 			
 			if ( this.isResumed() ) {
 				
-				SearchHistory.addSearchQuery( getActivity(), media_id );
+				SearchHistory history = new SearchHistory( getActivity() );
+				history.addSearchQuery( media_id );
+				history.destroy();
 				
 				Fragment mFragment = getActivity().getSupportFragmentManager().findFragmentById( R.id.SearchFragment );
 				
@@ -268,7 +279,6 @@ public class SearchFragment extends Fragment implements IMusicBrowser {
 					mSearchable.setSearchTerms( mSearchQuery );
 					
 				}
-				
 				
 			}
 			

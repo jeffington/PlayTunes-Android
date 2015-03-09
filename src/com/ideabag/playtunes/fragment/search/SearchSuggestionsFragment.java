@@ -35,12 +35,9 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 	
 	private Button mButtonClearHistory;
 	
-	SharedPreferences mSharedPrefs;
-	
-	ArrayAdapter < String > adapter;
-	String[] mSearchQueries = null;
-	
 	private Tracker mTracker;
+	
+	SearchHistory mSearchHistory;
 	
 	public SearchSuggestionsFragment() {
 		
@@ -51,36 +48,22 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 	public SearchSuggestionsFragment( SearchFragment parentFragment ) {
 		
 		mSearchFragment = parentFragment;
+		mSearchHistory = new SearchHistory( getActivity() );
 		
 	}
 	
 	private void loadSearchHistory() {
 		
-		Gson gson = new Gson();
-		String searchHistoryString = mSharedPrefs.getString( getString( R.string.pref_key_search_history ), "[]" );
+		mListView.setAdapter( mSearchHistory.getAdapter() );
 		
-		String[] mSearchQueries = gson.fromJson( searchHistoryString, String[].class);
-		
-		if ( null != mSearchQueries ) {
-			
-			adapter = new ArrayAdapter < String >( getActivity(), R.layout.list_item_title, R.id.Title, mSearchQueries );
-			mListView.setAdapter( adapter );
-			
-			if ( this.isResumed() ) {
-				
-				//restoreScrollPosition();
-				
-			}
-			
-		}
-		
-    	if ( adapter.getCount() >= 1 ) {
+    	if ( mSearchHistory.getAdapter().getCount() >= 1 ) {
     		
     		mButtonClearHistory.setVisibility( View.VISIBLE );
     		
     	} else {
     		
     		mButtonClearHistory.setVisibility( View.GONE );
+    		
     	}
 		
 	}
@@ -94,8 +77,7 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 	@Override public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated( savedInstanceState );
 		
-		mSharedPrefs = getActivity().getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
-		mSharedPrefs.registerOnSharedPreferenceChangeListener( mPreferencesChangeListener );
+		
 		
 		mListView = ( ListView ) getView().findViewById( R.id.SuggestionListView );
 		mButtonClearHistory = ( Button ) getView().findViewById( R.id.ButtonClearHistory );
@@ -132,7 +114,7 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 		mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
     	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
+    	.setValue( mSearchHistory.getAdapter().getCount() )
     	.build());
 		
 	}
@@ -140,17 +122,13 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 	@Override public void onDestroy() {
 		super.onDestroy();
 		
-		if ( mSharedPrefs != null ) {
-			
-			mSharedPrefs.unregisterOnSharedPreferenceChangeListener( mPreferencesChangeListener );
-			
-		}
+		mSearchHistory.destroy();
 		
 	}
 	
 	@Override public void onItemClick(AdapterView<?> list, View v, int position, long id ) {
 		
-		String mSearchTerm = ( String ) adapter.getItem( position );
+		String mSearchTerm = ( String ) mSearchHistory.getAdapter().getItem( position );
 			
 		mSearchFragment.mQueryTextView.setText( mSearchTerm );
 		mSearchFragment.setMediaID( mSearchTerm );
@@ -165,10 +143,9 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 	
 	private void clearSearchHistory() {
 		
-		SearchHistory.clearHistory( getActivity() );
-		adapter.notifyDataSetChanged();
+		mSearchHistory.clearHistory();
 		
-		if ( adapter.getCount() > 0 ) {
+		if ( mSearchHistory.getAdapter().getCount() > 0 ) {
 			
 			mButtonClearHistory.setVisibility( View.VISIBLE );
 			
@@ -181,23 +158,11 @@ public class SearchSuggestionsFragment extends Fragment implements ListView.OnIt
 		mTracker.send( new HitBuilders.EventBuilder()
     	.setCategory( Categories.PLAYLIST )
     	.setAction( Playlist.ACTION_SHOWLIST )
-    	.setValue( adapter.getCount() )
+    	.setValue( mSearchHistory.getAdapter().getCount() )
     	.build());
 		
 	}
 	
-	SharedPreferences.OnSharedPreferenceChangeListener mPreferencesChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-		
-		@Override public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key ) {
-			
-			if ( key.equals( getString( R.string.pref_key_search_history ) ) ) {
-				
-				loadSearchHistory();
-				
-			}
-			
-		}
-		
-	};
+
 
 }

@@ -37,9 +37,9 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 	// The adapters
 	MergeAdapter adapter;
 	
-	SearchSongsAdapter mSearchSongs;
-	SearchAlbumsAdapter mSearchAlbums;
-	SearchArtistsAdapter mSearchArtists;
+	protected SearchSongsAdapter mSearchSongs;
+	protected SearchAlbumsAdapter mSearchAlbums;
+	protected SearchArtistsAdapter mSearchArtists;
 	
 	// Headers/dividers
 	
@@ -54,7 +54,7 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 	
 	
 	MainActivity mActivity;
-	private String mQueryString;
+	protected String mQueryString;
 	
 	SearchFragment mSearchFragment;
 	
@@ -160,6 +160,10 @@ public class SearchAllFragment extends SaveScrollListFragment implements ISearch
 		adapter.addAdapter( mSearchArtists );
 		
 		setListAdapter( adapter );
+		getView().setBackgroundColor( getResources().getColor( android.R.color.white ) );
+		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
+		getListView().setDividerHeight( 1 );
+		getListView().setSelector( R.drawable.list_item_background );
 		
 	}
 	
