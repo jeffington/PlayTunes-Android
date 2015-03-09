@@ -1,12 +1,15 @@
 package com.ideabag.playtunes.fragment;
 
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.slidinguppanel.SlidingUpPanelLayout;
+import com.ideabag.playtunes.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -17,9 +20,23 @@ public class NavigationDrawerFragment extends NavigationFragment {
 	public ActionBarDrawerToggle mDrawerToggle;
 	protected DrawerLayout mDrawerLayout;
 	
+	protected ActionBar mActionBar;
+	
+	protected SlidingUpPanelLayout mSlidingPanel;
+	
 	public void onActivityCreated( Bundle savedInstanceState ) {
 		super.onActivityCreated(savedInstanceState);
 		
+		
+		mActionBar = mActivity.getSupportActionBar();
+		
+        //mActionBar.setLogo( R.drawable.ic_drawer );
+		mActionBar.setDisplayHomeAsUpEnabled( true );
+        mActionBar.setHomeButtonEnabled( true ); // Makes the drawer icon enabled
+        //mActionBar.setDisplayUseLogoEnabled( true ); // Hides the icon
+        //mActionBar.setDisplayShowHomeEnabled( true );
+        //mActionBar.setIcon( android.R.color.transparent ); 
+        mActionBar.setDisplayShowHomeEnabled( false );
 		// 
 		// Set up navigation drawer ( if we have one )
 		// 
@@ -36,6 +53,8 @@ public class NavigationDrawerFragment extends NavigationFragment {
 			//getView().findViewById( R.id.NavigationToolbarFeedback ).setOnClickListener( NavigationClickListener );
 			
 		}*/
+		
+		mSlidingPanel = ( SlidingUpPanelLayout ) getActivity().findViewById( R.id.sliding_layout );
 		
 		android.util.Log.i( TAG, "is null? " + ( null == mDrawerViewContainer ) );
 		
@@ -267,6 +286,12 @@ public class NavigationDrawerFragment extends NavigationFragment {
         		
         		return true;
         		
+        	} else if ( mSlidingPanel.getPanelState() != PanelState.COLLAPSED ) {
+        		
+        		mSlidingPanel.setPanelState( PanelState.COLLAPSED );
+        		
+        		return true;
+        		
         	}
         	
         	break;
@@ -308,6 +333,12 @@ public class NavigationDrawerFragment extends NavigationFragment {
 		super.load( id );
 		
 		hideNavigation();
+		
+		if  ( mSlidingPanel.getPanelState() != PanelState.COLLAPSED ) {
+     		
+     		mSlidingPanel.setPanelState( PanelState.COLLAPSED );
+     		
+		}
 		
 	}
 	
