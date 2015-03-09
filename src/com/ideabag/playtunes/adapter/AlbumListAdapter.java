@@ -19,6 +19,8 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 	
 	private int mAlbumThumbWidthPx;
 	
+	public int LAYOUT_RESOURCE_ID = R.layout.grid_item_album;
+	
 	public AlbumListAdapter( Context context ) {
 		super( context );
 
@@ -36,7 +38,7 @@ public class AlbumListAdapter extends AsyncQueryAdapter {
 			
 			holder = new ViewHolder();
 			
-			convertView = inflater.inflate( R.layout.list_item_album, null );
+			convertView = inflater.inflate( LAYOUT_RESOURCE_ID, null );
 			
 			holder.albumArtist = ( TextView ) convertView.findViewById( R.id.AlbumArtist );
 			holder.albumTitle = ( TextView ) convertView.findViewById( R.id.AlbumTitle );
