@@ -8,7 +8,7 @@ import android.view.View;
 
 public class SongsAllAdapter extends SongListAdapter {
 	
-    private static final String[] allSongsSelection = new String[] {
+    public static final String[] SELECTION = new String[] {
     	
     	MediaStore.Audio.Media._ID,
     	
@@ -26,13 +26,13 @@ public class SongsAllAdapter extends SongListAdapter {
 	public SongsAllAdapter( Context context, View.OnClickListener menuClickListener, MediaQuery.OnQueryCompletedListener listener ) {
 		super( context, menuClickListener );
 		
-    	mQuery = new MediaQuery(
-    				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-    				allSongsSelection,
-    				MediaStore.Audio.Media.IS_MUSIC + " != 0",
-    				null,
-    				MediaStore.Audio.Media.TITLE
-    				);
+		mQuery = new MediaQuery(
+				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+				SELECTION,
+				MediaStore.Audio.Media.IS_MUSIC + " != 0",
+				null,
+				MediaStore.Audio.Media.TITLE
+				);
 		
     	setOnQueryCompletedListener( listener );
     	

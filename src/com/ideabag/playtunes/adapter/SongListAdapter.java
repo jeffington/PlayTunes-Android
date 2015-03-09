@@ -3,13 +3,16 @@ package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.util.StarToggleTask;
+import com.ideabag.playtunes.widget.StarButton;
 
 import android.content.Context;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -23,7 +26,7 @@ public class SongListAdapter extends AsyncQueryAdapter {
 	
 	View.OnClickListener songMenuClickListener;
     
-    
+	
 	public SongListAdapter( Context context, View.OnClickListener menuClickListener) {
 		super( context );
 		
@@ -38,19 +41,25 @@ public class SongListAdapter extends AsyncQueryAdapter {
 	public void setNowPlayingMedia( String media_id ) {
 		
 		mNowPlayingMediaID = media_id;
+		notifyDataSetChanged();
 		
 	}
 	
 
 	@Override public long getItemId( int position ) {
 		
-		int mID = 0;
+		int mID = -1;
 		
 		if ( mCursor != null ) {
 			
 			mCursor.moveToPosition( position );
-			// TODO: Remember, in any playlist or song query, the first field _MUST_ be a media _id
-			mID = mCursor.getInt( 0 );
+			
+			if ( !(mCursor.isAfterLast() || mCursor.isBeforeFirst() ) ) {
+				
+				// TODO: Remember, in any playlist or song query, the first field _MUST_ be a media _id
+				mID = mCursor.getInt( 0 );
+				
+			}
 			
 		}
 		
@@ -74,13 +83,33 @@ public class SongListAdapter extends AsyncQueryAdapter {
 			
 			holder = new ViewHolder();
 			
-			holder.starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+			holder.starButton = ( StarButton ) convertView.findViewById( R.id.StarButton );
 			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.MenuButton );
+			
 			holder.songTitle = ( TextView ) convertView.findViewById( R.id.SongTitle );
+			
+			holder.row = ( LinearLayout ) convertView;
+			
+			//holder.indicator = convertView.findViewById( R.id.NowPlayingIndicator );
+			
+
 			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
 			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
 			
-			//holder.indicator = convertView.findViewById( R.id.NowPlayingIndicator );
+			holder.artistButton = ( Button ) convertView.findViewById( R.id.SongArtistButton );
+			holder.albumButton = ( Button ) convertView.findViewById( R.id.SongAlbumButton );
+			
+			if ( holder.artistButton != null ) {
+				
+				holder.artistButton.setOnClickListener( songMenuClickListener );
+				
+			}
+			
+			if ( holder.albumButton != null ) {
+				
+				holder.albumButton.setOnClickListener( songMenuClickListener );
+				
+			}
 			
 			holder.starButton.setOnClickListener( songMenuClickListener );
 			holder.menuButton.setOnClickListener( songMenuClickListener );
@@ -109,45 +138,66 @@ public class SongListAdapter extends AsyncQueryAdapter {
 		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
 		StarToggleTask starTask = new StarToggleTask( holder.starButton );
-		
+		holder.starButton.setTag( R.id.tag_song_id, song_id );
 		holder.starButton.setTag( starTask );
 		
 		starTask.execute( song_id );
 		
 		holder.songTitle.setText( songTitle );
-		holder.songArtist.setText( songArtist );
-		holder.songAlbum.setText( songAlbum );
 		
-		holder.starButton.setTag( R.id.tag_song_id, song_id );
-		holder.menuButton.setTag( R.id.tag_song_id, song_id );
-		
-		// TODO: Add now playing indicator
-		/*
-		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
+		if ( holder.songArtist != null ) {
 			
-			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.primaryAccentColor ) );
-			holder.indicator.setVisibility( View.VISIBLE );
+			holder.songArtist.setText( songArtist );
 			
 		} else {
 			
-			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.textColorPrimary ) );
-			
-			holder.indicator.setVisibility( View.INVISIBLE );
+			String artist_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ARTIST_ID ) );
+			holder.artistButton.setText( songArtist );
+			holder.artistButton.setTag( R.id.tag_artist_id, artist_id );
 		}
-		*/
+		
+		if ( holder.songAlbum != null ) {
+			
+			holder.songAlbum.setText( songAlbum );
+			
+		} else {
+			
+			String album_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.ALBUM_ID ) );
+			
+			holder.albumButton.setText( songAlbum );
+			holder.albumButton.setTag( R.id.tag_album_id, album_id );
+		}
+		
+		holder.menuButton.setTag( R.id.tag_song_id, song_id );
+		
+		// TODO: Add now playing indicator
+		
+		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
+			
+			// Is now playing
+			holder.row.setBackgroundResource( R.drawable.indicator );
+			
+		} else {
+			
+			holder.row.setBackgroundResource( android.R.color.transparent );
+			
+		}
+		
 		return convertView;
 		
 	}
 	
 	static class ViewHolder {
 		
-		ToggleButton starButton;
+		LinearLayout row;
+		StarButton starButton;
 		ImageButton menuButton;
 		TextView songTitle;
 		TextView songArtist;
 		TextView songAlbum;
-		// TODO: Add now playing indicator
-		//View indicator;
+		
+		Button artistButton;
+		Button albumButton;
 		
 	}
 

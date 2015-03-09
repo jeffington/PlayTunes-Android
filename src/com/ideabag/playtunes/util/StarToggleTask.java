@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 
 import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.widget.StarButton;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -15,14 +16,14 @@ import android.widget.ToggleButton;
 
 public class StarToggleTask extends AsyncTask<String, Void, Boolean > {
 	
-    private final WeakReference< ToggleButton > toggleButtonReference;
+    private final WeakReference< StarButton > toggleButtonReference;
     private String media_id;
     
     private Context mContext;
     
-    public StarToggleTask( ToggleButton toggleView ) {
+    public StarToggleTask( StarButton toggleView ) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
-    	toggleButtonReference = new WeakReference< ToggleButton >( toggleView );
+    	toggleButtonReference = new WeakReference< StarButton >( toggleView );
         
         mContext = toggleView.getContext();
         
@@ -49,13 +50,13 @@ public class StarToggleTask extends AsyncTask<String, Void, Boolean > {
     	
         if ( toggleButtonReference != null ) {
         	
-            final ToggleButton mStarButton = toggleButtonReference.get();
+            final StarButton mStarButton = toggleButtonReference.get();
             
             if ( mStarButton != null ) {
                 
             	String mTagId = ( String ) mStarButton.getTag( R.id.tag_song_id );
             	
-            	if ( mTagId.equals( media_id ) ) {
+            	if ( mTagId != null && mTagId.equals( media_id ) ) {
             		
             		mStarButton.setTag( null );
             		mStarButton.setChecked( ( isFavorite != null ? isFavorite.booleanValue() : false ) );

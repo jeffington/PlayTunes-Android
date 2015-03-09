@@ -54,8 +54,10 @@
         
         </LinearLayout>
         
-       <ToggleButton android:id="@+id/StarButton"
+       <com.ideabag.playtunes.widget.StarButton android:id="@+id/StarButton"
            style="@style/StarButton"
+           android:layout_height="match_parent"
+           android:layout_width="@dimen/touch_target_minimum"
             />
        
        <ImageButton android:id="@+id/MenuButton"
