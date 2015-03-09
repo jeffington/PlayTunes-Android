@@ -7,6 +7,8 @@
 	<color name="button_pressed_dark">#22FFFFFF</color>
 	<color name="button_selected_dark">#44FFFFFF</color>
 	
+	<color name="button_border">#BBBBBB</color>
+	
 	<color name="textColorPrimary">#444444</color>
 	<color name="textColorSecondary">#555555</color>
 	<color name="textColorTertiary">#999999</color>
@@ -16,6 +18,7 @@
 	<color name="textColorTertiaryDark">#999999</color>
 	
 	<color name="footer_background">#222222</color>
+	<color name="footer_background_translucent">#99222222</color>
 	
 	<color name="list_item_default">#FFFFFF</color>
 	<color name="list_item_pressed">#EEEEEE</color>

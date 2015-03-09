@@ -7,7 +7,7 @@
         android:top="0dp"
         android:bottom="0dp">
 	    
-	    <color android:color="@color/footer_background" />
+	    <color android:color="@color/footer_background_translucent" />
 	    
 	</item>
 	
