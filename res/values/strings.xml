@@ -81,6 +81,8 @@
     <string name="playlist_name">Playlist Name</string>
     
     <string name="back_warning">Press again to exit</string>
+    
+    <string name="scan_for_new_media">Scan device for new music files</string>
   
     
 </resources>
