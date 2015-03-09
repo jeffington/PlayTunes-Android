@@ -5,9 +5,7 @@
     
     
     <item android:state_checked="true"
-        android:drawable="@drawable/ic_action_star_10"
-        
-        />
+        android:drawable="@drawable/ic_action_star_10" />
     
     <item android:drawable="@drawable/ic_action_star_0" />
 
