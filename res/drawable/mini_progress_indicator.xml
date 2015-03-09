@@ -3,7 +3,7 @@
 <item android:id="@android:id/background">
     <shape>
         <solid
-                android:color="#11FFFFFF"
+                android:color="#999999"
         />
     </shape>
 
@@ -28,7 +28,7 @@
     <clip>
     <shape>
         
-		<solid android:color="#CCF1510B" />
+		<solid android:color="@color/textColorPrimaryDark" />
 		
 		
     </shape>
