@@ -14,13 +14,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.ideabag.playtunes.R;
-import com.ideabag.playtunes.activity.NowPlayingActivity;
+import com.ideabag.playtunes.activity.MainActivity;
 
 public class TrackProgressFragment extends Fragment {
 	
-	private static final int ONE_SECOND_IN_MILLI = 1000;
+	private static final int TIMER_MILLISECONDS = 1000;
 	
-	//private NowPlayingActivity mActivity;
+	private MainActivity mActivity;
 	
 	private SeekBar mBar;
 	
@@ -36,7 +36,7 @@ public class TrackProgressFragment extends Fragment {
 		
 		super.onAttach( activity );
 		
-		//mActivity = ( NowPlayingActivity ) activity;
+		mActivity = ( MainActivity ) activity;
 		
 		handle = new Handler();
 		
@@ -85,7 +85,7 @@ public class TrackProgressFragment extends Fragment {
 				
 				setProgress( progress );
 				
-				//mActivity.mBoundService.setSeekPosition( progress );
+				mActivity.mBoundService.setSeekPosition( progress );
 				
 			}
 			
@@ -120,11 +120,11 @@ public class TrackProgressFragment extends Fragment {
 			
 			//android.util.Log.i("mBar Progress",  "" + mBar.getProgress() );
 			
-			mPlayPositionMilli += ONE_SECOND_IN_MILLI;
+			mPlayPositionMilli += TIMER_MILLISECONDS;
 			
 			setProgress( mPlayPositionMilli );
 			
-			handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
+			handle.postDelayed( mUpdateTimer, TIMER_MILLISECONDS );
 			
 		}
 		
@@ -137,7 +137,7 @@ public class TrackProgressFragment extends Fragment {
 		
 		stopProgress();
 		isPlaying = true;
-		handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
+		handle.postDelayed( mUpdateTimer, TIMER_MILLISECONDS );
 		//handle.postDelayed( mUpdateTimer, ONE_SECOND_IN_MILLI );
 		
 		
@@ -158,7 +158,7 @@ public class TrackProgressFragment extends Fragment {
 		
 		mBar.setProgress( mPlayPositionMilli );
 		
-		int seconds = progress / ONE_SECOND_IN_MILLI;
+		int seconds = progress / TIMER_MILLISECONDS;
 		int minutes = seconds / 60;
 		seconds = seconds % 60;
 		
@@ -178,7 +178,7 @@ public class TrackProgressFragment extends Fragment {
 		
 		
 		
-		int seconds = duration / ONE_SECOND_IN_MILLI;
+		int seconds = duration / TIMER_MILLISECONDS;
 		int minutes = seconds / 60;
 		seconds = seconds % 60;
 		

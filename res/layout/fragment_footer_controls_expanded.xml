@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/FooterControls"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -6,100 +6,144 @@
 	android:clickable="true"
 	android:background="@color/now_playing_background">
 	
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/spacing_medium"
-		android:paddingRight="@dimen/spacing_medium"
-		android:background="@drawable/button_background_dark">
-               <ToggleButton android:id="@+id/StarButton"
-           style="@style/DarkStarButton"
-            android:layout_height="@dimen/list_item_height"
-            android:layout_width="@dimen/touch_target_minimum"
-            android:minWidth="@dimen/list_item_height"
-            />
-        <LinearLayout
-	    android:layout_width="0dip"
-	    android:layout_height="match_parent"
-	    android:layout_gravity="center_vertical"
-	    android:layout_weight="1"
-	    android:gravity="center_vertical"
-	    android:orientation="vertical" >
-	    
-    <TextView android:id="@+id/SongTitle"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@color/textColorPrimaryDark"
-		android:textSize="@dimen/text_large"
-		android:singleLine="true"
-		android:ellipsize="end"
-		
-	/>
-    
-	<TextView android:id="@+id/SongArtist"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:textColor="@color/textColorSecondaryDark"
-		android:lines="1"
-		android:textSize="@dimen/text_small"
-	/>
-	
-	        <TextView android:id="@+id/SongAlbum"
-        	android:gravity="center"
-        	android:layout_width="match_parent"
-        	android:layout_height="wrap_content"
-           	android:textColor="@color/textColorSecondaryDark"
-           	android:textSize="@dimen/text_medium"
-        	android:visibility="gone"
-        	android:ellipsize="end"
-        	android:lines="1"
-        	android:singleLine="true"
-        	
+	<ImageView android:id="@+id/AlbumArtBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
         />
-	        
-	        </LinearLayout>
 	
-		<ImageButton android:id="@+id/SongMenuButton"
-	    android:layout_width="56dip"
-	    android:layout_height="match_parent"
-	    android:src="@drawable/ic_action_overflow_white"
-	    android:background="@drawable/button_background_dark"
-	    />
+    <include android:id="@+id/FullPlaybackControls"
+        layout="@layout/view_nowplaying_controls"
         
-    </LinearLayout>
+        android:layout_height="@dimen/list_item_height"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+    	
+    />
     
-		<RelativeLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="0dp"
-			android:layout_weight="1"
-			android:padding="8dp"
-			android:layout_marginTop="8dp">
-	    
-		    <ImageView android:id="@+id/AlbumArt"
-		        
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
-		        android:src="@drawable/no_album_art_full"
-		        
-			/>
-	    
-	    </RelativeLayout>
-	
-			<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
-		    	android:id="@+id/TrackProgressFragment"
-	    	    android:layout_width="match_parent"
-	    	    android:layout_height="wrap_content"
-	    	    />
+	<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
+    	android:id="@+id/TrackProgressFragment"
+    	
+   	    android:layout_width="match_parent"
+   	    android:layout_height="wrap_content"
+   	    android:layout_above="@id/FullPlaybackControls"
+   	    
+   	    />
 		
-	    <include android:id="@+id/NowPlayingControls"
-	        layout="@layout/view_nowplaying_controls"
+    <!-- Start "@+id/CompactPlaybackControls" -->
+	<LinearLayout android:id="@+id/CompactPlaybackControls"
+		
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/footer_height"
+		android:layout_alignParentTop="true"
+		
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
+		android:background="@drawable/footer_controls_background"
+		android:clickable="true">
+		
+		<com.ideabag.playtunes.widget.StarButton android:id="@+id/StarButton"
+	           style="@style/DarkStarButton"
+	            android:layout_height="@dimen/list_item_height"
+	            android:layout_width="@dimen/footer_height"
+	            android:minWidth="@dimen/footer_height"
+	            />
+	    
+	    <RelativeLayout android:id="@+id/CompactAlbumArtContainer"
+	        android:layout_width="@dimen/footer_height"
+			android:layout_height="@dimen/footer_height"
+			android:layout_marginRight="8dip">
+			
+		<ImageView android:id="@+id/CompactAlbumArt"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:src="@drawable/no_album_art_thumb"
+			android:scaleType="fitXY"
+		/>
+		</RelativeLayout>
+		<LinearLayout
+		    android:layout_width="0dip"
+		    android:layout_height="match_parent"
+		    android:layout_gravity="center_vertical"
+		    android:layout_weight="1"
+		    android:gravity="center_vertical"
+		    android:orientation="vertical" >
+		    
+	    <TextView android:id="@+id/ControlsTitle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="@color/textColorPrimaryDark"
+			android:textSize="@dimen/text_large"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:text="Song Title"
+			
+		/>
+
+	<com.ideabag.playtunes.widget.TimeProgressBar android:id="@+id/CompactProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progressDrawable="@drawable/progress_indicator_mini"
+        android:layout_marginTop="-6dp"
+        android:layout_marginBottom="-6dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+	/>
 	        
-	        android:layout_height="@dimen/list_item_height"
+		<TextView android:id="@+id/ControlsSubtitle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="@color/textColorSecondaryDark"
+			android:lines="1"
+			android:textSize="@dimen/text_small"
+			android:text="Song Artist"
+		/>
+		
+		</LinearLayout>
+		
+		
+		<!--
+			This is where we selectively include different controls based on screen size.
+			Small phones get just a play/pause button, larger phones get play/pause and next,
+			and larger devices get play/pause, back, and next.
+			
+		-->
+		<include layout="@layout/view_compact_media_controls"
+		    
+		    android:layout_width="wrap_content"
+		    android:layout_height="match_parent"
+		    />
+		
+		<ImageButton android:id="@+id/MenuButton"
+		    android:layout_width="@dimen/footer_height"
+		    android:layout_height="match_parent"
+		    android:src="@drawable/ic_action_overflow_white"
+		    android:background="@drawable/button_background_dark"
+		    />
+		
+	</LinearLayout>
+    <!-- End "@+id/CompactPlaybackControls" -->
+   
+	<RelativeLayout android:id="@+id/FullAlbumArtContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:layout_above="@id/TrackProgressFragment"
+		android:layout_below="@id/CompactPlaybackControls"
+		
+		android:padding="16dp">
+    
+	    <ImageView android:id="@+id/FullAlbumArt"
+	        
 	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:src="@drawable/no_album_art_full"
 	        
-	    	
-	    />
+		/>
+    
+    </RelativeLayout>
+
+
 
 	
-</LinearLayout>
+</RelativeLayout>

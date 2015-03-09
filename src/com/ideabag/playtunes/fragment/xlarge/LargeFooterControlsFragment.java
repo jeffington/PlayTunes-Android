@@ -4,7 +4,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.activity.NowPlayingActivity;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.fragment.TrackProgressFragment;
 import com.ideabag.playtunes.media.PlaylistMediaPlayer;
