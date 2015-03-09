@@ -7,8 +7,8 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.ArtistSinglesAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.IMusicBrowser;
-import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
 import com.ideabag.playtunes.util.GAEvent.Categories;
 import com.ideabag.playtunes.util.GAEvent.Playlist;
@@ -26,7 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-public class ArtistSinglesFragment extends SaveScrollListFragment implements IMusicBrowser, IPlayableList {
+public class ArtistSinglesFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "Artist Singles Fragment";
 	
@@ -164,13 +164,14 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 		
 		// Send a screen view.
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
+		mActivity.addPlaybackListener( mPlaybackListener );
 		
 	}
 		
 	@Override public void onPause() {
 		super.onPause();
 		
-		
+		mActivity.removePlaybackListener( mPlaybackListener );
 		
 	}
 	
@@ -291,11 +292,25 @@ public class ArtistSinglesFragment extends SaveScrollListFragment implements IMu
 
 	};
 
-	@Override public void onNowPlayingMediaChanged(String media_id) {
+	private PlaybackListener mPlaybackListener = new PlaybackListener() {
+
+		@Override public void onTrackChanged( String media_id ) {
+			
+			adapter.setNowPlayingMedia( media_id );
+			
+		}
+
+		@Override public void onPlaylistDone() {
+			
+			adapter.setNowPlayingMedia( null );
+			
+		}
 		
-		adapter.setNowPlayingMedia( media_id );
-		
-	}
-	
+		@Override public void onPlay() {  }
+		@Override public void onPause() {  }
+		@Override public void onLoopingChanged(int loop) {  }
+		@Override public void onShuffleChanged(boolean isShuffling) {  }
+		@Override public void onDurationChanged( int position, int duration ) {  }
+	};
 	
 }
