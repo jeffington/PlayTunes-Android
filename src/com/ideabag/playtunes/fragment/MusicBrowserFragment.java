@@ -1,10 +1,7 @@
 package com.ideabag.playtunes.fragment;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.activity.MainActivity;
-import com.ideabag.playtunes.util.AdmobUtil;
 import com.ideabag.playtunes.util.IMusicBrowser;
 
 import android.app.Activity;
@@ -26,11 +23,7 @@ public class MusicBrowserFragment extends Fragment {
 	
 	private MainActivity mActivity;
 	
-	private AdView mAdView;
-	
-	
-	
-	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
 		
 		return inflater.inflate( R.layout.fragment_music_browser, container, false );
 		
@@ -51,16 +44,6 @@ public class MusicBrowserFragment extends Fragment {
 		
 		super.onActivityCreated( savedInstanceState );
         
-    	mAdView = ( AdView ) getView().findViewById( R.id.adView );
-	    
-		AdRequest.Builder adRequestBuilder = new AdRequest.Builder().addTestDevice( AdRequest.DEVICE_ID_EMULATOR );
-	    AdmobUtil.AddTestDevices( getActivity(), adRequestBuilder );
-	    
-	    AdRequest adRequest = adRequestBuilder.build();
-		
-	    //getActivity().getSupportFragmentManager().findFragmentById( R.id.MusicBrowserContainer );
-		// Start loading the ad in the background.
-	    mAdView.loadAd( adRequest );
 	    
 	    SharedPreferences prefs = getActivity().getSharedPreferences( getString( R.string.prefs_file ), Context.MODE_PRIVATE );
 	    //IMusicBrowser TopFragment = null;
@@ -130,22 +113,6 @@ public class MusicBrowserFragment extends Fragment {
 	    
 	}
 	
-	@Override public void onResume() {
-		super.onResume();
-		
-		mAdView.resume();
-		
-	}
-	
-	@Override public void onPause() {
-		
-		mAdView.pause();
-		
-		super.onPause();
-		
-		// Save current showing state
-		
-	}
 	
 	@Override public void onStop() {
 		super.onStop();
@@ -160,14 +127,6 @@ public class MusicBrowserFragment extends Fragment {
 		edit.putString( PREF_KEY_MEDIAID, TopFragment.getMediaID() );
 		
 		edit.commit();
-		
-	}
-	
-	@Override public void onDestroy() {
-		super.onDestroy();
-		
-		mAdView.destroy();
-		
 		
 	}
 	
@@ -282,7 +241,6 @@ public class MusicBrowserFragment extends Fragment {
 			
 		}
 		
-		mActivity.NavigationFragment.hideNavigation();
     	
     }
     
