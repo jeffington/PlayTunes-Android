@@ -11,6 +11,25 @@
 		
 	</style>
 	
+	<style name="PlaylistsToolbar" parent="@style/Widget.AppCompat.Light.ActionBar">
+		
+	    <item name="android:minHeight">@dimen/navigation_list_item_height</item>
+	    <item name="android:layout_height">@dimen/navigation_list_item_height</item>
+		<!-- Support library compatibility -->
+		<item name="android:background">@color/button_background_default</item>
+		
+		<item name="titleTextStyle">@style/PlaylistsToolbarTitle</item>
+		
+		
+	</style>
+	
+	<style name="PlaylistsToolbarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+	    
+	    <item name="android:textColor">@color/textColorPrimary</item>
+	    <item name="android:textSize">@dimen/text_xlarge</item>
+	    
+	</style>
+	
 	<style name="ActionButtonCompat" parent="@style/Widget.AppCompat.ActionButton">
 	    
 	    <item name="android:background">@drawable/button_background_dark</item>
@@ -44,25 +63,17 @@
 	
 	<style name="StarButton">
 	    
-	    <item name="android:button">@null</item>
-	    <item name="android:background">@drawable/star_button_background</item>
-	    <item name="android:layout_height">match_parent</item>
-	    <item name="android:layout_width">@dimen/touch_target_minimum</item>
+	    <item name="android:background">@drawable/button_background_light</item>
 	    <item name="android:gravity">center</item>
-	    <item name="android:textOn">@null</item>
-	    <item name="android:textOff">@null</item>
+	    <item name="android:src">@drawable/ic_action_star_0</item>
 		
 	</style>
 	
 	<style name="DarkStarButton">
-	    
-	    <item name="android:button">@null</item>
-	    <item name="android:background">@drawable/star_button_background_dark</item>
-	    <item name="android:layout_height">match_parent</item>
-	    <item name="android:layout_width">@dimen/touch_target_minimum</item>
+		
+	    <item name="android:background">@drawable/button_background_dark</item>
 	    <item name="android:gravity">center</item>
-	    <item name="android:textOn">@null</item>
-	    <item name="android:textOff">@null</item>
+	    <item name="android:src">@drawable/ic_action_star_0_white</item>
 		
 	</style>
 	
