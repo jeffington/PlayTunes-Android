@@ -3,14 +3,17 @@ package com.ideabag.playtunes.adapter;
 import com.ideabag.playtunes.R;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.util.StarToggleTask;
+import com.ideabag.playtunes.widget.StarButton;
 
 import android.content.Context;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 
 public class AlbumsOneAdapter extends SongListAdapter {
 	
@@ -26,8 +29,8 @@ public class AlbumsOneAdapter extends SongListAdapter {
 		MediaStore.Audio.Media.TRACK,
 		MediaStore.Audio.Media.ALBUM,
 		MediaStore.Audio.Media.DATA,
-		MediaStore.Audio.Media.ALBUM_ID
-		
+		MediaStore.Audio.Media.ALBUM_ID,
+    	MediaStore.Audio.Media.ARTIST_ID
 		
 	};
 	
@@ -65,11 +68,12 @@ public class AlbumsOneAdapter extends SongListAdapter {
 			
 			holder = new ViewHolder();
 			
-			holder.starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+			holder.starButton = ( StarButton ) convertView.findViewById( R.id.StarButton );
 			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.MenuButton );
 			holder.songTitle = ( TextView ) convertView.findViewById( R.id.SongTitle );
 			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
 			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
+			holder.row = ( LinearLayout ) convertView;
 			
 			holder.songArtist.setVisibility( View.GONE );
 			holder.songAlbum.setVisibility( View.GONE );
@@ -83,6 +87,14 @@ public class AlbumsOneAdapter extends SongListAdapter {
 			
 			holder = ( ViewHolder ) convertView.getTag();
 			
+			StarToggleTask starTask = ( StarToggleTask ) holder.starButton.getTag();
+			
+			if ( starTask != null && !starTask.isCancelled() ) {
+				
+				starTask.cancel( true );
+				
+			}
+			
 		}
 		
 		mCursor.moveToPosition( position );
@@ -90,23 +102,25 @@ public class AlbumsOneAdapter extends SongListAdapter {
 		String songTitle = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media.TITLE ) );
 		String song_id = mCursor.getString( mCursor.getColumnIndexOrThrow( MediaStore.Audio.Media._ID ) );
 		
-		new StarToggleTask( holder.starButton ).execute( song_id );
+		StarToggleTask starTask = new StarToggleTask( holder.starButton );
+		
+		holder.starButton.setTag( starTask );
+		holder.starButton.setTag( R.id.tag_song_id, song_id );
+		starTask.execute( song_id );
 		
 		holder.songTitle.setText( songTitle );
 		
-		holder.starButton.setTag( R.id.tag_song_id, song_id );
+		
 		holder.menuButton.setTag( R.id.tag_song_id, song_id );
 		
 		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
 			
-			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.primaryAccentColor ) );
-			
+			// Is now playing
+			holder.row.setBackgroundResource( R.drawable.indicator );
 			
 		} else {
 			
-			holder.songTitle.setTextColor( mContext.getResources().getColor( R.color.textColorPrimary ) );
-			
-			//convertView.setBackgroundResource(resid)
+			holder.row.setBackgroundResource( android.R.color.transparent );
 			
 		}
 		
