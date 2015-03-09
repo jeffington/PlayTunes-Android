@@ -24,14 +24,14 @@ import com.ideabag.playtunes.activity.MainActivity;
 import com.ideabag.playtunes.adapter.AlbumsOneAdapter;
 import com.ideabag.playtunes.database.MediaQuery;
 import com.ideabag.playtunes.dialog.SongMenuDialogFragment;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer.PlaybackListener;
 import com.ideabag.playtunes.util.AsyncDrawable;
 import com.ideabag.playtunes.util.BitmapWorkerTask;
 import com.ideabag.playtunes.util.GAEvent;
 import com.ideabag.playtunes.util.IMusicBrowser;
-import com.ideabag.playtunes.util.IPlayableList;
 import com.ideabag.playtunes.util.TrackerSingleton;
 
-public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicBrowser, IPlayableList {
+public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicBrowser {
 	
 	public static final String TAG = "One Album Fragment";
 	
@@ -175,6 +175,7 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		getListView().setDivider( getResources().getDrawable( R.drawable.list_divider ) );
 		getListView().setDividerHeight( 1 );
 		getListView().setSelector( R.drawable.list_item_background );
+		getListView().setHeaderDividersEnabled( false );
 		
 		adapter = new AlbumsOneAdapter( getActivity(), ALBUM_ID, songMenuClickListener, new MediaQuery.OnQueryCompletedListener() {
 			
@@ -239,12 +240,14 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 		
 	        // Send a screen view.
 		mTracker.send( new HitBuilders.AppViewBuilder().build() );
-		
+		mActivity.addPlaybackListener( mPlaybackListener );
 		
 	}
 	
 	@Override public void onPause() {
 		super.onPause();
+		
+		mActivity.removePlaybackListener( mPlaybackListener );
 		
 	}
 	
@@ -375,10 +378,26 @@ public class AlbumsOneFragment extends SaveScrollListFragment implements IMusicB
 
 	};
 
-	@Override public void onNowPlayingMediaChanged( String media_id ) {
+
+	private PlaybackListener mPlaybackListener = new PlaybackListener() {
+
+		@Override public void onTrackChanged( String media_id ) {
+			
+			adapter.setNowPlayingMedia( media_id );
+			
+		}
+
+		@Override public void onPlaylistDone() {
+			
+			adapter.setNowPlayingMedia( null );
+			
+		}
 		
-		adapter.setNowPlayingMedia( media_id );
-		
-	}
+		@Override public void onPlay() {  }
+		@Override public void onPause() {  }
+		@Override public void onLoopingChanged(int loop) {  }
+		@Override public void onShuffleChanged(boolean isShuffling) {  }
+		@Override public void onDurationChanged( int position, int duration ) {  }
+	};
 	
 }
