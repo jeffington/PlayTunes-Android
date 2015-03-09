@@ -8,7 +8,7 @@ import android.provider.MediaStore;
 
 public class AlbumsAllAdapter extends AlbumListAdapter {
 	
-    private static final String[] allAlbumsSelection = new String[] {
+    public static final String[] SELECTION = new String[] {
     	
     	MediaStore.Audio.Albums.ALBUM,
     	MediaStore.Audio.Albums.ARTIST,
@@ -23,7 +23,7 @@ public class AlbumsAllAdapter extends AlbumListAdapter {
 		super( context );
 		
 		mQuery = new MediaQuery(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-				allAlbumsSelection,
+				SELECTION,
 				MediaStore.Audio.Media.ALBUM + "!=?",
 				new String[] {
 						mContext.getString( R.string.no_album_string )
