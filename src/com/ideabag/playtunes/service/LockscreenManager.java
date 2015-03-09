@@ -48,12 +48,13 @@ public class LockscreenManager {
 	        	
 	        	mContext = context;
 	        	
-	        	//mAudioManager = ( AudioManager ) mContext.getSystemService( Context.AUDIO_SERVICE );
-				//mMediaButtonReceiverComponent = new ComponentName( mContext, MusicIntentReceiver.class );
+	        	mAudioManager = ( AudioManager ) mContext.getSystemService( Context.AUDIO_SERVICE );
+				mMediaButtonReceiverComponent = new ComponentName( mContext, MusicIntentReceiver.class );
 				//MediaButtonHelper.registerMediaButtonEventReceiverCompat( mAudioManager, mMediaButtonReceiverComponent );
 	            
-	        	Intent intent = new Intent( mContext, MusicIntentReceiver.class );
-	            intent.setAction( Intent.ACTION_MEDIA_BUTTON );
+				
+	        	Intent intent = new Intent( Intent.ACTION_MEDIA_BUTTON );
+	        	intent.setComponent( mMediaButtonReceiverComponent );
 	            
 	            //intent.setAction(  );
 	            mRemoteControlClientCompat = new RemoteControlClientCompat(
