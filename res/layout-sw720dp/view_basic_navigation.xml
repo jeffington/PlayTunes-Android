@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<LinearLayout android:id="@+id/NavigationStarred"
+    	style="@style/NavigationListItem">
+	   	
+	   	<ImageView
+	            android:layout_width="24dp"
+	            android:layout_height="24dp"
+	            android:src="@drawable/ic_action_star_10"
+	            />
+	        
+	    <TextView style="@style/TextViewXLarge"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:text="@string/playlist_name_starred"
+	        />
+	    
+		<TextView android:id="@+id/BadgeStarredCount"
+	            style="@style/BadgeNumber"
+				android:textColor="@color/textColorSecondary"
+	            />
+
+	</LinearLayout>
+	
+	<LinearLayout android:id="@+id/NavigationSongsAll"
+    	style="@style/NavigationListItem">
+   	
+   	<ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_music_2"
+            />
+        
+    <TextView style="@style/TextViewXLarge"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/songs_plural"
+        />
+    
+        <TextView android:id="@+id/BadgeSongsAll"
+            style="@style/BadgeNumber"
+			android:textColor="@color/textColorSecondary"
+            />
+
+</LinearLayout>
+
+	<LinearLayout android:id="@+id/NavigationAlbumsAll"
+	    style="@style/NavigationListItem">
+   	
+   	<ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_record"
+            />
+        
+    <TextView style="@style/TextViewXLarge"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/albums_plural"
+        />
+    
+        <TextView android:id="@+id/BadgeAlbumsAll"
+            style="@style/BadgeNumber"
+			android:textColor="@color/textColorSecondary"
+            />
+
+</LinearLayout>
+
+	<LinearLayout android:id="@+id/NavigationArtistsAll"
+	    style="@style/NavigationListItem">
+   	
+   	<ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_action_mic"
+            />
+        
+    <TextView style="@style/TextViewXLarge"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/artists_plural"
+        />
+    
+        <TextView android:id="@+id/BadgeArtistsAll"
+            style="@style/BadgeNumber"
+			android:textColor="@color/textColorSecondary"
+            />
+
+</LinearLayout>
+	
+</LinearLayout>

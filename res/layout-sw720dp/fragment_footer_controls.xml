@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/FooterControls"
+	android:layout_width="match_parent"
+	android:layout_height="@dimen/footer_height"
+	android:orientation="horizontal"
+	android:background="@color/footer_background"
+	android:paddingLeft="@dimen/spacing_large"
+	android:paddingRight="@dimen/spacing_large">
+	
+	<ImageButton android:id="@+id/NowPlayingPrevButton"
+        
+	    android:layout_width="@dimen/list_item_height"
+	    android:minWidth="@dimen/list_item_height"
+	    android:layout_height="match_parent"
+	    android:src="@drawable/ic_action_playback_prev_white"
+	    android:background="@drawable/button_background_dark"
+	    
+	/>
+    
+    <ImageButton android:id="@+id/NowPlayingPlayPauseButton"
+        
+        android:minWidth="@dimen/list_item_height"
+	    android:layout_width="@dimen/list_item_height"
+	    android:layout_height="match_parent"
+	    android:src="@drawable/ic_action_playback_pause_white"
+	    android:background="@drawable/button_background_dark"
+	    
+	/>
+        
+	<ImageButton android:id="@+id/NowPlayingNextButton"
+        
+	    android:layout_width="@dimen/list_item_height"
+	    android:minWidth="@dimen/list_item_height"
+	    android:layout_height="match_parent"
+	    android:src="@drawable/ic_action_playback_next_white"
+	    android:background="@drawable/button_background_dark"
+		
+	/>
+	
+	<fragment android:name="com.ideabag.playtunes.fragment.TrackProgressFragment"
+	    android:id="@+id/TrackProgressFragment"
+		android:layout_width="0dp"
+		android:layout_weight="1"
+		android:layout_height="match_parent"
+	/>
+	
+    <ImageButton android:id="@+id/NowPlayingShuffleButton"
+        
+        android:layout_width="@dimen/touch_target_minimum"
+        android:minWidth="@dimen/touch_target_minimum"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_action_playback_schuffle_white"
+        android:background="@drawable/button_background_dark"
+        
+	/>
+    
+	    <ImageButton android:id="@+id/NowPlayingRepeatButton"
+        
+        android:layout_width="@dimen/touch_target_minimum"
+        android:minWidth="@dimen/touch_target_minimum"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_action_playback_repeat_white"
+        android:background="@drawable/button_background_dark"
+        
+	/>
+    
+</LinearLayout>

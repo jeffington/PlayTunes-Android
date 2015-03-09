@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/spacing_small"
+    android:paddingRight="@dimen/spacing_small"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:gravity="center">
+    
+    
+    <TextView android:id="@+id/TrackProgressPlayPosition"
+        
+
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="0:00"
+        android:textColor="@color/textColorSecondaryDark"
+		android:gravity="right|center_vertical"
+		android:paddingRight="4dp"
+		
+	/>
+    
+    <SeekBar android:id="@+id/TrackProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:progressDrawable="@drawable/progress_indicator"
+        android:thumb="@drawable/progress_circle_handle"
+	/>
+    
+    <TextView android:id="@+id/TrackProgressPlayLength"
+        
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="5:00"
+        android:textColor="@color/textColorSecondaryDark"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="4dp"
+        />
+
+
+
+</LinearLayout>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<android.support.v7.widget.Toolbar
+	    android:id="@+id/ActionBarToolbar"
+	    android:layout_height="wrap_content"
+	    android:layout_width="match_parent"
+	    android:minHeight="?attr/actionBarSize"
+	    android:background="?attr/colorPrimary"
+	    
+	    android:layout_alignParentTop="true"
+	    
+	    />
+    
+	<fragment android:name="com.ideabag.playtunes.fragment.xlarge.LargeFooterControlsFragment"
+            
+        	android:id="@+id/FooterControlsFragment"
+        	android:layout_width="match_parent"
+        	android:layout_height="@dimen/footer_height"
+        	android:layout_alignParentBottom="true"
+        	
+	/>
+    
+	<com.google.android.gms.ads.AdView android:id="@+id/adView"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				ads:adUnitId="@string/admob_unit_id_main_activity"
+				ads:adSize="SMART_BANNER"
+				android:layout_below="@id/ActionBarToolbar"
+				android:background="@color/footer_background"
+			/>
+
+	
+	<fragment android:name="com.ideabag.playtunes.fragment.xlarge.NowPlayingStub"
+	    android:id="@+id/FragmentNowPlayingStub"
+	
+	android:layout_height="@dimen/footer_height"
+	android:layout_width="@dimen/navigation_drawer_width"
+	android:layout_above="@id/FooterControlsFragment"
+	
+	android:orientation="horizontal"
+	android:background="@drawable/footer_controls_background"
+	android:clickable="true" />
+
+		<View
+	    android:layout_width="@dimen/navigation_drawer_width"
+	    android:layout_height="1px"
+	    android:background="@color/textColorPrimary"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@id/FragmentNowPlayingStub"
+	    />
+    	<fragment android:name="com.ideabag.playtunes.fragment.xlarge.LargeNavigationFragment"
+        android:id="@+id/left_drawer"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="wrap_content"
+        android:background="#F5F5F5"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/adView"
+        android:layout_above="@id/FragmentNowPlayingStub"
+        />
+    	
+
+	<android.support.v7.widget.Toolbar
+	    android:id="@+id/MusicBrowserToolbar"
+	    android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:minHeight="?attr/actionBarSize"
+	    android:background="@color/button_background_default"
+	    
+	    android:layout_below="@id/adView"
+	    android:layout_alignParentRight="true"
+	    android:layout_toRightOf="@id/left_drawer"
+	    
+	    />
+	
+	
+	
+    <fragment android:name="com.ideabag.playtunes.fragment.MusicBrowserFragment"
+        android:id="@+id/MusicBrowserFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_below="@id/MusicBrowserToolbar"
+        android:layout_above="@id/FooterControlsFragment"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/left_drawer"
+        />
+    
+
+</RelativeLayout>

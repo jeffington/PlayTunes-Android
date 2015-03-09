@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+	<style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+      <!-- Set AppCompat’s color theming attrs -->
+	    <item name="colorPrimary">@color/primaryAccentColor</item>
+	    <item name="colorPrimaryDark">@color/primaryAccentColorTranslucent</item>
+		
+		
+    </style>
+</resources>

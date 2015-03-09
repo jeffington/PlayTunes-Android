@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/album_art_header_height"
+    android:minHeight="@dimen/album_art_header_height"
+    android:orientation="vertical"
+    android:background="@color/now_playing_background"
+    android:gravity="center_horizontal">
+    
+    <ImageView android:id="@+id/AlbumArtBackground"
+        
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_album_art_full"
+        android:scaleX="2.0"
+        android:scaleY="2.0"
+        
+        />
+    
+    <ImageView android:id="@+id/AlbumArtFull"
+        
+        android:layout_alignParentLeft="true"
+        
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:scaleType="fitXY"
+        android:layout_margin="8dp"
+        android:src="@drawable/no_album_art_thumb"
+        />
+    
+    <TextView android:id="@+id/AlbumArtTitle"
+        
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimaryDark"
+        android:textSize="@dimen/text_xlarge"
+        android:text="Album Title"
+        android:gravity="left"
+        android:layout_toRightOf="@id/AlbumArtFull"
+        
+        />
+    <TextView android:id="@+id/AlbumArtSubtitle"
+        
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimaryDark"
+        android:textSize="@dimen/text_large"
+        android:text="Album Artist"
+        android:gravity="left"
+        android:layout_below="@id/AlbumArtTitle"
+        android:layout_toRightOf="@id/AlbumArtFull"
+        />
+    
+</RelativeLayout>

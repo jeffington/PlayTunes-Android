@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2" >
+        
+		<fragment android:name="com.ideabag.playtunes.fragment.xlarge.browser.ArtistGenreFragment"
+		    android:id="@+id/ArtistGenrePickerFragment"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+		
+	    <View
+	        android:layout_width="1dp"
+	        android:layout_height="match_parent"
+	        android:background="@color/textColorSecondary"
+		/>
+        
+        <fragment android:name="com.ideabag.playtunes.fragment.xlarge.browser.FilteredAlbumsFragment"
+            android:id="@+id/ArtistsAlbumsPickerFragment"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+        
+    </LinearLayout>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/textColorSecondary"
+        />
+    
+    <fragment android:name="com.ideabag.playtunes.fragment.xlarge.browser.FilteredSongsFragment"
+        android:id="@+id/FilteredSongsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        
+        
+	/>
+    
+</LinearLayout>

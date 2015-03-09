@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:minHeight="@dimen/list_item_height"
+        android:descendantFocusability="blocksDescendants" >
+        
+		
+		<com.ideabag.playtunes.widget.StarButton android:id="@+id/StarButton"
+           style="@style/StarButton"
+           android:layout_width="@dimen/touch_target_minimum"
+           android:layout_height="match_parent"
+			
+            />
+		
+        <TextView android:id="@+id/SongTitle"
+            
+           	android:layout_height="match_parent"
+           	android:layout_width="0dp"
+           	android:gravity="center_vertical"
+           	android:layout_weight="2"
+           	
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+    	    
+    	    android:paddingRight="2dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    	    
+    	    android:text="Song Title"
+    	    
+        />
+        
+        <Button android:id="@+id/SongArtistButton"
+            
+           	android:layout_height="match_parent"
+           	android:layout_width="0dp"
+           	android:layout_weight="1"
+           	
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+           	
+           	android:gravity="center_vertical"
+    	    android:paddingRight="2dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+           	
+           	android:text="Song Artists"
+           	android:background="@drawable/list_item_background"
+        />
+        
+        <Button android:id="@+id/SongAlbumButton"
+            
+            
+           	android:layout_height="match_parent"
+           	android:layout_width="0dp"
+           	android:layout_weight="1"
+        	
+           	android:textColor="@color/textColorPrimary"
+           	android:textSize="@dimen/text_large"
+           	
+        	android:ellipsize="end"
+        	android:lines="1"
+        	android:singleLine="true"
+        	
+        	android:gravity="center_vertical"
+    	    android:paddingRight="2dp"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+        	
+        	android:text="Album"
+        	android:background="@drawable/list_item_background"
+        	
+        />
+        
+
+       
+       <ImageButton android:id="@+id/MenuButton"
+            style="@style/MenuButton"
+            android:visibility="gone"
+            />
+
+</LinearLayout>

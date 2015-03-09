@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/CompactPlaybackControls"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/footer_height"
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
+		android:background="@color/footer_background"
+		android:clickable="true">
+	    
+	    <RelativeLayout android:id="@+id/CompactAlbumArtContainer"
+	        android:layout_width="@dimen/footer_height"
+			android:layout_height="@dimen/footer_height"
+			android:layout_marginRight="8dip">
+			
+		<ImageView android:id="@+id/CompactAlbumArt"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:src="@drawable/no_album_art_thumb"
+			android:scaleType="fitXY"
+		/>
+		</RelativeLayout>
+		<LinearLayout
+		    android:layout_width="0dip"
+		    android:layout_height="match_parent"
+		    android:layout_gravity="center_vertical"
+		    android:layout_weight="1"
+		    android:gravity="center_vertical"
+		    android:orientation="vertical" >
+		    
+	    <TextView android:id="@+id/ControlsTitle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="@color/textColorPrimaryDark"
+			android:textSize="@dimen/text_large"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:text="Song Title"
+			
+		/>
+	        
+		<TextView android:id="@+id/ControlsSubtitle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="@color/textColorSecondaryDark"
+			android:lines="1"
+			android:textSize="@dimen/text_medium"
+			android:text="Song Artist"
+		/>
+		
+	</LinearLayout>
+		
+	<com.ideabag.playtunes.widget.StarButton android:id="@+id/StarButton"
+           style="@style/DarkStarButton"
+            android:layout_height="match_parent"
+            android:layout_width="@dimen/touch_target_minimum"
+            android:minWidth="@dimen/footer_height"
+	/>
+	
+	<ImageButton android:id="@+id/MenuButton"
+	    android:layout_width="@dimen/touch_target_minimum"
+	    android:layout_height="match_parent"
+	    android:src="@drawable/ic_action_overflow_white"
+	    android:background="@drawable/button_background_dark"
+	    />
+	
+</LinearLayout>
