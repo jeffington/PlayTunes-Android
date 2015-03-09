@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingRight="@dimen/list_item_horizontal_spacing">
+    
+    <ImageView android:id="@+id/AlbumArtThumb"
+        android:layout_width="@dimen/list_item_height"
+        android:layout_height="@dimen/list_item_height"
+        android:background="@android:color/black"
+        />
+    	
+	<LinearLayout
+    	    android:layout_width="0dp"
+    	    android:layout_height="match_parent"
+    	    android:layout_gravity="top"
+    	    android:layout_weight="1"
+    	    android:orientation="vertical"
+    	    android:paddingLeft="@dimen/list_item_horizontal_spacing"
+    	    android:gravity="center_vertical">
+    	    
+        <TextView
+           	android:id="@+id/AlbumTitle"
+           	android:layout_height="wrap_content"
+           	android:layout_width="match_parent"
+           	android:background="@android:color/transparent"
+           	android:textColor="#333333"
+           	android:textSize="@dimen/text_large"
+           	android:lines="1"
+           	android:ellipsize="end"
+           	android:singleLine="true"
+        />
+        
+        <TextView android:id="@+id/AlbumArtist"
+            
+           	android:layout_width="match_parent"
+           	android:layout_height="wrap_content"
+           	android:singleLine="true"
+			android:ellipsize="end"
+			
+        />
+        </LinearLayout>
+
+		<TextView android:id="@+id/SongCount"
+            style="@style/BadgeNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|right"
+            android:layout_marginLeft="@dimen/list_item_horizontal_spacing"
+            />
+	
+</LinearLayout>
