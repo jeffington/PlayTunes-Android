@@ -1,14 +1,18 @@
 package com.ideabag.playtunes.adapter;
 
 import com.ideabag.playtunes.R;
+import com.ideabag.playtunes.PlaylistManager;
 import com.ideabag.playtunes.database.MediaQuery;
+import com.ideabag.playtunes.media.PlaylistMediaPlayer;
 import com.ideabag.playtunes.util.StarToggleTask;
+import com.ideabag.playtunes.widget.StarButton;
 
 import android.content.Context;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -18,8 +22,9 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 	public String PLAYLIST_NAME;
 	
 	public boolean isEditing = false;
+	PlaylistManager mPlaylistManager;
 	
-    private static final String[] singlePlaylistSelection = new String[] {
+    public static final String[] SELECTION = new String[] {
     	
     	// The ID of the media item must be the first thing in the selection
     	MediaStore.Audio.Playlists.Members.AUDIO_ID,
@@ -37,6 +42,8 @@ public class PlaylistsOneAdapter extends SongListAdapter {
     public PlaylistsOneAdapter( Context context, String playlist_id, View.OnClickListener menuClickListener, MediaQuery.OnQueryCompletedListener listener ) {
     	this( context, playlist_id, menuClickListener );
     	
+    	mPlaylistManager = new PlaylistManager( context );
+    	
     	setOnQueryCompletedListener( listener );
     	
     }
@@ -49,7 +56,7 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 		
 		mQuery = new MediaQuery(
 				MediaStore.Audio.Playlists.Members.getContentUri( "external", Long.parseLong( PLAYLIST_ID ) ),
-				singlePlaylistSelection,
+				SELECTION,
 				MediaStore.Audio.Playlists.Members.PLAYLIST_ID + "=?",
 				new String[] {
 					
@@ -73,7 +80,7 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 			
 			convertView = inflater.inflate( R.layout.list_item_playlist_song, null );
 			
-			holder.starButton = ( ToggleButton ) convertView.findViewById( R.id.StarButton );
+			holder.starButton = ( StarButton ) convertView.findViewById( R.id.StarButton );
 			holder.starButton.setOnClickListener( songMenuClickListener );
 			
 			holder.menuButton = ( ImageButton ) convertView.findViewById( R.id.MenuButton );
@@ -87,6 +94,7 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 			holder.songTitle = ( TextView ) convertView.findViewById( R.id.SongTitle );
 			holder.songAlbum = ( TextView ) convertView.findViewById( R.id.SongAlbum );
 			holder.songArtist = ( TextView ) convertView.findViewById( R.id.SongArtist );
+			holder.row = ( ViewGroup ) convertView;
 			
 			convertView.setTag( holder );
 			
@@ -130,6 +138,19 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 			
 		}
 		
+		// TODO: Add now playing indicator
+		
+		if ( null != mNowPlayingMediaID && mNowPlayingMediaID.equals( song_id ) ) {
+			
+			// Is now playing
+			holder.row.setBackgroundResource( R.drawable.indicator );
+			
+		} else {
+			
+			holder.row.setBackgroundResource( android.R.color.transparent );
+			
+		}
+		
 		return convertView;
 		
 	}
@@ -144,8 +165,9 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 	
 	static class ViewHolder {
 		
+		ViewGroup row;
 		View dragButton;
-		ToggleButton starButton;
+		StarButton starButton;
 		ImageButton menuButton;
 		ImageButton removeButton;
 		TextView songTitle;
@@ -153,5 +175,11 @@ public class PlaylistsOneAdapter extends SongListAdapter {
 		TextView songAlbum;
 		
 	}
-
+/*
+	@Override public void swap(int x, int y) {
+		
+		mPlaylistManager.moveTrack( PLAYLIST_ID, x, y );
+		
+	}
+*/
 }
