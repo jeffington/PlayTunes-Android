@@ -1,13 +1,12 @@
-#PlayTunes
+# PlayTunes - Not Under Active Development
 
-PlayTunes is a simple music player that was originally released in 2010 for Android 1.5. It has been completely overhauled and can be found for download here: [https://play.google.com/store/apps/details?id=com.ideabag.playtunes](https://play.google.com/store/apps/details?id=com.ideabag.playtunes)
+PlayTunes is a simple music player that was originally released in 2010 for Android 1.5. It has been completely overhauled a few times, but it is no longer under active development. It received a modest amount of downloads and even made me over $1000 in ad revenue over the course of several years. It was fun and I learned a lot maintaing it, but I can't justify the time to add modern day features, like Chromecast support, or streaming audio from Cloud storage services. Making sustainable money on an independent app is tough. If you decide to try that for yourself, good luck. You're going to need it.
 
+The code is not documented, but it includes some good examples of best practices for scrolling large ListViews using the ViewHolder pattern and it also has many examples of using the Android compatibility library and Fragments. 
 
-For any questions or comments, you can email me at jeff@impeccabledigital.com or follow me on Google+ at [http://plus.google.com/+JeffMeyerhoff](http://plus.google.com/+JeffMeyerhoff). Visit [impeccabledigital.com](impeccabledigital.com) for more info.
+# Icons
 
-# Icons and Graphic Resources
-
-This app uses icons from the beautiful [Androidicons Developer set](http://androidicons.com). I highly recommend adding these icons to your tool belt. If you want to use any of these icons in your own works, you need to purchase them at [http://androidicons.com](http://androidicons.com). 
+This app uses icons from the beautiful [Androidicons Developer set](http://androidicons.com). Buy them at [http://androidicons.com](http://androidicons.com). 
 
 #### Androidicons License Agreement
 
